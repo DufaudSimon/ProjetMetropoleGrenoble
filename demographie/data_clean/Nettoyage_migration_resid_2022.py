@@ -2,7 +2,7 @@ import pandas as pd
 
 # 1. CHARGER LE FICHIER ORIGINAL
 df_raw = pd.read_csv(
-    "Migrations_resid.csv",
+    "demographie/data_base/Migrations_resid.csv",
     sep=";",
     low_memory=False
 )
