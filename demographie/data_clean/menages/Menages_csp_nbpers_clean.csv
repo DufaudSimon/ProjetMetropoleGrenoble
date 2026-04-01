@@ -1,4 +1,36 @@
 CODGEO,LIBGEO
+34022,Baillargues
+34027,Beaulieu
+34057,Castelnau-le-Lez
+34058,Castries
+34077,Clapiers
+34087,Cournonsec
+34088,Cournonterral
+34090,Le Crès
+34095,Fabrègues
+34102,Fontanès
+34116,Grabels
+34120,Jacou
+34123,Juvignac
+34129,Lattes
+34134,Lavérune
+34164,Montaud
+34169,Montferrier-sur-Lez
+34172,Montpellier
+34179,Murviel-lès-Montpellier
+34198,Pérols
+34202,Pignan
+34217,Prades-le-Lez
+34227,Restinclières
+34244,Saint-Brès
+34249,Saint-Drézéry
+34256,Saint-Geniès-des-Mourgues
+34259,Saint-Georges-d'Orques
+34270,Saint-Jean-de-Védas
+34295,Saussan
+34307,Sussargues
+34327,Vendargues
+34337,Villeneuve-lès-Maguelone
 35001,Acigné
 35022,Bécherel
 35024,Betton
@@ -42,6 +74,7 @@ CODGEO,LIBGEO
 35352,Vern-sur-Seiche
 35353,Vezin-le-Coquet
 35363,Pont-Péan
+38033,Beaulieu
 38057,Bresson
 38059,Brié-et-Angonnes
 38068,Champagnier
@@ -60,6 +93,7 @@ CODGEO,LIBGEO
 38200,Jarrie
 38229,Meylan
 38235,Miribel-Lanchâtre
+38248,Montaud
 38252,Montchaboud
 38258,Mont-Saint-Martin
 38271,Murianette
@@ -91,3 +125,126 @@ CODGEO,LIBGEO
 38540,Veurey-Voroize
 38545,Vif
 38562,Vizille
+42001,Aboën
+42005,Andrézieux-Bouthéon
+42031,Caloire
+42032,Cellieu
+42036,Chagnon
+42043,Chambœuf
+42044,Le Chambon-Feugerolles
+42053,Châteauneuf
+42083,Dargoire
+42085,Doizieux
+42092,L'Étrat
+42093,Farnay
+42095,Firminy
+42096,Fontanès
+42097,La Fouillouse
+42099,Fraisses
+42100,La Gimond
+42103,La Grand-Croix
+42110,L'Horme
+42123,Lorette
+42133,Marcenod
+42167,Pavezin
+42183,La Ricamarie
+42186,Rive-de-Gier
+42189,Roche-la-Molière
+42192,Rozier-Côtes-d'Aurec
+42206,Saint-Bonnet-les-Oules
+42207,Saint-Chamond
+42208,Saint-Christo-en-Jarez
+42210,Sainte-Croix-en-Jarez
+42218,Saint-Étienne
+42222,Saint-Galmier
+42223,Saint-Genest-Lerpt
+42225,Genilac
+42234,Saint-Héand
+42237,Saint-Jean-Bonnefonds
+42242,Saint-Joseph
+42259,Saint-Martin-la-Plaine
+42262,Saint-Maurice-en-Gourgois
+42266,Saint-Nizier-de-Fornas
+42270,Saint-Paul-en-Cornillon
+42271,Saint-Paul-en-Jarez
+42275,Saint-Priest-en-Jarez
+42283,Saint-Romain-en-Jarez
+42302,Sorbiers
+42305,La Talaudière
+42307,Tartaras
+42308,La Terrasse-sur-Dorlay
+42311,La Tour-en-Jarez
+42316,Unieux
+42320,Valfleury
+42322,La Valla-en-Gier
+42330,Villars
+76005,Amfreville-la-Mi-Voie
+76020,Anneville-Ambourville
+76039,Les Authieux-sur-le-Port-Saint-Ouen
+76056,Bardouville
+76069,Belbeuf
+76088,Berville-sur-Seine
+76095,Bihorel
+76103,Bonsecours
+76108,Bois-Guillaume
+76116,Boos
+76131,La Bouille
+76157,Canteleu
+76165,Caudebec-lès-Elbeuf
+76178,Cléon
+76212,Darnétal
+76216,Déville-lès-Rouen
+76222,Duclair
+76231,Elbeuf
+76237,Épinay-sur-Duclair
+76273,Fontaine-sous-Préaux
+76282,Freneuse
+76313,Gouy
+76319,Grand-Couronne
+76322,Le Grand-Quevilly
+76350,Hautot-sur-Seine
+76354,Hénouville
+76366,Le Houlme
+76367,Houppeville
+76377,Isneauville
+76378,Jumièges
+76391,La Londe
+76402,Malaunay
+76410,Maromme
+76429,Le Mesnil-Esnard
+76436,Le Mesnil-sous-Jumièges
+76448,Montmain
+76451,Mont-Saint-Aignan
+76457,Moulineaux
+76464,La Neuville-Chant-d'Oisel
+76474,Notre-Dame-de-Bondeville
+76475,Franqueville-Saint-Pierre
+76486,Orival
+76497,Petit-Couronne
+76498,Le Petit-Quevilly
+76513,Quevillon
+76514,Quévreville-la-Poterie
+76536,Roncherolles-sur-le-Vivier
+76540,Rouen
+76550,Sahurs
+76558,Saint-Aubin-Celloville
+76560,Saint-Aubin-Épinay
+76561,Saint-Aubin-lès-Elbeuf
+76575,Saint-Étienne-du-Rouvray
+76591,Saint-Jacques-sur-Darnétal
+76599,Saint-Léger-du-Bourg-Denis
+76608,Sainte-Marguerite-sur-Duclair
+76614,Saint-Martin-de-Boscherville
+76617,Saint-Martin-du-Vivier
+76631,Saint-Paër
+76634,Saint-Pierre-de-Manneville
+76636,Saint-Pierre-de-Varengeville
+76640,Saint-Pierre-lès-Elbeuf
+76681,Sotteville-lès-Rouen
+76682,Sotteville-sous-le-Val
+76705,Tourville-la-Rivière
+76709,Le Trait
+76717,Val-de-la-Haye
+76750,Yainville
+76753,Ymare
+76759,Yville-sur-Seine
