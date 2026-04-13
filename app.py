@@ -421,8 +421,8 @@ def filter_bar(label="🔧 Filtres"):
 # 5. EN-TÊTE
 # ──────────────────────────────────────────────────────────────────────────────
 st.markdown(
-    "<h1 style='color:#1C3A27;font-size:2rem;margin-bottom:2px'>📊 Tableau de bord démographique</h1>"
-    "<p style='color:#5A8A6A;margin-bottom:20px'>Analyse comparative · 5 métropoles françaises · Données INSEE RP 2011–2022</p>",
+    "<h1 style='color:#1C3A27;font-size:2rem;margin-bottom:2px'> Tableau de bord concernant la métropole de Grenoble</h1>"
+    "<p style='color:#5A8A6A;margin-bottom:20px'>Analyse intercommunal et intermétropole</p>",
     unsafe_allow_html=True,
 )
 
@@ -529,8 +529,8 @@ if st.session_state.page == "home":
     <div class="hero-accueil">
         <div class="hero-inner">
             <div class="hero-text-col">
-                <div class="hero-badge">Projet académique · INSEE</div>
-                <div class="hero-title">Tableau de bord<br>des métropoles françaises</div>
+                <div class="hero-badge">Outil d'aide à la décision</div>
+                <div class="hero-title">Différentes dynamiques<br>et enjeux territoriales</div>
                 <div class="hero-subtitle">
                     Grenoble · Rennes · Rouen<br>Saint-Étienne · Montpellier
                 </div>
@@ -555,9 +555,9 @@ if st.session_state.page == "home":
         <div class="info-card">
             <div class="info-card-title">Objectif</div>
             <div class="info-card-body">
-                Comparer les dynamiques territoriales de 5 métropoles françaises
-                à partir des données officielles de l'INSEE, couvrant les recensements
-                de 2011 à 2022 sur les volets démographiques et sociaux.
+                Analyser les données de démographie et de solidarité & citoyenneté afin de produire une analyse complète pour chaque commune de la métropole de Grenoble. 
+                Cette étude vise à permettre la comparaison des communes entre elles, ainsi qu’à situer la métropole de Grenoble par rapport à celles de Rouen, Saint-Étienne, Rennes et Montpellier. 
+                Elle est également destinée à accompagner les nouveaux élus dans la compréhension des dynamiques territoriales.
             </div>
         </div>
         <div class="info-card" style="border-left-color:#1A6FA3;">
@@ -576,16 +576,15 @@ if st.session_state.page == "home":
         <div class="info-card">
             <div class="info-card-title">📊 Démographie</div>
             <div class="info-card-body">
-                Analyse de la population, de la structure par âge, des ménages
-                et des mobilités résidentielles, professionnelles et scolaires
+                Analyse de la population, de la structure par âge, des mobilités, des ménages, des mobilités résidentielles, professionnelles et scolaires
                 à l'échelle des communes et des EPCI.
             </div>
             <div class="tag-row">
                 <span class="tag-green">Population</span>
-                <span class="tag-green">Pyramide des âges</span>
+                <span class="tag-green">Structure des âges</span>
                 <span class="tag-green">Mobilités</span>
                 <span class="tag-green">Ménages</span>
-                <span class="tag-green">CSP</span>
+                <span class="tag-green">Population active 25-54 ans</span>
             </div>
         </div>
         <div class="info-card orange">
