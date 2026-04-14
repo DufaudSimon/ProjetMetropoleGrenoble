@@ -684,13 +684,108 @@ if st.session_state.page == "home":
 # 7. SIDEBAR + NAVIGATION (sidebar minimale : navigation seule)
 # ──────────────────────────────────────────────────────────────────────────────
 with st.sidebar:
-    if st.button("🏠 Accueil"):
+    # ── 1. STYLE AMÉLIORÉ (Effets Hover + Design moderne) ────────────────────
+    st.markdown("""
+        <style>
+        /* Force le fond de la sidebar en vert foncé */
+        [data-testid="stSidebar"] {
+            background-color: #1B4332 !important;
+        }
+
+        /* Conteneur global de la radio pour enlever les marges par défaut */
+        div[data-testid="stRadio"] > div {
+            gap: 8px;
+        }
+
+        /* Style de base des boutons (labels) */
+        div[data-testid="stRadio"] label {
+            background-color: rgba(255, 255, 255, 0.9) !important;
+            padding: 12px 16px !important;
+            border-radius: 12px !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            transition: all 0.3s ease-in-out !important; /* Animation fluide */
+            cursor: pointer !important;
+        }
+
+        /* EFFET AU SURVOL (HOVER) */
+        div[data-testid="stRadio"] label:hover {
+            background-color: #FFFFFF !important; /* Blanc pur au survol */
+            transform: translateX(5px) !important; /* Petit décalage à droite */
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.2) !important; /* Ombre portée */
+            border: 1px solid #95D5B2 !important;
+        }
+
+        /* Style du texte (Noir) */
+        div[data-testid="stRadio"] label p {
+            color: #1B4332 !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            margin: 0 !important;
+        }
+
+        /* Style quand l'option est sélectionnée (Active) */
+        div[data-testid="stRadio"] input:checked + div label {
+            background-color: #95D5B2 !important; /* Vert clair quand sélectionné */
+            border: 1px solid #FFFFFF !important;
+        }
+        
+        /* Titre de section "Navigation" */
+        .nav-header {
+            font-size: 11px;
+            font-weight: 800;
+            color: #95D5B2;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            padding: 20px 0 10px 5px;
+            font-family: 'Sora', sans-serif;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # ── 2. LOGO DU HAUT ──────────────────────────────────────────────────────
+    st.markdown("""
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 8px 20px 8px;border-bottom:1px solid rgba(149,213,178,0.2);">
+        <div style="width:38px;height:38px;background:#2D6A4F;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="#95D5B2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 22V12h6v10" stroke="#95D5B2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div>
+            <div style="font-size:14px;font-weight:700;color:#FFFFFF;line-height:1.2;">Métropole Grenoble</div>
+            <div style="font-size:10px;color:#95D5B2;opacity:0.8;">Tableau de bord interactif</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── 3. BOUTON ACCUEIL (Avec style assorti) ────────────────────────────────
+    st.write("") # Petit espace
+    if st.button("Retour à l'Accueil", use_container_width=True):
         st.session_state.page = "home"
         st.rerun()
-    st.markdown("---")
-    vue = st.radio("Navigation", ["Description", "Démographie", "Solidarité et citoyenneté"],
-                   index=0, label_visibility="collapsed")
 
+    # ── 4. RADIO NAVIGATION AMÉLIORÉE ────────────────────────────────────────
+    st.markdown('<div class="nav-header">Menu Principal</div>', unsafe_allow_html=True)
+    
+    vue = st.radio(
+        "Navigation",
+        ["Description", "Démographie", "Solidarité et citoyenneté"],
+        index=0,
+        label_visibility="collapsed",
+    )
+
+    # ── 5. PIED DE PAGE ──────────────────────────────────────────────────────
+    st.markdown("<div style='margin-top: 50px;'></div>", unsafe_allow_html=True) # Espaceur
+    st.markdown("---")
+    st.markdown("""
+    <div style="text-align:center; padding:10px;">
+        <div style="font-size:12px; font-weight:600; color:#95D5B2;">Grenoble-Alpes Métropole</div>
+        <div style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:10px;">
+            Équipe Projet :<br>
+            S. Dufaud • H. Unaldi • J. Ben-Hadj-Salem
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 # ──────────────────────────────────────────────────────────────────────────────
 # 8. PAGES
 # ──────────────────────────────────────────────────────────────────────────────
