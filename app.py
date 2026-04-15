@@ -1433,6 +1433,9 @@ if vue == "Démographie":
 # ==============================================================================
 # ONGLET 3 — MOBILITÉS
 # ==============================================================================
+# ==============================================================================
+# ONGLET 3 — MOBILITÉS
+# ==============================================================================
 if vue == "Démographie":
     with tab3:
         st.markdown('<p class="section-header">Observatoire des mobilités</p>', unsafe_allow_html=True)
@@ -1443,6 +1446,7 @@ if vue == "Démographie":
             unsafe_allow_html=True,
         )
 
+        # Vérification de la présence des données
         data_ok = any(df is not None for df in [df_res, df_prof, df_scol])
         if not data_ok:
             st.info(
@@ -1464,7 +1468,6 @@ if vue == "Démographie":
                          "💼 Mobilité Professionnelle",
                          "🎓 Mobilité Scolaire"],
                         key="mob_theme",
-                        label_visibility="visible",
                     )
                 with mob_col2:
                     mode_mob = st.radio(
@@ -1496,24 +1499,31 @@ if vue == "Démographie":
                     with mob_col3:
                         sel_annee_mob = st.selectbox("Année", annees_mob, key="mob_annee")
 
-                # Sélection entités (communes ou métropoles) — dans le même bandeau
+                # Sélection entités (communes ou métropoles)
                 if current_mob_df is not None:
                     if mode_mob == "Détail Communal":
-                        geo_col1, geo_col2 = st.columns(2)
-                        with geo_col1:
-                            met_choice = st.selectbox("Métropole parente", TOUTES, key="mob_met")
-                        with geo_col2:
-                            sel_communes_mob = st.multiselect(
-                                "Communes", sorted(COMMUNES[met_choice]),
-                                default=sorted(COMMUNES[met_choice])[:2], key="mob_communes",
-                            )
+                        # ON FORCE GRENOBLE ICI
+                        met_choice = "Grenoble"
+                        st.markdown(f"📍 **Analyse des communes de la métropole : {met_choice}**")
+                        
+                        sel_communes_mob = st.multiselect(
+                            "Sélectionner les communes", 
+                            sorted(COMMUNES[met_choice]),
+                            default=sorted(COMMUNES[met_choice])[:2], 
+                            key="mob_communes",
+                        )
                     else:
+                        # On garde le choix libre pour comparer les métropoles entre elles
                         sel_metros_mob = st.multiselect(
-                            "Métropoles à comparer", TOUTES, default=TOUTES[:3], key="mob_metros",
+                            "Métropoles à comparer", 
+                            TOUTES, 
+                            default=TOUTES[:3], 
+                            key="mob_metros",
                         )
 
                 st.markdown('</div>', unsafe_allow_html=True)
 
+            # ── Calculs et Visualisations ────────────────────────────────────
             if current_mob_df is None:
                 st.warning(f"📂 Données non disponibles pour '{theme_mob}'.")
             else:
@@ -1568,7 +1578,7 @@ if vue == "Démographie":
                             fig_vol.add_trace(go.Bar(x=df_plot_mob["name"], y=df_plot_mob["out"],
                                                      name=label_out, marker_color=color_out))
                             fig_vol.update_layout(barmode="group", height=380,
-                                                  legend=dict(orientation="h", y=1.1))
+                                                legend=dict(orientation="h", y=1.1))
                             st.plotly_chart(style(fig_vol, 40), use_container_width=True)
                         with c2:
                             st.markdown("##### 🎯 Performance nette (solde)")
@@ -1610,23 +1620,18 @@ if vue == "Démographie":
                     st.header("📖 Guide d'interprétation")
                     st.markdown("""
 ### 1. Les trois thématiques
-- **🏠 Migrations Résidentielles :** *"Où les gens ont-ils choisi de déménager ?"* — indicateur de la qualité de vie et du logement.
-- **💼 Mobilité Professionnelle :** *"Où les gens travaillent-ils par rapport à leur domicile ?"* — indicateur de la force économique du territoire.
-- **🎓 Mobilité Scolaire :** *"Où les élèves et étudiants vont-ils apprendre ?"* — indicateur du rayonnement éducatif.
+- **🏠 Migrations Résidentielles :** Indicateur de la qualité de vie et de l'attractivité résidentielle.
+- **💼 Mobilité Professionnelle :** Indicateur de la force économique et de l'emploi local.
+- **🎓 Mobilité Scolaire :** Indicateur du rayonnement éducatif.
 
 ### 2. Comprendre les graphiques
-- **Barres groupées (Volume)** : vitalité globale du territoire.
-- **Barres de solde (Rouge/Vert)** : attractivité nette.
-- **Top 10 (horizontal)** : partenaires géographiques principaux.
+- **Bilan net (KPI)** : La différence entre les entrées et les sorties.
+- **Volume des échanges** : Compare les entrées et sorties en barres groupées.
+- **Top 10** : Identifie les communes partenaires les plus importantes.
 
-### 3. Niveaux géographiques
-- **Détail communal** : analyse fine d'une ou plusieurs communes d'une même métropole.
-- **Comparaison métropoles** : vue macro agrégée.
-
-### 4. Source des données
-Données INSEE issues des Recensements de la Population. Les flux internes sont exclus.
+### 3. Source des données
+Données INSEE issues des Recensements de la Population.
                     """)
-
 # ==============================================================================
 # ONGLET 4 — MÉNAGES
 # ==============================================================================
