@@ -1,7 +1,7 @@
 # =============================================================================
-# APPLICATION STREAMLIT — DÉMOGRAPHIE DES MÉTROPOLES FRANÇAISES
+# APPLICATION STREAMLIT - DÉMOGRAPHIE DES MÉTROPOLES FRANÇAISES
 # Grenoble · Rennes · Saint-Étienne · Rouen · Montpellier
-# Sources : INSEE — Recensements de la Population 2011, 2016, 2022
+# Sources : INSEE - Recensements de la Population 2011, 2016, 2022
 # Filtres déplacés en haut de chaque onglet (plus de sidebar surchargée)
 # =============================================================================
 
@@ -629,13 +629,6 @@ if st.session_state.page == "home":
                 Elle est également destinée à accompagner les nouveaux élus dans la compréhension des dynamiques territoriales.
             </div>
         </div>
-        <div class="info-card" style="border-left-color:#1A6FA3;">
-            <div class="info-card-title" style="color:#1A6FA3;">Sources</div>
-            <div class="info-card-body">
-                Données INSEE — Recensements de la Population 2011, 2016 et 2022.
-                Données CAF et indicateurs de solidarité pour la période 2019–2022.
-            </div>
-        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -643,7 +636,7 @@ if st.session_state.page == "home":
     st.markdown("""
     <div class="cards-row">
         <div class="info-card">
-            <div class="info-card-title">📊 Démographie</div>
+            <div class="info-card-title">Démographie</div>
             <div class="info-card-body">
                 Analyse de la population, de la structure par âge, des mobilités, des ménages, des mobilités résidentielles, professionnelles et scolaires
                 à l'échelle des communes et des EPCI.
@@ -651,13 +644,13 @@ if st.session_state.page == "home":
             <div class="tag-row">
                 <span class="tag-green">Population</span>
                 <span class="tag-green">Structure des âges</span>
+                <span class="tag-green">Population active 25-54 ans</span>
                 <span class="tag-green">Mobilités</span>
                 <span class="tag-green">Ménages</span>
-                <span class="tag-green">Population active 25-54 ans</span>
             </div>
         </div>
         <div class="info-card orange">
-            <div class="info-card-title">🤝 Solidarité & citoyenneté</div>
+            <div class="info-card-title">Solidarité & citoyenneté</div>
             <div class="info-card-body">
                 Étude des allocations CAF, des indicateurs éducatifs et de santé,
                 ainsi que de la participation citoyenne sur l'ensemble
@@ -668,6 +661,7 @@ if st.session_state.page == "home":
                 <span class="tag-orange">Éducation</span>
                 <span class="tag-orange">Santé</span>
                 <span class="tag-orange">Participation citoyenne</span>
+                <span class="tag-orange">Revenus & pauvreté</span>
             </div>
         </div>
     </div>
@@ -679,10 +673,6 @@ if st.session_state.page == "home":
         st.session_state.page = "app"
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<p class="footer-note">Données INSEE · Recensements de la Population 2011, 2016, 2022</p>',
-        unsafe_allow_html=True,
-    )
     st.stop()
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -787,7 +777,8 @@ with st.sidebar:
         <div style="font-size:12px; font-weight:600; color:#95D5B2;">Grenoble-Alpes Métropole</div>
         <div style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:10px;">
             Équipe Projet :<br>
-            S. Dufaud • H. Unaldi • J. Ben-Hadj-Salem
+            S. Dufaud  • J. Ben-Hadj-Salem <br>
+            H. Unaldi • M. Desjobert--Mutelet
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -805,7 +796,7 @@ if vue == "Description":
 
     st.markdown("---")
 
-    st.markdown("### 🏙️ Périmètre géographique")
+    st.markdown("### Périmètre géographique")
     communes_data = {
         "Métropole": list(COMMUNES.keys()),
         "Nombre de communes": [len(v) for v in COMMUNES.values()],
@@ -815,49 +806,49 @@ if vue == "Description":
 
     st.markdown("---")
 
-    st.markdown("### 🏙️ Volet 1 — Démographie")
+    st.markdown("### Thématique 1 - Démographie")
 
     demo_onglets = [
         {
-            "titre": "🏙️ Population globale",
+            "titre": "Population globale",
             "description": "Évolution et comparaison des populations totales entre métropoles.",
-            "source": "INSEE — Données générales comparatives (RP 2011–2022)",
+            "source": "INSEE - Données générales comparatives (RP 2011–2022)",
             "lien": "https://www.insee.fr/fr/statistiques/1405599?geo=EPCI-200040715+EPCI-243500139",
         },
         {
-            "titre": "👥 Structure par âge",
+            "titre": "Structure par âge",
             "description": "Pyramides des âges, part des jeunes, actifs et seniors.",
-            "source": "INSEE — Population par tranche d'âge (RP 2011–2022)",
+            "source": "INSEE - Population par tranche d'âge (RP 2011–2022)",
             "lien": "https://www.insee.fr/fr/statistiques/1893204",
         },
         {
-            "titre": "🚌 Mobilités résidentielles",
+            "titre": "Mobilités résidentielles",
             "description": "Flux de migrations résidentielles entre communes et métropoles.",
-            "source": "INSEE — Migrations résidentielles 2019–2022",
+            "source": "INSEE - Migrations résidentielles 2019–2022",
             "lien": "https://www.insee.fr/fr/statistiques/8582988",
         },
         {
-            "titre": "🚌 Mobilités professionnelles",
+            "titre": "Mobilités professionnelles",
             "description": "Déplacements domicile-travail à l'échelle des métropoles.",
-            "source": "INSEE — Mobilité professionnelle 2019–2022",
+            "source": "INSEE - Mobilité professionnelle 2019–2022",
             "lien": "https://www.insee.fr/fr/statistiques/8582949",
         },
         {
-            "titre": "🚌 Mobilités scolaires",
+            "titre": "Mobilités scolaires",
             "description": "Flux de déplacements vers les établissements scolaires.",
-            "source": "INSEE — Mobilité scolaire 2019–2022",
+            "source": "INSEE - Mobilité scolaire 2019–2022",
             "lien": "https://www.insee.fr/fr/statistiques/8582969",
         },
         {
-            "titre": "🏠 Ménages",
+            "titre": "Ménages",
             "description": "Taille et composition des ménages selon l'âge et la CSP.",
-            "source": "INSEE — Ménages par âge et situation (RP 2011–2022)",
+            "source": "INSEE - Ménages par âge et situation (RP 2011–2022)",
             "lien": "https://www.insee.fr/fr/statistiques/8582448",
         },
         {
-            "titre": "📊 CSP comparatif",
+            "titre": "Population active 25-54 ans",
             "description": "Structure socioprofessionnelle et indice de spécialisation entre métropoles.",
-            "source": "INSEE — Population 25-54 ans par CSP et diplôme (RP 2011–2022)",
+            "source": "INSEE - Population 25-54 ans par CSP et diplôme (RP 2011–2022)",
             "lien": "https://www.insee.fr/fr/statistiques/1893185",
         },
     ]
@@ -865,42 +856,49 @@ if vue == "Description":
     for onglet in demo_onglets:
         with st.expander(onglet["titre"]):
             st.markdown(onglet["description"])
-            st.markdown(f"📂 **Source :** {onglet['source']} · [🔗 Accéder]({onglet['lien']})")
+            st.markdown(f"**Source :** {onglet['source']} · [🔗 Accéder]({onglet['lien']})")
 
     st.markdown("---")
 
-    st.markdown("### 🤝 Volet 2 — Solidarité & citoyenneté")
+    st.markdown("### Thématique 2 - Solidarité & citoyenneté")
 
     solid_onglets = [
         {
-            "titre": "🤝 Solidarité",
+            "titre": "Solidarité",
             "description": "Analyse des données CAF : foyers bénéficiaires, montants versés, évolution temporelle.",
             "sources": [
-                ("INSEE — Filosofi : âge, type de ménage, niveau de vie", "https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_FILOSOFI_AGE_TP_NIVVIE"),
-                ("CAF — Allocataires par commune (NDUR)", "https://data.caf.fr/explore/dataset/ndur_s_qf_400_com_f/table/"),
-                ("CAF — Bénéficiaires par commune (complément)", "https://data.caf.fr/explore/dataset/s_ben_com_f/table/"),
-                ("INSEE — Données générales comparatives EPCI", "https://www.insee.fr/fr/statistiques/1405599?geo=EPCI-200040715+EPCI-243500139"),
+                ("INSEE - Filosofi : âge, type de ménage, niveau de vie", "https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_FILOSOFI_AGE_TP_NIVVIE"),
+                ("CAF - Allocataires par commune (NDUR)", "https://data.caf.fr/explore/dataset/ndur_s_qf_400_com_f/table/"),
+                ("CAF - Bénéficiaires par commune (complément)", "https://data.caf.fr/explore/dataset/s_ben_com_f/table/"),
+                ("INSEE - Données générales comparatives EPCI", "https://www.insee.fr/fr/statistiques/1405599?geo=EPCI-200040715+EPCI-243500139"),
             ],
         },
         {
-            "titre": "🎓 Éducation",
+            "titre": "Éducation",
             "description": "Analyse des niveaux de diplôme et de la scolarisation par métropole.",
             "sources": [
-                ("INSEE — Statistiques locales (diplômes, scolarisation)", "https://www.insee.fr/fr/statistiques/8307327?sommaire=2500477"),
+                ("INSEE - Statistiques locales (diplômes, scolarisation)", "https://www.insee.fr/fr/statistiques/8307327?sommaire=2500477"),
             ],
         },
         {
-            "titre": "🏥 Santé",
+            "titre": "Santé",
             "description": "Cartographie et analyse des équipements de santé.",
             "sources": [
-                ("OpenData — Équipements de santé OSM France", "https://smartregionidf.opendatasoft.com/explore/dataset/osm-france-healthcare/table/"),
+                ("OpenData - Équipements de santé OSM France", "https://smartregionidf.opendatasoft.com/explore/dataset/osm-france-healthcare/table/"),
             ],
         },
         {
-            "titre": "🗳️ Participation citoyenne",
+            "titre": "Participation citoyenne",
             "description": "Taux de participation et résultats des élections municipales 2020.",
             "sources": [
-                ("Data.gouv — Élections municipales 2020 (1er tour)", "https://www.data.gouv.fr/datasets/elections-municipales-2020-resultats-1er-tour/"),
+                ("Data.gouv - Élections municipales 2020 (1er tour)", "https://www.data.gouv.fr/datasets/elections-municipales-2020-resultats-1er-tour/"),
+            ],
+        },
+        {
+            "titre": "Revenus & pauvreté",
+            "description": "...",
+            "sources": [
+                ("...", "..."),
             ],
         },
     ]
@@ -909,14 +907,7 @@ if vue == "Description":
         with st.expander(onglet["titre"]):
             st.markdown(onglet["description"])
             for source, lien in onglet["sources"]:
-                st.markdown(f"📂 **Source :** {source} · [🔗 Accéder]({lien})")
-
-    st.markdown("---")
-
-    st.markdown("""
-    <p class="source-note">Sources : INSEE — Recensements de la Population 2011, 2016, 2022 ·
-    Mobilités résidentielles, professionnelles et scolaires 2019–2022 · CAF — 5 métropoles · Data.gouv · OpenData IDF</p>
-    """, unsafe_allow_html=True)
+                st.markdown(f"**Source :** {source} · [🔗 Accéder]({lien})")
 
     st.stop()
 
@@ -930,14 +921,14 @@ if vue == "Démographie":
     ])
 
 # ==============================================================================
-# ONGLET 1 — POPULATION GLOBALE
+# ONGLET 1 - POPULATION GLOBALE
 # ==============================================================================
 if vue == "Démographie":
     with tab1:
         st.markdown(
             '<p class="source-note">Source : '
             '<a href="https://www.insee.fr/fr/statistiques/1405599" target="_blank">'
-            'INSEE — Données générales comparatives (RP 2022)</a></p>',
+            'INSEE - Données générales comparatives (RP 2022)</a></p>',
             unsafe_allow_html=True,
         )
 
@@ -959,7 +950,7 @@ if vue == "Démographie":
         # ── Bandeau filtres ──────────────────────────────────────────────────
         with st.container():
             st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-            filter_bar("🔧 Filtres — Population globale")
+            filter_bar("🔧 Filtres - Population globale")
             pg_c1, pg_c2 = st.columns(2)
             with pg_c1:
                 mode_pop = st.radio(
@@ -990,7 +981,7 @@ if vue == "Démographie":
             COLORS_COMM = ["#081C15", "#1B4332", "#2D6A4F", "#40916C", "#52B788", "#74C69D", "#95D5B2", "#B7E4C7", "#D8F3DC"]
 
             st.markdown(
-                "<h2 style='color:#1C3A27;font-size:1.4rem;margin:0 0 4px'>🏘️ Population — Communes de Grenoble</h2>"
+                "<h2 style='color:#1C3A27;font-size:1.4rem;margin:0 0 4px'>🏘️ Population - Communes de Grenoble</h2>"
                 f"<p style='color:#5A8A6A;font-size:0.82rem;margin-bottom:18px'>"
                 f"Communes sélectionnées : {', '.join(sel_communes_pop)}</p>",
                 unsafe_allow_html=True,
@@ -1115,7 +1106,7 @@ if vue == "Démographie":
                     "Taux chômage": f"{tc:.1f}%" if not np.isnan(tc) else "N/D",
                 })
             st.dataframe(pd.DataFrame(lignes_tab_c).set_index("Commune"), use_container_width=True)
-            st.caption("Sources : INSEE — Données générales comparatives (RP 2022).")
+            st.caption("Sources : INSEE - Données générales comparatives (RP 2022).")
 
         # ════════════════════════════════════════════════════════════════════
         # VUE COMPARAISON MÉTROPOLES
@@ -1128,7 +1119,7 @@ if vue == "Démographie":
             st.markdown(
                 "<h2 style='color:#1C3A27;font-size:1.4rem;margin:0 0 4px'>🏙️ Population globale</h2>"
                 "<p style='color:#5A8A6A;font-size:0.82rem;margin-bottom:18px'>"
-                "Vue d'ensemble comparative des 5 métropoles — Données INSEE RP 2022</p>",
+                "Vue d'ensemble comparative des 5 métropoles - Données INSEE RP 2022</p>",
                 unsafe_allow_html=True,
             )
             kpi_cols = st.columns(len(sel))
@@ -1275,7 +1266,7 @@ if vue == "Démographie":
                     st.plotly_chart(style(fig_chom), use_container_width=True)
 
             st.markdown("---")
-            st.markdown("#### 📋 Tableau récapitulatif — indicateurs clés")
+            st.markdown("#### 📋 Tableau récapitulatif - indicateurs clés")
             lignes_tab = []
             for m in sel:
                 tx_v  = epci_val(m, "tx_var_population_2016_2022")
@@ -1298,17 +1289,17 @@ if vue == "Démographie":
                 })
             df_tab = pd.DataFrame(lignes_tab).set_index("Métropole")
             st.dataframe(df_tab, use_container_width=True)
-            st.caption("Sources : INSEE — Données générales comparatives (RP 2022).")
+            st.caption("Sources : INSEE - Données générales comparatives (RP 2022).")
             
 # ==============================================================================
-# ONGLET 2 — STRUCTURE PAR ÂGE
+# ONGLET 2 - STRUCTURE PAR ÂGE
 # ==============================================================================
 if vue == "Démographie":
     with tab2:
         st.markdown('<p class="section-header">Structure par âge et par sexe</p>', unsafe_allow_html=True)
         st.markdown(
             '<p class="source-note">Source : <a href="https://www.insee.fr/fr/statistiques/1893204" target="_blank">'
-            'INSEE — Population par tranche d\'âge quinquennal (RP 2011, 2016, 2022)</a></p>',
+            'INSEE - Population par tranche d\'âge quinquennal (RP 2011, 2016, 2022)</a></p>',
             unsafe_allow_html=True,
         )
 
@@ -1371,7 +1362,7 @@ if vue == "Démographie":
             # ── Bandeau filtres ──────────────────────────────────────────────
             with st.container():
                 st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                filter_bar("🔧 Filtres — Structure par âge")
+                filter_bar("🔧 Filtres - Structure par âge")
                 fa1, fa2, fa3 = st.columns(3)
                 with fa1:
                     mode_age = st.radio(
@@ -1407,7 +1398,7 @@ if vue == "Démographie":
                     st.stop()
 
                 # ── KPIs ────────────────────────────────────────────────────
-                st.markdown(f"#### 📌 Indicateurs clés — {annee_age}")
+                st.markdown(f"#### 📌 Indicateurs clés - {annee_age}")
                 kpi_cols = st.columns(len(sel_metros_age))
                 for i, m in enumerate(sel_metros_age):
                     df_m = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)]
@@ -1441,7 +1432,7 @@ if vue == "Démographie":
                 if len(sel_metros_age) == 1:
                     m = sel_metros_age[0]
                     df_m = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)]
-                    fig_pyr = build_pyramide(df_m, f"{m} — {annee_age}",
+                    fig_pyr = build_pyramide(df_m, f"{m} - {annee_age}",
                                              COLORS_METRO_H.get(m, "#2D6A4F"),
                                              COLORS_METRO_F.get(m, "#95D5B2"))
                     st.plotly_chart(style(fig_pyr, 40), use_container_width=True)
@@ -1569,7 +1560,7 @@ if vue == "Démographie":
                                   "#B7E4C7", "#FDDCB5", "#83B0BB", "#F5DEBA", "#D4ECEE"]
 
                 # ── KPIs ────────────────────────────────────────────────────
-                st.markdown(f"#### 📌 Indicateurs clés — {annee_age}")
+                st.markdown(f"#### 📌 Indicateurs clés - {annee_age}")
                 kpi_cols = st.columns(len(communes_age))
                 for i, comm in enumerate(communes_age):
                     df_c = df_pop[(df_pop["LIBELLE"] == comm) & (df_pop["annee"] == annee_age)]
@@ -1596,7 +1587,7 @@ if vue == "Démographie":
                 if len(communes_age) == 1:
                     comm = communes_age[0]
                     df_c = df_pop[(df_pop["LIBELLE"] == comm) & (df_pop["annee"] == annee_age)]
-                    fig_pyr = build_pyramide(df_c, f"{comm} — {annee_age}",
+                    fig_pyr = build_pyramide(df_c, f"{comm} - {annee_age}",
                                              COLORS_COMM[0], COLORS_COMM_F[0])
                     st.plotly_chart(style(fig_pyr, 40), use_container_width=True)
                 else:
@@ -1713,7 +1704,7 @@ if vue == "Démographie":
                     st.plotly_chart(style(fig_hfc, 40), use_container_width=True)
                     
 # ==============================================================================
-# ONGLET 3 — MOBILITÉS
+# ONGLET 3 - MOBILITÉS
 # ==============================================================================
 if vue == "Démographie":
     with tab3:
@@ -1726,7 +1717,6 @@ if vue == "Démographie":
         else:
             # ── Bandeau filtres ──────────────────────────────────────────────
             with st.container():
-                st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
                 
                 mob_col1, mob_col2, mob_col3 = st.columns(3)
                 with mob_col1:
@@ -1743,7 +1733,7 @@ if vue == "Démographie":
                 with mob_col2:
                     mode_mob = st.radio(
                         "Niveau géographique",
-                        ["Détail Communal", "Comparaison Métropoles"],
+                        ["Comparaison Métropoles", "Détail Communal"],
                         key="mob_mode",
                         horizontal=True,
                         help="Choisissez si vous voulez voir les communes de Grenoble ou comparer Grenoble aux autres métropoles."
@@ -1768,7 +1758,7 @@ if vue == "Démographie":
                 # Sélection des entités et préparation de l'aide dynamique
                 if mode_mob == "Détail Communal":
                     met_choice = "Grenoble"
-                    st.markdown(f"📍 **Communes de la métropole : {met_choice}**")
+                    st.markdown(f"**Communes de la métropole : {met_choice}**")
                     sel_communes_mob = st.multiselect(
                         "Sélection des communes", sorted(COMMUNES[met_choice]),
                         default=sorted(COMMUNES[met_choice])[:2], key="mob_communes"
@@ -1807,7 +1797,7 @@ if vue == "Démographie":
 
             # ── Affichage Principal ────────────────────
             if not df_plot_mob.empty:
-                st.markdown(f"#### 📌 Bilan net — {theme_mob} ({sel_annee_mob})", 
+                st.markdown(f"#### 📌 Bilan net - {theme_mob} ({sel_annee_mob})", 
                             help="Le bilan net (solde) est la différence entre ceux qui arrivent et ceux qui partent. Un chiffre positif indique une attractivité.")
                 
                 kpi_cols = st.columns(len(df_plot_mob))
@@ -1879,15 +1869,13 @@ if vue == "Démographie":
                     - Les flux internes entre les communes sélectionnées sont ignorés pour mettre en avant les échanges avec **l'extérieur**.
                     - Cela permet de voir si un groupement de communes dépend d'un même pôle d'attraction (ex: Lyon, Paris ou une autre zone de la métropole).
                     """)
-                
-                st.info("ℹ️ **Le saviez-vous ?** Les flux 'Top 10' permettent d'identifier les phénomènes de périurbanisation : souvent, les gens qui quittent une ville s'installent dans les communes limitrophes.")
 # ==============================================================================
-# ONGLET 4 — MÉNAGES
+# ONGLET 4 - MÉNAGES
 # ==============================================================================
 if vue == "Démographie":
     with tab4:
         st.markdown('<p class="section-header">Structure des ménages</p>', unsafe_allow_html=True)
-        st.markdown('<p class="source-note">Source : <a href="https://www.insee.fr/fr/statistiques/8582448" target="_blank">INSEE — Ménages par âge, situation familiale et CSP (RP 2022)</a></p>', unsafe_allow_html=True)
+        st.markdown('<p class="source-note">Source : <a href="https://www.insee.fr/fr/statistiques/8582448" target="_blank">INSEE - Ménages par âge, situation familiale et CSP (RP 2022)</a></p>', unsafe_allow_html=True)
         sous1, sous2 = st.tabs(["👨‍👩‍👧 Type & taille de ménage", "🧑‍💼 CSP des ménages"])
 
         with sous1:
@@ -1897,7 +1885,7 @@ if vue == "Démographie":
                 # ── Bandeau filtres ──────────────────────────────────────────
                 with st.container():
                     st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                    filter_bar("🔧 Filtres — Type & taille de ménage")
+                    filter_bar("🔧 Filtres - Type & taille de ménage")
                     fm1, fm2 = st.columns(2)
                     with fm1:
                         mode_men = st.radio(
@@ -1941,7 +1929,7 @@ if vue == "Démographie":
                             pop_m = dm2[[c for c in dm2.columns if "ageq_rec" in c]].sum().sum()
                     taille = (pop_m / nb_men) if (not np.isnan(nb_men) and nb_men > 0) else np.nan
                     k1, k2 = st.columns(2)
-                    k1.metric(f"Nombre de ménages — {metro_men}", fmt(nb_men))
+                    k1.metric(f"Nombre de ménages - {metro_men}", fmt(nb_men))
                     k2.metric("Taille moyenne du ménage", f"{taille:.2f} pers." if not np.isnan(taille) else "N/D")
                     st.markdown("---")
                     totaux = {lbl: df_men_m[[c for c in cols if c in df_men_m.columns]].sum().sum()
@@ -1950,7 +1938,7 @@ if vue == "Démographie":
                     df_t = df_t[df_t["Ménages"] > 0].sort_values("Ménages", ascending=False)
                     c1, c2 = st.columns(2)
                     with c1:
-                        st.markdown(f"##### Types de ménages — {metro_men}")
+                        st.markdown(f"##### Types de ménages - {metro_men}")
                         fig_t = px.bar(df_t, x="Ménages", y="Type", orientation="h",
                                        color_discrete_sequence=[COULEURS[metro_men]], text_auto=".0f")
                         fig_t.update_layout(yaxis={"autorange": "reversed"}, yaxis_title="",
@@ -1996,7 +1984,7 @@ if vue == "Démographie":
                             df_single = df_ccp[df_ccp["Ménages"] > 0].sort_values("Ménages", ascending=False)
                             c1, c2 = st.columns(2)
                             with c1:
-                                st.markdown(f"##### Types de ménages — {comm}")
+                                st.markdown(f"##### Types de ménages - {comm}")
                                 fig_t = px.bar(df_single, x="Ménages", y="Type", orientation="h",
                                                color_discrete_sequence=[COULEURS.get(metro_men, "#2D6A4F")],
                                                text_auto=".0f")
@@ -2008,7 +1996,7 @@ if vue == "Démographie":
                                                  color_discrete_sequence=px.colors.sequential.Greens_r)
                                 st.plotly_chart(style(fig_pie), use_container_width=True)
                         elif df_ccp["Ménages"].sum() > 0:
-                            st.markdown(f"##### Comparaison — {' · '.join(communes_men)}")
+                            st.markdown(f"##### Comparaison - {' · '.join(communes_men)}")
                             fig_ccp = px.bar(df_ccp, x="Type", y="Ménages", color="Commune",
                                              barmode="group",
                                              color_discrete_sequence=["#2D6A4F", "#95D5B2", "#1A6FA3",
@@ -2025,7 +2013,7 @@ if vue == "Démographie":
                 # ── Bandeau filtres ──────────────────────────────────────────
                 with st.container():
                     st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                    filter_bar("🔧 Filtres — CSP des ménages")
+                    filter_bar("🔧 Filtres - CSP des ménages")
                     fc1, fc2 = st.columns(2)
                     with fc1:
                         metro_csp_m = st.selectbox("Métropole", TOUTES, key="m_csp")
@@ -2062,7 +2050,7 @@ if vue == "Démographie":
                         df_cp = df_cp[df_cp["Ménages"] > 0].sort_values("Ménages", ascending=False)
                         c1, c2 = st.columns(2)
                         with c1:
-                            st.markdown(f"##### Ménages par CSP — {metro_csp_m}")
+                            st.markdown(f"##### Ménages par CSP - {metro_csp_m}")
                             fig_cp = px.bar(df_cp, x="Ménages", y="CSP", orientation="h",
                                             color="Ménages", color_continuous_scale="Greens", text_auto=".0f")
                             fig_cp.update_layout(yaxis={"autorange": "reversed"},
@@ -2074,7 +2062,7 @@ if vue == "Démographie":
                                               color_discrete_sequence=px.colors.sequential.Greens_r)
                             st.plotly_chart(style(fig_cp2), use_container_width=True)
                 else:
-                    st.markdown("##### Part des grandes CSP — toutes métropoles (%)")
+                    st.markdown("##### Part des grandes CSP - toutes métropoles (%)")
                     rows_c = []
                     for m in TOUTES:
                         df_m_csp = df_men_csp[df_men_csp["metropole"] == m]
@@ -2091,13 +2079,13 @@ if vue == "Démographie":
                     st.plotly_chart(style(fig_comp_csp, 50), use_container_width=True)
                     
 # ==============================================================================
-# ONGLET 5 — CSP COMPARATIF
+# ONGLET 5 - CSP COMPARATIF
 # ==============================================================================
 if vue == "Démographie":
     with tab6:
-        st.markdown('<p class="section-header">CSP comparatif — Secteurs d\'activité & Niveau de diplôme</p>', unsafe_allow_html=True)
+        st.markdown('<p class="section-header">CSP comparatif - Secteurs d\'activité & Niveau de diplôme</p>', unsafe_allow_html=True)
         st.markdown(
-            '<p class="source-note">Source : INSEE — Recensements de la Population 2011, 2016, 2022 '
+            '<p class="source-note">Source : INSEE - Recensements de la Population 2011, 2016, 2022 '
             '· Population active de 25 à 54 ans · Fichiers Commune_AAAA_2554</p>',
             unsafe_allow_html=True,
         )
@@ -2108,7 +2096,7 @@ if vue == "Démographie":
             # ── Bandeau filtres ──────────────────────────────────────────────
             with st.container():
                 st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                filter_bar("🔧 Filtres — CSP comparatif")
+                filter_bar("🔧 Filtres - CSP comparatif")
 
                 csp_row1_c1, csp_row1_c2, csp_row1_c3 = st.columns(3)
                 with csp_row1_c1:
@@ -2169,7 +2157,7 @@ if vue == "Démographie":
                     noms = " · ".join(e["name"] for e in entities_csp)
                     st.markdown(
                         f"<h2 style='color:#1C3A27;font-size:1.3rem;margin-bottom:4px'>"
-                        f"🔍 {theme_analyse} — {noms} · {sel_annee_csp}</h2>",
+                        f"🔍 {theme_analyse} - {noms} · {sel_annee_csp}</h2>",
                         unsafe_allow_html=True,
                     )
 
@@ -2236,8 +2224,8 @@ if vue == "Démographie":
                         spec = ((v1 / t1) / (v2 / t2) * 100).fillna(100) if t1 > 0 and t2 > 0 else pd.Series([100] * len(sel_cats), index=sel_cats)
 
                         k1, k2, k3, k4 = st.columns(4)
-                        k1.metric(f"Actifs — {entities_csp[0]['name']}", f"{int(t1):,}".replace(",", "\u202f"))
-                        k2.metric(f"Actifs — {entities_csp[1]['name']}", f"{int(t2):,}".replace(",", "\u202f"))
+                        k1.metric(f"Actifs - {entities_csp[0]['name']}", f"{int(t1):,}".replace(",", "\u202f"))
+                        k2.metric(f"Actifs - {entities_csp[1]['name']}", f"{int(t2):,}".replace(",", "\u202f"))
                         k3.metric("Écart brut", f"{int(t1 - t2):+,}".replace(",", "\u202f"))
                         k4.metric("Indice de masse", f"{(t1 / t2):.2f}x" if t2 > 0 else "N/D")
 
@@ -2257,8 +2245,8 @@ if vue == "Démographie":
                         with st.expander("📄 Voir le tableau de données complet"):
                             table_df = pd.DataFrame({
                                 "Catégorie": sel_cats,
-                                f"{entities_csp[0]['name']} — Effectif": [int(v1[c]) for c in sel_cats],
-                                f"{entities_csp[1]['name']} — Effectif": [int(v2[c]) for c in sel_cats],
+                                f"{entities_csp[0]['name']} - Effectif": [int(v1[c]) for c in sel_cats],
+                                f"{entities_csp[1]['name']} - Effectif": [int(v2[c]) for c in sel_cats],
                                 "Différence": [int(v1[c] - v2[c]) for c in sel_cats],
                                 "Indice spécialisation": [round(spec[c], 1) for c in sel_cats],
                             })
@@ -2292,13 +2280,13 @@ if vue == "Solidarité et citoyenneté":
     s1, s2, s3, s4, s5 = st.tabs(["🤝 Solidarité", "🎓 Éducation", "🏥 Santé", "🗳️ Participation", "💶 Revenus & pauvreté"])
 
     # ──────────────────────────────────────────────────────────────────────────
-    # ONGLET SOLIDARITÉ — CAF
+    # ONGLET SOLIDARITÉ - CAF
     # ──────────────────────────────────────────────────────────────────────────
     with s1:
-        st.markdown('<p class="section-header">🤝 Solidarité — Données CAF</p>', unsafe_allow_html=True)
+        st.markdown('<p class="section-header">🤝 Solidarité - Données CAF</p>', unsafe_allow_html=True)
         st.markdown(
             '<p class="source-note">Source : <a href="https://data.caf.fr" target="_blank">' +
-            "Caisse d\'Allocations Familiales — CAF 5 Métropoles 2020–2023</a></p>",
+            "Caisse d\'Allocations Familiales - CAF 5 Métropoles 2020–2023</a></p>",
             unsafe_allow_html=True,
         )
         if df_caf is None or df_caf.empty:
@@ -2309,21 +2297,21 @@ if vue == "Solidarité et citoyenneté":
                 st.error("Colonnes Annee / Agglomeration manquantes.")
             else:
                 ALL_METRIC_LABELS = {
-                    "Nombre foyers NDUR":        "Foyers — Toutes aides",
-                    "Nombre personnes NDUR":     "Personnes — Toutes aides",
-                    "Montant total NDUR":        "Montant total (€) — Toutes aides",
-                    "Nombre foyers NDURPAJE":    "Foyers — PAJE",
-                    "Nombre personnes NDURPAJE": "Personnes — PAJE",
-                    "Montant total NDURPAJE":    "Montant (€) — PAJE",
-                    "Nombre foyers NDUREJ":      "Foyers — Aide jeunes enfants",
-                    "Nombre personnes NDUREJ":   "Personnes — Aide jeunes enfants",
-                    "Montant total NDUREJ":      "Montant (€) — Aide jeunes enfants",
-                    "Nombre foyers NDURAL":      "Foyers — Allocation logement",
-                    "Nombre personnes NDURAL":   "Personnes — Allocation logement",
-                    "Montant total NDURAL":      "Montant (€) — Allocation logement",
-                    "Nombre foyers NDURINS":     "Foyers — Insertion sociale",
-                    "Nombre personnes NDURINS":  "Personnes — Insertion sociale",
-                    "Montant total NDURINS":     "Montant (€) — Insertion sociale",
+                    "Nombre foyers NDUR":        "Foyers - Toutes aides",
+                    "Nombre personnes NDUR":     "Personnes - Toutes aides",
+                    "Montant total NDUR":        "Montant total (€) - Toutes aides",
+                    "Nombre foyers NDURPAJE":    "Foyers - PAJE",
+                    "Nombre personnes NDURPAJE": "Personnes - PAJE",
+                    "Montant total NDURPAJE":    "Montant (€) - PAJE",
+                    "Nombre foyers NDUREJ":      "Foyers - Aide jeunes enfants",
+                    "Nombre personnes NDUREJ":   "Personnes - Aide jeunes enfants",
+                    "Montant total NDUREJ":      "Montant (€) - Aide jeunes enfants",
+                    "Nombre foyers NDURAL":      "Foyers - Allocation logement",
+                    "Nombre personnes NDURAL":   "Personnes - Allocation logement",
+                    "Montant total NDURAL":      "Montant (€) - Allocation logement",
+                    "Nombre foyers NDURINS":     "Foyers - Insertion sociale",
+                    "Nombre personnes NDURINS":  "Personnes - Insertion sociale",
+                    "Montant total NDURINS":     "Montant (€) - Insertion sociale",
                 }
                 available_metrics = {k: v for k, v in ALL_METRIC_LABELS.items() if k in df_caf.columns}
                 if not available_metrics:
@@ -2336,7 +2324,7 @@ if vue == "Solidarité et citoyenneté":
 
                     with st.container():
                         st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                        filter_bar("🔧 Filtres — Solidarité CAF")
+                        filter_bar("🔧 Filtres - Solidarité CAF")
                         caf_f1, caf_f2, caf_f3 = st.columns([1, 1, 2])
                         
                         with caf_f1:
@@ -2369,7 +2357,7 @@ if vue == "Solidarité et citoyenneté":
                             total_val = df_yr[metric].sum()
                             nb_agglo  = int(df_yr["Agglomeration"].nunique())
                             nb_com    = int(df_yr["Nom_Commune"].nunique()) if "Nom_Commune" in df_yr.columns else 0
-                            max_agglo = df_yr.groupby("Agglomeration")[metric].sum().idxmax() if not df_yr.empty else "—"
+                            max_agglo = df_yr.groupby("Agglomeration")[metric].sum().idxmax() if not df_yr.empty else "-"
 
                             k1, k2, k3, k4 = st.columns(4)
                             caf_cards = [
@@ -2411,19 +2399,19 @@ if vue == "Solidarité et citoyenneté":
                                         title="Composition par quotient familial", height=380)
                                     st.plotly_chart(style(fig_qf, 40), use_container_width=True)
                             with c4:
-                                st.markdown(f"##### 🏆 Top 15 communes — {year_caf}")
+                                st.markdown(f"##### 🏆 Top 15 communes - {year_caf}")
                                 if "Nom_Commune" in df_yr.columns:
                                     top15 = df_yr.groupby(["Nom_Commune","Agglomeration"], as_index=False)[metric].sum().nlargest(15, metric)
                                     top15["Metropole_Key"] = top15["Agglomeration"].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
                                     fig_top = px.bar(top15, x=metric, y="Nom_Commune", orientation="h",
                                         color="Metropole_Key", color_discrete_map=COULEURS, text_auto=".3s",
                                         labels={"Nom_Commune": "", metric: label_metric, "Metropole_Key": "Métropole"},
-                                        title=f"Top 15 communes — {label_metric}", height=420)
+                                        title=f"Top 15 communes - {label_metric}", height=420)
                                     fig_top.update_layout(yaxis={"categoryorder": "total ascending"})
                                     st.plotly_chart(style(fig_top, 40), use_container_width=True)
                             st.markdown("---")
 
-                            st.markdown("##### 🕸️ Profil comparatif des aides — radar")
+                            st.markdown("##### 🕸️ Profil comparatif des aides - radar")
                             aides_f = {"Foyers PAJE":"Nombre foyers NDURPAJE","Foyers aj. enf.":"Nombre foyers NDUREJ",
                                 "Foyers alloc. log.":"Nombre foyers NDURAL","Foyers insertion":"Nombre foyers NDURINS",
                                 "Foyers total":"Nombre foyers NDUR"}
@@ -2440,7 +2428,7 @@ if vue == "Solidarité et citoyenneté":
                                         fill="toself", name=rr["Metropole_Key"],
                                         line_color=COULEURS.get(rr["Metropole_Key"], "#999")))
                                 fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True)), height=420,
-                                    title=f"Profil des aides — {year_caf}", font_family="Sora",
+                                    title=f"Profil des aides - {year_caf}", font_family="Sora",
                                     paper_bgcolor="rgba(0,0,0,0)")
                                 st.plotly_chart(fig_radar, use_container_width=True)
                             st.markdown("---")
@@ -2449,7 +2437,7 @@ if vue == "Solidarité et citoyenneté":
                                     ["Agglomeration","Quotient familial"] if "Quotient familial" in df_yr.columns else ["Agglomeration"],
                                     as_index=False)[list(available_metrics.keys())].sum(), use_container_width=True)
                             with st.expander("📖 Note méthodologique"):
-                                st.write("**Sources** : CAF — données communales 2020–2023.\n\n"
+                                st.write("**Sources** : CAF - données communales 2020–2023.\n\n"
                                     "**NDUR** : dossiers unifiés réels. **NDURPAJE** : prestation jeune enfant. "
                                     "**NDURAL** : allocation logement. **NDURINS** : insertion sociale (RSA...).")
 
@@ -2477,10 +2465,10 @@ if vue == "Solidarité et citoyenneté":
                                 fig_ccb = px.bar(df_yr, x="Nom_Commune", y=metric, color="Nom_Commune",
                                                  color_discrete_sequence=px.colors.sequential.Greens_r,
                                                  labels={"Nom_Commune": "", metric: label_metric},
-                                                 title=f"Comparaison — {year_caf}", height=400)
+                                                 title=f"Comparaison - {year_caf}", height=400)
                                 st.plotly_chart(style(fig_ccb, 40), use_container_width=True)
                             with c2:
-                                st.markdown(f"##### 📈 Évolution — {label_metric}")
+                                st.markdown(f"##### 📈 Évolution - {label_metric}")
                                 df_evo = df_fil.groupby(["Annee", "Nom_Commune"], as_index=False)[metric].sum()
                                 fig_ecc = px.line(df_evo, x="Annee", y=metric, color="Nom_Commune",
                                                   color_discrete_sequence=px.colors.sequential.Greens_r,
@@ -2500,12 +2488,12 @@ if vue == "Solidarité et citoyenneté":
                                     st.plotly_chart(style(fig_qfcc, 40), use_container_width=True)
 
     # ──────────────────────────────────────────────────────────────────────────
-    # ONGLET ÉDUCATION — Effectifs étudiants
+    # ONGLET ÉDUCATION - Effectifs étudiants
     # ──────────────────────────────────────────────────────────────────────────
     with s2:
-        st.markdown('<p class="section-header">🎓 Éducation — Effectifs dans l\'enseignement supérieur</p>', unsafe_allow_html=True)
+        st.markdown('<p class="section-header">🎓 Éducation - Effectifs dans l\'enseignement supérieur</p>', unsafe_allow_html=True)
         st.markdown('<p class="source-note">Source : <a href="https://data.enseignementsup-recherche.gouv.fr" target="_blank">' +
-            "MESRI — Effectifs dans l\'enseignement supérieur · Communes des 5 métropoles</a></p>",
+            "MESRI - Effectifs dans l\'enseignement supérieur · Communes des 5 métropoles</a></p>",
             unsafe_allow_html=True)
         if df_eff is None or df_eff.empty:
             st.info("📂 Fichier `effectifs_5_villes.csv` introuvable.")
@@ -2524,7 +2512,7 @@ if vue == "Solidarité et citoyenneté":
 
             with st.container():
                 st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                filter_bar("🔧 Filtres — Effectifs enseignement supérieur")
+                filter_bar("🔧 Filtres - Effectifs enseignement supérieur")
                 ef1, ef2, ef3, ef4 = st.columns([1, 1, 1, 1])
                 with ef1:
                     mode_eff = st.radio("Niveau géographique", ["Comparaison Métropoles", "Détail Communal (Grenoble)"], key="eff_mode", horizontal=True)
@@ -2556,7 +2544,7 @@ if vue == "Solidarité et citoyenneté":
                     st.markdown("---")
 
                     total_eff   = int(df_e_yr["effectif"].sum())
-                    best_metro  = df_e_yr.groupby("metropole")["effectif"].sum().idxmax() if not df_e_yr.empty else "—"
+                    best_metro  = df_e_yr.groupby("metropole")["effectif"].sum().idxmax() if not df_e_yr.empty else "-"
                     k1, k2, k3, k4 = st.columns(4)
                     k1.metric(f"Effectif total ({annee_eff})", fmt(total_eff))
                     k2.metric("Métropoles", int(df_e_yr["metropole"].nunique()))
@@ -2566,12 +2554,12 @@ if vue == "Solidarité et citoyenneté":
 
                     c1, c2 = st.columns(2)
                     with c1:
-                        st.markdown(f"##### 📊 Effectifs par métropole — {annee_eff}")
+                        st.markdown(f"##### 📊 Effectifs par métropole - {annee_eff}")
                         by_metro = df_e_yr.groupby("metropole", as_index=False)["effectif"].sum().sort_values("effectif", ascending=False)
                         fig_em = px.bar(by_metro, x="metropole", y="effectif", color="metropole",
                             color_discrete_map=COULEURS, text_auto=".3s",
                             labels={"metropole":"","effectif":"Étudiants"},
-                            title=f"Effectif — {LABEL_REGROUPEMENT.get(sel_regr, sel_regr)} · {annee_eff}", height=380)
+                            title=f"Effectif - {LABEL_REGROUPEMENT.get(sel_regr, sel_regr)} · {annee_eff}", height=380)
                         fig_em.update_traces(textposition="outside")
                         fig_em.update_layout(showlegend=False)
                         st.plotly_chart(style(fig_em, 40), use_container_width=True)
@@ -2598,7 +2586,7 @@ if vue == "Solidarité et citoyenneté":
                         type_agg = df_type.groupby("regroupement", as_index=False)["effectif"].sum().sort_values("effectif", ascending=False).head(10)
                         type_agg["label"] = type_agg["regroupement"].map(lambda r: LABEL_REGROUPEMENT.get(r, r))
                         fig_pie = px.pie(type_agg, names="label", values="effectif",
-                            title=f"Répartition par filière — {annee_eff}", hole=0.4,
+                            title=f"Répartition par filière - {annee_eff}", hole=0.4,
                             color_discrete_sequence=px.colors.sequential.Greens_r, height=400)
                         fig_pie.update_traces(textposition="inside", textinfo="percent+label")
                         st.plotly_chart(style(fig_pie, 40), use_container_width=True)
@@ -2610,19 +2598,19 @@ if vue == "Solidarité et citoyenneté":
                                 barmode="group",
                                 color_discrete_map={"Masculin":"#2D6A4F","Feminin":"#95D5B2"},
                                 labels={"metropole":"","effectif":"Étudiants","sexe_de_l_etudiant":"Genre"},
-                                title=f"Parité H/F — {LABEL_REGROUPEMENT.get(sel_regr, sel_regr)}", height=400)
+                                title=f"Parité H/F - {LABEL_REGROUPEMENT.get(sel_regr, sel_regr)}", height=400)
                             fig_sex.update_layout(legend=dict(orientation="h", y=1.1))
                             st.plotly_chart(style(fig_sex, 40), use_container_width=True)
                     st.markdown("---")
 
                     c5, c6 = st.columns(2)
                     with c5:
-                        st.markdown(f"##### 🏆 Top 15 communes — {annee_eff}")
+                        st.markdown(f"##### 🏆 Top 15 communes - {annee_eff}")
                         top_com = df_e_yr.groupby(["geo_nom","metropole"], as_index=False)["effectif"].sum().nlargest(15,"effectif")
                         fig_tc = px.bar(top_com, x="effectif", y="geo_nom", orientation="h",
                             color="metropole", color_discrete_map=COULEURS, text_auto=".3s",
                             labels={"geo_nom":"","effectif":"Étudiants"},
-                            title=f"Top communes — {annee_eff}", height=430)
+                            title=f"Top communes - {annee_eff}", height=430)
                         fig_tc.update_layout(yaxis={"categoryorder":"total ascending"})
                         st.plotly_chart(style(fig_tc, 40), use_container_width=True)
                     with c6:
@@ -2633,7 +2621,7 @@ if vue == "Solidarité et citoyenneté":
                                 color="secteur_de_l_etablissement", barmode="stack",
                                 color_discrete_map={"Établissements publics":"#2D6A4F","Établissements privés":"#95D5B2"},
                                 labels={"metropole":"","effectif":"Étudiants","secteur_de_l_etablissement":"Secteur"},
-                                title=f"Répartition public / privé — {annee_eff}", height=430)
+                                title=f"Répartition public / privé - {annee_eff}", height=430)
                             fig_sec.update_layout(legend=dict(orientation="h", y=1.1))
                             st.plotly_chart(style(fig_sec, 40), use_container_width=True)
                     st.markdown("---")
@@ -2664,14 +2652,14 @@ if vue == "Solidarité et citoyenneté":
                     st.markdown("---")
                     c1, c2 = st.columns(2)
                     with c1:
-                        st.markdown(f"##### 📊 Effectifs — {LABEL_REGROUPEMENT.get(sel_regr, sel_regr)}")
+                        st.markdown(f"##### 📊 Effectifs - {LABEL_REGROUPEMENT.get(sel_regr, sel_regr)}")
                         fig_ccb = px.bar(df_e_yr.groupby("geo_nom", as_index=False)["effectif"].sum(), x="geo_nom", y="effectif", color="geo_nom",
                                          color_discrete_sequence=px.colors.sequential.Greens_r,
                                          labels={"geo_nom": "", "effectif": "Étudiants"},
-                                         title=f"Comparaison — {annee_eff}", height=400)
+                                         title=f"Comparaison - {annee_eff}", height=400)
                         st.plotly_chart(style(fig_ccb, 40), use_container_width=True)
                     with c2:
-                        st.markdown(f"##### 📈 Évolution — {LABEL_REGROUPEMENT.get(sel_regr, sel_regr)}")
+                        st.markdown(f"##### 📈 Évolution - {LABEL_REGROUPEMENT.get(sel_regr, sel_regr)}")
                         df_evo = df_e.groupby(["annee", "geo_nom"], as_index=False)["effectif"].sum()
                         fig_ecc = px.line(df_evo, x="annee", y="effectif", color="geo_nom",
                                           color_discrete_sequence=px.colors.sequential.Greens_r,
@@ -2709,7 +2697,7 @@ if vue == "Solidarité et citoyenneté":
     with s3:
         st.markdown('<p class="section-header">🏥 Santé</p>', unsafe_allow_html=True)
         st.markdown(
-            '<p class="source-note">Source : OpenStreetMap — Établissements de santé géolocalisés</p>',
+            '<p class="source-note">Source : OpenStreetMap - Établissements de santé géolocalisés</p>',
             unsafe_allow_html=True,
         )
 
@@ -2736,7 +2724,7 @@ if vue == "Solidarité et citoyenneté":
                 coords = feat["geometry"]["coordinates"]
                 rows.append({
                     "type_etab": p.get("type_etablissement", ""),
-                    "nom":       p.get("nom_etablissement") or "—",
+                    "nom":       p.get("nom_etablissement") or "-",
                     "commune":   p.get("commune", ""),
                     "metropole": p.get("Métropole", ""),
                     "lon":       coords[0],
@@ -2786,7 +2774,7 @@ if vue == "Solidarité et citoyenneté":
         # ── Filtres ───────────────────────────────────────────────────────────────
         with st.container():
             st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-            filter_bar("🔧 Filtres — Établissements de santé")
+            filter_bar("🔧 Filtres - Établissements de santé")
             pv1, pv2, pv3 = st.columns(3)
             with pv1:
                 mode_sante = st.radio(
@@ -3079,7 +3067,7 @@ if vue == "Solidarité et citoyenneté":
             )
             st.plotly_chart(fig_pie, use_container_width=True)
 
-        # ── Graphique 3 (pleine largeur) : Densité — établissements pour 10 000 hab (si données dispo)
+        # ── Graphique 3 (pleine largeur) : Densité - établissements pour 10 000 hab (si données dispo)
         # Ce graphique n'est affiché qu'en mode Comparaison Métropoles
         if mode_sante == "Comparaison Métropoles":
             st.markdown("---")
@@ -3145,7 +3133,7 @@ if vue == "Solidarité et citoyenneté":
         st.markdown(
             '<p class="source-note">Source : '
             '<a href="https://www.data.gouv.fr/datasets/elections-municipales-2020-resultats-1er-tour/" target="_blank">'
-            'Data.gouv — Élections municipales 2014 & 2020 (1er et 2e tour)</a></p>',
+            'Data.gouv - Élections municipales 2014 & 2020 (1er et 2e tour)</a></p>',
             unsafe_allow_html=True,
         )
 
@@ -3169,7 +3157,7 @@ if vue == "Solidarité et citoyenneté":
 
         with st.container():
             st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-            filter_bar("Filtres — Participation citoyenne")
+            filter_bar("Filtres - Participation citoyenne")
             pv1, pv2, pv3 = st.columns(3)
             with pv1:
                 mode_part = st.radio(
@@ -3249,7 +3237,7 @@ if vue == "Solidarité et citoyenneté":
                     color_discrete_map=COULEURS,
                     text=df_agg.sort_values("% Participation", ascending=False)["% Participation"].apply(lambda v: f"{v:.1f}%"),
                     labels={"metropole": "", "% Participation": "Participation (%)"},
-                    title=f"Participation — {sel_annee_part} · Tour {sel_tour_part}",
+                    title=f"Participation - {sel_annee_part} · Tour {sel_tour_part}",
                     height=400,
                 )
                 fig_part.update_traces(textposition="outside")
@@ -3293,7 +3281,7 @@ if vue == "Solidarité et citoyenneté":
                 df_evo_agg, x="Année", y="% Participation", color=color_col,
                 color_discrete_map=COULEURS, markers=True,
                 labels={"Année": "Année", "% Participation": "Participation (%)", color_col: ""},
-                title=f"Évolution participation — Tour {sel_tour_part}",
+                title=f"Évolution participation - Tour {sel_tour_part}",
                 height=380,
             )
             fig_evo.update_traces(line_width=2.5, marker_size=9)
@@ -3305,17 +3293,17 @@ if vue == "Solidarité et citoyenneté":
                 st.dataframe(df_agg.set_index("metropole"), use_container_width=True)
             with st.expander("📖 Note méthodologique"):
                 st.write(
-                    "**Source** : Data.gouv — Élections municipales 2014 & 2020.\n\n"
+                    "**Source** : Data.gouv - Élections municipales 2014 & 2020.\n\n"
                     "**Taux de participation** = Votants / Inscrits × 100.\n\n"
                     "**Périmètre** : communes des 5 métropoles. "
                     "Pour 2014, les communes de moins de 1 000 habitants utilisent un fichier TXT séparé."
                 )
 
     # ──────────────────────────────────────────────────────────────────────────
-    # ONGLET REVENUS & PAUVRETÉ — FiLoSoFi IRIS 2021
+    # ONGLET REVENUS & PAUVRETÉ - FiLoSoFi IRIS 2021
     # ──────────────────────────────────────────────────────────────────────────
     with s5:
-        st.markdown('<p class="section-header">💶 Revenus & pauvreté — FiLoSoFi IRIS 2021</p>', unsafe_allow_html=True)
+        st.markdown('<p class="section-header">💶 Revenus & pauvreté - FiLoSoFi IRIS 2021</p>', unsafe_allow_html=True)
         st.markdown(
             '<p class="source-note">Source : <a href="https://www.insee.fr/fr/statistiques/8268806" target="_blank">'
             'INSEE-DGFIP-Cnaf-Cnav-CCMSA · Fichier localisé social et fiscal (FiLoSoFi) · Revenus déclarés 2021 à l\'IRIS</a></p>',
@@ -3323,12 +3311,12 @@ if vue == "Solidarité et citoyenneté":
         )
 
         if df_filo is None or df_filo.empty:
-            st.info("📂 Fichier `BASE_TD_FILO_IRIS_2021_DEC.xlsx` introuvable — placez-le dans `solidarite&citoyennete/data_clean/revenus/`.")
+            st.info("📂 Fichier `BASE_TD_FILO_IRIS_2021_DEC.xlsx` introuvable - placez-le dans `solidarite&citoyennete/data_clean/revenus/`.")
         else:
             # ── Libellés des indicateurs ──────────────────────────────────
             FILO_LABELS = {
                 "DEC_MED21":    "Revenu médian (€/UC)",
-                "DEC_TP6021":   "Taux de bas revenus — seuil 60 % (%)",
+                "DEC_TP6021":   "Taux de bas revenus - seuil 60 % (%)",
                 "DEC_Q121":     "1er quartile Q1 (€/UC)",
                 "DEC_Q321":     "3e quartile Q3 (€/UC)",
                 "DEC_D121":     "1er décile D1 (€/UC)",
@@ -3351,7 +3339,7 @@ if vue == "Solidarité et citoyenneté":
 
             with st.container():
                 st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                filter_bar("🔧 Filtres — Revenus & pauvreté")
+                filter_bar("🔧 Filtres - Revenus & pauvreté")
                 fv1, fv2, fv3 = st.columns([1, 1, 2])
                 with fv1:
                     filo_ind = st.selectbox(
@@ -3388,7 +3376,7 @@ if vue == "Solidarité et citoyenneté":
                     st.markdown("---")
 
                     # ── KPI par métropole ──────────────────────────────────
-                    st.markdown(f"#### 📌 Aperçu — {lbl}")
+                    st.markdown(f"#### 📌 Aperçu - {lbl}")
                     kpi_cols = st.columns(len(sel_metros_filo))
                     for i, metro in enumerate(sel_metros_filo):
                         sub = df_agg[df_agg["metropole"] == metro][filo_ind].dropna()
@@ -3414,7 +3402,7 @@ if vue == "Solidarité et citoyenneté":
                             color="metropole",
                             color_discrete_map=COULEURS,
                             labels={"metropole": "", filo_ind: lbl},
-                            title=f"Distribution — {lbl}",
+                            title=f"Distribution - {lbl}",
                             height=400,
                         )
                         fig_box.update_layout(showlegend=False)
@@ -3432,7 +3420,7 @@ if vue == "Solidarité et citoyenneté":
                             color_discrete_map=COULEURS,
                             orientation="h",
                             labels={"LIBCOM": "", filo_ind: lbl},
-                            title=f"Top/Flop communes — {lbl}",
+                            title=f"Top/Flop communes - {lbl}",
                             height=450,
                         )
                         st.plotly_chart(style(fig_hbar, 40), use_container_width=True)
@@ -3459,7 +3447,7 @@ if vue == "Solidarité et citoyenneté":
                             st.info("Colonnes DEC_MED21 / DEC_TP6021 absentes.")
 
                     with c4:
-                        st.markdown("##### ⚖️ Inégalités — Indice de Gini par commune")
+                        st.markdown("##### ⚖️ Inégalités - Indice de Gini par commune")
                         if "DEC_GI21" in df_agg.columns:
                             df_gi = df_agg.dropna(subset=["DEC_GI21"]).sort_values("DEC_GI21", ascending=False).head(20)
                             fig_gi = px.bar(
@@ -3467,7 +3455,7 @@ if vue == "Solidarité et citoyenneté":
                                 color="metropole", color_discrete_map=COULEURS,
                                 orientation="h",
                                 labels={"LIBCOM": "", "DEC_GI21": "Indice de Gini"},
-                                title="Top 20 communes — Indice de Gini",
+                                title="Top 20 communes - Indice de Gini",
                                 height=420,
                             )
                             fig_gi.update_layout(yaxis={"categoryorder": "total ascending"})
@@ -3499,7 +3487,7 @@ if vue == "Solidarité et citoyenneté":
                             st.plotly_chart(style(fig_pie, 40), use_container_width=True)
 
                     with c6:
-                        st.markdown("##### 📊 Rapport D9/D1 — inégalités entre IRIS")
+                        st.markdown("##### 📊 Rapport D9/D1 - inégalités entre IRIS")
                         if "DEC_RD21" in df_agg.columns:
                             df_rd = df_agg.dropna(subset=["DEC_RD21"])
                             fig_rd = px.box(
@@ -3522,13 +3510,13 @@ if vue == "Solidarité et citoyenneté":
                         desc_df = (df_f.groupby("metropole")[desc_avail]
                                    .agg(["median", "mean", "std", "min", "max"])
                                    .round(2))
-                        desc_df.columns = [f"{FILO_LABELS.get(c, c)} — {s}" for c, s in desc_df.columns]
+                        desc_df.columns = [f"{FILO_LABELS.get(c, c)} - {s}" for c, s in desc_df.columns]
                         st.dataframe(desc_df, use_container_width=True)
 
                     with st.expander("📖 Note méthodologique"):
                         st.write(
-                            "**Source** : INSEE-DGFIP-Cnaf-Cnav-CCMSA, Fichier localisé social et fiscal (FiLoSoFi) — Année 2021.\n\n"
-                            "**Indicateurs** exprimés par **unité de consommation (UC)** — 1 UC pour le 1er adulte, 0,5 pour les autres personnes ≥ 14 ans, 0,3 pour les moins de 14 ans.\n\n"
+                            "**Source** : INSEE-DGFIP-Cnaf-Cnav-CCMSA, Fichier localisé social et fiscal (FiLoSoFi) - Année 2021.\n\n"
+                            "**Indicateurs** exprimés par **unité de consommation (UC)** - 1 UC pour le 1er adulte, 0,5 pour les autres personnes ≥ 14 ans, 0,3 pour les moins de 14 ans.\n\n"
                             "**Taux de bas revenus** : part des ménages dont le revenu/UC est inférieur à 60 % du revenu médian métropolitain.\n\n"
                             "**Indice de Gini** : entre 0 (égalité parfaite) et 1 (inégalité maximale).\n\n"
                             "**Périmètre** : IRIS appartenant aux communes des 5 métropoles, identifiés par code département."
@@ -3565,7 +3553,7 @@ if vue == "Solidarité et citoyenneté":
                             fig_dist = px.box(df_dist, x="LIBCOM", y=filo_ind, color="LIBCOM",
                                               color_discrete_sequence=px.colors.sequential.Greens_r,
                                               labels={"LIBCOM": "", filo_ind: lbl},
-                                              title=f"Distribution par IRIS — {lbl}", height=400)
+                                              title=f"Distribution par IRIS - {lbl}", height=400)
                             st.plotly_chart(style(fig_dist, 40), use_container_width=True)
 
                     st.markdown("---")
@@ -3599,12 +3587,3 @@ if vue == "Solidarité et citoyenneté":
                                               title="Profil normalisé (0–100 dans la métropole)", paper_bgcolor="rgba(0,0,0,0)",
                                               legend=dict(orientation="h", y=-0.1))
                         st.plotly_chart(fig_rad, use_container_width=True)
-
-# ──────────────────────────────────────────────────────────────────────────────
-st.markdown("---")
-st.markdown(
-    "<p style='text-align:center;color:#9AB8A7;font-size:0.72rem'>"
-    "Données INSEE · Recensements de la Population 2011, 2016, 2022 · "
-    "Mobilités résidentielles, professionnelles et scolaires 2019–2022</p>",
-    unsafe_allow_html=True,
-)
