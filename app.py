@@ -1311,12 +1311,62 @@ if vue == "Démographie":
             'INSEE — Population par tranche d\'âge quinquennal (RP 2011, 2016, 2022)</a></p>',
             unsafe_allow_html=True,
         )
+
         if df_pop is None:
             st.info("📂 Fichier `Population_tranche_age_clean.csv` introuvable.")
         else:
-            annees = sorted(df_pop["annee"].dropna().unique().astype(int).tolist())
-            ch = cols_h(df_pop)
-            cf = cols_f(df_pop)
+            annees_dispo = sorted(df_pop["annee"].dropna().unique().astype(int).tolist())
+            ch_all = cols_h(df_pop)
+            cf_all = cols_f(df_pop)
+
+            # ── Constantes tranches ──────────────────────────────────────────
+            # Tranches : 01=0-4 … 20=95+
+            # Moins de 25 ans  : 01–05
+            # 25–64 ans (actifs): 06–13
+            # 65 ans et +       : 14–20
+            TRANCHES_M25  = ["01","02","03","04","05"]   # 0–24 ans
+            TRANCHES_ACT  = ["06","07","08","09","10","11","12","13"]  # 25–64 ans
+            TRANCHES_SEN  = ["14","15","16","17","18","19","20"]       # 65+ ans
+            TRANCHES_M20  = ["01","02","03","04"]         # 0–19 ans (pour évolution)
+
+            def pop_tranches(df_src, tranches):
+                """Somme H+F pour une liste de tranches sur un df déjà filtré."""
+                total = 0
+                for t in tranches:
+                    for sx in ["s1", "s2"]:
+                        col = f"ageq_rec{t}{sx}rpop2016"
+                        if col in df_src.columns:
+                            total += pd.to_numeric(df_src[col], errors="coerce").fillna(0).sum()
+                return float(total)
+
+            def pop_totale_df(df_src):
+                age_cols = [c for c in df_src.columns if "ageq_rec" in c]
+                return pd.to_numeric(df_src[age_cols].stack(), errors="coerce").sum()
+
+            def build_pyramide(df_src, label_entity, color_h="#2D6A4F", color_f="#95D5B2"):
+                labels = [LABEL_TRANCHE.get(f"{i:02d}", f"{i:02d}") for i in range(1, 21)]
+                vals_h, vals_f = [], []
+                for i in range(1, 21):
+                    t = f"{i:02d}"
+                    ch_col = f"ageq_rec{t}s1rpop2016"
+                    cf_col = f"ageq_rec{t}s2rpop2016"
+                    vals_h.append(-pd.to_numeric(df_src[ch_col], errors="coerce").fillna(0).sum() if ch_col in df_src.columns else 0)
+                    vals_f.append(pd.to_numeric(df_src[cf_col], errors="coerce").fillna(0).sum() if cf_col in df_src.columns else 0)
+                fig = go.Figure()
+                fig.add_trace(go.Bar(y=labels, x=vals_h, name="Hommes", orientation="h",
+                                     marker_color=color_h))
+                fig.add_trace(go.Bar(y=labels, x=vals_f, name="Femmes", orientation="h",
+                                     marker_color=color_f))
+                fig.update_layout(
+                    barmode="relative", bargap=0.06,
+                    legend=dict(orientation="h", y=1.08),
+                    yaxis_title="Tranche d'âge (ans)",
+                    xaxis_title="Population",
+                    xaxis=dict(tickformat="~s"),
+                    title=dict(text=label_entity, font_size=13),
+                    height=480,
+                )
+                return fig
 
             # ── Bandeau filtres ──────────────────────────────────────────────
             with st.container():
@@ -1326,110 +1376,342 @@ if vue == "Démographie":
                 with fa1:
                     mode_age = st.radio(
                         "Niveau géographique",
-                        ["Comparaison Métropoles", "Détail Communal"],
+                        ["Comparaison Métropoles", "Détail Communal (Grenoble)"],
                         key="age_mode", horizontal=True,
                     )
                 with fa2:
-                    metro_age = st.selectbox("Métropole parente", TOUTES, key="metro_age")
+                    annee_age = st.selectbox("Année", annees_dispo,
+                                             index=len(annees_dispo)-1, key="an_age")
                 with fa3:
-                    annee_age = st.selectbox("Année", annees, index=len(annees)-1, key="an_age")
-                if mode_age == "Détail Communal":
-                    cmns = sorted(COMMUNES.get(metro_age, []))
-                    sel_communes_age = st.multiselect(
-                        "Communes", cmns, default=cmns[:2], key="age_communes",
-                    )
+                    if mode_age == "Comparaison Métropoles":
+                        sel_metros_age = st.multiselect(
+                            "Métropoles", TOUTES, default=TOUTES, key="age_metros",
+                        )
+                    else:
+                        sel_communes_age = st.multiselect(
+                            "Communes de Grenoble",
+                            sorted(COMMUNES["Grenoble"]),
+                            default=sorted(COMMUNES["Grenoble"])[:2],
+                            key="age_communes",
+                        )
                 st.markdown('</div>', unsafe_allow_html=True)
 
             st.markdown("---")
 
-            if mode_age == "Détail Communal":
+            # ════════════════════════════════════════════════════════════════
+            # VUE COMPARAISON MÉTROPOLES
+            # ════════════════════════════════════════════════════════════════
+            if mode_age == "Comparaison Métropoles":
+                if not sel_metros_age:
+                    st.warning("Sélectionnez au moins une métropole.")
+                    st.stop()
+
+                # ── KPIs ────────────────────────────────────────────────────
+                st.markdown(f"#### 📌 Indicateurs clés — {annee_age}")
+                kpi_cols = st.columns(len(sel_metros_age))
+                for i, m in enumerate(sel_metros_age):
+                    df_m = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)]
+                    tot   = pop_totale_df(df_m)
+                    p_m25 = pop_tranches(df_m, TRANCHES_M25)
+                    p_sen = pop_tranches(df_m, TRANCHES_SEN)
+                    p_act = pop_tranches(df_m, TRANCHES_ACT)
+                    pct_m25 = p_m25 / tot * 100 if tot > 0 else np.nan
+                    pct_sen = p_sen / tot * 100 if tot > 0 else np.nan
+                    ratio_dep = (p_m25 + p_sen) / p_act * 100 if p_act > 0 else np.nan
+                    with kpi_cols[i]:
+                        st.markdown(f"**{m}**")
+                        st.metric("< 25 ans", f"{pct_m25:.1f}%" if not np.isnan(pct_m25) else "N/D",
+                                  help="Part des moins de 25 ans dans la population totale")
+                        st.metric("65 ans et +", f"{pct_sen:.1f}%" if not np.isnan(pct_sen) else "N/D",
+                                  help="Part des 65 ans et plus dans la population totale")
+                        st.metric("Ratio dépendance", f"{ratio_dep:.0f}%" if not np.isnan(ratio_dep) else "N/D",
+                                  help="(0–24 ans + 65+ ans) / 25–64 ans × 100")
+
+                st.markdown("---")
+
+                # ── Pyramides côte-à-côte ────────────────────────────────────
+                st.markdown("#### 🔺 Pyramides des âges comparées")
+                COLORS_METRO_H = {"Grenoble": "#2D6A4F", "Rennes": "#1A6FA3",
+                                   "Saint-Étienne": "#C45B2A", "Rouen": "#7B3FA0",
+                                   "Montpellier": "#D4A017"}
+                COLORS_METRO_F = {"Grenoble": "#95D5B2", "Rennes": "#AED4F0",
+                                   "Saint-Étienne": "#F2A07A", "Rouen": "#C9A5E0",
+                                   "Montpellier": "#F5D87A"}
+
+                if len(sel_metros_age) == 1:
+                    m = sel_metros_age[0]
+                    df_m = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)]
+                    fig_pyr = build_pyramide(df_m, f"{m} — {annee_age}",
+                                             COLORS_METRO_H.get(m, "#2D6A4F"),
+                                             COLORS_METRO_F.get(m, "#95D5B2"))
+                    st.plotly_chart(style(fig_pyr, 40), use_container_width=True)
+                else:
+                    ncols = min(len(sel_metros_age), 3)
+                    rows_pyr = [sel_metros_age[i:i+ncols] for i in range(0, len(sel_metros_age), ncols)]
+                    for row_metros in rows_pyr:
+                        pyr_cols = st.columns(len(row_metros))
+                        for j, m in enumerate(row_metros):
+                            df_m = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)]
+                            fig_pyr = build_pyramide(df_m, f"{m}",
+                                                     COLORS_METRO_H.get(m, "#2D6A4F"),
+                                                     COLORS_METRO_F.get(m, "#95D5B2"))
+                            fig_pyr.update_layout(height=380)
+                            with pyr_cols[j]:
+                                st.plotly_chart(style(fig_pyr, 30), use_container_width=True)
+
+                st.markdown("---")
+
+                # ── Structure par grands groupes ─────────────────────────────
+                st.markdown("#### 📊 Répartition par grands groupes d'âge")
+                rows_grp = []
+                for m in sel_metros_age:
+                    df_m = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)]
+                    tot = pop_totale_df(df_m)
+                    if tot > 0:
+                        rows_grp.append({
+                            "Métropole": m,
+                            "0–24 ans": pop_tranches(df_m, TRANCHES_M25) / tot * 100,
+                            "25–64 ans": pop_tranches(df_m, TRANCHES_ACT) / tot * 100,
+                            "65 ans et +": pop_tranches(df_m, TRANCHES_SEN) / tot * 100,
+                        })
+                df_grp = pd.DataFrame(rows_grp)
+                if not df_grp.empty:
+                    df_grp_m = df_grp.melt(id_vars="Métropole", var_name="Groupe", value_name="Part (%)")
+                    fig_grp = px.bar(df_grp_m, x="Métropole", y="Part (%)", color="Groupe",
+                                     barmode="stack", text_auto=".1f",
+                                     color_discrete_map={
+                                         "0–24 ans": "#74C69D",
+                                         "25–64 ans": "#2D6A4F",
+                                         "65 ans et +": "#C45B2A",
+                                     }, height=380)
+                    fig_grp.update_traces(textposition="inside", textfont_size=10)
+                    fig_grp.update_layout(legend=dict(orientation="h", y=1.08),
+                                          yaxis_title="Part de la population (%)")
+                    st.plotly_chart(style(fig_grp, 40), use_container_width=True)
+
+                st.markdown("---")
+
+                # ── Évolution des groupes sur les 3 années ───────────────────
+                st.markdown("#### 📈 Évolution des groupes d'âge (2011 → 2022)")
+                c_ev1, c_ev2 = st.columns(2)
+                with c_ev1:
+                    st.markdown("##### Part des moins de 25 ans (%)")
+                    rows_ev = []
+                    for m in sel_metros_age:
+                        for an in annees_dispo:
+                            df_m = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == an)]
+                            tot = pop_totale_df(df_m)
+                            p = pop_tranches(df_m, TRANCHES_M25)
+                            if tot > 0:
+                                rows_ev.append({"Métropole": m, "Année": an, "Part (%)": p / tot * 100})
+                    df_ev = pd.DataFrame(rows_ev)
+                    if not df_ev.empty:
+                        fig_ev = px.line(df_ev, x="Année", y="Part (%)", color="Métropole",
+                                         markers=True, color_discrete_map=COULEURS, height=350)
+                        fig_ev.update_layout(xaxis=dict(tickvals=annees_dispo),
+                                             legend=dict(orientation="h", y=1.12))
+                        st.plotly_chart(style(fig_ev), use_container_width=True)
+                with c_ev2:
+                    st.markdown("##### Part des 65 ans et + (%)")
+                    rows_ev2 = []
+                    for m in sel_metros_age:
+                        for an in annees_dispo:
+                            df_m = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == an)]
+                            tot = pop_totale_df(df_m)
+                            p = pop_tranches(df_m, TRANCHES_SEN)
+                            if tot > 0:
+                                rows_ev2.append({"Métropole": m, "Année": an, "Part (%)": p / tot * 100})
+                    df_ev2 = pd.DataFrame(rows_ev2)
+                    if not df_ev2.empty:
+                        fig_ev2 = px.line(df_ev2, x="Année", y="Part (%)", color="Métropole",
+                                          markers=True, color_discrete_map=COULEURS, height=350)
+                        fig_ev2.update_layout(xaxis=dict(tickvals=annees_dispo),
+                                              legend=dict(orientation="h", y=1.12))
+                        st.plotly_chart(style(fig_ev2), use_container_width=True)
+
+                st.markdown("---")
+
+                # ── Rapport H/F par métropole ────────────────────────────────
+                st.markdown("#### ⚖️ Rapport hommes / femmes par tranche d'âge")
+                rows_hf = []
+                for m in sel_metros_age:
+                    df_m = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)]
+                    for i in range(1, 21):
+                        t = f"{i:02d}"
+                        ch_col = f"ageq_rec{t}s1rpop2016"
+                        cf_col = f"ageq_rec{t}s2rpop2016"
+                        h = pd.to_numeric(df_m[ch_col], errors="coerce").fillna(0).sum() if ch_col in df_m.columns else 0
+                        f_ = pd.to_numeric(df_m[cf_col], errors="coerce").fillna(0).sum() if cf_col in df_m.columns else 0
+                        ratio = h / f_ * 100 if f_ > 0 else np.nan
+                        rows_hf.append({"Métropole": m, "Tranche": LABEL_TRANCHE.get(t, t), "Ratio H/F (%)": ratio})
+                df_hf = pd.DataFrame(rows_hf).dropna()
+                if not df_hf.empty:
+                    fig_hf = px.line(df_hf, x="Tranche", y="Ratio H/F (%)", color="Métropole",
+                                     markers=True, color_discrete_map=COULEURS, height=350)
+                    fig_hf.add_hline(y=100, line_dash="dot", line_color="#AAAAAA",
+                                     annotation_text="Parité (100)", annotation_position="top left")
+                    fig_hf.update_layout(xaxis_tickangle=-30, legend=dict(orientation="h", y=1.12),
+                                         yaxis_title="Hommes pour 100 femmes")
+                    st.plotly_chart(style(fig_hf, 40), use_container_width=True)
+
+            # ════════════════════════════════════════════════════════════════
+            # VUE DÉTAIL COMMUNAL (Grenoble uniquement)
+            # ════════════════════════════════════════════════════════════════
+            else:
                 communes_age = sel_communes_age if sel_communes_age else []
                 if not communes_age:
                     st.info("Sélectionnez au moins une commune.")
-                elif len(communes_age) == 1:
-                    comm = communes_age[0]
-                    st.markdown(f"##### Pyramide des âges — {comm} ({annee_age})")
+                    st.stop()
+
+                COLORS_COMM = ["#2D6A4F", "#1A6FA3", "#C45B2A", "#7B3FA0", "#D4A017",
+                               "#74C69D", "#F4A261", "#264653", "#E9C46A", "#A8DADC"]
+                COLORS_COMM_F = ["#95D5B2", "#AED4F0", "#F2A07A", "#C9A5E0", "#F5D87A",
+                                  "#B7E4C7", "#FDDCB5", "#83B0BB", "#F5DEBA", "#D4ECEE"]
+
+                # ── KPIs ────────────────────────────────────────────────────
+                st.markdown(f"#### 📌 Indicateurs clés — {annee_age}")
+                kpi_cols = st.columns(len(communes_age))
+                for i, comm in enumerate(communes_age):
                     df_c = df_pop[(df_pop["LIBELLE"] == comm) & (df_pop["annee"] == annee_age)]
-                    if not df_c.empty and ch and cf:
-                        labels = [label_col(c) for c in ch]
-                        fig_p = go.Figure()
-                        fig_p.add_trace(go.Bar(y=labels, x=[-df_c[c].sum() for c in ch],
-                                               name="Hommes", orientation="h", marker_color="#2D6A4F"))
-                        fig_p.add_trace(go.Bar(y=labels, x=[df_c[c].sum() for c in cf],
-                                               name="Femmes", orientation="h", marker_color="#95D5B2"))
-                        fig_p.update_layout(barmode="relative", bargap=0.06,
-                                            legend=dict(orientation="h", y=1.08),
-                                            yaxis_title="Tranche d'âge (ans)", xaxis_title="Population")
-                        st.plotly_chart(style(fig_p, 40), use_container_width=True)
-                    else:
-                        st.info("Données insuffisantes pour cette commune.")
+                    tot   = pop_totale_df(df_c)
+                    p_m25 = pop_tranches(df_c, TRANCHES_M25)
+                    p_sen = pop_tranches(df_c, TRANCHES_SEN)
+                    p_act = pop_tranches(df_c, TRANCHES_ACT)
+                    pct_m25 = p_m25 / tot * 100 if tot > 0 else np.nan
+                    pct_sen = p_sen / tot * 100 if tot > 0 else np.nan
+                    ratio_dep = (p_m25 + p_sen) / p_act * 100 if p_act > 0 else np.nan
+                    with kpi_cols[i]:
+                        st.markdown(f"**{comm}**")
+                        st.metric("< 25 ans", f"{pct_m25:.1f}%" if not np.isnan(pct_m25) else "N/D",
+                                  help="Part des moins de 25 ans dans la population totale")
+                        st.metric("65 ans et +", f"{pct_sen:.1f}%" if not np.isnan(pct_sen) else "N/D",
+                                  help="Part des 65 ans et plus dans la population totale")
+                        st.metric("Ratio dépendance", f"{ratio_dep:.0f}%" if not np.isnan(ratio_dep) else "N/D",
+                                  help="(0–24 ans + 65+ ans) / 25–64 ans × 100")
+
+                st.markdown("---")
+
+                # ── Pyramide(s) ──────────────────────────────────────────────
+                st.markdown("#### 🔺 Pyramide(s) des âges")
+                if len(communes_age) == 1:
+                    comm = communes_age[0]
+                    df_c = df_pop[(df_pop["LIBELLE"] == comm) & (df_pop["annee"] == annee_age)]
+                    fig_pyr = build_pyramide(df_c, f"{comm} — {annee_age}",
+                                             COLORS_COMM[0], COLORS_COMM_F[0])
+                    st.plotly_chart(style(fig_pyr, 40), use_container_width=True)
                 else:
-                    st.markdown(f"##### Comparaison — {' · '.join(communes_age)} ({annee_age})")
-                    rows_c = []
+                    ncols = min(len(communes_age), 3)
+                    rows_pyr = [communes_age[i:i+ncols] for i in range(0, len(communes_age), ncols)]
+                    for row_comms in rows_pyr:
+                        pyr_cols = st.columns(len(row_comms))
+                        for j, comm in enumerate(row_comms):
+                            df_c = df_pop[(df_pop["LIBELLE"] == comm) & (df_pop["annee"] == annee_age)]
+                            fig_pyr = build_pyramide(df_c, comm,
+                                                     COLORS_COMM[j % len(COLORS_COMM)],
+                                                     COLORS_COMM_F[j % len(COLORS_COMM_F)])
+                            fig_pyr.update_layout(height=380)
+                            with pyr_cols[j]:
+                                st.plotly_chart(style(fig_pyr, 30), use_container_width=True)
+
+                st.markdown("---")
+
+                # ── Structure par grands groupes ─────────────────────────────
+                st.markdown("#### 📊 Répartition par grands groupes d'âge")
+                rows_grp_c = []
+                for comm in communes_age:
+                    df_c = df_pop[(df_pop["LIBELLE"] == comm) & (df_pop["annee"] == annee_age)]
+                    tot = pop_totale_df(df_c)
+                    if tot > 0:
+                        rows_grp_c.append({
+                            "Commune": comm,
+                            "0–24 ans": pop_tranches(df_c, TRANCHES_M25) / tot * 100,
+                            "25–64 ans": pop_tranches(df_c, TRANCHES_ACT) / tot * 100,
+                            "65 ans et +": pop_tranches(df_c, TRANCHES_SEN) / tot * 100,
+                        })
+                df_grp_c = pd.DataFrame(rows_grp_c)
+                if not df_grp_c.empty:
+                    df_grp_cm = df_grp_c.melt(id_vars="Commune", var_name="Groupe", value_name="Part (%)")
+                    fig_grp_c = px.bar(df_grp_cm, x="Commune", y="Part (%)", color="Groupe",
+                                       barmode="stack", text_auto=".1f",
+                                       color_discrete_map={
+                                           "0–24 ans": "#74C69D",
+                                           "25–64 ans": "#2D6A4F",
+                                           "65 ans et +": "#C45B2A",
+                                       }, height=380)
+                    fig_grp_c.update_traces(textposition="inside", textfont_size=10)
+                    fig_grp_c.update_layout(legend=dict(orientation="h", y=1.08),
+                                            yaxis_title="Part de la population (%)",
+                                            xaxis_tickangle=-20)
+                    st.plotly_chart(style(fig_grp_c, 40), use_container_width=True)
+
+                st.markdown("---")
+
+                # ── Évolution des groupes sur les 3 années ───────────────────
+                st.markdown("#### 📈 Évolution des groupes d'âge (2011 → 2022)")
+                c_ev1, c_ev2 = st.columns(2)
+                with c_ev1:
+                    st.markdown("##### Part des moins de 25 ans (%)")
+                    rows_evc = []
                     for comm in communes_age:
-                        df_c = df_pop[(df_pop["LIBELLE"] == comm) & (df_pop["annee"] == annee_age)]
-                        if not df_c.empty and ch and cf:
-                            for h, f in zip(ch, cf):
-                                rows_c.append({"Tranche": label_col(h), "Commune": comm,
-                                               "Population": df_c[h].sum() + df_c[f].sum()})
-                    if rows_c:
-                        fig_cc = px.bar(pd.DataFrame(rows_c), x="Tranche", y="Population", color="Commune",
-                                        barmode="group",
-                                        color_discrete_sequence=["#2D6A4F", "#95D5B2", "#1A6FA3",
-                                                                  "#C45B2A", "#D4A017"])
-                        fig_cc.update_layout(xaxis_tickangle=-40, legend=dict(orientation="h", y=1.08))
-                        st.plotly_chart(style(fig_cc), use_container_width=True)
-                    else:
-                        st.info("Données insuffisantes pour ces communes.")
+                        for an in annees_dispo:
+                            df_c = df_pop[(df_pop["LIBELLE"] == comm) & (df_pop["annee"] == an)]
+                            tot = pop_totale_df(df_c)
+                            p = pop_tranches(df_c, TRANCHES_M25)
+                            if tot > 0:
+                                rows_evc.append({"Commune": comm, "Année": an, "Part (%)": p / tot * 100})
+                    df_evc = pd.DataFrame(rows_evc)
+                    if not df_evc.empty:
+                        fig_evc = px.line(df_evc, x="Année", y="Part (%)", color="Commune",
+                                          markers=True,
+                                          color_discrete_sequence=COLORS_COMM, height=350)
+                        fig_evc.update_layout(xaxis=dict(tickvals=annees_dispo),
+                                              legend=dict(orientation="h", y=1.12))
+                        st.plotly_chart(style(fig_evc), use_container_width=True)
+                with c_ev2:
+                    st.markdown("##### Part des 65 ans et + (%)")
+                    rows_evc2 = []
+                    for comm in communes_age:
+                        for an in annees_dispo:
+                            df_c = df_pop[(df_pop["LIBELLE"] == comm) & (df_pop["annee"] == an)]
+                            tot = pop_totale_df(df_c)
+                            p = pop_tranches(df_c, TRANCHES_SEN)
+                            if tot > 0:
+                                rows_evc2.append({"Commune": comm, "Année": an, "Part (%)": p / tot * 100})
+                    df_evc2 = pd.DataFrame(rows_evc2)
+                    if not df_evc2.empty:
+                        fig_evc2 = px.line(df_evc2, x="Année", y="Part (%)", color="Commune",
+                                           markers=True,
+                                           color_discrete_sequence=COLORS_COMM, height=350)
+                        fig_evc2.update_layout(xaxis=dict(tickvals=annees_dispo),
+                                               legend=dict(orientation="h", y=1.12))
+                        st.plotly_chart(style(fig_evc2), use_container_width=True)
 
-            else:
-                # ── Vue métropole ────────────────────────────────────────────
-                df_m = df_pop[(df_pop["metropole"] == metro_age) & (df_pop["annee"] == annee_age)]
-                st.markdown(f"##### Pyramide des âges — {metro_age} ({annee_age})")
-                if ch and cf and not df_m.empty:
-                    labels = [label_col(c) for c in ch]
-                    fig_p = go.Figure()
-                    fig_p.add_trace(go.Bar(y=labels, x=[-df_m[c].sum() for c in ch],
-                                           name="Hommes", orientation="h", marker_color="#2D6A4F"))
-                    fig_p.add_trace(go.Bar(y=labels, x=[df_m[c].sum() for c in cf],
-                                           name="Femmes", orientation="h", marker_color="#95D5B2"))
-                    fig_p.update_layout(barmode="relative", bargap=0.06,
-                                        legend=dict(orientation="h", y=1.08),
-                                        yaxis_title="Tranche d'âge (ans)", xaxis_title="Population")
-                    st.plotly_chart(style(fig_p, 40), use_container_width=True)
-                else:
-                    st.info("Données insuffisantes pour la pyramide.")
+                st.markdown("---")
 
-            # ── Indices démographiques (toujours affichés) ───────────────────
-            st.markdown("---")
-            st.markdown("##### Indices démographiques par métropole")
-            idx_c = st.columns(len(TOUTES))
-            for i, m in enumerate(TOUTES):
-                dm = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)]
-                pj = somme_tranches(dm, TRANCHES_JEUNES)
-                pa = somme_tranches(dm, TRANCHES_ACTIFS)
-                ps = somme_tranches(dm, TRANCHES_SENIORS)
-                iv = (ps / pj * 100) if pj > 0 else np.nan
-                rd = ((pj + ps) / pa * 100) if pa > 0 else np.nan
-                with idx_c[i]:
-                    st.metric(f"Vieillissement\n{m}", f"{iv:.0f}" if not np.isnan(iv) else "N/D",
-                              help="65+ / <20 ans × 100")
-                    st.metric(f"Dépendance\n{m}", f"{rd:.0f}%" if not np.isnan(rd) else "N/D",
-                              help="(Jeunes + Seniors) / Actifs")
-
-            st.markdown("---")
-            st.markdown("##### Évolution de la population totale (2011 → 2022)")
-            sel_evol = st.multiselect("Métropoles", TOUTES, default=["Grenoble", "Rennes"], key="evol")
-            if sel_evol and ch and cf:
-                df_e = df_pop[df_pop["metropole"].isin(sel_evol)].copy()
-                df_e["pop_totale"] = df_e[[c for c in ch + cf if c in df_e.columns]].sum(axis=1)
-                df_g = df_e.groupby(["metropole", "annee"])["pop_totale"].sum().reset_index()
-                fig_ev = px.line(df_g, x="annee", y="pop_totale", color="metropole",
-                                 color_discrete_map=COULEURS, markers=True)
-                fig_ev.update_layout(yaxis_title="Population totale", xaxis_title="Année",
-                                     legend_title="Métropole")
-                st.plotly_chart(style(fig_ev), use_container_width=True)
-
+                # ── Rapport H/F par commune ──────────────────────────────────
+                st.markdown("#### ⚖️ Rapport hommes / femmes par tranche d'âge")
+                rows_hfc = []
+                for i, comm in enumerate(communes_age):
+                    df_c = df_pop[(df_pop["LIBELLE"] == comm) & (df_pop["annee"] == annee_age)]
+                    for t_i in range(1, 21):
+                        t = f"{t_i:02d}"
+                        ch_col = f"ageq_rec{t}s1rpop2016"
+                        cf_col = f"ageq_rec{t}s2rpop2016"
+                        h = pd.to_numeric(df_c[ch_col], errors="coerce").fillna(0).sum() if ch_col in df_c.columns else 0
+                        f_ = pd.to_numeric(df_c[cf_col], errors="coerce").fillna(0).sum() if cf_col in df_c.columns else 0
+                        ratio = h / f_ * 100 if f_ > 0 else np.nan
+                        rows_hfc.append({"Commune": comm, "Tranche": LABEL_TRANCHE.get(t, t), "Ratio H/F (%)": ratio})
+                df_hfc = pd.DataFrame(rows_hfc).dropna()
+                if not df_hfc.empty:
+                    fig_hfc = px.line(df_hfc, x="Tranche", y="Ratio H/F (%)", color="Commune",
+                                      markers=True,
+                                      color_discrete_sequence=COLORS_COMM, height=350)
+                    fig_hfc.add_hline(y=100, line_dash="dot", line_color="#AAAAAA",
+                                      annotation_text="Parité (100)", annotation_position="top left")
+                    fig_hfc.update_layout(xaxis_tickangle=-30, legend=dict(orientation="h", y=1.12),
+                                          yaxis_title="Hommes pour 100 femmes")
+                    st.plotly_chart(style(fig_hfc, 40), use_container_width=True)
+                    
 # ==============================================================================
 # ONGLET 3 — MOBILITÉS
 # ==============================================================================
