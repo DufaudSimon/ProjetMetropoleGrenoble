@@ -482,7 +482,7 @@ def style(fig, marge_t=20):
                       margin=dict(t=marge_t, b=20, l=10, r=10))
     return fig
 
-def filter_bar(label="🔧 Filtres"):
+def filter_bar(label="Filtres"):
     """Ouvre un conteneur visuellement encadré pour les filtres en haut de page."""
     st.markdown(f'<div class="filter-bar-title">{label}</div>', unsafe_allow_html=True)
 
@@ -950,7 +950,7 @@ if vue == "Démographie":
         # ── Bandeau filtres ──────────────────────────────────────────────────
         with st.container():
             st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-            filter_bar("🔧 Filtres - Population globale")
+            filter_bar("Filtres - Population globale")
             pg_c1, pg_c2 = st.columns(2)
             with pg_c1:
                 mode_pop = st.radio(
@@ -1362,7 +1362,7 @@ if vue == "Démographie":
             # ── Bandeau filtres ──────────────────────────────────────────────
             with st.container():
                 st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                filter_bar("🔧 Filtres - Structure par âge")
+                filter_bar("Filtres - Structure par âge")
                 fa1, fa2, fa3 = st.columns(3)
                 with fa1:
                     mode_age = st.radio(
@@ -1717,6 +1717,7 @@ if vue == "Démographie":
         else:
             # ── Bandeau filtres ──────────────────────────────────────────────
             with st.container():
+                filter_bar("Filtres - Mobilités")
                 
                 mob_col1, mob_col2, mob_col3 = st.columns(3)
                 with mob_col1:
@@ -1885,7 +1886,7 @@ if vue == "Démographie":
                 # ── Bandeau filtres ──────────────────────────────────────────
                 with st.container():
                     st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                    filter_bar("🔧 Filtres - Type & taille de ménage")
+                    filter_bar("Filtres - Type & taille de ménage")
                     fm1, fm2 = st.columns(2)
                     with fm1:
                         mode_men = st.radio(
@@ -2013,7 +2014,7 @@ if vue == "Démographie":
                 # ── Bandeau filtres ──────────────────────────────────────────
                 with st.container():
                     st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                    filter_bar("🔧 Filtres - CSP des ménages")
+                    filter_bar("Filtres - CSP des ménages")
                     fc1, fc2 = st.columns(2)
                     with fc1:
                         metro_csp_m = st.selectbox("Métropole", TOUTES, key="m_csp")
@@ -2096,7 +2097,7 @@ if vue == "Démographie":
             # ── Bandeau filtres ──────────────────────────────────────────────
             with st.container():
                 st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                filter_bar("🔧 Filtres - CSP comparatif")
+                filter_bar("Filtres - CSP comparatif")
 
                 csp_row1_c1, csp_row1_c2, csp_row1_c3 = st.columns(3)
                 with csp_row1_c1:
@@ -2324,7 +2325,7 @@ if vue == "Solidarité et citoyenneté":
 
                     with st.container():
                         st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                        filter_bar("🔧 Filtres - Solidarité CAF")
+                        filter_bar("Filtres - Solidarité CAF")
                         caf_f1, caf_f2, caf_f3 = st.columns([1, 1, 2])
                         
                         with caf_f1:
@@ -2512,7 +2513,7 @@ if vue == "Solidarité et citoyenneté":
 
             with st.container():
                 st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                filter_bar("🔧 Filtres - Effectifs enseignement supérieur")
+                filter_bar("Filtres - Effectifs enseignement supérieur")
                 ef1, ef2, ef3, ef4 = st.columns([1, 1, 1, 1])
                 with ef1:
                     mode_eff = st.radio("Niveau géographique", ["Comparaison Métropoles", "Détail Communal (Grenoble)"], key="eff_mode", horizontal=True)
@@ -2774,7 +2775,7 @@ if vue == "Solidarité et citoyenneté":
         # ── Filtres ───────────────────────────────────────────────────────────────
         with st.container():
             st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-            filter_bar("🔧 Filtres - Établissements de santé")
+            filter_bar("Filtres - Établissements de santé")
             pv1, pv2, pv3 = st.columns(3)
             with pv1:
                 mode_sante = st.radio(
@@ -3339,7 +3340,7 @@ if vue == "Solidarité et citoyenneté":
 
             with st.container():
                 st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-                filter_bar("🔧 Filtres - Revenus & pauvreté")
+                filter_bar("Filtres - Revenus & pauvreté")
                 fv1, fv2, fv3 = st.columns([1, 1, 2])
                 with fv1:
                     filo_ind = st.selectbox(
