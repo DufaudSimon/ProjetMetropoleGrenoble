@@ -3559,7 +3559,6 @@ if vue == "Solidarité et citoyenneté":
             # ── Libellés des indicateurs ──────────────────────────────────
             FILO_LABELS = {
                 "DEC_MED21":    "Revenu médian (€/UC)",
-                "DEC_S80S2021": "Ratio S80/S20",
                 "DEC_GI21":     "Indice de Gini",
                 "DEC_PIMP21":   "Part ménages imposés (%)",
                 "DEC_PACT21":   "Part revenus d'activité (%)",
@@ -3733,14 +3732,24 @@ if vue == "Solidarité et citoyenneté":
 
                     st.markdown("---")
 
-                    with st.expander("📊 Statistiques descriptives complètes"):
-                        desc_cols = ["DEC_MED21", "DEC_TP6021", "DEC_GI21", "DEC_RD21",
-                                     "DEC_S80S2021", "DEC_Q121", "DEC_Q321"]
+                    with st.expander("📊 Statistiques descriptives (Essentiel)"):
+                        st.markdown("Aperçu des valeurs minimales, médianes et maximales par métropole pour les indicateurs clés.")
+                        
+                        # 1. On ne garde que les 4 indicateurs majeurs
+                        desc_cols = ["DEC_MED21", "DEC_TP6021", "DEC_GI21", "DEC_RD21"]
                         desc_avail = [c for c in desc_cols if c in df_f.columns]
+                        
+                        # 2. On limite les calculs à Min, Médiane et Max
                         desc_df = (df_f.groupby("metropole")[desc_avail]
-                                   .agg(["median", "mean", "std", "min", "max"])
+                                   .agg(["min", "median", "max"])
                                    .round(2))
-                        desc_df.columns = [f"{FILO_LABELS.get(c, c)} - {s}" for c, s in desc_df.columns]
+                        
+                        # 3. Renommage propre pour enlever le jargon technique (ex: "Revenu médian - Max")
+                        stat_names = {"min": "Min", "median": "Médiane", "max": "Max"}
+                        
+                        # On coupe les unités "(€/UC)" ou "(%)" pour alléger les en-têtes du tableau
+                        desc_df.columns = [f"{FILO_LABELS.get(c, c).split(' (')[0]} - {stat_names[s]}" for c, s in desc_df.columns]
+                        
                         st.dataframe(desc_df, use_container_width=True)
 
                     with st.expander("📖 Note méthodologique"):
