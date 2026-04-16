@@ -3057,27 +3057,6 @@ if vue == "Solidarité et citoyenneté":
                                                   height=400)
                                 st.plotly_chart(style(fig_sex, 40), use_container_width=True)
 
-                with st.expander(" Note méthodologique détaillée"):
-                        st.markdown("""
-                        **Source des données :** Ministère de l'Enseignement Supérieur et de la Recherche (MESR) - Données ouvertes sur les effectifs d'étudiants inscrits.
-                        
-                        ** Périmètre de l'étude :**
-                        * **Géographie :** Données restreintes aux communes des 5 départements d'étude (Isère [38], Ille-et-Vilaine [35], Seine-Maritime [76], Loire [42] et Hérault [34]).
-                        * **Unité de compte :** Le comptage porte sur les individus inscrits en **formation initiale** (au titre de leur inscription principale). Les auditeurs libres et les inscrits en formation continue stricte en sont généralement exclus.
-                        
-                        ** Comprendre les filières et acronymes :**
-                        * **TOTAL :** Agrège l'ensemble des étudiants, toutes filières confondues sur le territoire.
-                        * **UNIV (Universités) :** Cursus universitaires classiques (Licence, Master, Doctorat, BUT, etc.).
-                        * **STS :** Sections de Techniciens Supérieurs (étudiants préparant un BTS).
-                        * **CPGE :** Classes Préparatoires aux Grandes Écoles.
-                        * **GE / ING / EC_COM :** Grandes Écoles, Écoles d'ingénieurs, et Écoles de commerce et de management.
-                        * **Autres Écoles :** Regroupe les formations spécialisées (écoles d'art, écoles paramédicales et sociales, écoles juridiques, etc.).
-                        
-                        ** Secteur d'établissement :**
-                        La distinction **Public / Privé** repose sur le statut juridique de l'établissement d'inscription. 
-                        
-                        * Note sur les doubles inscriptions : Les étudiants inscrits dans deux formations différentes (par exemple, un étudiant en CPGE inscrit en parallèle à l'université) font l'objet de retraitements statistiques par le MESR pour éviter au maximum les doubles comptes à l'échelle d'une ville.*
-                        """)
 
         # ──────────────────────────────────────────────────────────────────────────
         # ONGLET SANTE
