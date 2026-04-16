@@ -3111,6 +3111,7 @@ if vue == "Solidarité et citoyenneté":
         tours_elec  = sorted(df_elec["Numéro de tour"].dropna().unique().astype(int))
         metros_elec = sorted(df_elec["metropole"].dropna().unique())
 
+        # ── Filtres ───────────────────────────────────────────────────────────────
         with st.container():
             filter_bar("Filtres - Participation citoyenne")
             fp1, fp2 = st.columns([1, 3])
@@ -3120,7 +3121,7 @@ if vue == "Solidarité et citoyenneté":
                 mode_part = st.radio(
                     "",
                     ["Comparaison Métropoles", "Détail Communal"],
-                    key="part_mode", 
+                    key="part_mode",
                     horizontal=True,
                     label_visibility="collapsed",
                 )
@@ -3149,6 +3150,7 @@ if vue == "Solidarité et citoyenneté":
                 )
             st.markdown('</div>', unsafe_allow_html=True)
 
+        # ── Filtrage ──────────────────────────────────────────────────────────────
         df_elec_f = df_elec[
             (df_elec["Année"] == sel_annee_part) &
             (df_elec["Numéro de tour"] == sel_tour_part)
@@ -3160,107 +3162,185 @@ if vue == "Solidarité et citoyenneté":
                 Inscrits=("Inscrits", "sum"),
                 Votants=("Votants", "sum"),
                 Abstentions=("Abstentions", "sum"),
+                Non_Exprimes=("Non-Exprimés", "sum"),
+                Exprimes=("Exprimés", "sum"),
             )
-            df_agg["% Participation"] = (df_agg["Votants"] / df_agg["Inscrits"] * 100).round(2)
-            df_agg["% Abstention"]    = (df_agg["Abstentions"] / df_agg["Inscrits"] * 100).round(2)
         else:
             df_elec_f = df_elec_f[df_elec_f["Libellé de la commune"].isin(sel_communes_part)]
             df_agg = df_elec_f.groupby("Libellé de la commune", as_index=False).agg(
                 Inscrits=("Inscrits", "sum"),
                 Votants=("Votants", "sum"),
                 Abstentions=("Abstentions", "sum"),
+                Non_Exprimes=("Non-Exprimés", "sum"),
+                Exprimes=("Exprimés", "sum"),
             )
-            df_agg["% Participation"] = (df_agg["Votants"] / df_agg["Inscrits"] * 100).round(2)
-            df_agg["% Abstention"]    = (df_agg["Abstentions"] / df_agg["Inscrits"] * 100).round(2)
             df_agg = df_agg.rename(columns={"Libellé de la commune": "metropole"})
+
+        df_agg["% Participation"] = (df_agg["Votants"]    / df_agg["Inscrits"] * 100).round(2)
+        df_agg["% Abstention"]    = (df_agg["Abstentions"] / df_agg["Inscrits"] * 100).round(2)
+        df_agg["% Non-Exprimés"]  = (df_agg["Non_Exprimes"] / df_agg["Votants"] * 100).round(2)
+        df_agg["% Exprimés"]      = (df_agg["Exprimes"]    / df_agg["Votants"] * 100).round(2)
+
+        st.markdown("---")
+
+        # ── KPIs (même style que santé) ───────────────────────────────────────────
+        if not df_agg.empty:
+            total_inscrits  = int(df_agg["Inscrits"].sum())
+            total_votants   = int(df_agg["Votants"].sum())
+            total_exprimes  = int(df_agg["Exprimes"].sum())
+            total_abstentions = int(df_agg["Abstentions"].sum())
+            total_non_exp   = int(df_agg["Non_Exprimes"].sum())
+            taux_part_global = round(total_votants / total_inscrits * 100, 1) if total_inscrits else 0
+            taux_abs_global  = round(total_abstentions / total_inscrits * 100, 1) if total_inscrits else 0
+            taux_non_exp_global = round(total_non_exp / total_votants * 100, 1) if total_votants else 0
+            taux_exp_global  = round(total_exprimes / total_votants * 100, 1) if total_votants else 0
+
+            kpi_data = [
+                ("Inscrits",          f"{total_inscrits:,}".replace(",", " ")),
+                ("Taux de participation", f"{taux_part_global} %"),
+                ("Taux d'abstention",  f"{taux_abs_global} %"),
+                ("Votes exprimés / votants", f"{taux_exp_global} %"),
+                ("Votes non exprimés / votants", f"{taux_non_exp_global} %"),
+            ]
+
+            kpi_cols = st.columns(5)
+            for col, (title, value) in zip(kpi_cols, kpi_data):
+                with col:
+                    st.markdown(f"""
+                    <div style='
+                        display: flex;
+                        flex-direction: row;
+                        align-items: stretch;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                        background: #fff;
+                        min-height: 80px;
+                        border-left: 6px solid #1e5631;
+                    '>
+                        <div style='
+                            padding: 10px 16px;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                        '>
+                            <div style='font-size:11px; font-weight:700; letter-spacing:0.08em; color:#666; text-transform:uppercase;'>{title}</div>
+                            <div style='font-size:24px; font-weight:bold; color:#111; margin: 2px 0;'>{value}</div>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
         st.markdown("---")
 
         if df_agg.empty:
             st.warning("⚠️ Aucune donnée pour les filtres sélectionnés.")
         else:
-            kpi_cols_part = st.columns(len(df_agg))
-            for i, row in df_agg.iterrows():
-                with kpi_cols_part[i]:
-                    st.metric(
-                        label=row["metropole"],
-                        value=f"{row['% Participation']:.1f} %",
-                        delta=f"{row['% Participation'] - df_agg['% Participation'].mean():+.1f} pts vs moy.",
-                    )
-
-            st.markdown("---")
             c1, c2 = st.columns(2)
 
+            # ── Graphique 1 : Taux participation par entité ───────────────────────
             with c1:
-                st.markdown("##### 🗳️ Taux de participation")
+                st.markdown("##### Taux de participation")
                 fig_part = px.bar(
-                    df_agg.sort_values("% Participation", ascending=False),
-                    x="metropole", y="% Participation",
+                    df_agg.sort_values("% Participation", ascending=True),
+                    x="% Participation",
+                    y="metropole",
+                    orientation="h",
                     color="metropole",
                     color_discrete_map=COULEURS,
-                    text=df_agg.sort_values("% Participation", ascending=False)["% Participation"].apply(lambda v: f"{v:.1f}%"),
+                    text=df_agg.sort_values("% Participation", ascending=True)["% Participation"].apply(lambda v: f"{v:.1f}%"),
                     labels={"metropole": "", "% Participation": "Participation (%)"},
-                    title=f"Participation - {sel_annee_part} · Tour {sel_tour_part}",
-                    height=400,
+                    height=380,
                 )
                 fig_part.update_traces(textposition="outside")
-                fig_part.update_layout(showlegend=False, yaxis_range=[0, 100])
+                fig_part.update_layout(
+                    showlegend=False,
+                    xaxis_range=[0, 100],
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Sora",
+                    xaxis=dict(gridcolor="#E8F5EE"),
+                    margin=dict(l=10, r=40, t=40, b=10),
+                )
                 st.plotly_chart(style(fig_part, 40), use_container_width=True)
 
+            # ── Graphique 2 : Qualité du vote (votes exprimés vs non-exprimés) ────
             with c2:
-                st.markdown("##### 📊 Participation vs Abstention")
-                df_stack = df_agg[["metropole", "% Participation", "% Abstention"]].melt(
+                st.markdown("##### Votes exprimés vs non-exprimés")
+                df_qual = df_agg[["metropole", "% Exprimés", "% Non-Exprimés"]].melt(
                     id_vars="metropole", var_name="Type", value_name="Taux"
                 )
-                fig_stack = px.bar(
-                    df_stack, x="metropole", y="Taux", color="Type",
+                fig_qual = px.bar(
+                    df_qual,
+                    x="metropole", y="Taux", color="Type",
                     barmode="stack",
-                    color_discrete_map={"% Participation": "#2D6A4F", "% Abstention": "#95D5B2"},
+                    color_discrete_map={"% Exprimés": "#2D6A4F", "% Non-Exprimés": "#95D5B2"},
                     labels={"metropole": "", "Taux": "%", "Type": ""},
-                    title="Répartition Participation / Abstention",
-                    height=400,
+                    height=380,
+                    text_auto=".1f",
                 )
-                fig_stack.update_layout(yaxis_range=[0, 100], legend=dict(orientation="h", y=1.1))
-                st.plotly_chart(style(fig_stack, 40), use_container_width=True)
+                fig_qual.update_layout(
+                    yaxis_range=[0, 100],
+                    legend=dict(orientation="h", y=1.1),
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Sora",
+                    yaxis=dict(gridcolor="#E8F5EE"),
+                    margin=dict(l=10, r=10, t=40, b=10),
+                )
+                st.plotly_chart(style(fig_qual, 40), use_container_width=True)
 
             st.markdown("---")
-            st.markdown("##### 📈 Évolution de la participation (2014 → 2020)")
-            df_evo = df_elec[df_elec["Numéro de tour"] == sel_tour_part].copy()
+
+            # ── Graphique 3 : Comparaison 2014 vs 2020 par entité (delta) ─────────
+            st.markdown("##### Variation de la participation entre 2014 et 2020")
+
+            df_delta_base = df_elec[df_elec["Numéro de tour"] == sel_tour_part].copy()
             if mode_part == "Comparaison Métropoles":
-                df_evo = df_evo[df_evo["metropole"].isin(sel_metros_part)]
-                df_evo_agg = df_evo.groupby(["Année", "metropole"], as_index=False).agg(
-                    Inscrits=("Inscrits", "sum"), Votants=("Votants", "sum")
-                )
-                color_col = "metropole"
+                df_delta_base = df_delta_base[df_delta_base["metropole"].isin(sel_metros_part)]
+                grp_col = "metropole"
             else:
-                df_evo = df_evo[df_evo["Libellé de la commune"].isin(sel_communes_part)]
-                df_evo_agg = df_evo.groupby(["Année", "Libellé de la commune"], as_index=False).agg(
-                    Inscrits=("Inscrits", "sum"), Votants=("Votants", "sum")
-                )
-                df_evo_agg = df_evo_agg.rename(columns={"Libellé de la commune": "metropole"})
-                color_col = "metropole"
-            df_evo_agg["% Participation"] = (df_evo_agg["Votants"] / df_evo_agg["Inscrits"] * 100).round(2)
-            fig_evo = px.line(
-                df_evo_agg, x="Année", y="% Participation", color=color_col,
-                color_discrete_map=COULEURS, markers=True,
-                labels={"Année": "Année", "% Participation": "Participation (%)", color_col: ""},
-                title=f"Évolution participation - Tour {sel_tour_part}",
-                height=380,
-            )
-            fig_evo.update_traces(line_width=2.5, marker_size=9)
-            fig_evo.update_layout(yaxis_range=[0, 100], legend=dict(orientation="h", y=1.1))
-            st.plotly_chart(style(fig_evo), use_container_width=True)
+                df_delta_base = df_delta_base[df_delta_base["Libellé de la commune"].isin(sel_communes_part)]
+                grp_col = "Libellé de la commune"
 
-            st.markdown("---")
-            with st.expander("📄 Tableau de données"):
-                st.dataframe(df_agg.set_index("metropole"), use_container_width=True)
-            with st.expander("📖 Note méthodologique"):
-                st.write(
-                    "**Source** : Data.gouv - Élections municipales 2014 & 2020.\n\n"
-                    "**Taux de participation** = Votants / Inscrits × 100.\n\n"
-                    "**Périmètre** : communes des 5 métropoles. "
-                    "Pour 2014, les communes de moins de 1 000 habitants utilisent un fichier TXT séparé."
+            df_delta_agg = df_delta_base.groupby(["Année", grp_col], as_index=False).agg(
+                Inscrits=("Inscrits", "sum"), Votants=("Votants", "sum")
+            )
+            df_delta_agg["% Participation"] = (df_delta_agg["Votants"] / df_delta_agg["Inscrits"] * 100).round(2)
+
+            df_2014 = df_delta_agg[df_delta_agg["Année"] == 2014].set_index(grp_col)["% Participation"]
+            df_2020 = df_delta_agg[df_delta_agg["Année"] == 2020].set_index(grp_col)["% Participation"]
+            df_delta = (df_2020 - df_2014).dropna().reset_index()
+            df_delta.columns = ["entite", "Δ Participation (pts)"]
+            df_delta = df_delta.sort_values("Δ Participation (pts)")
+            df_delta["couleur"] = df_delta["Δ Participation (pts)"].apply(
+                lambda v: "#e76f51" if v < 0 else "#2D6A4F"
+            )
+
+            if not df_delta.empty:
+                fig_delta = px.bar(
+                    df_delta,
+                    x="Δ Participation (pts)",
+                    y="entite",
+                    orientation="h",
+                    color="couleur",
+                    color_discrete_map="identity",
+                    text=df_delta["Δ Participation (pts)"].apply(lambda v: f"{v:+.1f} pts"),
+                    labels={"entite": "", "Δ Participation (pts)": "Variation (pts)"},
+                    height=max(300, len(df_delta) * 50),
                 )
+                fig_delta.update_traces(textposition="outside")
+                fig_delta.add_vline(x=0, line_dash="dash", line_color="#888", line_width=1)
+                fig_delta.update_layout(
+                    showlegend=False,
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Sora",
+                    xaxis=dict(gridcolor="#E8F5EE"),
+                    margin=dict(l=10, r=60, t=40, b=10),
+                )
+                st.plotly_chart(style(fig_delta), use_container_width=True)
+            else:
+                st.info("Données insuffisantes pour calculer la variation.")
 
     # ──────────────────────────────────────────────────────────────────────────
     # ONGLET REVENUS & PAUVRETÉ - FiLoSoFi IRIS 2021
