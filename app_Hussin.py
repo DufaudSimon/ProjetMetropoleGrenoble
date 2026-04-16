@@ -1077,7 +1077,7 @@ if vue == "Démographie":
                         xaxis_title="Superficie (km²)",
                         yaxis_title="Densité (hab/km²)",
                     )
-                    st.plotly_chart(style(fig_dens_c), use_container_width=True)
+                    st.plotly_chart(style(fig_dens_c), use_container_width=True)    
 
             with st.expander("💡 Comment interpréter ces deux graphiques ?"):
                 st.write("Une barre plus haute signifie une population plus importante ; sur le nuage, une bulle haute et volumineuse indique une commune dense et peuplée.")
@@ -2363,10 +2363,27 @@ if vue == "Solidarité et citoyenneté":
                             for col, title, value, subtitle in caf_cards:
                                 with col:
                                     st.markdown(f"""
-                                    <div class='kpi-card-mob' style='border-top: none; border-left: 5px solid #1e5631; padding: 10px 15px; text-align: left; background-color: #f9f9f9; border-radius: 4px;'>
-                                        <div class='kpi-label' style='font-size: 11px; color: #666; font-weight: bold; text-transform: uppercase;'>{title}</div>
-                                        <div class='kpi-value' style='font-size: 22px; font-weight: bold; color: #1e5631; margin: 5px 0;'>{value}</div>
-                                        <div style='font-size:10px; color:#888;'>{subtitle}</div>
+                                    <div style='
+                                        display: flex;
+                                        flex-direction: row;
+                                        align-items: stretch;
+                                        border-radius: 8px;
+                                        overflow: hidden;
+                                        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                                        background: #fff;
+                                        min-height: 80px;
+                                        border-left: 6px solid #1e5631;
+                                    '>
+                                        <div style='
+                                            padding: 10px 16px;
+                                            display: flex;
+                                            flex-direction: column;
+                                            justify-content: center;
+                                        '>
+                                            <div style='font-size:11px; font-weight:700; letter-spacing:0.08em; color:#666; text-transform:uppercase;'>{title}</div>
+                                            <div style='font-size:24px; font-weight:bold; color:#111; margin: 2px 0;'>{value}</div>
+                                            <div style='color:#888; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;'>{subtitle}</div>
+                                        </div>
                                     </div>
                                     """, unsafe_allow_html=True)
 
@@ -2391,15 +2408,28 @@ if vue == "Solidarité et citoyenneté":
                                         labels={"Agglomeration": "", metric: label_metric}, height=380)
                                     st.plotly_chart(style(fig_qf, 40), use_container_width=True)
                             with c4:
-                                st.markdown(f"##### Top 15 communes - {year_caf}")
-                                if "Nom_Commune" in df_yr.columns:
-                                    top15 = df_yr.groupby(["Nom_Commune","Agglomeration"], as_index=False)[metric].sum().nlargest(15, metric)
-                                    top15["Metropole_Key"] = top15["Agglomeration"].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
-                                    fig_top = px.bar(top15, x=metric, y="Nom_Commune", orientation="h",
-                                        color="Metropole_Key", color_discrete_map=COULEURS, text_auto=".3s",
-                                        labels={"Nom_Commune": "", metric: label_metric, "Metropole_Key": "Métropole"}, height=420)
-                                    fig_top.update_layout(yaxis={"categoryorder": "total ascending"})
-                                    st.plotly_chart(style(fig_top, 40), use_container_width=True)
+                                st.markdown(f"##### Classement des métropoles - {year_caf}")
+                                
+                                # Regroupement par agglomération
+                                top_metros = df_yr.groupby("Agglomeration", as_index=False)[metric].sum().sort_values(by=metric, ascending=False)
+                                top_metros["Metropole_Key"] = top_metros["Agglomeration"].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
+                                
+                                fig_top = px.bar(
+                                    top_metros, 
+                                    x=metric, 
+                                    y="Agglomeration", 
+                                    orientation="h",
+                                    color="Metropole_Key", 
+                                    color_discrete_map=COULEURS, 
+                                    text_auto=".3s",
+                                    labels={"Agglomeration": "", metric: label_metric}, 
+                                    height=420
+                                )
+                                fig_top.update_layout(
+                                    yaxis={"categoryorder": "total ascending"},
+                                    showlegend=False
+                                )
+                                st.plotly_chart(style(fig_top, 40), use_container_width=True)
                             st.markdown("---")
 
                             st.markdown("##### Profil comparatif des aides - radar")
@@ -2443,7 +2473,30 @@ if vue == "Solidarité et citoyenneté":
                             for i, comm in enumerate(sel_communes_caf):
                                 val = df_yr[df_yr["Nom_Commune"] == comm][metric].sum() if not df_yr.empty else 0
                                 with kpi_cols[i]:
-                                    st.metric(label=f"🏘️ {comm}", value=fmt(val))
+                                    st.markdown(f"""
+                                    <div style='
+                                        display: flex;
+                                        flex-direction: row;
+                                        align-items: stretch;
+                                        border-radius: 8px;
+                                        overflow: hidden;
+                                        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                                        background: #fff;
+                                        min-height: 80px;
+                                        border-left: 6px solid #1e5631;
+                                    '>
+                                        <div style='
+                                            padding: 10px 16px;
+                                            display: flex;
+                                            flex-direction: column;
+                                            justify-content: center;
+                                        '>
+                                            <div style='font-size:11px; font-weight:700; letter-spacing:0.08em; color:#666; text-transform:uppercase;'>{comm}</div>
+                                            <div style='font-size:24px; font-weight:bold; color:#111; margin: 2px 0;'>{fmt(val)}</div>
+                                            <div style='color:#888; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;'>{label_metric}</div>
+                                        </div>
+                                    </div>
+                                    """, unsafe_allow_html=True)
 
                             st.markdown("---")
                             c1, c2 = st.columns(2)
