@@ -1773,6 +1773,9 @@ if vue == "Démographie":
 # ==============================================================================
 # ONGLET 3 - MOBILITÉS
 # ==============================================================================
+# ==============================================================================
+# ONGLET 3 - MOBILITÉS
+# ==============================================================================
 if vue == "Démographie":
     with tab3:
         
@@ -1781,7 +1784,18 @@ if vue == "Démographie":
         if not data_ok:
             st.info("📂 Fichiers de mobilité manquants.")
         else:
-            # ── Suppression effet hover radio ────────────────────────────────
+            # ── Introduction Méthodologique ──────────────────────────────────
+            st.markdown("""
+                <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 14px;'>
+                    <strong>Comprendre les thématiques :</strong><br>
+                    • 🏠 <b>Migrations</b> : Analyse les changements de domicile sur un an. Reflète l'attractivité résidentielle (envie de s'installer).<br>
+                    • 💼 <b>Professionnelle</b> : Analyse les flux domicile-travail des actifs. Identifie les pôles d'emploi face aux villes-dortoirs.<br>
+                    • 🎓 <b>Scolaire</b> : Analyse le trajet entre lieu de résidence et lieu d'études. Mesure le rayonnement des centres d'enseignement.<br>
+                    <br>
+                    <em>Ces données INSEE permettent de comparer si un territoire "aspire" ou "perd" des populations selon leurs activités.</em>
+                </div>
+                """, unsafe_allow_html=True)
+            # ── Style CSS pour les radios ────────────────────────────────────
             st.markdown("""
                 <style>
                 div[data-testid="stRadio"] > label { display: none; }
@@ -1818,7 +1832,7 @@ if vue == "Démographie":
                         help="Choisissez si vous voulez voir les communes de Grenoble ou comparer Grenoble aux autres métropoles."
                     )
 
-                # ── LIGNE 2 : Sélection des entités (métropoles ou communes) ─
+                # ── LIGNE 2 : Sélection des entités ──────────────────────────
                 if mode_mob == "Détail Communal":
                     met_choice = "Grenoble"
                     st.markdown(f"**Communes de la métropole : {met_choice}**")
@@ -1829,10 +1843,7 @@ if vue == "Démographie":
                         key="mob_communes"
                     )
                     coms_selection = sel_communes_mob
-                    if len(sel_communes_mob) > 1:
-                        txt_aide_geo = f"Analyse des flux cumulés pour le groupe : {', '.join(sel_communes_mob)}."
-                    else:
-                        txt_aide_geo = "Quelles sont les communes qui interagissent le plus avec votre sélection ?"
+                    txt_aide_geo = f"Analyse des flux cumulés pour le groupe : {', '.join(sel_communes_mob)}."
                 else:
                     sel_metros_mob = st.multiselect(
                         "Métropoles à comparer",
@@ -1857,7 +1868,7 @@ if vue == "Démographie":
                         """
                     )
 
-                # Logique des couleurs et labels
+                # Logique des couleurs et labels selon la thématique
                 if "Migrations" in theme_mob:
                     current_mob_df, col_orig, col_dest = df_res, "commune_origine", "commune_destination"
                     label_in, label_out, color_in, color_out = "Arrivées", "Départs", "#2D6A4F", "#B7E4C7"
@@ -1878,18 +1889,24 @@ if vue == "Démographie":
                 (current_mob_df[col_orig] != current_mob_df[col_dest]) &
                 (current_mob_df["annee"] == sel_annee_mob)
             ]
+            
             entities_mob = []
-            if mode_mob == "Détail Communal":
-                for ent in sel_communes_mob:
-                    f_in  = df_mob_filtered[df_mob_filtered[col_dest] == ent]["flux"].sum()
-                    f_out = df_mob_filtered[df_mob_filtered[col_orig] == ent]["flux"].sum()
-                    entities_mob.append({"name": ent, "in": f_in, "out": f_out, "solde": f_in - f_out})
-            else:
-                for m_name in sel_metros_mob:
-                    coms = COMMUNES[m_name]
-                    f_in  = df_mob_filtered[df_mob_filtered[col_dest].isin(coms)]["flux"].sum()
-                    f_out = df_mob_filtered[df_mob_filtered[col_orig].isin(coms)]["flux"].sum()
-                    entities_mob.append({"name": m_name, "in": f_in, "out": f_out, "solde": f_in - f_out})
+            targets = sel_communes_mob if mode_mob == "Détail Communal" else sel_metros_mob
+            
+            for target in targets:
+                coms = [target] if mode_mob == "Détail Communal" else COMMUNES[target]
+                
+                f_in  = int(df_mob_filtered[df_mob_filtered[col_dest].isin(coms)]["flux"].sum())
+                f_out = int(df_mob_filtered[df_mob_filtered[col_orig].isin(coms)]["flux"].sum())
+                solde = f_in - f_out
+                
+                entities_mob.append({
+                    "name": target, 
+                    "in": f_in, 
+                    "out": f_out, 
+                    "solde": solde
+                })
+                
             df_plot_mob = pd.DataFrame(entities_mob)
 
             # ── Affichage Principal ───────────────────────────────────────────
@@ -1903,12 +1920,15 @@ if vue == "Démographie":
                 kpi_cols = st.columns(len(df_plot_mob))
                 for i, row in df_plot_mob.iterrows():
                     color_solde = "#2ecc71" if row["solde"] >= 0 else "#e74c3c"
+                    # Formatage français : +20 157
+                    val_formatee = f"{row['solde']:+,d}".replace(",", " ")
+                    
                     with kpi_cols[i]:
                         st.markdown(f"""
                         <div style='display: flex; flex-direction: row; align-items: stretch; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background: #fff; min-height: 80px; border-left: 6px solid #1a7a4a;'>
                             <div style='padding: 10px 16px; display: flex; flex-direction: column; justify-content: center;'>
                                 <div style='font-size:11px; font-weight:700; letter-spacing:0.08em; color:#666; text-transform:uppercase;'>{row['name']}</div>
-                                <div style='font-size:24px; font-weight:bold; color:#111;'>{int(row['solde']):+,d}</div>
+                                <div style='font-size:24px; font-weight:bold; color:#111;'>{val_formatee}</div>
                                 <div style='color:{color_solde}; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;'>SOLDE</div>
                             </div>
                         </div>
@@ -1919,7 +1939,7 @@ if vue == "Démographie":
                 c1, c2 = st.columns(2)
                 with c1:
                     st.markdown(
-                        "#####  Volume des échanges",
+                        "##### 📊 Volume des échanges",
                         help="Compare les entrées (foncé) et les sorties (clair). Si les deux barres sont hautes, la commune est un pôle d'échange majeur."
                     )
                     fig_vol = go.Figure()
@@ -1931,7 +1951,7 @@ if vue == "Démographie":
 
                 with c2:
                     st.markdown(
-                        "#####  Performance nette",
+                        "##### 📈 Performance nette",
                         help="Visualisation directe du gain ou de la perte. Utile pour classer les territoires du plus attractif au moins attractif."
                     )
                     fig_net = px.bar(df_plot_mob, x="name", y="solde", color="solde", color_continuous_scale="RdYlGn")
@@ -1940,14 +1960,14 @@ if vue == "Démographie":
                                           xaxis=dict(title="Territoire", showgrid=False), yaxis=dict(title="Solde (entrées - sorties)", showgrid=True, gridcolor="#eeeeee"))
                     st.plotly_chart(fig_net, use_container_width=True)
 
-                with st.expander("Comment interpréter ces deux graphiques ?"):
+                with st.expander("❓ Comment interpréter ces deux graphiques ?"):
                     st.write("""
-                    - **Si le volume est élevé mais le solde est proche de zéro** : La commune "brasse" beaucoup de monde (ex: ville étape) mais ne retient pas de population.
+                    - **Si le volume est élevé mais le solde est proche de zéro** : La commune "brasse" beaucoup de monde (ex: ville étape ou pôle de transit) mais ne retient pas de population.
                     - **Si le solde est très positif** : Le territoire est un 'aspirateur'. En résidentiel, cela signifie qu'il est très demandé. En professionnel, qu'il est un moteur d'emploi régional.
                     """)
 
                 st.markdown("---")
-                st.markdown("####  Analyse géographique des partenaires", help=txt_aide_geo)
+                st.markdown("#### 🌍 Analyse géographique des flux", help=txt_aide_geo)
 
                 if mode_mob == "Détail Communal" and len(sel_communes_mob) > 1:
                     st.info(f"**Analyse de groupe** : Les graphiques ci-dessous affichent les partenaires cumulés pour : {', '.join(sel_communes_mob)}.")
@@ -1957,61 +1977,41 @@ if vue == "Démographie":
                 # --- TOP 10 PROVENANCES (CUMULÉ) ---
                 with col_l:
                     st.markdown(f"<h5 style='text-align:center;'> Top 10 provenances ({label_in})</h5>", unsafe_allow_html=True)
-                    
-                    # On filtre les flux arrivant dans la sélection
                     raw_in = df_mob_filtered[df_mob_filtered[col_dest].isin(coms_selection)]
-                    # On regroupe par origine pour cumuler les flux
                     grouped_in = raw_in.groupby(col_orig)["flux"].sum().reset_index()
                     top_in = grouped_in.nlargest(10, "flux")
-                    
                     if not top_in.empty:
                         fig_in = px.bar(top_in, x="flux", y=col_orig, orientation="h", color_discrete_sequence=[color_in], text_auto=".0f")
-                        fig_in.update_layout(yaxis=dict(categoryorder="total ascending", title="Commune d'origine"), xaxis=dict(title="Nombre de flux"), height=350, margin=dict(t=20, b=60))
+                        fig_in.update_layout(yaxis=dict(categoryorder="total ascending", title=""), xaxis=dict(title="Nombre de flux"), height=350)
                         st.plotly_chart(fig_in, use_container_width=True)
 
                 # --- TOP 10 DESTINATIONS (CUMULÉ) ---
                 with col_r:
                     st.markdown(f"<h5 style='text-align:center;'> Top 10 destinations ({label_out})</h5>", unsafe_allow_html=True)
-                    
-                    # On filtre les flux partant de la sélection
                     raw_out = df_mob_filtered[df_mob_filtered[col_orig].isin(coms_selection)]
-                    # On regroupe par destination pour cumuler les flux
                     grouped_out = raw_out.groupby(col_dest)["flux"].sum().reset_index()
                     top_out = grouped_out.nlargest(10, "flux")
-                    
                     if not top_out.empty:
                         fig_out = px.bar(top_out, x="flux", y=col_dest, orientation="h", color_discrete_sequence=[color_out], text_auto=".0f")
-                        fig_out.update_layout(yaxis=dict(categoryorder="total ascending", title="Commune de destination"), xaxis=dict(title="Nombre de flux"), height=350, margin=dict(t=20, b=60))
+                        fig_out.update_layout(yaxis=dict(categoryorder="total ascending", title=""), xaxis=dict(title="Nombre de flux"), height=350)
                         st.plotly_chart(fig_out, use_container_width=True)
 
-                with st.expander(" Guide d'interprétation des flux cumulés"):
+                with st.expander("📘 Guide d'interprétation des flux cumulés"):
                     nom_territoire = "votre sélection" if len(coms_selection) > 1 else coms_selection[0]
-                    
                     st.markdown(f"""
                     ### Comment lire ces graphiques ?
                     Lorsque vous analysez **{nom_territoire}**, l'outil regroupe les données pour offrir une vision stratégique.
                     
-                    
-                    ####  1. Le principe du "Territoire Unique"
+                    #### 1. Le principe du "Territoire Unique"
                     L'outil trace une frontière globale autour de votre sélection. Toutes les communes choisies sont traitées comme un seul bloc cohérent. 
-                    * **L'objectif :** Ne plus regarder les détails ville par ville, mais comprendre la dynamique globale du bassin de vie.
                     
-                    ####  2. Fusion et Cumul des données
+                    #### 2. Fusion et Cumul des données
                     Les flux venant d'une même ville vers différentes communes de votre zone sont **additionnés**.
                     * *Exemple :* Si 100 personnes de Lyon vont à Grenoble et 50 à Meylan, vous verrez une seule barre **"Lyon : 150"**.
-                    * **L'intérêt :** Vous identifiez immédiatement les partenaires qui ont la plus grosse influence réelle sur votre territoire.
                     
-                    ####  3. Pertinence de l'analyse
-                    * **Analyse Métropolitaine :** Idéale pour voir les grandes tendances et éviter les résultats trop "hachés".
-                    * **Analyse Communale :** Utile pour un zoom précis, mais attention aux petits chiffres qui peuvent varier brusquement d'une année à l'autre.
-                    
-                    ####  4. Filtrage des flux internes
-                    Les déplacements effectués **entre** les communes que vous avez sélectionnées sont masqués.
-                    * *Pourquoi ?* Pour ne pas "polluer" le graphique. On se concentre uniquement sur ce qui entre ou sort de votre territoire (échanges avec l'extérieur).
-                    
-                    ** Résumé :** Une barre longue et pleine signifie que la ville partenaire est un moteur majeur pour **l'ensemble** de votre zone sélectionnée.
-                    """)
-                    
+                    #### 3. Filtrage des flux internes
+                    Les déplacements effectués **entre** les communes que vous avez sélectionnées sont masqués pour se concentrer uniquement sur les échanges avec l'extérieur.
+                    """) 
 # ==============================================================================
 # ONGLET 4 — MÉNAGES
 # ==============================================================================
@@ -2585,8 +2585,8 @@ if vue == "Démographie":
             <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px;'>
                 <strong>Origine des données :</strong> Ces chiffres sont issus des recensements de l'<b>INSEE</b>. 
                 Ils recensent la <b>population active de 25 à 54 ans</b>, c'est-à-dire les personnes en âge de travailler qui occupent un emploi ou en recherchent un. 
-                Cette tranche d'âge est privilégiée car elle représente le cœur stable du marché du travail, après la fin des études et avant les départs en retraite.
-                A noter, quand vous choisissez de comparer deux territoires (métropoles et communes), un graphique d'indice de spécialisation s'affiche en plus.
+                Cette tranche d'âge est privilégiée car elle représente le cœur stable du marché du travail.
+                A noter, quand vous choisissez de comparer deux territoires, un graphique d'indice de spécialisation s'affiche en plus.
             </div>
             """, unsafe_allow_html=True)
 
@@ -2601,7 +2601,7 @@ if vue == "Démographie":
                     mode_analyse = st.radio("",
                         ["Comparaison Métropoles", "Détail Communal"],
                         key="csp_mode", horizontal=True,
-                        help="Métropoles : Compare les grandes agglomérations. Détail Communal : Zoom sur les communes grenobloises.")
+                        help="Choisissez de comparer les grandes métropoles entre elles ou de zoomer sur les communes de la métropole grenobloise.")
 
                 csp_row1_c1, csp_row1_c2 = st.columns(2)
                 with csp_row1_c1:
@@ -2609,7 +2609,7 @@ if vue == "Démographie":
                         "Thématique",
                         ["Secteurs d'activité (CSP)", "Niveau de diplôme"],
                         key="csp_theme",
-                        help="Choisissez si vous voulez comparer les métiers (CSP) ou le niveau d'études (Diplômes)."
+                        help="Secteurs d'activité (CSP) : catégories socio-professionnelles. Niveau de diplôme : niveau d'études atteint."
                     )
                 
                 current_df_csp  = df_csp_new if theme_analyse == "Secteurs d'activité (CSP)" else df_dip_new
@@ -2617,26 +2617,26 @@ if vue == "Démographie":
 
                 annees_csp = sorted(current_df_csp["ANNEE"].dropna().unique(), reverse=True) if not current_df_csp.empty else []
                 with csp_row1_c2:
-                    sel_annee_csp = st.selectbox("Année", annees_csp, key="csp_annee",
-                                                 help="Sélectionnez l'année du recensement INSEE.") if annees_csp else None
+                    sel_annee_csp = st.selectbox("Année", annees_csp, key="csp_annee", 
+                                                 help="Sélectionnez l'année de référence du recensement.") if annees_csp else None
 
                 if mode_analyse == "Détail Communal":
                     clist = sorted(COMMUNES["Grenoble"])
                     sel_communes_csp = st.multiselect("Communes", clist, default=["Grenoble", "Meylan"], 
-                                                     key="csp_communes", help="Sélectionnez deux entités ou plus pour comparer leurs profils.")
+                                                     key="csp_communes", help="Sélectionnez les communes à analyser.")
                     entities_names = sel_communes_csp
                 else:
                     sel_metros_csp = st.multiselect("Métropoles", TOUTES, default=["Grenoble", "Rouen"], 
-                                                   key="csp_metros", help="Comparez Grenoble aux autres grandes métropoles françaises.")
+                                                   key="csp_metros", help="Sélectionnez les métropoles à comparer.")
                     entities_names = sel_metros_csp
 
                 sel_cats = st.multiselect("Catégories à afficher",
                                           options=list(current_map_csp.values()),
                                           default=list(current_map_csp.values()),
                                           key="csp_cats",
-                                          help="Cochez ou décochez les catégories pour affiner les graphiques.")
+                                          help="Filtrez les catégories pour simplifier la lecture des graphiques.")
 
-            # ── Logique de calcul et Affichage ───────────────────────────────
+            # ── Logique de calcul ───────────────────────────────────────────
             if sel_annee_csp:
                 df_year_csp = current_df_csp[current_df_csp["ANNEE"] == sel_annee_csp]
                 entities_csp = []
@@ -2657,83 +2657,81 @@ if vue == "Démographie":
                 if entities_csp and sel_cats:
                     st.markdown("---")
                     
-                    # ── INDICATEURS (KPI) - Bordure Verte ────────────────────
+                    # ── INDICATEURS (KPI) ────────────────────
                     kpi_cols_csp = st.columns(len(entities_csp))
                     for i, entity in enumerate(entities_csp):
                         total_actifs = entity["data"][sel_cats].sum()
+                        val_formatee = f"{int(total_actifs):,d}".replace(",", " ")
                         with kpi_cols_csp[i]:
                             st.markdown(f"""
                             <div style='display: flex; flex-direction: row; align-items: stretch; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background: #fff; min-height: 80px; border-left: 6px solid #1a7a4a;'>
                                 <div style='padding: 10px 16px; display: flex; flex-direction: column; justify-content: center;'>
                                     <div style='font-size:11px; font-weight:700; letter-spacing:0.08em; color:#666; text-transform:uppercase;'>{entity['name']}</div>
-                                    <div style='font-size:24px; font-weight:bold; color:#111;'>{int(total_actifs):,}</div>
+                                    <div style='font-size:24px; font-weight:bold; color:#111;'>{val_formatee}</div>
                                     <div style='color:#1a7a4a; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;'>Actifs 25-54 ans</div>
                                 </div>
                             </div>
                             """, unsafe_allow_html=True)
 
-                    st.markdown("---")
-                    
                     # ── Graphiques de base ───────────────────────────────────
                     c1, c2 = st.columns(2)
                     with c1:
-                        st.subheader("Répartition en volume", help="Affiche le nombre réel de personnes dans chaque catégorie.")
+                        st.subheader("Répartition en volume", help="Nombre réel de personnes par catégorie.")
                         fig_bar_csp = go.Figure()
                         for ent in entities_csp:
                             fig_bar_csp.add_trace(go.Bar(x=sel_cats, y=ent["data"][sel_cats], name=ent["name"]))
-                        fig_bar_csp.update_layout(barmode="group", height=400, legend=dict(orientation="h", y=1.2))
+                        fig_bar_csp.update_layout(barmode="group", height=400, margin=dict(t=20, b=20))
                         st.plotly_chart(fig_bar_csp, use_container_width=True)
 
                     with c2:
-                        st.subheader("Profil structurel (%)", help="Affiche la 'forme' du territoire (composition relative).")
+                        st.subheader("Profil structurel (%)", help="Part relative de chaque catégorie (indépendamment de la taille du territoire).")
                         fig_radar_csp = go.Figure()
                         for ent in entities_csp:
                             v = ent["data"][sel_cats]
                             pct = (v / v.sum() * 100).fillna(0)
                             fig_radar_csp.add_trace(go.Scatterpolar(r=list(pct) + [pct.iloc[0]], theta=sel_cats + [sel_cats[0]], fill="toself", name=ent["name"]))
-                        fig_radar_csp.update_layout(height=400, legend=dict(orientation="h", y=-0.2))
+                        fig_radar_csp.update_layout(height=400, margin=dict(t=50, b=50))
                         st.plotly_chart(fig_radar_csp, use_container_width=True)
-
-                    with st.expander("Comment interpréter ces graphiques ?"):
-                        st.write("""
-                        - **Le volume (Barres)** : Il montre la force de frappe réelle (nombre de personnes).
-                        - **Le profil (Radar)** : Il ignore la taille pour comparer la structure. Si une pointe dépasse, cette catégorie est proportionnellement plus importante.
-                        """)
 
                     # ── INDICE DE SPÉCIALISATION (Si 2 entités) ──────────────
                     if len(entities_csp) == 2:
-                        st.markdown("---")
-                        st.markdown("### Zoom : Indice de spécialisation comparative")
+                        t1_name = entities_names[0]
+                        t2_name = entities_names[1]
                         
-                        v1, v2 = entities_csp[0]["data"][sel_cats], entities_csp[1]["data"][sel_cats]
-                        t1, t2 = v1.sum(), v2.sum()
-                        spec = ((v1 / t1) / (v2 / t2) * 100).fillna(100)
+                        st.markdown("---")
+                        st.markdown(f"### 🎯 Guide de lecture : Spécialisation du Territoire 1 ({t1_name}) face au Territoire 2 ({t2_name})")
+                        
+                        st.markdown(f"""
+                        <div style='background-color: #f8f9fa; padding: 18px; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 20px;'>
+                            <h5 style='margin-top:0;'>💡 Comment lire ce graphique et ce tableau ?</h5>
+                            <p style='font-size: 14px;'>L'indice compare si une catégorie est plus ou moins présente en <b>proportion</b> dans le Territoire 1 par rapport au Territoire 2.</p>
+                            <ul style='font-size: 14px;'>
+                                <li><b>Indice > 100 :</b> La catégorie est <b>surreprésentée</b> dans le Territoire 1 ({t1_name}). Elle y pèse plus lourd qu'ailleurs.</li>
+                                <li><b>Indice = 100 :</b> Équilibre parfait. La catégorie a le même poids relatif dans les deux zones.</li>
+                                <li><b>Indice < 100 :</b> La catégorie est <b>sous-représentée</b> dans le Territoire 1. Cela signifie qu'elle est proportionnellement plus importante dans le Territoire 2 ({t2_name}).</li>
+                            </ul>
+                            <p style='font-size: 14px;'><b>Important :</b> Ne regardez pas que l'indice ! Une forte surreprésentation sur un petit nombre de personnes (voir colonne <i>Eff.</i> du tableau) a moins d'impact qu'une légère spécialisation sur des milliers d'actifs.</p>
+                        </div>
+                        """, unsafe_allow_html=True)
 
-                        with st.expander("Qu'est-ce que l'Indice de Spécialisation ?"):
-                            st.write(f"""
-                            Cet indice permet de comparer **la structure** de deux territoires en ignorant leur taille.
-                            
-                            **Calcul :** On compare le poids d'une catégorie à {entities_names[0]} par rapport à son poids à {entities_names[1]}.
-                            
-                            **Lecture :**
-                            - **À 100 (Ligne noire) :** Équilibre. La catégorie pèse le même poids dans les deux zones.
-                            - **Au-dessus de 100 (Vert) :** **Spécialisation**. La catégorie est plus présente proportionnellement chez {entities_names[0]}.
-                            - **En-dessous de 100 (Rouge) :** Sous-représentation par rapport à la zone de comparaison.
-                            """)
+                        v1, v2 = entities_csp[0]["data"][sel_cats], entities_csp[1]["data"][sel_cats]
+                        t1_total, t2_total = v1.sum(), v2.sum()
+                        spec = ((v1 / t1_total) / (v2 / t2_total) * 100).fillna(100)
 
                         fig_spec = px.bar(x=sel_cats, y=spec, color=spec, color_continuous_scale="RdYlGn", 
-                                          title=f"Spécialisation de {entities_names[0]} / {entities_names[1]}")
+                                          title=f"Spécialisation : {t1_name} / {t2_name}")
                         fig_spec.add_hline(y=100, line_dash="dash", line_color="black")
+                        fig_spec.update_layout(height=450, coloraxis_showscale=False, yaxis_title="Indice (Base 100)")
                         st.plotly_chart(fig_spec, use_container_width=True)
 
-                        with st.expander("Voir le tableau de données complet"):
+                        with st.expander("📊 Voir le tableau récapitulatif (Effectifs et Indice)", expanded=True):
                             table_df = pd.DataFrame({
                                 "Catégorie": sel_cats,
-                                f"{entities_csp[0]['name']} (Eff.)": [int(v1[c]) for c in sel_cats],
-                                f"{entities_csp[1]['name']} (Eff.)": [int(v2[c]) for c in sel_cats],
-                                "Indice spécialisation": [round(spec[c], 1) for c in sel_cats],
+                                f"{t1_name} (Territoire 1 - Eff.)": [f"{int(v1[c]):,d}".replace(",", " ") for c in sel_cats],
+                                f"{t2_name} (Territoire 2 - Eff.)": [f"{int(v2[c]):,d}".replace(",", " ") for c in sel_cats],
+                                "Indice spécialisation": [int(spec[c]) for c in sel_cats],
                             })
-                            st.dataframe(table_df, use_container_width=True) 
+                            st.dataframe(table_df.set_index("Catégorie"), use_container_width=True)
 # ==============================================================================
 # SOLIDARITÉ & CITOYENNETÉ
 # ==============================================================================
