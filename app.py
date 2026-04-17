@@ -209,10 +209,10 @@ DR24_MAP = {"Grenoble": 38, "Rennes": 35, "Rouen": 76, "Saint-Étienne": 42, "Mo
 # Palette spécifique appliquée aux 5 métropoles 
 COULEURS = {
     "Montpellier": "#77818C",
-    "Saint-Étienne": "#596C91",
+    "Saint-Étienne": "#A2A6AE",
     "Grenoble": "#FF584D",
-    "Rennes": "#9EBDE1",
-    "Rouen": "#CFCDF4",
+    "Rennes": "#C5C9CE",
+    "Rouen": "#E8E8EB",
 }
 
 TOUTES = list(COMMUNES.keys())
