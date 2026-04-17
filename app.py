@@ -519,8 +519,8 @@ def kpi_card_left(title, value, subtitle="", accent="#1a7a4a"):
 # 5. EN-TÊTE
 # ──────────────────────────────────────────────────────────────────────────────
 st.markdown(
-    "<h1 style='color:#1C3A27;font-size:2rem;margin-bottom:2px'> Tableau de bord concernant la métropole de Grenoble</h1>"
-    "<p style='color:#5A8A6A;margin-bottom:20px'>Analyse intercommunal et intermétropole</p>",
+    "<h1 style='color:#1C3A27;font-size:2rem;margin-bottom:2px'>Observatoire de la métropole de Grenoble : Profils internes et rayonnement métropolitain</h1>"
+    "<p style='color:#5A8A6A;margin-bottom:20px'>Analyse intercommunale et intermétropoles</p>",
     unsafe_allow_html=True,
 )
 
