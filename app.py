@@ -2822,8 +2822,20 @@ if vue == "Solidarité et citoyenneté":
     st.markdown('<p class="section-header">Solidarité & citoyenneté</p>', unsafe_allow_html=True)
     s1, s2, s3, s4, s5 = st.tabs(["🤝 Solidarité", "🎓 Éducation", "🏥 Santé", "🗳️ Participation", "💶 Revenus & pauvreté"])
 
+    # --- Fonction utilitaire locale pour harmoniser les cartes KPI ---
+    def render_solidarite_kpi(title, value, subtitle, border_color="#1e5631"):
+        return f"""
+        <div style='display: flex; flex-direction: row; align-items: stretch; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background: #fff; min-height: 80px; border-left: 6px solid {border_color}; margin-bottom: 10px;'>
+            <div style='padding: 10px 16px; display: flex; flex-direction: column; justify-content: center; width: 100%;'>
+                <div style='font-size:11px; font-weight:700; letter-spacing:0.08em; color:#666; text-transform:uppercase;'>{title}</div>
+                <div style='font-size:24px; font-weight:bold; color:#111; margin: 2px 0;'>{value}</div>
+                <div style='color:{border_color}; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;'>{subtitle}</div>
+            </div>
+        </div>
+        """
+
     # ──────────────────────────────────────────────────────────────────────────
-    # ONGLET SOLIDARITÉ - CAF
+    # ONGLET 1 - SOLIDARITÉ (CAF)
     # ──────────────────────────────────────────────────────────────────────────
     with s1:
         if df_caf is None or df_caf.empty:
@@ -2834,21 +2846,21 @@ if vue == "Solidarité et citoyenneté":
                 st.error("Colonnes Annee / Agglomeration manquantes.")
             else:
                 ALL_METRIC_LABELS = {
-                    "Nombre foyers NDUR":        "Foyers - Toutes aides",
-                    "Nombre personnes NDUR":     "Personnes - Toutes aides",
-                    "Montant total NDUR":        "Montant total (€) - Toutes aides",
-                    "Nombre foyers NDURPAJE":    "Foyers - PAJE",
-                    "Nombre personnes NDURPAJE": "Personnes - PAJE",
-                    "Montant total NDURPAJE":    "Montant (€) - PAJE",
-                    "Nombre foyers NDUREJ":      "Foyers - Aide jeunes enfants",
-                    "Nombre personnes NDUREJ":   "Personnes - Aide jeunes enfants",
-                    "Montant total NDUREJ":      "Montant (€) - Aide jeunes enfants",
-                    "Nombre foyers NDURAL":      "Foyers - Allocation logement",
-                    "Nombre personnes NDURAL":   "Personnes - Allocation logement",
-                    "Montant total NDURAL":      "Montant (€) - Allocation logement",
-                    "Nombre foyers NDURINS":     "Foyers - Insertion sociale",
-                    "Nombre personnes NDURINS":  "Personnes - Insertion sociale",
-                    "Montant total NDURINS":     "Montant (€) - Insertion sociale",
+                    "Nombre foyers NDUR": "Foyers aidés (toutes aides)",
+                    "Nombre personnes NDUR": "Personnes concernées (toutes aides)",
+                    "Montant total NDUR": "Montant total versé (€)",
+                    "Nombre foyers NDURPAJE": "Foyers aidés – Jeunes enfants",
+                    "Nombre personnes NDURPAJE": "Personnes concernées – Jeunes enfants",
+                    "Montant total NDURPAJE": "Montant versé – Jeunes enfants (€)",
+                    "Nombre foyers NDUREJ": "Foyers aidés – Enfance & jeunesse",
+                    "Nombre personnes NDUREJ": "Personnes concernées – Enfance & jeunesse",
+                    "Montant total NDUREJ": "Montant versé – Enfance & jeunesse (€)",
+                    "Nombre foyers NDURAL": "Foyers aidés – Logement",
+                    "Nombre personnes NDURAL": "Personnes concernées – Logement",
+                    "Montant total NDURAL": "Montant versé – Logement (€)",
+                    "Nombre foyers NDURINS": "Foyers aidés – Insertion",
+                    "Nombre personnes NDURINS": "Personnes concernées – Insertion",
+                    "Montant total NDURINS": "Montant versé – Insertion (€)",
                 }
                 available_metrics = {k: v for k, v in ALL_METRIC_LABELS.items() if k in df_caf.columns}
                 if not available_metrics:
@@ -2860,10 +2872,9 @@ if vue == "Solidarité et citoyenneté":
                     agglos_caf = sorted(df_caf["Agglomeration"].dropna().unique())
                     gre_agglo = next((a for a in agglos_caf if "Grenoble" in a), "Grenoble Alpes Métropole")
 
-                    # ── Filtres ───────────────────────────────────────────────────────────────
+                    # ── Filtres ──
                     with st.container():
                         filter_bar("Filtres - Solidarité CAF")
-                        
                         f1, f2 = st.columns([1, 3])
                         with f1:
                             filter_row_label("Niveau géographique")
@@ -2884,10 +2895,9 @@ if vue == "Solidarité et citoyenneté":
                             metric_key = st.selectbox("Indicateur", list(available_metrics.keys()), format_func=lambda k: available_metrics[k], index=0, key="caf_metric")
                         with c2:
                             year_caf = st.selectbox("Année", years_caf, index=len(years_caf)-1, key="caf_year")
-                        
                         st.markdown('</div>', unsafe_allow_html=True)
 
-                    # ── Filtrage ──────────────────────────────────────────────────────────────
+                    # ── Filtrage ──
                     geo_col = "Agglomeration" if mode_caf == "Comparaison Métropoles" else "Nom_Commune"
                     is_metro = (mode_caf == "Comparaison Métropoles")
                     
@@ -2907,32 +2917,23 @@ if vue == "Solidarité et citoyenneté":
                         nb_entites = df_fil[geo_col].nunique()
                         max_entite = df_fil.groupby(geo_col)[metric_key].sum().idxmax()
                         
-                        # ── KPIs ──────────────────────────────────────────────────────────────────
+                        # ── KPIs ──
+                        st.markdown(f"#### Synthèse des allocations - {year_caf}")
                         k1, k2, k3 = st.columns(3)
-                        caf_cards = [
-                            (k1, f"Total {year_caf}", fmt(total_val), label_metric),
-                            (k2, "Métropoles" if is_metro else "Communes", nb_entites, "Unités comparées"),
-                            (k3, "Top Territoire", max_entite, "Volume le plus élevé")
-                        ]
+                        kpi_border_color = "#666" if is_metro else "#1e5631"
 
-                        for col, title, value, subtitle in caf_cards:
-                            with col:
-                                st.markdown(f"""
-                                <div style='display: flex; flex-direction: row; align-items: stretch; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background: #fff; min-height: 80px; border-left: 6px solid #1e5631;'>
-                                    <div style='padding: 10px 16px; display: flex; flex-direction: column; justify-content: center;'>
-                                        <div style='font-size:11px; font-weight:700; letter-spacing:0.08em; color:#666; text-transform:uppercase;'>{title}</div>
-                                        <div style='font-size:24px; font-weight:bold; color:#111; margin: 2px 0;'>{value}</div>
-                                        <div style='color:#888; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;'>{subtitle}</div>
-                                    </div>
-                                </div>
-                                """, unsafe_allow_html=True)
+                        with k1:
+                            suffix = " €" if "Montant" in metric_key else ""
+                            st.markdown(render_solidarite_kpi(f"Total ({year_caf})", fmt(total_val, suffix=suffix), label_metric, kpi_border_color), unsafe_allow_html=True)
+                        with k2:
+                            st.markdown(render_solidarite_kpi("Périmètre", fmt(nb_entites), "Unités comparées", kpi_border_color), unsafe_allow_html=True)
+                        with k3:
+                            st.markdown(render_solidarite_kpi("Top Territoire", max_entite, "Volume le plus élevé", kpi_border_color), unsafe_allow_html=True)
 
                         st.markdown("---")
 
-                        # ── Graphiques ────────────────────────────────────────────────────────────
+                        # ── Graphiques ──
                         c1, c2 = st.columns(2)
-                        
-                        # Couleurs dynamiques selon le mode
                         color_map = COULEURS if is_metro else None
                         color_seq = None if is_metro else px.colors.sequential.Greens_r
                         color_group = "Metropole_Key" if is_metro else geo_col
@@ -2941,42 +2942,36 @@ if vue == "Solidarité et citoyenneté":
                             df_fil["Metropole_Key"] = df_fil["Agglomeration"].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
 
                         with c1:
-                            st.markdown(f"##### Quotient familial ({year_caf})", help="Répartition des foyers selon leur tranche de revenus.")
+                            st.markdown(f"##### Quotient familial ({year_caf})", help="Répartition des foyers bénéficiaires selon leur tranche de revenus (Quotient Familial CAF).")
                             if "Quotient familial" in df_fil.columns:
                                 qf_order = ["Moins de 400 euros", "Entre 400 et 799 euros", "Entre 800 et 1199 euros", "Entre 1200 et 1599 euros", "Entre 1600 et 1999 euros", "Entre 2000 et 3999 euros", "4000 euros ou plus", "Inconnu"]
                                 qf_data = df_fil.groupby([geo_col, "Quotient familial"], as_index=False)[metric_key].sum()
                                 qf_data["QF_ord"] = pd.Categorical(qf_data["Quotient familial"], categories=qf_order, ordered=True)
+                                order_x = qf_data.groupby(geo_col)[metric_key].sum().sort_values(ascending=False).index.tolist()
                                 
-                                # Pour les métropoles, le code d'origine utilisait un dégradé de gris
                                 if is_metro:
                                     n_tranches = len(qf_order)
                                     grey_shades = [f"#{v:02x}{v:02x}{v:02x}" for v in [int(0x77 + (220 - 0x77) * i / (n_tranches - 1)) for i in range(n_tranches)]]
                                     qf_color_map = {tranche: grey_shades[j] for j, tranche in enumerate(qf_order)}
+                                    
                                     fig_qf = px.bar(qf_data.sort_values("QF_ord"), x=geo_col, y=metric_key, color="Quotient familial", color_discrete_map=qf_color_map, barmode="stack", labels={geo_col: "", metric_key: label_metric}, height=380)
                                     
-                                    # Contour rouge pour Grenoble (Spécificité Métropoles)
                                     grenoble_agglo = next((a for a in qf_data[geo_col].unique() if "Grenoble" in a), None)
                                     if grenoble_agglo:
                                         for trace in fig_qf.data:
-                                            marker_colors = []
-                                            marker_widths = []
-                                            for agglo in (trace.x if trace.x is not None else []):
-                                                if str(agglo) == str(grenoble_agglo):
-                                                    marker_colors.append("#FF584D")
-                                                    marker_widths.append(1)
-                                                else:
-                                                    marker_colors.append("#000000")
-                                                    marker_widths.append(0)
+                                            marker_colors = ["#FF584D" if str(agg) == str(grenoble_agglo) else "#000000" for agg in (trace.x if trace.x is not None else [])]
+                                            marker_widths = [1 if str(agg) == str(grenoble_agglo) else 0 for agg in (trace.x if trace.x is not None else [])]
                                             if marker_colors:
                                                 trace.marker.line.color = marker_colors
                                                 trace.marker.line.width = marker_widths
                                 else:
                                     fig_qf = px.bar(qf_data.sort_values("QF_ord"), x=geo_col, y=metric_key, color="Quotient familial", color_discrete_sequence=color_seq, barmode="stack", labels={geo_col: "", metric_key: label_metric}, height=380)
 
+                                fig_qf.update_layout(xaxis={'categoryorder': 'array', 'categoryarray': order_x}, legend=dict(orientation="h", y=-0.2))
                                 st.plotly_chart(style(fig_qf, 40), use_container_width=True)
 
                         with c2:
-                            st.markdown(f"##### Classement des territoires - {year_caf}", help="Volume total pour l'indicateur sélectionné.")
+                            st.markdown(f"##### Classement des territoires", help="Volume total pour l'indicateur sélectionné. Permet de repérer les territoires concentrant le plus d'aides.")
                             top_ent = df_fil.groupby(geo_col, as_index=False)[metric_key].sum().sort_values(by=metric_key, ascending=True if not is_metro else False)
                             
                             if is_metro:
@@ -2988,25 +2983,54 @@ if vue == "Solidarité et citoyenneté":
                             
                             st.plotly_chart(style(fig_top, 40), use_container_width=True)
 
-                        st.markdown("---")
+                        # ── Bloc de comparaison ──
+                        INDICATEURS_GLOBAUX = ["Nombre foyers NDUR", "Nombre personnes NDUR", "Montant total NDUR"]
+                        if metric_key in INDICATEURS_GLOBAUX:
+                            st.markdown("---")
+                            st.markdown(f"##### Structure détaillée de la solidarité", help="Répartition du total sélectionné par grandes catégories d'allocations.")
 
-                        st.markdown("##### Profil comparatif des aides", help="Comparaison directe des trois aides principales.")
-                        aides_f = {"Foyers insertion": "Nombre foyers NDURINS", "Foyers alloc. log.": "Nombre foyers NDURAL", "Foyers PAJE": "Nombre foyers NDURPAJE"}
-                        aides_d = {k: v for k, v in aides_f.items() if v in df_fil.columns}
+                            current_root = metric_key.split("NDUR")[0] 
+                            aides_full_map = {
+                                "Insertion (RSA, AAH...)": current_root + "NDURINS",
+                                "Logement (APL, ALS...)": current_root + "NDURAL",
+                                "Jeunes enfants (PAJE)": current_root + "NDURPAJE",
+                                "Enfance & Jeunesse": current_root + "NDUREJ"
+                            }
+                            aides_d = {label: col for label, col in aides_full_map.items() if col in df_fil.columns}
 
-                        if aides_d:
-                            bdata = df_fil.groupby(geo_col, as_index=False)[list(aides_d.values())].sum()
-                            if is_metro: bdata["Metropole_Key"] = bdata[geo_col].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
-                            
-                            bdata = bdata.rename(columns={v: k for k, v in aides_d.items()})
-                            bdata_long = bdata.melt(id_vars=[geo_col] + (["Metropole_Key"] if is_metro else []), value_vars=list(aides_d.keys()), var_name="Type d'aide", value_name="Nombre de foyers")
-                            
-                            fig_bar_comp = px.bar(bdata_long, x="Nombre de foyers", y="Type d'aide", color=color_group, color_discrete_map=color_map, color_discrete_sequence=color_seq, barmode="group", orientation="h", text_auto=".3s", labels={"Nombre de foyers": "Foyers", "Type d'aide": "", color_group: "Territoire"}, height=400)
-                            fig_bar_comp.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.05, xanchor="left", x=0, title=""), margin=dict(t=80, b=40, l=100), yaxis={"categoryorder": "total ascending"})
-                            st.plotly_chart(style(fig_bar_comp, 40), use_container_width=True)
+                            if aides_d:
+                                bdata = df_fil.groupby(geo_col, as_index=False)[list(aides_d.values())].sum()
+                                if is_metro: 
+                                    bdata["Metropole_Key"] = bdata[geo_col].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
                                 
+                                bdata = bdata.rename(columns={v: k for k, v in aides_d.items()})
+                                bdata_long = bdata.melt(
+                                    id_vars=[geo_col] + (["Metropole_Key"] if is_metro else []), 
+                                    value_vars=list(aides_d.keys()), 
+                                    var_name="Type d'aide", 
+                                    value_name="Valeur"
+                                )
+                                
+                                fig_bar_comp = px.bar(
+                                    bdata_long, x="Valeur", y="Type d'aide", color=color_group, 
+                                    color_discrete_map=color_map, color_discrete_sequence=color_seq, 
+                                    barmode="group", orientation="h", text_auto=".3s", 
+                                    labels={"Valeur": "Volume", "Type d'aide": "", color_group: "Territoire"}, height=450
+                                )
+                                fig_bar_comp.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0), margin=dict(t=80, b=40, l=150), yaxis={"categoryorder": "total ascending"})
+                                st.plotly_chart(style(fig_bar_comp, 40), use_container_width=True)
+
+                        with st.expander("💡 Guide d'interprétation - Données CAF"):
+                            st.markdown("""
+                            * **Foyers aidés** : Nombre de foyers allocataires percevant au moins une prestation de la CAF.
+                            * **Personnes concernées** : Population couverte (allocataire + conjoint + enfants + autres personnes à charge).
+                            * **Quotient familial** : Indicateur de niveau de vie calculé par la CAF (Revenus / Nombre de parts du foyer). Plus il est bas, plus le foyer est en situation de précarité.
+                            * **Aides à l'insertion** : Regroupe le RSA, la Prime d'activité et l'AAH.
+                            * **Aides au logement** : APL, ALS, ALF.
+                            """)
+
     # ──────────────────────────────────────────────────────────────────────────
-    # ONGLET ÉDUCATION - Effectifs étudiants
+    # ONGLET 2 - ÉDUCATION (Effectifs Étudiants)
     # ──────────────────────────────────────────────────────────────────────────
     with s2:
         if df_eff is None or df_eff.empty:
@@ -3018,10 +3042,9 @@ if vue == "Solidarité et citoyenneté":
             LABEL_REGROUPEMENT = {"TOTAL":"Tous types confondus","UNIV":"Universités","STS":"STS & assimilés","CPGE":"CPGE","GE":"Grandes Écoles","ING_autres":"Écoles d'ingénieurs","EC_COM":"Écoles de commerce","EC_ART":"Écoles d'art","EC_JUR":"Écoles juridiques","EC_PARAM":"Écoles paramédicales","EC_autres":"Autres écoles","INP":"INP","EPEU":"EPEU","ENS":"ENS","IUFM":"IUFM / INSPE"}
             regroupements_dispo = sorted(df_eff_w["regroupement"].dropna().unique())
 
-            # ── Filtres ───────────────────────────────────────────────────────────────
+            # ── Filtres ──
             with st.container():
                 filter_bar("Filtres - Effectifs enseignement supérieur")
-                
                 f1, f2 = st.columns([1, 3])
                 with f1:
                     filter_row_label("Niveau géographique")
@@ -3045,10 +3068,9 @@ if vue == "Solidarité et citoyenneté":
                     sel_regr = st.selectbox("Type d'établissement", regr_choices, format_func=lambda r: LABEL_REGROUPEMENT.get(r, r), index=0, key="eff_regr")
                 with c3:
                     sel_secteur = st.selectbox("Secteur", ["Tous","Établissements publics","Établissements privés"], key="eff_secteur")
-                
                 st.markdown('</div>', unsafe_allow_html=True)
 
-            # ── Filtrage ──────────────────────────────────────────────────────────────
+            # ── Filtrage ──
             geo_col = "metropole" if mode_eff == "Comparaison Métropoles" else "geo_nom"
             is_metro = (mode_eff == "Comparaison Métropoles")
 
@@ -3068,39 +3090,30 @@ if vue == "Solidarité et citoyenneté":
             if df_e_yr.empty or not sel_entites_eff:
                 st.warning("⚠️ Aucune donnée pour les filtres sélectionnés.")
             else:
-                # ── KPIs ──────────────────────────────────────────────────────────────────
+                # ── KPIs ──
                 total_eff   = int(df_e_yr["effectif"].sum())
                 nb_entites  = int(df_e_yr[geo_col].nunique())
                 max_entite  = df_e_yr.groupby(geo_col)["effectif"].sum().idxmax()
+                kpi_border_color = "#666" if is_metro else "#1e5631"
                 
+                st.markdown(f"#### Synthèse des effectifs étudiants - {annee_eff}")
                 k1, k2, k3 = st.columns(3)
-                eff_cards = [
-                    (k1, f"Effectif total ({annee_eff})", fmt(total_eff), "Étudiants inscrits"),
-                    (k2, "Métropoles" if is_metro else "Communes", nb_entites, "Unités comparées"),
-                    (k3, "Top Territoire", max_entite, "Volume le plus élevé")
-                ]
-                
-                for col, title, value, subtitle in eff_cards:
-                    with col:
-                        st.markdown(f"""
-                        <div style='display: flex; flex-direction: row; align-items: stretch; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background: #fff; min-height: 80px; border-left: 6px solid #1e5631;'>
-                            <div style='padding: 10px 16px; display: flex; flex-direction: column; justify-content: center;'>
-                                <div style='font-size:11px; font-weight:700; letter-spacing:0.08em; color:#666; text-transform:uppercase;'>{title}</div>
-                                <div style='font-size:24px; font-weight:bold; color:#111; margin: 2px 0;'>{value}</div>
-                                <div style='color:#888; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;'>{subtitle}</div>
-                            </div>
-                        </div>
-                        """, unsafe_allow_html=True)
+                with k1:
+                    st.markdown(render_solidarite_kpi(f"Effectif total", fmt(total_val), "Étudiants inscrits", kpi_border_color), unsafe_allow_html=True)
+                with k2:
+                    st.markdown(render_solidarite_kpi("Périmètre", fmt(nb_entites), "Unités comparées", kpi_border_color), unsafe_allow_html=True)
+                with k3:
+                    st.markdown(render_solidarite_kpi("Top Territoire", max_entite, "Volume le plus élevé", kpi_border_color), unsafe_allow_html=True)
                         
                 st.markdown("---")
 
-                # ── Graphiques ────────────────────────────────────────────────────────────
+                # ── Graphiques ──
                 color_map = COULEURS if is_metro else None
                 color_seq = None if is_metro else px.colors.sequential.Greens_r
 
                 c1, c2 = st.columns(2)
                 with c1:
-                    st.markdown(f"##### Effectifs étudiants - {annee_eff}", help="Comparaison du volume total d'étudiants selon les filières et secteurs sélectionnés.")
+                    st.markdown(f"##### Volume d'étudiants ({annee_eff})", help="Nombre absolu d'étudiants inscrits selon les filières et secteurs sélectionnés.")
                     by_entite = df_e_yr.groupby(geo_col, as_index=False)["effectif"].sum().sort_values("effectif", ascending=False)
                     fig_bar = px.bar(by_entite, x=geo_col, y="effectif", color=geo_col, color_discrete_map=color_map, color_discrete_sequence=color_seq, text_auto=".3s", labels={geo_col:"", "effectif":"Étudiants"}, height=380)
                     fig_bar.update_traces(textposition="outside")
@@ -3108,7 +3121,7 @@ if vue == "Solidarité et citoyenneté":
                     st.plotly_chart(style(fig_bar, 40), use_container_width=True)
                     
                 with c2:
-                    st.markdown("##### Évolution des effectifs étudiants", help="Tendance des effectifs étudiants sur l'ensemble des années disponibles.")
+                    st.markdown("##### Évolution des effectifs", help="Tendance d'évolution du nombre d'étudiants sur l'ensemble des années disponibles.")
                     evo_e = df_e.groupby(["annee", geo_col], as_index=False)["effectif"].sum().sort_values("annee")
                     fig_line = px.line(evo_e, x="annee", y="effectif", color=geo_col, color_discrete_map=color_map, color_discrete_sequence=color_seq, markers=True, labels={"annee":"Année", "effectif":"Étudiants", geo_col:"Territoire"}, height=380)
                     fig_line.update_traces(line_width=2.5, marker_size=7)
@@ -3118,7 +3131,7 @@ if vue == "Solidarité et citoyenneté":
 
                 c3, c4 = st.columns(2)
                 with c3:
-                    st.markdown(f"##### Répartition par filière ({annee_eff})", help="Poids des différents types d'établissements dans l'effectif global.")
+                    st.markdown(f"##### Répartition par filière ({annee_eff})", help="Poids relatif des différents types d'établissements dans l'effectif global du territoire.")
                     df_type = df_eff_w[df_eff_w["annee"] == annee_eff]
                     if is_metro:
                         df_type = df_type[df_type["metropole"].isin(sel_entites_eff)]
@@ -3141,7 +3154,7 @@ if vue == "Solidarité et citoyenneté":
                     st.plotly_chart(style(fig_fil, 40), use_container_width=True)
                     
                 with c4:
-                    st.markdown(f"##### Parité femmes / hommes ({annee_eff})", help="Répartition par genre des étudiants inscrits.")
+                    st.markdown(f"##### Parité Femmes / Hommes ({annee_eff})", help="Répartition par genre des étudiants inscrits.")
                     if "sexe_de_l_etudiant" in df_e_yr.columns:
                         sex_agg = df_e_yr.groupby([geo_col, "sexe_de_l_etudiant"], as_index=False)["effectif"].sum()
                         fig_sex = px.bar(sex_agg, x=geo_col, y="effectif", color="sexe_de_l_etudiant", barmode="group", color_discrete_map={"Masculin":"#2D6A4F","Feminin":"#95D5B2"}, labels={geo_col:"", "effectif":"Étudiants", "sexe_de_l_etudiant":"Genre"}, height=400)
@@ -3151,457 +3164,220 @@ if vue == "Solidarité et citoyenneté":
                 st.markdown("---")
 
                 if is_metro and "secteur_de_l_etablissement" in df_e_yr.columns:
-                    st.markdown(f"##### Public vs Privé ({annee_eff})", help="Proportion d'étudiants inscrits dans des établissements publics par rapport au privé.")
+                    st.markdown(f"##### Public vs Privé ({annee_eff})", help="Proportion d'étudiants inscrits dans le public par rapport au privé.")
                     sec_agg = df_e_yr.groupby([geo_col, "secteur_de_l_etablissement"], as_index=False)["effectif"].sum()
                     fig_sec = px.bar(sec_agg, x=geo_col, y="effectif", color="secteur_de_l_etablissement", barmode="stack", color_discrete_map={"Établissements publics":"#2D6A4F","Établissements privés":"#95D5B2"}, labels={geo_col:"", "effectif":"Étudiants", "secteur_de_l_etablissement":"Secteur"}, height=400)
                     fig_sec.update_layout(legend=dict(orientation="h", y=1.1))
                     st.plotly_chart(style(fig_sec, 40), use_container_width=True)
-                    st.markdown("---")
 
-
-        # ──────────────────────────────────────────────────────────────────────────
-        # ONGLET SANTE
-        # ──────────────────────────────────────────────────────────────────────────
-        with s3:
-            import json
-
-            GEOJSON_PATH = Path("solidarite&citoyennete/data_clean/sante/Etablissements_santé_filtre.geojson")
-            GEOJSON_METROS_PATH = Path("solidarite&citoyennete/data_clean/sante/contour_metropole.geojson")
-            GEOJSON_COMMUNES_PATH = Path("solidarite&citoyennete/data_clean/sante/contour_communes.geojson")
-
-            @st.cache_data
-            def charger_sante():
-                with open(GEOJSON_PATH, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                rows = []
-                for feat in data["features"]:
-                    p = feat["properties"]
-                    coords = feat["geometry"]["coordinates"]
-                    rows.append({
-                        "type_etab": p.get("type_etablissement", ""),
-                        "nom": p.get("nom_etablissement") or "-",
-                        "commune": p.get("DCOE_L_LIB", p.get("commune", "")),
-                        "metropole": p.get("METROPOLE", p.get("Métropole", p.get("metropole", ""))),
-                        "lon": coords[0],
-                        "lat": coords[1],
-                    })
-                return pd.DataFrame(rows)
-
-            @st.cache_data
-            def charger_geojson_metros():
-                if not GEOJSON_METROS_PATH.exists():
-                    return None
-                with open(GEOJSON_METROS_PATH, "r", encoding="utf-8") as f:
-                    return json.load(f)
-
-            @st.cache_data
-            def charger_geojson_communes():
-                if not GEOJSON_COMMUNES_PATH.exists():
-                    return None
-                with open(GEOJSON_COMMUNES_PATH, "r", encoding="utf-8") as f:
-                    return json.load(f)
-
-            df_sante = charger_sante()
-            geojson_metros = charger_geojson_metros()
-            geojson_communes = charger_geojson_communes()
-
-            TYPE_LABELS = {
-                "pharmacy": "Pharmacie",
-                "doctors": "Médecins / Soins",
-                "dentist": "Dentiste",
-                "hospital": "Hôpital",
-                "nursing_home": "EHPAD / Maison de retraite",
-                "clinic": "Clinique / Centre de santé",
-            }
-
-            TYPE_COLORS = {
-                "pharmacy": "#264653",
-                "doctors": "#2a9d8f",
-                "dentist": "#e9c46a",
-                "hospital": "#f4a261",
-                "nursing_home": "#e76f51",
-                "clinic": "#5DC26E",
-            }
-
-            metros_sante = sorted(df_sante["metropole"].dropna().unique())
-            types_sante = sorted(df_sante["type_etab"].dropna().unique())
-
-            # ── Filtres ───────────────────────────────────────────────────────────────
-            with st.container():
-                filter_bar("Filtres - Établissements de santé")
-                fs1, fs2 = st.columns([1, 3])
-                with fs1:
-                    filter_row_label("Niveau géographique")
-                with fs2:
-                    mode_sante = st.radio(
-                        "",
-                        ["Comparaison Métropoles", "Détail Communal"],
-                        key="sante_mode",
-                        horizontal=True,
-                        label_visibility="collapsed",
-                    )
-                if mode_sante == "Comparaison Métropoles":
-                    sel_metros_sante = st.multiselect(
-                        "Métropoles à comparer",
-                        metros_sante,
-                        default=metros_sante,
-                        key="sante_metros_multi",
-                    )
-                else:
-                    communes_sante_dispo = sorted(
-                        df_sante[df_sante["metropole"] == "Grenoble"]["commune"].dropna().unique()
-                    )
-                    sel_communes_sante = st.multiselect(
-                        "Communes de Grenoble",
-                        communes_sante_dispo,
-                        default=communes_sante_dispo[:5],
-                        key="sante_communes_t1",
-                    )
-                sel_types_sante = st.multiselect(
-                    "Type d'établissement",
-                    options=types_sante,
-                    default=types_sante,
-                    format_func=lambda t: TYPE_LABELS.get(t, t),
-                    key="sante_types_t1",
-                )
-                st.markdown('</div>', unsafe_allow_html=True)
-
-            # ── Filtrage du DataFrame ─────────────────────────────────────────────────
-            if mode_sante == "Comparaison Métropoles":
-                df_sf = df_sante[
-                    (df_sante["metropole"].isin(sel_metros_sante)) &
-                    (df_sante["type_etab"].isin(sel_types_sante))
-                ].copy()
-            else:
-                df_sf = df_sante[
-                    (df_sante["metropole"] == "Grenoble") &
-                    (df_sante["commune"].isin(sel_communes_sante)) &
-                    (df_sante["type_etab"].isin(sel_types_sante))
-                ].copy()
-
-            # ── KPIs ──────────────────────────────────────────────────────────────────
-            st.markdown("---")
-
-            sk1, sk2, sk3, sk4, sk5 = st.columns(5)
-
-            sante_cards = [
-                (sk1, "Total établissements", len(df_sf)),
-                (sk2, "Pharmacies", len(df_sf[df_sf["type_etab"] == "pharmacy"])),
-                (sk3, "Médecins / Soins", len(df_sf[df_sf["type_etab"] == "doctors"])),
-                (sk4, "Hôpitaux", len(df_sf[df_sf["type_etab"] == "hospital"])),
-                (sk5, "Communes couvertes", df_sf["commune"].nunique()),
-            ]
-
-            for col, title, value in sante_cards:
-                with col:
-                    st.markdown(f"""
-                    <div style='
-                        display: flex;
-                        flex-direction: row;
-                        align-items: stretch;
-                        border-radius: 8px;
-                        overflow: hidden;
-                        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-                        background: #fff;
-                        min-height: 80px;
-                        border-left: 6px solid #1e5631;
-                    '>
-                        <div style='
-                            padding: 10px 16px;
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: center;
-                        '>
-                            <div style='font-size:11px; font-weight:700; letter-spacing:0.08em; color:#666; text-transform:uppercase;'>{title}</div>
-                            <div style='font-size:24px; font-weight:bold; color:#111; margin: 2px 0;'>{value}</div>
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            st.markdown("---")
-
-            # ── Helpers zoom ──────────────────────────────────────────────────────────
-            def bbox_from_features(features):
-                lons, lats = [], []
-                for feat in features:
-                    geom = feat.get("geometry", {})
-                    t    = geom.get("type", "")
-                    if t == "Point":
-                        lons.append(geom["coordinates"][0])
-                        lats.append(geom["coordinates"][1])
-                    elif t == "Polygon":
-                        for ring in geom["coordinates"]:
-                            for c in ring:
-                                lons.append(c[0]); lats.append(c[1])
-                    elif t == "MultiPolygon":
-                        for poly in geom["coordinates"]:
-                            for ring in poly:
-                                for c in ring:
-                                    lons.append(c[0]); lats.append(c[1])
-                if not lons:
-                    return None
-                return min(lats), max(lats), min(lons), max(lons)
-
-            def zoom_from_span(span):
-                if span < 0.1: return 13
-                if span < 0.3: return 11
-                if span < 0.8: return 10
-                if span < 3: return 8
-                if span < 6: return 7
-                return 5
-
-            # ── Calcul zoom/centre depuis la bbox des contours ────────────────────────────
-            import math
-
-            def bbox_from_features(features):
-                """Retourne (lat_min, lat_max, lon_min, lon_max) depuis une liste de features GeoJSON."""
-                lons, lats = [], []
-                for feat in features:
-                    geom = feat.get("geometry", {})
-                    t = geom.get("type", "")
-                    if t == "Point":
-                        lons.append(geom["coordinates"][0]); lats.append(geom["coordinates"][1])
-                    elif t == "Polygon":
-                        for ring in geom["coordinates"]:
-                            for c in ring: lons.append(c[0]); lats.append(c[1])
-                    elif t == "MultiPolygon":
-                        for poly in geom["coordinates"]:
-                            for ring in poly:
-                                for c in ring: lons.append(c[0]); lats.append(c[1])
-                if not lons:
-                    return None
-                return min(lats), max(lats), min(lons), max(lons)
-
-            def zoom_from_bbox(bbox, map_width_px=1200, map_height_px=480, margin=1.3):
-                lat_min, lat_max, lon_min, lon_max = bbox
-                span_lat = (lat_max - lat_min) * margin
-                span_lon = (lon_max - lon_min) * margin
-                span_lat = max(span_lat, 0.01)
-                span_lon = max(span_lon, 0.01)
-                zoom_lon = math.log2(360 / span_lon) + math.log2(map_width_px / 256)
-                zoom_lat = math.log2(180 / span_lat) + math.log2(map_height_px / 256)
-                return round(min(zoom_lon, zoom_lat) - 0.5, 1)
-
-            # Choisir les features selon le mode
-            if mode_sante == "Comparaison Métropoles" and geojson_metros is not None and sel_metros_sante:
-                feats_zoom = [f for f in geojson_metros["features"]
-                            if f["properties"].get("METROPOLE") in sel_metros_sante]
-            elif mode_sante == "Détail Communal" and geojson_communes is not None and sel_communes_sante:
-                feats_zoom = [f for f in geojson_communes["features"]
-                            if f["properties"].get("DCOE_L_LIB") in sel_communes_sante]
-            else:
-                feats_zoom = []
-
-            bbox = bbox_from_features(feats_zoom)
-            if bbox:
-                lat_min, lat_max, lon_min, lon_max = bbox
-                lat_c      = (lat_min + lat_max) / 2
-                lon_c      = (lon_min + lon_max) / 2
-                zoom_level = zoom_from_bbox(bbox)
-            elif not df_sf.empty:
-                bbox_pts = bbox_from_features([
-                    {"geometry": {"type": "Point", "coordinates": [row.lon, row.lat]}}
-                    for _, row in df_sf.iterrows()
-                ])
-                lat_min, lat_max, lon_min, lon_max = bbox_pts
-                lat_c = (lat_min + lat_max) / 2
-                lon_c = (lon_min + lon_max) / 2
-                zoom_level = zoom_from_bbox(bbox_pts)
-            else:
-                lat_c, lon_c, zoom_level = 46.5, 2.5, 5
-
-            # ── Construction des layers de contours ───────────────────────────────────
-            mapbox_layers = []
-
-            if mode_sante == "Comparaison Métropoles" and geojson_metros is not None:
-                feats_filtrees = [
-                    f for f in geojson_metros["features"]
-                    if f["properties"].get("METROPOLE") in sel_metros_sante
-                ]
-                if feats_filtrees:
-                    mapbox_layers.append({
-                        "source":  {"type": "FeatureCollection", "features": feats_filtrees},
-                        "type":    "line",
-                        "color":   "#2D6A4F",
-                        "line":    {"width": 2},
-                        "opacity": 0.8,
-                    })
-
-            elif mode_sante == "Détail Communal":
-                # Contours des communes sélectionnées
-                if geojson_communes is not None:
-                    feats_communes = [
-                        f for f in geojson_communes["features"]
-                        if f["properties"].get("DCOE_L_LIB") in sel_communes_sante
-                    ]
-                    if feats_communes:
-                        mapbox_layers.append({
-                            "source": {"type": "FeatureCollection", "features": feats_communes},
-                            "type": "line",
-                            "color": "#40916C",
-                            "line": {"width": 1.5},
-                            "opacity": 0.9,
-                        })
-                # Contour global de la métropole Grenoble
-                if geojson_metros is not None:
-                    feats_grenoble = [
-                        f for f in geojson_metros["features"]
-                        if f["properties"].get("METROPOLE") == "Grenoble"
-                    ]
-                    if feats_grenoble:
-                        mapbox_layers.append({
-                            "source": {"type": "FeatureCollection", "features": feats_grenoble},
-                            "type": "line",
-                            "color": "#1B4332",
-                            "line": {"width": 2.5},
-                            "opacity": 0.6,
-                        })
-
-            # ── Carte ─────────────────────────────────────────────────────────────────
-            st.markdown("##### Carte des établissements")
-
-            if df_sf.empty:
-                st.info("Aucun établissement pour ces filtres.")
-            else:
-                fig_map = px.scatter_mapbox(
-                    df_sf,
-                    lat="lat", lon="lon",
-                    color="type_etab",
-                    color_discrete_map=TYPE_COLORS,
-                    hover_name="nom",
-                    hover_data={"commune": True, "metropole": True, "type_etab": False, "lat": False, "lon": False},
-                    labels={"type_etab": "Type", "commune": "Commune", "metropole": "Métropole"},
-                    height=480,
-                    mapbox_style="carto-positron",
-                )
-
-                for trace in fig_map.data:
-                    trace.name = TYPE_LABELS.get(trace.name, trace.name)
-
-                fig_map.update_layout(
-                    mapbox_zoom=zoom_level,
-                    mapbox_center={"lat": lat_c, "lon": lon_c},
-                    mapbox_layers=mapbox_layers,
-                    legend=dict(
-                        title="Type", orientation="v", x=0.01, y=0.99,
-                        bgcolor="rgba(255,255,255,0.85)",
-                        bordercolor="#C8E6D4", borderwidth=1,
-                        font=dict(size=11),
-                    ),
-                    margin=dict(l=0, r=0, t=0, b=0),
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    font_family="Sora",
-                )
-
-                st.plotly_chart(fig_map, use_container_width=True)
-
-            st.markdown("---")
-
-            extra1, extra2 = st.columns(2)
-
-            with extra1:
-                if mode_sante == "Comparaison Métropoles":
-                    st.markdown("###### Répartition par métropole et type")
-                    df_pivot = (
-                        df_sf.groupby(["metropole", "type_etab"])
-                            .size()
-                            .reset_index(name="count")
-                    )
-                    df_pivot["label"] = df_pivot["type_etab"].map(lambda t: TYPE_LABELS.get(t, t))
-                    fig_stack = px.bar(
-                        df_pivot,
-                        x="metropole", y="count",
-                        color="type_etab",
-                        color_discrete_map=TYPE_COLORS,
-                        text="count",
-                        labels={"metropole": "Métropole", "count": "Nombre", "type_etab": "Type"},
-                        height=380,
-                        barmode="stack",
-                    )
-                    fig_stack.update_traces(textposition="inside", textfont_size=10)
-                    for trace in fig_stack.data:
-                        trace.name = TYPE_LABELS.get(trace.name, trace.name)
-                    fig_stack.update_layout(
-                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                        font_family="Sora",
-                        xaxis=dict(tickangle=-30),
-                        yaxis=dict(gridcolor="#E8F5EE"),
-                        legend=dict(title="Type", font=dict(size=10)),
-                        margin=dict(l=10, r=10, t=10, b=60),
-                    )
-                    st.plotly_chart(style(fig_stack, 40), use_container_width=True)
-                else:
-                    st.markdown("###### Répartition par commune")
-                    df_comm = (
-                        df_sf.groupby(["commune", "type_etab"])
-                            .size()
-                            .reset_index(name="count")
-                    )
-                    df_comm["label"] = df_comm["type_etab"].map(lambda t: TYPE_LABELS.get(t, t))
-                    fig_comm = px.bar(
-                        df_comm,
-                        x="commune", y="count",
-                        color="type_etab",
-                        color_discrete_map=TYPE_COLORS,
-                        text="count",
-                        labels={"commune": "Commune", "count": "Nombre", "type_etab": "Type"},
-                        height=380,
-                        barmode="stack",
-                    )
-                    fig_comm.update_traces(textposition="inside", textfont_size=10)
-                    for trace in fig_comm.data:
-                        trace.name = TYPE_LABELS.get(trace.name, trace.name)
-                    fig_comm.update_layout(
-                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                        font_family="Sora",
-                        xaxis=dict(tickangle=-30),
-                        yaxis=dict(gridcolor="#E8F5EE"),
-                        legend=dict(title="Type", font=dict(size=10)),
-                        margin=dict(l=10, r=10, t=10, b=60),
-                    )
-                    st.plotly_chart(style(fig_comm, 40), use_container_width=True)
-
-            with extra2:
-                st.markdown("###### Part de chaque type d'établissement")
-                pie_data = df_sf.groupby("type_etab").size().reset_index(name="count")
-                pie_data["label"] = pie_data["type_etab"].map(lambda t: TYPE_LABELS.get(t, t))
-                fig_pie = px.pie(
-                    pie_data,
-                    names="label",
-                    values="count",
-                    color="type_etab",
-                    color_discrete_map=TYPE_COLORS,
-                    height=380,
-                    hole=0.4,
-                )
-                fig_pie.update_traces(
-                    textposition="outside",
-                    textinfo="percent+label",
-                    pull=[0.03] * len(pie_data),
-                )
-                fig_pie.update_layout(
-                    showlegend=False,
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    font_family="Sora",
-                    margin=dict(l=10, r=10, t=10, b=10),
-                )
-                st.plotly_chart(fig_pie, use_container_width=True)
+                with st.expander("💡 Guide d'interprétation - Éducation"):
+                    st.markdown("""
+                    * **Effectifs** : Nombre d'étudiants physiquement inscrits dans les établissements du territoire (indépendamment de leur lieu de résidence d'origine).
+                    * **CPGE** : Classes Préparatoires aux Grandes Écoles.
+                    * **STS** : Sections de Techniciens Supérieurs (BTS).
+                    * **Attractivité** : Un fort volume étudiant dynamise le territoire (logement, consommation) mais requiert des infrastructures adaptées (transports, santé).
+                    """)
 
     # ──────────────────────────────────────────────────────────────────────────
-    # ONGLET PARTICIPATION
+    # ONGLET 3 - SANTÉ
+    # ──────────────────────────────────────────────────────────────────────────
+    with s3:
+        import json
+        GEOJSON_PATH = Path("solidarite&citoyennete/data_clean/sante/Etablissements_santé_filtre.geojson")
+        GEOJSON_METROS_PATH = Path("solidarite&citoyennete/data_clean/sante/contour_metropole.geojson")
+        GEOJSON_COMMUNES_PATH = Path("solidarite&citoyennete/data_clean/sante/contour_communes.geojson")
+
+        @st.cache_data
+        def charger_sante():
+            with open(GEOJSON_PATH, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            rows = []
+            for feat in data["features"]:
+                p = feat["properties"]
+                coords = feat["geometry"]["coordinates"]
+                rows.append({
+                    "type_etab": p.get("type_etablissement", ""),
+                    "nom": p.get("nom_etablissement") or "-",
+                    "commune": p.get("DCOE_L_LIB", p.get("commune", "")),
+                    "metropole": p.get("METROPOLE", p.get("Métropole", p.get("metropole", ""))),
+                    "lon": coords[0],
+                    "lat": coords[1],
+                })
+            return pd.DataFrame(rows)
+
+        @st.cache_data
+        def charger_geojson_metros():
+            if not GEOJSON_METROS_PATH.exists(): return None
+            with open(GEOJSON_METROS_PATH, "r", encoding="utf-8") as f: return json.load(f)
+
+        @st.cache_data
+        def charger_geojson_communes():
+            if not GEOJSON_COMMUNES_PATH.exists(): return None
+            with open(GEOJSON_COMMUNES_PATH, "r", encoding="utf-8") as f: return json.load(f)
+
+        df_sante = charger_sante()
+        geojson_metros = charger_geojson_metros()
+        geojson_communes = charger_geojson_communes()
+
+        TYPE_LABELS = {"pharmacy": "Pharmacie", "doctors": "Médecins / Soins", "dentist": "Dentiste", "hospital": "Hôpital", "nursing_home": "EHPAD / M. retraite", "clinic": "Clinique / C. santé"}
+        TYPE_COLORS = {"pharmacy": "#264653", "doctors": "#2a9d8f", "dentist": "#e9c46a", "hospital": "#f4a261", "nursing_home": "#e76f51", "clinic": "#5DC26E"}
+        metros_sante = sorted(df_sante["metropole"].dropna().unique())
+        types_sante = sorted(df_sante["type_etab"].dropna().unique())
+
+        # ── Filtres ──
+        with st.container():
+            filter_bar("Filtres - Établissements de santé")
+            fs1, fs2 = st.columns([1, 3])
+            with fs1: filter_row_label("Niveau géographique")
+            with fs2:
+                mode_sante = st.radio("", ["Comparaison Métropoles", "Détail Communal"], key="sante_mode", horizontal=True, label_visibility="collapsed")
+            if mode_sante == "Comparaison Métropoles":
+                sel_metros_sante = st.multiselect("Métropoles à comparer", metros_sante, default=metros_sante, key="sante_metros_multi")
+            else:
+                communes_sante_dispo = sorted(df_sante[df_sante["metropole"] == "Grenoble"]["commune"].dropna().unique())
+                sel_communes_sante = st.multiselect("Communes de Grenoble", communes_sante_dispo, default=communes_sante_dispo[:5], key="sante_communes_t1")
+            
+            sel_types_sante = st.multiselect("Type d'établissement", options=types_sante, default=types_sante, format_func=lambda t: TYPE_LABELS.get(t, t), key="sante_types_t1")
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        # ── Filtrage ──
+        if mode_sante == "Comparaison Métropoles":
+            df_sf = df_sante[(df_sante["metropole"].isin(sel_metros_sante)) & (df_sante["type_etab"].isin(sel_types_sante))].copy()
+            kpi_border_color = "#666"
+        else:
+            df_sf = df_sante[(df_sante["metropole"] == "Grenoble") & (df_sante["commune"].isin(sel_communes_sante)) & (df_sante["type_etab"].isin(sel_types_sante))].copy()
+            kpi_border_color = "#1e5631"
+
+        st.markdown("---")
+        st.markdown(f"#### Synthèse de l'offre de soins")
+
+        # ── KPIs ──
+        sk1, sk2, sk3, sk4, sk5 = st.columns(5)
+        with sk1: st.markdown(render_solidarite_kpi("Total", fmt(len(df_sf)), "Établissements", kpi_border_color), unsafe_allow_html=True)
+        with sk2: st.markdown(render_solidarite_kpi("Pharmacies", fmt(len(df_sf[df_sf["type_etab"] == "pharmacy"])), "Officines", kpi_border_color), unsafe_allow_html=True)
+        with sk3: st.markdown(render_solidarite_kpi("Médecins", fmt(len(df_sf[df_sf["type_etab"] == "doctors"])), "Cabinets", kpi_border_color), unsafe_allow_html=True)
+        with sk4: st.markdown(render_solidarite_kpi("Hôpitaux", fmt(len(df_sf[df_sf["type_etab"] == "hospital"])), "Centres hospitaliers", kpi_border_color), unsafe_allow_html=True)
+        with sk5: st.markdown(render_solidarite_kpi("Périmètre", fmt(df_sf["commune"].nunique()), "Communes", kpi_border_color), unsafe_allow_html=True)
+
+        st.markdown("---")
+
+        # ── Helpers zoom ──
+        import math
+        def bbox_from_features(features):
+            lons, lats = [], []
+            for feat in features:
+                geom = feat.get("geometry", {})
+                t = geom.get("type", "")
+                if t == "Point":
+                    lons.append(geom["coordinates"][0]); lats.append(geom["coordinates"][1])
+                elif t == "Polygon":
+                    for ring in geom["coordinates"]:
+                        for c in ring: lons.append(c[0]); lats.append(c[1])
+                elif t == "MultiPolygon":
+                    for poly in geom["coordinates"]:
+                        for ring in poly:
+                            for c in ring: lons.append(c[0]); lats.append(c[1])
+            if not lons: return None
+            return min(lats), max(lats), min(lons), max(lons)
+
+        def zoom_from_bbox(bbox, map_width_px=1200, map_height_px=480, margin=1.3):
+            lat_min, lat_max, lon_min, lon_max = bbox
+            span_lat = max((lat_max - lat_min) * margin, 0.01)
+            span_lon = max((lon_max - lon_min) * margin, 0.01)
+            zoom_lon = math.log2(360 / span_lon) + math.log2(map_width_px / 256)
+            zoom_lat = math.log2(180 / span_lat) + math.log2(map_height_px / 256)
+            return round(min(zoom_lon, zoom_lat) - 0.5, 1)
+
+        if mode_sante == "Comparaison Métropoles" and geojson_metros is not None and sel_metros_sante:
+            feats_zoom = [f for f in geojson_metros["features"] if f["properties"].get("METROPOLE") in sel_metros_sante]
+        elif mode_sante == "Détail Communal" and geojson_communes is not None and sel_communes_sante:
+            feats_zoom = [f for f in geojson_communes["features"] if f["properties"].get("DCOE_L_LIB") in sel_communes_sante]
+        else:
+            feats_zoom = []
+
+        bbox = bbox_from_features(feats_zoom)
+        if bbox:
+            lat_min, lat_max, lon_min, lon_max = bbox
+            lat_c, lon_c, zoom_level = (lat_min + lat_max) / 2, (lon_min + lon_max) / 2, zoom_from_bbox(bbox)
+        elif not df_sf.empty:
+            bbox_pts = bbox_from_features([{"geometry": {"type": "Point", "coordinates": [row.lon, row.lat]}} for _, row in df_sf.iterrows()])
+            lat_c, lon_c, zoom_level = (bbox_pts[0] + bbox_pts[1]) / 2, (bbox_pts[2] + bbox_pts[3]) / 2, zoom_from_bbox(bbox_pts)
+        else:
+            lat_c, lon_c, zoom_level = 46.5, 2.5, 5
+
+        mapbox_layers = []
+        if mode_sante == "Comparaison Métropoles" and geojson_metros is not None:
+            feats_filtrees = [f for f in geojson_metros["features"] if f["properties"].get("METROPOLE") in sel_metros_sante]
+            if feats_filtrees:
+                mapbox_layers.append({"source": {"type": "FeatureCollection", "features": feats_filtrees}, "type": "line", "color": "#2D6A4F", "line": {"width": 2}, "opacity": 0.8})
+        elif mode_sante == "Détail Communal":
+            if geojson_communes is not None:
+                feats_communes = [f for f in geojson_communes["features"] if f["properties"].get("DCOE_L_LIB") in sel_communes_sante]
+                if feats_communes:
+                    mapbox_layers.append({"source": {"type": "FeatureCollection", "features": feats_communes}, "type": "line", "color": "#40916C", "line": {"width": 1.5}, "opacity": 0.9})
+            if geojson_metros is not None:
+                feats_grenoble = [f for f in geojson_metros["features"] if f["properties"].get("METROPOLE") == "Grenoble"]
+                if feats_grenoble:
+                    mapbox_layers.append({"source": {"type": "FeatureCollection", "features": feats_grenoble}, "type": "line", "color": "#1B4332", "line": {"width": 2.5}, "opacity": 0.6})
+
+        # ── Carte ──
+        st.markdown("##### Carte de l'offre de santé", help="Localisation des établissements extraits via OpenStreetMap.")
+        if df_sf.empty:
+            st.info("Aucun établissement pour ces filtres.")
+        else:
+            fig_map = px.scatter_mapbox(df_sf, lat="lat", lon="lon", color="type_etab", color_discrete_map=TYPE_COLORS, hover_name="nom", hover_data={"commune": True, "metropole": True, "type_etab": False, "lat": False, "lon": False}, labels={"type_etab": "Type", "commune": "Commune", "metropole": "Métropole"}, height=480, mapbox_style="carto-positron")
+            for trace in fig_map.data: trace.name = TYPE_LABELS.get(trace.name, trace.name)
+            fig_map.update_layout(mapbox_zoom=zoom_level, mapbox_center={"lat": lat_c, "lon": lon_c}, mapbox_layers=mapbox_layers, legend=dict(title="Type", orientation="v", x=0.01, y=0.99, bgcolor="rgba(255,255,255,0.85)", bordercolor="#C8E6D4", borderwidth=1, font=dict(size=11)), margin=dict(l=0, r=0, t=0, b=0), paper_bgcolor="rgba(0,0,0,0)", font_family="Sora")
+            st.plotly_chart(fig_map, use_container_width=True)
+
+        st.markdown("---")
+        extra1, extra2 = st.columns(2)
+
+        with extra1:
+            if mode_sante == "Comparaison Métropoles":
+                st.markdown("##### Densité par métropole et type", help="Nombre absolu d'établissements identifiés par type de soin.")
+                df_pivot = df_sf.groupby(["metropole", "type_etab"]).size().reset_index(name="count")
+                df_pivot["label"] = df_pivot["type_etab"].map(lambda t: TYPE_LABELS.get(t, t))
+                fig_stack = px.bar(df_pivot, x="metropole", y="count", color="type_etab", color_discrete_map=TYPE_COLORS, text="count", labels={"metropole": "Métropole", "count": "Nombre", "type_etab": "Type"}, height=380, barmode="stack")
+                fig_stack.update_traces(textposition="inside", textfont_size=10)
+                for trace in fig_stack.data: trace.name = TYPE_LABELS.get(trace.name, trace.name)
+                fig_stack.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora", xaxis=dict(tickangle=-30), legend=dict(title="Type", font=dict(size=10)))
+                st.plotly_chart(style(fig_stack, 40), use_container_width=True)
+            else:
+                st.markdown("##### Densité par commune", help="Nombre absolu d'établissements identifiés par commune.")
+                df_comm = df_sf.groupby(["commune", "type_etab"]).size().reset_index(name="count")
+                df_comm["label"] = df_comm["type_etab"].map(lambda t: TYPE_LABELS.get(t, t))
+                fig_comm = px.bar(df_comm, x="commune", y="count", color="type_etab", color_discrete_map=TYPE_COLORS, text="count", labels={"commune": "Commune", "count": "Nombre", "type_etab": "Type"}, height=380, barmode="stack")
+                fig_comm.update_traces(textposition="inside", textfont_size=10)
+                for trace in fig_comm.data: trace.name = TYPE_LABELS.get(trace.name, trace.name)
+                fig_comm.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora", xaxis=dict(tickangle=-30), legend=dict(title="Type", font=dict(size=10)))
+                st.plotly_chart(style(fig_comm, 40), use_container_width=True)
+
+        with extra2:
+            st.markdown("##### Part de chaque type d'établissement", help="Répartition relative de l'offre de soins sur les territoires sélectionnés.")
+            pie_data = df_sf.groupby("type_etab").size().reset_index(name="count")
+            pie_data["label"] = pie_data["type_etab"].map(lambda t: TYPE_LABELS.get(t, t))
+            fig_pie = px.pie(pie_data, names="label", values="count", color="type_etab", color_discrete_map=TYPE_COLORS, height=380, hole=0.4)
+            fig_pie.update_traces(textposition="outside", textinfo="percent+label", pull=[0.03] * len(pie_data))
+            fig_pie.update_layout(showlegend=False, paper_bgcolor="rgba(0,0,0,0)", font_family="Sora", margin=dict(l=10, r=10, t=10, b=10))
+            st.plotly_chart(fig_pie, use_container_width=True)
+
+        with st.expander("💡 Guide d'interprétation - Santé"):
+            st.markdown("""
+            * **Source des données** : OpenStreetMap (OSM). Ces données sont déclaratives et peuvent ne pas refléter l'intégralité de l'offre médicale (notamment les médecins libéraux isolés).
+            * **Couverture spatiale** : La carte permet d'identifier visuellement les éventuels "déserts médicaux" ou les fortes concentrations autour des pôles hospitaliers.
+            """)
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # ONGLET 4 - PARTICIPATION (Élections)
     # ──────────────────────────────────────────────────────────────────────────
     with s4:
         @st.cache_data
         def charger_elections():
-            df = pd.read_csv("solidarite&citoyennete/data_clean/participation_citoyenne/elections_2014_2020.csv")
-            return df
+            return pd.read_csv("solidarite&citoyennete/data_clean/participation_citoyenne/elections_2014_2020.csv")
 
         df_elec = charger_elections()
-
-        DEP_METRO_ELEC = {
-            "Isère": "Grenoble", "Ille-et-Vilaine": "Rennes",
-            "Seine-Maritime": "Rouen", "Loire": "Saint-Étienne", "Hérault": "Montpellier",
-        }
+        DEP_METRO_ELEC = {"Isère": "Grenoble", "Ille-et-Vilaine": "Rennes", "Seine-Maritime": "Rouen", "Loire": "Saint-Étienne", "Hérault": "Montpellier"}
         df_elec["metropole"] = df_elec["Libellé du département"].map(DEP_METRO_ELEC)
         df_elec["% Participation"] = 100 - df_elec["% Abs/Ins"]
 
@@ -3609,79 +3385,44 @@ if vue == "Solidarité et citoyenneté":
         tours_elec  = sorted(df_elec["Numéro de tour"].dropna().unique().astype(int))
         metros_elec = sorted(df_elec["metropole"].dropna().unique())
 
-        # ── Filtres ───────────────────────────────────────────────────────────────
+        # ── Filtres ──
         with st.container():
             filter_bar("Filtres - Participation citoyenne")
             fp1, fp2 = st.columns([1, 3])
-            with fp1:
-                filter_row_label("Niveau géographique")
-            with fp2:
-                mode_part = st.radio(
-                    "",
-                    ["Comparaison Métropoles", "Détail Communal"],
-                    key="part_mode",
-                    horizontal=True,
-                    label_visibility="collapsed",
-                )
+            with fp1: filter_row_label("Niveau géographique")
+            with fp2: mode_part = st.radio("", ["Comparaison Métropoles", "Détail Communal"], key="part_mode", horizontal=True, label_visibility="collapsed")
+            
             if mode_part == "Détail Communal":
-                communes_elec_dispo = sorted(
-                    df_elec[df_elec["metropole"] == "Grenoble"]["Libellé de la commune"].dropna().unique()
-                )
-                sel_communes_part = st.multiselect(
-                    "Communes de Grenoble", communes_elec_dispo,
-                    default=communes_elec_dispo[:5], key="part_communes",
-                )
+                communes_elec_dispo = sorted(df_elec[df_elec["metropole"] == "Grenoble"]["Libellé de la commune"].dropna().unique())
+                sel_communes_part = st.multiselect("Communes de Grenoble", communes_elec_dispo, default=communes_elec_dispo[:5], key="part_communes")
             else:
-                sel_metros_part = st.multiselect(
-                    "Métropoles à comparer", metros_elec, default=metros_elec, key="part_metros",
-                )
+                sel_metros_part = st.multiselect("Métropoles à comparer", metros_elec, default=metros_elec, key="part_metros")
+            
             fc1, fc2 = st.columns(2)
-            with fc1:
-                sel_annee_part = st.selectbox(
-                    "Année", annees_elec,
-                    index=len(annees_elec)-1, key="part_annee"
-                )
-            with fc2:
-                sel_tour_part = st.selectbox(
-                    "Tour", tours_elec,
-                    format_func=lambda t: f"Tour {t}", key="part_tour"
-                )
+            with fc1: sel_annee_part = st.selectbox("Année (Municipales)", annees_elec, index=len(annees_elec)-1, key="part_annee")
+            with fc2: sel_tour_part = st.selectbox("Tour", tours_elec, format_func=lambda t: f"Tour {t}", key="part_tour")
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # ── Filtrage ──────────────────────────────────────────────────────────────
-        df_elec_f = df_elec[
-            (df_elec["Année"] == sel_annee_part) &
-            (df_elec["Numéro de tour"] == sel_tour_part)
-        ]
-
+        # ── Filtrage ──
+        df_elec_f = df_elec[(df_elec["Année"] == sel_annee_part) & (df_elec["Numéro de tour"] == sel_tour_part)]
         if mode_part == "Comparaison Métropoles":
             df_elec_f = df_elec_f[df_elec_f["metropole"].isin(sel_metros_part)]
-            df_agg = df_elec_f.groupby("metropole", as_index=False).agg(
-                Inscrits=("Inscrits", "sum"),
-                Votants=("Votants", "sum"),
-                Abstentions=("Abstentions", "sum"),
-                Non_Exprimes=("Non-Exprimés", "sum"),
-                Exprimes=("Exprimés", "sum"),
-            )
+            df_agg = df_elec_f.groupby("metropole", as_index=False).agg(Inscrits=("Inscrits", "sum"), Votants=("Votants", "sum"), Abstentions=("Abstentions", "sum"), Non_Exprimes=("Non-Exprimés", "sum"), Exprimes=("Exprimés", "sum"))
+            kpi_border_color = "#666"
         else:
             df_elec_f = df_elec_f[df_elec_f["Libellé de la commune"].isin(sel_communes_part)]
-            df_agg = df_elec_f.groupby("Libellé de la commune", as_index=False).agg(
-                Inscrits=("Inscrits", "sum"),
-                Votants=("Votants", "sum"),
-                Abstentions=("Abstentions", "sum"),
-                Non_Exprimes=("Non-Exprimés", "sum"),
-                Exprimes=("Exprimés", "sum"),
-            )
+            df_agg = df_elec_f.groupby("Libellé de la commune", as_index=False).agg(Inscrits=("Inscrits", "sum"), Votants=("Votants", "sum"), Abstentions=("Abstentions", "sum"), Non_Exprimes=("Non-Exprimés", "sum"), Exprimes=("Exprimés", "sum"))
             df_agg = df_agg.rename(columns={"Libellé de la commune": "metropole"})
+            kpi_border_color = "#1e5631"
 
-        df_agg["% Participation"] = (df_agg["Votants"]    / df_agg["Inscrits"] * 100).round(2)
+        df_agg["% Participation"] = (df_agg["Votants"] / df_agg["Inscrits"] * 100).round(2)
         df_agg["% Abstention"]    = (df_agg["Abstentions"] / df_agg["Inscrits"] * 100).round(2)
         df_agg["% Non-Exprimés"]  = (df_agg["Non_Exprimes"] / df_agg["Votants"] * 100).round(2)
-        df_agg["% Exprimés"]      = (df_agg["Exprimes"]    / df_agg["Votants"] * 100).round(2)
+        df_agg["% Exprimés"]      = (df_agg["Exprimes"] / df_agg["Votants"] * 100).round(2)
 
         st.markdown("---")
 
-        # ── KPIs (même style que santé) ───────────────────────────────────────────
+        # ── KPIs ──
         if not df_agg.empty:
             total_inscrits  = int(df_agg["Inscrits"].sum())
             total_votants   = int(df_agg["Votants"].sum())
@@ -3691,42 +3432,13 @@ if vue == "Solidarité et citoyenneté":
             taux_part_global = round(total_votants / total_inscrits * 100, 1) if total_inscrits else 0
             taux_abs_global  = round(total_abstentions / total_inscrits * 100, 1) if total_inscrits else 0
             taux_non_exp_global = round(total_non_exp / total_votants * 100, 1) if total_votants else 0
-            taux_exp_global  = round(total_exprimes / total_votants * 100, 1) if total_votants else 0
 
-            kpi_data = [
-                ("Inscrits",          f"{total_inscrits:,}".replace(",", " ")),
-                ("Taux de participation", f"{taux_part_global} %"),
-                ("Taux d'abstention",  f"{taux_abs_global} %"),
-                ("Votes exprimés / votants", f"{taux_exp_global} %"),
-                ("Votes non exprimés / votants", f"{taux_non_exp_global} %"),
-            ]
-
-            kpi_cols = st.columns(5)
-            for col, (title, value) in zip(kpi_cols, kpi_data):
-                with col:
-                    st.markdown(f"""
-                    <div style='
-                        display: flex;
-                        flex-direction: row;
-                        align-items: stretch;
-                        border-radius: 8px;
-                        overflow: hidden;
-                        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-                        background: #fff;
-                        min-height: 80px;
-                        border-left: 6px solid #1e5631;
-                    '>
-                        <div style='
-                            padding: 10px 16px;
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: center;
-                        '>
-                            <div style='font-size:11px; font-weight:700; letter-spacing:0.08em; color:#666; text-transform:uppercase;'>{title}</div>
-                            <div style='font-size:24px; font-weight:bold; color:#111; margin: 2px 0;'>{value}</div>
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
+            st.markdown(f"#### Bilan Électoral - {sel_annee_part} (Tour {sel_tour_part})")
+            kpi_cols = st.columns(4)
+            with kpi_cols[0]: st.markdown(render_solidarite_kpi("Inscrits", fmt(total_inscrits), "Listes électorales", kpi_border_color), unsafe_allow_html=True)
+            with kpi_cols[1]: st.markdown(render_solidarite_kpi("Participation", f"{taux_part_global} %", "Votants / Inscrits", kpi_border_color), unsafe_allow_html=True)
+            with kpi_cols[2]: st.markdown(render_solidarite_kpi("Abstention", f"{taux_abs_global} %", "Absents / Inscrits", kpi_border_color), unsafe_allow_html=True)
+            with kpi_cols[3]: st.markdown(render_solidarite_kpi("Blancs & Nuls", f"{taux_non_exp_global} %", "Non-exprimés / Votants", kpi_border_color), unsafe_allow_html=True)
 
         st.markdown("---")
 
@@ -3734,64 +3446,23 @@ if vue == "Solidarité et citoyenneté":
             st.warning("⚠️ Aucune donnée pour les filtres sélectionnés.")
         else:
             c1, c2 = st.columns(2)
-
-            # ── Graphique 1 : Taux participation par entité ───────────────────────
             with c1:
-                st.markdown("##### Taux de participation")
-                fig_part = px.bar(
-                    df_agg.sort_values("% Participation", ascending=True),
-                    x="% Participation",
-                    y="metropole",
-                    orientation="h",
-                    color="metropole",
-                    color_discrete_map=COULEURS,
-                    text=df_agg.sort_values("% Participation", ascending=True)["% Participation"].apply(lambda v: f"{v:.1f}%"),
-                    labels={"metropole": "", "% Participation": "Participation (%)"},
-                    height=380,
-                )
+                st.markdown("##### Taux de participation", help="Pourcentage d'inscrits ayant déposé un bulletin dans l'urne (incluant les blancs et nuls).")
+                fig_part = px.bar(df_agg.sort_values("% Participation", ascending=True), x="% Participation", y="metropole", orientation="h", color="metropole", color_discrete_map=COULEURS, text=df_agg.sort_values("% Participation", ascending=True)["% Participation"].apply(lambda v: f"{v:.1f}%"), labels={"metropole": "", "% Participation": "Participation (%)"}, height=380)
                 fig_part.update_traces(textposition="outside")
-                fig_part.update_layout(
-                    showlegend=False,
-                    xaxis_range=[0, 100],
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    plot_bgcolor="rgba(0,0,0,0)",
-                    font_family="Sora",
-                    xaxis=dict(gridcolor="#E8F5EE"),
-                    margin=dict(l=10, r=40, t=40, b=10),
-                )
+                fig_part.update_layout(showlegend=False, xaxis_range=[0, 100], paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"), margin=dict(l=10, r=40, t=40, b=10))
                 st.plotly_chart(style(fig_part, 40), use_container_width=True)
 
-            # ── Graphique 2 : Qualité du vote (votes exprimés vs non-exprimés) ────
             with c2:
-                st.markdown("##### Votes exprimés vs non-exprimés")
-                df_qual = df_agg[["metropole", "% Exprimés", "% Non-Exprimés"]].melt(
-                    id_vars="metropole", var_name="Type", value_name="Taux"
-                )
-                fig_qual = px.bar(
-                    df_qual,
-                    x="metropole", y="Taux", color="Type",
-                    barmode="stack",
-                    color_discrete_map={"% Exprimés": "#2D6A4F", "% Non-Exprimés": "#95D5B2"},
-                    labels={"metropole": "", "Taux": "%", "Type": ""},
-                    height=380,
-                    text_auto=".1f",
-                )
-                fig_qual.update_layout(
-                    yaxis_range=[0, 100],
-                    legend=dict(orientation="h", y=1.1),
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    plot_bgcolor="rgba(0,0,0,0)",
-                    font_family="Sora",
-                    yaxis=dict(gridcolor="#E8F5EE"),
-                    margin=dict(l=10, r=10, t=40, b=10),
-                )
+                st.markdown("##### Qualité du vote", help="Parmi les votants, proportion de votes valides (Exprimés) vs proportion de votes blancs ou nuls (Non-Exprimés).")
+                df_qual = df_agg[["metropole", "% Exprimés", "% Non-Exprimés"]].melt(id_vars="metropole", var_name="Type", value_name="Taux")
+                fig_qual = px.bar(df_qual, x="metropole", y="Taux", color="Type", barmode="stack", color_discrete_map={"% Exprimés": "#2D6A4F", "% Non-Exprimés": "#95D5B2"}, labels={"metropole": "", "Taux": "%", "Type": ""}, height=380, text_auto=".1f")
+                fig_qual.update_layout(yaxis_range=[0, 100], legend=dict(orientation="h", y=1.1), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora", yaxis=dict(gridcolor="#E8F5EE"), margin=dict(l=10, r=10, t=40, b=10))
                 st.plotly_chart(style(fig_qual, 40), use_container_width=True)
 
             st.markdown("---")
 
-            # ── Graphique 3 : Comparaison 2014 vs 2020 par entité (delta) ─────────
-            st.markdown("##### Variation de la participation entre 2014 et 2020")
-
+            st.markdown("##### Évolution de la participation (2014 → 2020)", help="Différence en points de pourcentage de la participation entre les élections municipales de 2014 et 2020.")
             df_delta_base = df_elec[df_elec["Numéro de tour"] == sel_tour_part].copy()
             if mode_part == "Comparaison Métropoles":
                 df_delta_base = df_delta_base[df_delta_base["metropole"].isin(sel_metros_part)]
@@ -3800,9 +3471,7 @@ if vue == "Solidarité et citoyenneté":
                 df_delta_base = df_delta_base[df_delta_base["Libellé de la commune"].isin(sel_communes_part)]
                 grp_col = "Libellé de la commune"
 
-            df_delta_agg = df_delta_base.groupby(["Année", grp_col], as_index=False).agg(
-                Inscrits=("Inscrits", "sum"), Votants=("Votants", "sum")
-            )
+            df_delta_agg = df_delta_base.groupby(["Année", grp_col], as_index=False).agg(Inscrits=("Inscrits", "sum"), Votants=("Votants", "sum"))
             df_delta_agg["% Participation"] = (df_delta_agg["Votants"] / df_delta_agg["Inscrits"] * 100).round(2)
 
             df_2014 = df_delta_agg[df_delta_agg["Année"] == 2014].set_index(grp_col)["% Participation"]
@@ -3810,75 +3479,43 @@ if vue == "Solidarité et citoyenneté":
             df_delta = (df_2020 - df_2014).dropna().reset_index()
             df_delta.columns = ["entite", "Δ Participation (pts)"]
             df_delta = df_delta.sort_values("Δ Participation (pts)")
-            df_delta["couleur"] = df_delta["Δ Participation (pts)"].apply(
-                lambda v: "#e76f51" if v < 0 else "#2D6A4F"
-            )
+            df_delta["couleur"] = df_delta["Δ Participation (pts)"].apply(lambda v: "#e76f51" if v < 0 else "#2D6A4F")
 
             if not df_delta.empty:
-                fig_delta = px.bar(
-                    df_delta,
-                    x="Δ Participation (pts)",
-                    y="entite",
-                    orientation="h",
-                    color="couleur",
-                    color_discrete_map="identity",
-                    text=df_delta["Δ Participation (pts)"].apply(lambda v: f"{v:+.1f} pts"),
-                    labels={"entite": "", "Δ Participation (pts)": "Variation (pts)"},
-                    height=max(300, len(df_delta) * 50),
-                )
+                fig_delta = px.bar(df_delta, x="Δ Participation (pts)", y="entite", orientation="h", color="couleur", color_discrete_map="identity", text=df_delta["Δ Participation (pts)"].apply(lambda v: f"{v:+.1f} pts"), labels={"entite": "", "Δ Participation (pts)": "Variation (pts)"}, height=max(300, len(df_delta) * 50))
                 fig_delta.update_traces(textposition="outside")
                 fig_delta.add_vline(x=0, line_dash="dash", line_color="#888", line_width=1)
-                fig_delta.update_layout(
-                    showlegend=False,
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    plot_bgcolor="rgba(0,0,0,0)",
-                    font_family="Sora",
-                    xaxis=dict(gridcolor="#E8F5EE"),
-                    margin=dict(l=10, r=60, t=40, b=10),
-                )
+                fig_delta.update_layout(showlegend=False, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"), margin=dict(l=10, r=60, t=40, b=10))
                 st.plotly_chart(style(fig_delta), use_container_width=True)
             else:
                 st.info("Données insuffisantes pour calculer la variation.")
 
+            with st.expander("💡 Guide d'interprétation - Participation"):
+                st.markdown("""
+                * **Taux de participation** : Excellent indicateur de la santé démocratique locale et de l'intérêt porté aux enjeux de la commune.
+                * **Abstention** : En France, l'abstention aux élections municipales a fortement progressé en 2020, en partie à cause du contexte sanitaire (COVID-19). L'analyse de la variation 2014-2020 permet de mesurer ce recul sur chaque territoire.
+                * **Votes non-exprimés (Blancs et Nuls)** : Un taux anormalement élevé peut traduire une insatisfaction vis-à-vis de l'offre politique locale.
+                """)
+
     # ──────────────────────────────────────────────────────────────────────────
-    # ONGLET REVENUS & PAUVRETÉ - FiLoSoFi IRIS 2021
+    # ONGLET 5 - REVENUS & PAUVRETÉ (FiLoSoFi)
     # ──────────────────────────────────────────────────────────────────────────
     with s5:
-        st.markdown(
-            '<p class="source-note">Source : <a href="https://www.insee.fr/fr/statistiques/8268806" target="_blank">'
-            'INSEE-DGFIP-Cnaf-Cnav-CCMSA · Fichier localisé social et fiscal (FiLoSoFi) · Revenus déclarés 2021 à l\'IRIS</a></p>',
-            unsafe_allow_html=True,
-        )
-
         if df_filo is None or df_filo.empty:
             st.info("📂 Fichier `BASE_TD_FILO_IRIS_2021_DEC.xlsx` introuvable - placez-le dans `solidarite&citoyennete/data_clean/revenus/`.")
         else:
             FILO_LABELS = {
-                "DEC_MED21":    "Revenu médian (€/UC)",
-                "DEC_GI21":     "Indice de Gini",
-                "DEC_PIMP21":   "Part ménages imposés (%)",
-                "DEC_PACT21":   "Part revenus d'activité (%)",
-                "DEC_PTSA21":   "dont salaires & traitements (%)",
-                "DEC_PCHO21":   "dont indemnités chômage (%)",
-                "DEC_PBEN21":   "dont revenus non salariés (%)",
-                "DEC_PPEN21":   "Part pensions & retraites (%)",
-                "DEC_PAUT21":   "Part autres revenus (%)",
+                "DEC_MED21": "Revenu médian (€/UC)", "DEC_GI21": "Indice de Gini", "DEC_PIMP21": "Part ménages imposés (%)", "DEC_PACT21": "Part revenus d'activité (%)", "DEC_PTSA21": "dont salaires & traitements (%)", "DEC_PCHO21": "dont indemnités chômage (%)", "DEC_PBEN21": "dont revenus non salariés (%)", "DEC_PPEN21": "Part pensions & retraites (%)", "DEC_PAUT21": "Part autres revenus (%)",
             }
             filo_cols = [c for c in FILO_LABELS if c in df_filo.columns]
             metros_filo = sorted(df_filo["metropole"].dropna().unique())
 
-            # ── Filtres ───────────────────────────────────────────────────────────────
+            # ── Filtres ──
             with st.container():
                 filter_bar("Filtres - Revenus & pauvreté")
-                
                 f1, f2 = st.columns([1, 3])
-                with f1:
-                    filter_row_label("Niveau géographique")
-                with f2:
-                    mode_filo = st.radio(
-                        "", ["Comparaison Métropoles", "Détail Communal"], 
-                        key="filo_mode", horizontal=True, label_visibility="collapsed"
-                    )
+                with f1: filter_row_label("Niveau géographique")
+                with f2: mode_filo = st.radio("", ["Comparaison Métropoles", "Détail Communal"], key="filo_mode", horizontal=True, label_visibility="collapsed")
 
                 if mode_filo == "Comparaison Métropoles":
                     sel_entites_filo = st.multiselect("Métropoles", metros_filo, default=metros_filo, key="filo_metros")
@@ -3887,55 +3524,43 @@ if vue == "Solidarité et citoyenneté":
                     sel_entites_filo = st.multiselect("Communes de Grenoble", communes_gre_filo, default=communes_gre_filo[:5] if communes_gre_filo else [], key="filo_communes")
 
                 c1, c2 = st.columns(2)
-                with c1:
-                    filo_ind = st.selectbox("Indicateur principal", filo_cols, format_func=lambda c: FILO_LABELS.get(c, c), index=filo_cols.index("DEC_MED21") if "DEC_MED21" in filo_cols else 0, key="filo_ind")
-                with c2:
-                    if mode_filo == "Comparaison Métropoles":
-                        filo_niveau = st.selectbox("Niveau d'analyse", ["Commune (médiane des IRIS)", "IRIS (détail)"], key="filo_niveau")
-                
+                with c1: filo_ind = st.selectbox("Indicateur principal", filo_cols, format_func=lambda c: FILO_LABELS.get(c, c), index=filo_cols.index("DEC_MED21") if "DEC_MED21" in filo_cols else 0, key="filo_ind")
+                with c2: 
+                    if mode_filo == "Comparaison Métropoles": filo_niveau = st.selectbox("Niveau d'analyse", ["Commune (médiane des IRIS)", "IRIS (détail)"], key="filo_niveau")
                 st.markdown('</div>', unsafe_allow_html=True)
 
-            # ── Filtrage ──────────────────────────────────────────────────────────────
+            # ── Filtrage ──
             geo_col = "metropole" if mode_filo == "Comparaison Métropoles" else "LIBCOM"
             is_metro = (mode_filo == "Comparaison Métropoles")
 
-            if is_metro:
-                df_f = df_filo[df_filo["metropole"].isin(sel_entites_filo)].copy()
-            else:
-                df_f = df_filo[(df_filo["metropole"] == "Grenoble") & (df_filo["LIBCOM"].isin(sel_entites_filo))].copy()
+            if is_metro: df_f = df_filo[df_filo["metropole"].isin(sel_entites_filo)].copy()
+            else: df_f = df_filo[(df_filo["metropole"] == "Grenoble") & (df_filo["LIBCOM"].isin(sel_entites_filo))].copy()
 
             lbl = FILO_LABELS.get(filo_ind, filo_ind)
-
             st.markdown("---")
 
             if df_f.empty or not sel_entites_filo:
                 st.warning("⚠️ Aucune donnée pour les filtres sélectionnés.")
             else:
-                # ── KPIs ──────────────────────────────────────────────────────────────────
+                # ── KPIs ──
                 st.markdown(f"#### Aperçu - {lbl}")
                 kpi_cols = st.columns(len(sel_entites_filo))
                 for i, entite in enumerate(sel_entites_filo):
                     sub = df_f[df_f[geo_col] == entite][filo_ind].dropna()
                     val = sub.median() if not sub.empty else np.nan
-                    val_str = fmt(val, dec=1) if pd.notna(val) else "N/D"
+                    
+                    suffix = " €" if "Revenu" in lbl else (" %" if "Part" in lbl else "")
+                    val_str = fmt(val, suffix=suffix, dec=1) if pd.notna(val) else "N/D"
                     kpi_color = COULEURS.get(entite, "#1e5631") if is_metro else "#1e5631"
 
                     with kpi_cols[i]:
-                        st.markdown(f"""
-                        <div style='display: flex; flex-direction: row; align-items: stretch; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1); background: #fff; min-height: 80px; border-left: 6px solid {kpi_color};'>
-                            <div style='padding: 10px 16px; display: flex; flex-direction: column; justify-content: center;'>
-                                <div style='font-size:11px; font-weight:700; letter-spacing:0.08em; color:#666; text-transform:uppercase;'>{entite}</div>
-                                <div style='font-size:24px; font-weight:bold; color:#111; margin: 2px 0;'>{val_str}</div>
-                                <div style='color:{kpi_color}; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;'>{lbl}</div>
-                            </div>
-                        </div>
-                        """, unsafe_allow_html=True)
+                        st.markdown(render_solidarite_kpi(entite, val_str, lbl, kpi_color), unsafe_allow_html=True)
 
                 st.markdown("---")
 
-                # ── Graphiques spécifiques par mode ───────────────────────────────────────
+                # ── Graphiques spécifiques ──
                 if is_metro:
-                    st.markdown(f"##### Distribution par métropole", help="Boîte à moustaches montrant la dispersion des données. Permet de voir les valeurs extrêmes et la médiane pour chaque agglomération.")
+                    st.markdown(f"##### Distribution par métropole", help="Boîte à moustaches montrant la dispersion de l'indicateur sélectionné au sein des IRIS de chaque agglomération.")
                     fig_box = px.box(df_f.dropna(subset=[filo_ind]), x=geo_col, y=filo_ind, color=geo_col, color_discrete_map=COULEURS, labels={geo_col: "", filo_ind: lbl}, height=400)
                     fig_box.update_layout(showlegend=False)
                     st.plotly_chart(style(fig_box, 40), use_container_width=True)
@@ -3943,7 +3568,7 @@ if vue == "Solidarité et citoyenneté":
                     st.markdown("---")
                     c1, c2 = st.columns(2)
                     with c1:
-                        st.markdown("##### Revenu médian vs Taux de bas revenus", help="Met en relation le niveau de vie global (médiane) avec la précarité (taux de pauvreté).")
+                        st.markdown("##### Revenu médian vs Taux de bas revenus", help="Met en relation le niveau de vie global de la métropole avec sa précarité (taux de bas revenus).")
                         if "DEC_MED21" in df_f.columns and "DEC_TP6021" in df_f.columns:
                             df_sc = df_f.groupby(geo_col, as_index=False)[["DEC_MED21", "DEC_TP6021"]].median().dropna()
                             fig_sc = px.scatter(df_sc, x="DEC_MED21", y="DEC_TP6021", color=geo_col, color_discrete_map=COULEURS, text=geo_col, labels={"DEC_MED21": "Revenu médian (€/UC)", "DEC_TP6021": "Taux bas revenus (%)", geo_col: ""}, height=400)
@@ -3952,7 +3577,7 @@ if vue == "Solidarité et citoyenneté":
                             st.plotly_chart(style(fig_sc, 40), use_container_width=True)
 
                     with c2:
-                        st.markdown("##### Inégalités - Indice de Gini", help="L'indice de Gini mesure les inégalités. Plus on s'approche de 1, plus les revenus sont concentrés.")
+                        st.markdown("##### Inégalités - Indice de Gini", help="L'indice de Gini mesure les inégalités au sein du territoire. Un indice proche de 0 indique une égalité parfaite ; proche de 1, des inégalités très fortes.")
                         if "DEC_GI21" in df_f.columns:
                             df_gi = df_f.groupby(geo_col, as_index=False)["DEC_GI21"].median().dropna().sort_values("DEC_GI21", ascending=False)
                             fig_gi = px.bar(df_gi, x="DEC_GI21", y=geo_col, color=geo_col, color_discrete_map=COULEURS, orientation="h", text_auto=".3f", labels={geo_col: "", "DEC_GI21": "Indice de Gini"}, height=400)
@@ -3962,14 +3587,14 @@ if vue == "Solidarité et citoyenneté":
                 else:
                     c1, c2 = st.columns(2)
                     with c1:
-                        st.markdown(f"##### {lbl} par commune", help="Valeur médiane de l'indicateur sélectionné pour chaque commune.")
+                        st.markdown(f"##### {lbl} par commune", help="Valeur médiane de l'indicateur sélectionné pour l'ensemble des IRIS de la commune.")
                         df_bar = df_f.groupby(geo_col, as_index=False)[filo_ind].median()
                         fig_bar = px.bar(df_bar, x=geo_col, y=filo_ind, color=geo_col, color_discrete_sequence=px.colors.sequential.Greens_r, labels={geo_col: "", filo_ind: lbl}, height=400)
                         fig_bar.update_layout(showlegend=False)
                         st.plotly_chart(style(fig_bar, 40), use_container_width=True)
                         
                     with c2:
-                        st.markdown("##### Distribution au sein des quartiers (IRIS)", help="Visualisation de l'hétérogénéité d'une commune.")
+                        st.markdown(f"##### Dispersion au sein des quartiers (IRIS)", help=f"Boîte à moustaches montrant la variance du {lbl} entre les différents quartiers (IRIS) d'une même commune.")
                         df_dist = df_f.dropna(subset=[filo_ind])
                         if not df_dist.empty:
                             fig_dist = px.box(df_dist, x=geo_col, y=filo_ind, color=geo_col, color_discrete_sequence=px.colors.sequential.Greens_r, labels={geo_col: "", filo_ind: lbl}, height=400)
@@ -3978,7 +3603,7 @@ if vue == "Solidarité et citoyenneté":
 
                     st.markdown("---")
                     
-                    st.markdown("##### Profil comparatif", help="Comparaison multidimensionnelle normalisée de 0 à 100 par rapport à l'ensemble de la métropole.")
+                    st.markdown("##### Profil socio-économique comparatif", help="Comparaison multidimensionnelle normalisée de 0 à 100 par rapport aux valeurs maximales observées sur la Métropole de Grenoble.")
                     radar_ind = ["DEC_MED21", "DEC_TP6021", "DEC_GI21", "DEC_RD21", "DEC_PIMP21", "DEC_PACT21", "DEC_PPEN21"]
                     radar_avail = [c for c in radar_ind if c in df_f.columns]
                     
@@ -4000,9 +3625,13 @@ if vue == "Solidarité et citoyenneté":
                             cats = [FILO_LABELS.get(c, c).split(" (")[0][:20] for c in radar_avail]
                             fig_rad.add_trace(go.Scatterpolar(r=vals_norm + [vals_norm[0]], theta=cats + [cats[0]], fill="toself", name=comm, line_color=green_palette[idx % len(green_palette)]))
                             
-                        fig_rad.update_layout(
-                            polar=dict(radialaxis=dict(visible=True, range=[0, 100])), 
-                            height=400, paper_bgcolor="rgba(0,0,0,0)",
-                            legend=dict(orientation="v", x=1.05, y=0.5, yanchor="middle")
-                        )
+                        fig_rad.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), height=400, paper_bgcolor="rgba(0,0,0,0)", legend=dict(orientation="v", x=1.05, y=0.5, yanchor="middle"))
                         st.plotly_chart(fig_rad, use_container_width=True)
+
+                with st.expander("💡 Guide d'interprétation - Revenus & Pauvreté (FiLoSoFi)"):
+                    st.markdown("""
+                    * **Revenu médian (€/UC)** : Niveau de revenu tel que 50% de la population gagne moins et 50% gagne plus. L'UC (Unité de Consommation) permet de pondérer selon la taille du foyer.
+                    * **Indice de Gini** : Mesure synthétique des inégalités de revenus (entre 0 et 1). Plus il est proche de 1, plus les revenus sont inégalement répartis (quelques personnes concentrent l'essentiel de la richesse).
+                    * **Taux de bas revenus** : Part de la population vivant sous le seuil de bas revenus (fixé à 60% du revenu médian national).
+                    * **Structure des revenus** : Permet de voir si l'économie locale est principalement portée par les salaires de l'activité, les pensions de retraite ou les revenus non-salariés.
+                    """)
