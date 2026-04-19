@@ -3054,7 +3054,7 @@ if vue == "Solidarité et citoyenneté":
                                     )
                                     st.plotly_chart(style(fig_top, 40), use_container_width=True)
 
-                        # ── Bloc de comparaison ──
+                        # ── Bloc de comparaison mis à jour ──
                         INDICATEURS_GLOBAUX = ["Nombre foyers NDUR", "Nombre personnes NDUR", "Montant total NDUR"]
                         if metric_key in INDICATEURS_GLOBAUX:
                             st.markdown("---")
@@ -3073,6 +3073,7 @@ if vue == "Solidarité et citoyenneté":
                                 bdata = df_fil.groupby(geo_col, as_index=False)[list(aides_d.values())].sum()
                                 if is_metro:
                                     bdata["Metropole_Key"] = bdata[geo_col].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
+                                
                                 bdata = bdata.rename(columns={v: k for k, v in aides_d.items()})
                                 bdata_long = bdata.melt(
                                     id_vars=[geo_col] + (["Metropole_Key"] if is_metro else []),
@@ -3081,16 +3082,34 @@ if vue == "Solidarité et citoyenneté":
                                     value_name="Valeur"
                                 )
                                 
+                                # Correction text_auto : ,.0f affiche l'entier avec le séparateur défini dans le layout
                                 fig_bar_comp = px.bar(
                                     bdata_long, x="Valeur", y="Type d'aide", color=color_group,
                                     color_discrete_map=color_map, color_discrete_sequence=color_seq,
-                                    barmode="group", orientation="h", text_auto=".3s",
+                                    barmode="group", orientation="h", text_auto=",.0f",
                                     labels={"Valeur": "Volume", "Type d'aide": "", color_group: "Territoire"}, height=450
                                 )
+
+                                # Correction infobulle : ,.0f pour utiliser le séparateur d'espace
                                 fig_bar_comp.update_traces(
                                     hovertemplate="<b>%{y}</b><br>Volume : <b>%{x:,.0f}</b><extra></extra>"
                                 )
-                                fig_bar_comp.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0), margin=dict(t=80, b=40, l=150), yaxis={"categoryorder": "total ascending"})
+
+                                # Bordure Orange spécifique pour Grenoble
+                                if is_metro:
+                                    for trace in fig_bar_comp.data:
+                                        if "Grenoble" in trace.name:
+                                            trace.marker.line.width = 2
+                                            trace.marker.line.color = "#FF584D"
+
+                                # LE RÉGLAGE CLÉ : separators=", " (virgule puis ESPACE)
+                                fig_bar_comp.update_layout(
+                                    separators=", ", 
+                                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0), 
+                                    margin=dict(t=80, b=40, l=150), 
+                                    yaxis={"categoryorder": "total ascending"}
+                                )
+                                
                                 st.plotly_chart(style(fig_bar_comp, 40), use_container_width=True)
 
                         with st.expander("Note méthodologique"):
