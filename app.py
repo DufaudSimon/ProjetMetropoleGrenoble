@@ -2952,8 +2952,10 @@ if vue == "Solidarité et citoyenneté":
 
                         # ── Graphiques ──
                         c1, c2 = st.columns(2)
+                        PALETTE_METRO = px.colors.sequential.Greys[2:]
+                        PALETTE_COMMUNE = px.colors.sequential.Greens_r
                         color_map = COULEURS if is_metro else None
-                        color_seq = None if is_metro else px.colors.sequential.Greens_r
+                        color_seq = PALETTE_METRO if is_metro else PALETTE_COMMUNE
                         color_group = "Metropole_Key" if is_metro else geo_col
 
                         if is_metro:
@@ -2984,22 +2986,73 @@ if vue == "Solidarité et citoyenneté":
                                                 trace.marker.line.width = marker_widths
                                 else:
                                     fig_qf = px.bar(qf_data.sort_values("QF_ord"), x=geo_col, y=metric_key, color="Quotient familial", color_discrete_sequence=color_seq, barmode="stack", labels={geo_col: "", metric_key: label_metric}, height=380)
-
-                                fig_qf.update_layout(xaxis={'categoryorder': 'array', 'categoryarray': order_x}, legend=dict(orientation="h", y=-0.2))
+                                    fig_qf.update_traces(marker_line_width=0)
+                                    
+                                fig_qf.update_traces(
+                                    hovertemplate="<b>%{x}</b><br>" + label_metric + " : <b>%{y:,.0f}</b><extra></extra>"
+                                )
+                                fig_qf.update_layout(
+                                    separators=", ",
+                                    xaxis=dict(
+                                        categoryorder='array',
+                                        categoryarray=order_x,
+                                        tickangle=-30,
+                                        title=""
+                                    ),
+                                    legend=dict(
+                                        orientation="v",
+                                        yanchor="middle",
+                                        y=0.5,
+                                        xanchor="left",
+                                        x=1.02,
+                                        title=""
+                                    ),
+                                    margin=dict(t=40, r=140, b=80)
+                                )
                                 st.plotly_chart(style(fig_qf, 40), use_container_width=True)
 
-                        with c2:
-                            st.markdown(f"##### Classement des territoires", help="Volume total pour l'indicateur sélectionné. Permet de repérer les territoires concentrant le plus d'aides.")
-                            top_ent = df_fil.groupby(geo_col, as_index=False)[metric_key].sum().sort_values(by=metric_key, ascending=True if not is_metro else False)
-                            
-                            if is_metro:
-                                top_ent["Metropole_Key"] = top_ent[geo_col].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
-                                fig_top = px.bar(top_ent, x=metric_key, y=geo_col, orientation="h", color="Metropole_Key", color_discrete_map=COULEURS, text_auto=".3s", labels={geo_col: "", metric_key: label_metric}, height=380)
-                                fig_top.update_layout(yaxis={"categoryorder": "total ascending"}, showlegend=False)
-                            else:
-                                fig_top = px.bar(top_ent, x=metric_key, y=geo_col, orientation="h", color_discrete_sequence=["#1e5631"], text_auto=".3s", labels={geo_col: "", metric_key: label_metric}, height=380)
-                            
-                            st.plotly_chart(style(fig_top, 40), use_container_width=True)
+                                with c2:
+                                    st.markdown(f"##### Classement des territoires", help="Volume total pour l'indicateur sélectionné.")
+                                    
+                                    top_ent = df_fil.groupby(geo_col, as_index=False)[metric_key].sum().sort_values(by=metric_key, ascending=True if not is_metro else False)
+                                    top_ent["text_display"] = top_ent[metric_key].apply(lambda x: fmt(x, suffix=" €" if "Montant" in metric_key else ""))
+
+                                    if is_metro:
+                                        top_ent["Metropole_Key"] = top_ent[geo_col].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
+                                        fig_top = px.bar(
+                                            top_ent,
+                                            x=metric_key,
+                                            y=geo_col,
+                                            orientation="h",
+                                            color="Metropole_Key",
+                                            color_discrete_map=COULEURS,
+                                            text="text_display",
+                                            labels={geo_col: "", metric_key: label_metric},
+                                            height=380
+                                        )
+                                    else:
+                                        fig_top = px.bar(
+                                            top_ent,
+                                            x=metric_key,
+                                            y=geo_col,
+                                            orientation="h",
+                                            color=geo_col,
+                                            color_discrete_sequence=PALETTE_COMMUNE,
+                                            text="text_display",
+                                            labels={geo_col: "", metric_key: label_metric},
+                                            height=380
+                                        )
+                                    fig_top.update_traces(
+                                        textposition="inside",
+                                        insidetextanchor="end",
+                                        hovertemplate="<b>%{y}</b><br>" + label_metric + " : <b>%{text}</b><extra></extra>"
+                                    )
+                                    fig_top.update_layout(
+                                        yaxis={"categoryorder": "total ascending"},
+                                        showlegend=False,
+                                        margin=dict(t=20, b=20, l=10, r=10)
+                                    )
+                                    st.plotly_chart(style(fig_top, 40), use_container_width=True)
 
                         # ── Bloc de comparaison ──
                         INDICATEURS_GLOBAUX = ["Nombre foyers NDUR", "Nombre personnes NDUR", "Montant total NDUR"]
@@ -3018,34 +3071,39 @@ if vue == "Solidarité et citoyenneté":
 
                             if aides_d:
                                 bdata = df_fil.groupby(geo_col, as_index=False)[list(aides_d.values())].sum()
-                                if is_metro: 
+                                if is_metro:
                                     bdata["Metropole_Key"] = bdata[geo_col].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
-                                
                                 bdata = bdata.rename(columns={v: k for k, v in aides_d.items()})
                                 bdata_long = bdata.melt(
-                                    id_vars=[geo_col] + (["Metropole_Key"] if is_metro else []), 
-                                    value_vars=list(aides_d.keys()), 
-                                    var_name="Type d'aide", 
+                                    id_vars=[geo_col] + (["Metropole_Key"] if is_metro else []),
+                                    value_vars=list(aides_d.keys()),
+                                    var_name="Type d'aide",
                                     value_name="Valeur"
                                 )
                                 
                                 fig_bar_comp = px.bar(
-                                    bdata_long, x="Valeur", y="Type d'aide", color=color_group, 
-                                    color_discrete_map=color_map, color_discrete_sequence=color_seq, 
-                                    barmode="group", orientation="h", text_auto=".3s", 
+                                    bdata_long, x="Valeur", y="Type d'aide", color=color_group,
+                                    color_discrete_map=color_map, color_discrete_sequence=color_seq,
+                                    barmode="group", orientation="h", text_auto=".3s",
                                     labels={"Valeur": "Volume", "Type d'aide": "", color_group: "Territoire"}, height=450
+                                )
+                                fig_bar_comp.update_traces(
+                                    hovertemplate="<b>%{y}</b><br>Volume : <b>%{x:,.0f}</b><extra></extra>"
                                 )
                                 fig_bar_comp.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0), margin=dict(t=80, b=40, l=150), yaxis={"categoryorder": "total ascending"})
                                 st.plotly_chart(style(fig_bar_comp, 40), use_container_width=True)
 
-                        with st.expander("💡 Guide d'interprétation - Données CAF"):
+                        with st.expander("Note méthodologique"):
                             st.markdown("""
-                            * **Foyers aidés** : Nombre de foyers allocataires percevant au moins une prestation de la CAF.
-                            * **Personnes concernées** : Population couverte (allocataire + conjoint + enfants + autres personnes à charge).
-                            * **Quotient familial** : Indicateur de niveau de vie calculé par la CAF (Revenus / Nombre de parts du foyer). Plus il est bas, plus le foyer est en situation de précarité.
-                            * **Aides à l'insertion** : Regroupe le RSA, la Prime d'activité et l'AAH.
-                            * **Aides au logement** : APL, ALS, ALF.
-                            """)
+                                        - **Foyers aidés** : ménages percevant au moins une aide CAF  
+                                        - **Personnes concernées** : individus vivant dans ces foyers  
+                                        - **Montants (€)** : total des aides versées  
+                                        - **Quotient familial** : niveau de vie du foyer (revenus / parts)
+                                        - **Logement** : APL, ALS, ALF  
+                                        - **Insertion** : RSA, AAH, prime d'activité  
+                                        - **Jeunes enfants (PAJE)** : naissance, garde, petite enfance  
+                                        - **Enfance & jeunesse** : allocations familiales, rentrée scolaire
+                                        """)
 
     # ──────────────────────────────────────────────────────────────────────────
     # ONGLET 2 - ÉDUCATION (Effectifs Étudiants)
@@ -3057,7 +3115,7 @@ if vue == "Solidarité et citoyenneté":
             df_eff_w      = df_eff.copy()
             annees_eff    = sorted(df_eff_w["annee"].dropna().unique().astype(int))
             metros_eff    = sorted(df_eff_w["metropole"].dropna().unique())
-            LABEL_REGROUPEMENT = {"TOTAL":"Tous types confondus","UNIV":"Universités","STS":"STS & assimilés","CPGE":"CPGE","GE":"Grandes Écoles","ING_autres":"Écoles d'ingénieurs","EC_COM":"Écoles de commerce","EC_ART":"Écoles d'art","EC_JUR":"Écoles juridiques","EC_PARAM":"Écoles paramédicales","EC_autres":"Autres écoles","INP":"INP","EPEU":"EPEU","ENS":"ENS","IUFM":"IUFM / INSPE"}
+            LABEL_REGROUPEMENT = {"TOTAL":"Toutes formations","UNIV":"Universités","STS":"STS & assimilés","CPGE":"CPGE","GE":"Grandes Écoles","ING_autres":"Écoles d'ingénieurs","EC_COM":"Écoles de commerce","EC_ART":"Écoles d'art","EC_JUR":"Écoles juridiques","EC_PARAM":"Écoles paramédicales","EC_autres":"Autres écoles","INP":"INP","EPEU":"EPEU","ENS":"ENS","IUFM":"IUFM / INSPE"}
             regroupements_dispo = sorted(df_eff_w["regroupement"].dropna().unique())
 
             # ── Filtres ──
@@ -3109,6 +3167,7 @@ if vue == "Solidarité et citoyenneté":
                 st.warning("⚠️ Aucune donnée pour les filtres sélectionnés.")
             else:
                 # ── KPIs ──
+                # CORRECTION : total_eff au lieu de total_val
                 total_eff   = int(df_e_yr["effectif"].sum())
                 nb_entites  = int(df_e_yr[geo_col].nunique())
                 max_entite  = df_e_yr.groupby(geo_col)["effectif"].sum().idxmax()
@@ -3117,7 +3176,7 @@ if vue == "Solidarité et citoyenneté":
                 st.markdown(f"#### Synthèse des effectifs étudiants - {annee_eff}")
                 k1, k2, k3 = st.columns(3)
                 with k1:
-                    st.markdown(render_solidarite_kpi(f"Effectif total", fmt(total_val), "Étudiants inscrits", kpi_border_color), unsafe_allow_html=True)
+                    st.markdown(render_solidarite_kpi(f"Effectif total", fmt(total_eff), "Étudiants inscrits", kpi_border_color), unsafe_allow_html=True)
                 with k2:
                     st.markdown(render_solidarite_kpi("Périmètre", fmt(nb_entites), "Unités comparées", kpi_border_color), unsafe_allow_html=True)
                 with k3:
@@ -3126,23 +3185,43 @@ if vue == "Solidarité et citoyenneté":
                 st.markdown("---")
 
                 # ── Graphiques ──
+                PALETTE_METRO = px.colors.sequential.Greys[2:]
+                PALETTE_COMMUNE = px.colors.sequential.Greens_r
                 color_map = COULEURS if is_metro else None
-                color_seq = None if is_metro else px.colors.sequential.Greens_r
+                color_seq = PALETTE_METRO if is_metro else PALETTE_COMMUNE
 
                 c1, c2 = st.columns(2)
                 with c1:
                     st.markdown(f"##### Volume d'étudiants ({annee_eff})", help="Nombre absolu d'étudiants inscrits selon les filières et secteurs sélectionnés.")
                     by_entite = df_e_yr.groupby(geo_col, as_index=False)["effectif"].sum().sort_values("effectif", ascending=False)
-                    fig_bar = px.bar(by_entite, x=geo_col, y="effectif", color=geo_col, color_discrete_map=color_map, color_discrete_sequence=color_seq, text_auto=".3s", labels={geo_col:"", "effectif":"Étudiants"}, height=380)
-                    fig_bar.update_traces(textposition="outside")
+                    by_entite["text_display"] = by_entite["effectif"].apply(lambda x: fmt(x))
+                    fig_bar = px.bar(by_entite, x=geo_col, y="effectif", color=geo_col, color_discrete_map=color_map, color_discrete_sequence=color_seq, text="text_display", labels={geo_col:"", "effectif":"Étudiants"}, height=380)
+                    fig_bar.update_traces(
+                        textposition="outside",
+                        hovertemplate="<b>%{x}</b><br>Étudiants : <b>%{text}</b><extra></extra>"
+                    )
                     fig_bar.update_layout(showlegend=False)
                     st.plotly_chart(style(fig_bar, 40), use_container_width=True)
                     
                 with c2:
                     st.markdown("##### Évolution des effectifs", help="Tendance d'évolution du nombre d'étudiants sur l'ensemble des années disponibles.")
                     evo_e = df_e.groupby(["annee", geo_col], as_index=False)["effectif"].sum().sort_values("annee")
+                    evo_e["effectif_fmt"] = evo_e["effectif"].apply(lambda x: f"{int(x):,}".replace(",", " "))
                     fig_line = px.line(evo_e, x="annee", y="effectif", color=geo_col, color_discrete_map=color_map, color_discrete_sequence=color_seq, markers=True, labels={"annee":"Année", "effectif":"Étudiants", geo_col:"Territoire"}, height=380)
-                    fig_line.update_traces(line_width=2.5, marker_size=7)
+                    fig_line.update_traces(
+                        customdata=evo_e["effectif_fmt"],
+                        line_width=2.5,
+                        marker_size=7,
+                        hovertemplate=
+                        "<b>%{fullData.name}</b><br>" +
+                        "Année : <b>%{x}</b><br>" +
+                        "Étudiants : <b>%{customdata}</b>" +
+                        "<extra></extra>"
+                    )
+                    y_max = evo_e["effectif"].max()
+                    fig_line.update_yaxes(
+                        range=[0, y_max * 1.1]
+                    )
                     st.plotly_chart(style(fig_line, 40), use_container_width=True)
                     
                 st.markdown("---")
@@ -3163,19 +3242,60 @@ if vue == "Solidarité et citoyenneté":
                     if is_metro:
                         type_agg = df_type.groupby("regroupement", as_index=False)["effectif"].sum().sort_values("effectif", ascending=False).head(10)
                         type_agg["label"] = type_agg["regroupement"].map(lambda r: LABEL_REGROUPEMENT.get(r, r))
-                        fig_fil = px.pie(type_agg, names="label", values="effectif", hole=0.4, color_discrete_sequence=px.colors.sequential.Greens_r, height=400)
-                        fig_fil.update_traces(textposition="inside", textinfo="percent+label")
+                        type_agg["text_display"] = type_agg["effectif"].apply(lambda x: fmt(x))
+                        fig_fil = px.pie(type_agg, names="label", values="effectif", hole=0.4, color_discrete_sequence=PALETTE_METRO, height=400)
+                        type_agg["effectif_fmt"] = type_agg["effectif"].apply(fmt)
+                        fig_fil.update_traces(
+                            marker=dict(
+                                line=dict(color="black", width=1)
+                            ),
+                            sort=False,
+                            customdata=type_agg["effectif_fmt"],
+                            textposition="inside",
+                            textinfo="percent+label",
+                            hovertemplate=
+                            "<b>%{label}</b><br>" +
+                            "Étudiants : <b>%{customdata}</b><br>" +
+                            "Part : <b>%{percent}</b>" +
+                            "<extra></extra>"
+                        )
                     else:
                         df_fil_agg = df_type.groupby(["regroupement", geo_col], as_index=False)["effectif"].sum()
                         df_fil_agg["label"] = df_fil_agg["regroupement"].map(lambda r: LABEL_REGROUPEMENT.get(r, r))
-                        fig_fil = px.bar(df_fil_agg, x="effectif", y="label", color=geo_col, orientation="h", barmode="group", color_discrete_sequence=color_seq, labels={"label": "", "effectif": "Étudiants"}, height=400)
+                        df_fil_agg["text_display"] = df_fil_agg["effectif"].apply(lambda x: fmt(x))
+                        fig_fil = px.bar(df_fil_agg, x="effectif", y="label", color=geo_col, orientation="h", barmode="group", color_discrete_sequence=color_seq, text="text_display", labels={"label": "", "effectif": "Étudiants"}, height=400)
+                        fig_fil.update_traces(
+                            hovertemplate=
+                            "<b>%{y}</b><br>" +
+                            "Étudiants : <b>%{text}</b><br>" +
+                            "Territoire : %{fullData.name}" +
+                            "<extra></extra>"
+                        )
                     st.plotly_chart(style(fig_fil, 40), use_container_width=True)
                     
                 with c4:
                     st.markdown(f"##### Parité Femmes / Hommes ({annee_eff})", help="Répartition par genre des étudiants inscrits.")
                     if "sexe_de_l_etudiant" in df_e_yr.columns:
                         sex_agg = df_e_yr.groupby([geo_col, "sexe_de_l_etudiant"], as_index=False)["effectif"].sum()
-                        fig_sex = px.bar(sex_agg, x=geo_col, y="effectif", color="sexe_de_l_etudiant", barmode="group", color_discrete_map={"Masculin":"#2D6A4F","Feminin":"#95D5B2"}, labels={geo_col:"", "effectif":"Étudiants", "sexe_de_l_etudiant":"Genre"}, height=400)
+                        sex_agg["text_display"] = sex_agg["effectif"].apply(lambda x: fmt(x))
+                        fig_sex = px.bar(sex_agg, x=geo_col, y="effectif", color="sexe_de_l_etudiant", barmode="group",
+                            color_discrete_map={"Masculin": "#555555", "Feminin": "#aaaaaa"} if is_metro else {"Masculin": "#2D6A4F", "Feminin": "#95D5B2"},
+                            text="text_display", labels={geo_col:"", "effectif":"Étudiants", "sexe_de_l_etudiant":"Genre"}, height=400)
+                        order_sex = (
+                            sex_agg.groupby(geo_col)["effectif"]
+                            .sum()
+                            .sort_values(ascending=False)
+                            .index.tolist()
+                        )
+                        fig_sex.update_layout(
+                            xaxis=dict(
+                                categoryorder="array",
+                                categoryarray=order_sex
+                            )
+                        )
+                        fig_sex.update_traces(
+                            hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>"
+                        )
                         fig_sex.update_layout(legend=dict(orientation="h", y=1.1))
                         st.plotly_chart(style(fig_sex, 40), use_container_width=True)
                         
@@ -3184,17 +3304,33 @@ if vue == "Solidarité et citoyenneté":
                 if is_metro and "secteur_de_l_etablissement" in df_e_yr.columns:
                     st.markdown(f"##### Public vs Privé ({annee_eff})", help="Proportion d'étudiants inscrits dans le public par rapport au privé.")
                     sec_agg = df_e_yr.groupby([geo_col, "secteur_de_l_etablissement"], as_index=False)["effectif"].sum()
-                    fig_sec = px.bar(sec_agg, x=geo_col, y="effectif", color="secteur_de_l_etablissement", barmode="stack", color_discrete_map={"Établissements publics":"#2D6A4F","Établissements privés":"#95D5B2"}, labels={geo_col:"", "effectif":"Étudiants", "secteur_de_l_etablissement":"Secteur"}, height=400)
+                    sec_agg["text_display"] = sec_agg["effectif"].apply(lambda x: fmt(x))
+                    fig_sec = px.bar(sec_agg, x=geo_col, y="effectif", color="secteur_de_l_etablissement", barmode="stack",
+                        color_discrete_map={"Établissements publics": "#555555", "Établissements privés": "#aaaaaa"},
+                        text="text_display", labels={geo_col:"", "effectif":"Étudiants", "secteur_de_l_etablissement":"Secteur"}, height=400)
+                    order_sec = (
+                        sec_agg.groupby(geo_col)["effectif"]
+                        .sum()
+                        .sort_values(ascending=False)
+                        .index.tolist()
+                    )
+                    fig_sec.update_layout(
+                        xaxis=dict(
+                            categoryorder="array",
+                            categoryarray=order_sec
+                        )
+                    )
+                    fig_sec.update_traces(
+                        hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>"
+                    )
                     fig_sec.update_layout(legend=dict(orientation="h", y=1.1))
                     st.plotly_chart(style(fig_sec, 40), use_container_width=True)
 
-                with st.expander("💡 Guide d'interprétation - Éducation"):
+                with st.expander("Note méthodologique"):
                     st.markdown("""
-                    * **Effectifs** : Nombre d'étudiants physiquement inscrits dans les établissements du territoire (indépendamment de leur lieu de résidence d'origine).
-                    * **CPGE** : Classes Préparatoires aux Grandes Écoles.
-                    * **STS** : Sections de Techniciens Supérieurs (BTS).
-                    * **Attractivité** : Un fort volume étudiant dynamise le territoire (logement, consommation) mais requiert des infrastructures adaptées (transports, santé).
-                    """)
+                                * **CPGE** : Classes Préparatoires aux Grandes Écoles.
+                                * **STS** : Sections de Techniciens Supérieurs (BTS).
+                                """)
 
     # ──────────────────────────────────────────────────────────────────────────
     # ONGLET 3 - SANTÉ
@@ -3343,9 +3479,31 @@ if vue == "Solidarité et citoyenneté":
         if df_sf.empty:
             st.info("Aucun établissement pour ces filtres.")
         else:
-            fig_map = px.scatter_mapbox(df_sf, lat="lat", lon="lon", color="type_etab", color_discrete_map=TYPE_COLORS, hover_name="nom", hover_data={"commune": True, "metropole": True, "type_etab": False, "lat": False, "lon": False}, labels={"type_etab": "Type", "commune": "Commune", "metropole": "Métropole"}, height=480, mapbox_style="carto-positron")
-            for trace in fig_map.data: trace.name = TYPE_LABELS.get(trace.name, trace.name)
-            fig_map.update_layout(mapbox_zoom=zoom_level, mapbox_center={"lat": lat_c, "lon": lon_c}, mapbox_layers=mapbox_layers, legend=dict(title="Type", orientation="v", x=0.01, y=0.99, bgcolor="rgba(255,255,255,0.85)", bordercolor="#C8E6D4", borderwidth=1, font=dict(size=11)), margin=dict(l=0, r=0, t=0, b=0), paper_bgcolor="rgba(0,0,0,0)", font_family="Sora")
+            fig_map = px.scatter_mapbox(
+                df_sf, lat="lat", lon="lon", color="type_etab",
+                color_discrete_map=TYPE_COLORS,
+                hover_name="nom",
+                hover_data={"commune": True, "metropole": True, "type_etab": False, "lat": False, "lon": False},
+                labels={"type_etab": "Type", "commune": "Commune", "metropole": "Métropole"},
+                height=480, mapbox_style="carto-positron"
+            )
+            for trace in fig_map.data:
+                trace.name = TYPE_LABELS.get(trace.name, trace.name)
+                trace.hovertemplate = (
+                    "<b>%{hovertext}</b><br>"
+                    "Commune : <b>%{customdata[0]}</b><br>"
+                    "Métropole : <b>%{customdata[1]}</b>"
+                    "<extra></extra>"
+                )
+            fig_map.update_layout(
+                mapbox_zoom=zoom_level,
+                mapbox_center={"lat": lat_c, "lon": lon_c},
+                mapbox_layers=mapbox_layers,
+                legend=dict(title="Type", orientation="v", x=0.01, y=0.99, bgcolor="rgba(255,255,255,0.85)", bordercolor="#C8E6D4", borderwidth=1, font=dict(size=11)),
+                margin=dict(l=0, r=0, t=0, b=0),
+                paper_bgcolor="rgba(0,0,0,0)",
+                font_family="Sora"
+            )
             st.plotly_chart(fig_map, use_container_width=True)
 
         st.markdown("---")
@@ -3356,8 +3514,13 @@ if vue == "Solidarité et citoyenneté":
                 st.markdown("##### Densité par métropole et type", help="Nombre absolu d'établissements identifiés par type de soin.")
                 df_pivot = df_sf.groupby(["metropole", "type_etab"]).size().reset_index(name="count")
                 df_pivot["label"] = df_pivot["type_etab"].map(lambda t: TYPE_LABELS.get(t, t))
-                fig_stack = px.bar(df_pivot, x="metropole", y="count", color="type_etab", color_discrete_map=TYPE_COLORS, text="count", labels={"metropole": "Métropole", "count": "Nombre", "type_etab": "Type"}, height=380, barmode="stack")
-                fig_stack.update_traces(textposition="inside", textfont_size=10)
+                df_pivot["text_display"] = df_pivot["count"].apply(lambda x: fmt(x))
+                fig_stack = px.bar(df_pivot, x="metropole", y="count", color="type_etab", color_discrete_map=TYPE_COLORS, text="text_display", labels={"metropole": "Métropole", "count": "Nombre", "type_etab": "Type"}, height=380, barmode="stack")
+                fig_stack.update_traces(
+                    textposition="inside",
+                    textfont_size=10,
+                    hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>"
+                )
                 for trace in fig_stack.data: trace.name = TYPE_LABELS.get(trace.name, trace.name)
                 fig_stack.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora", xaxis=dict(tickangle=-30), legend=dict(title="Type", font=dict(size=10)))
                 st.plotly_chart(style(fig_stack, 40), use_container_width=True)
@@ -3365,8 +3528,13 @@ if vue == "Solidarité et citoyenneté":
                 st.markdown("##### Densité par commune", help="Nombre absolu d'établissements identifiés par commune.")
                 df_comm = df_sf.groupby(["commune", "type_etab"]).size().reset_index(name="count")
                 df_comm["label"] = df_comm["type_etab"].map(lambda t: TYPE_LABELS.get(t, t))
-                fig_comm = px.bar(df_comm, x="commune", y="count", color="type_etab", color_discrete_map=TYPE_COLORS, text="count", labels={"commune": "Commune", "count": "Nombre", "type_etab": "Type"}, height=380, barmode="stack")
-                fig_comm.update_traces(textposition="inside", textfont_size=10)
+                df_comm["text_display"] = df_comm["count"].apply(lambda x: fmt(x))
+                fig_comm = px.bar(df_comm, x="commune", y="count", color="type_etab", color_discrete_map=TYPE_COLORS, text="text_display", labels={"commune": "Commune", "count": "Nombre", "type_etab": "Type"}, height=380, barmode="stack")
+                fig_comm.update_traces(
+                    textposition="inside",
+                    textfont_size=10,
+                    hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>"
+                )
                 for trace in fig_comm.data: trace.name = TYPE_LABELS.get(trace.name, trace.name)
                 fig_comm.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora", xaxis=dict(tickangle=-30), legend=dict(title="Type", font=dict(size=10)))
                 st.plotly_chart(style(fig_comm, 40), use_container_width=True)
@@ -3376,15 +3544,14 @@ if vue == "Solidarité et citoyenneté":
             pie_data = df_sf.groupby("type_etab").size().reset_index(name="count")
             pie_data["label"] = pie_data["type_etab"].map(lambda t: TYPE_LABELS.get(t, t))
             fig_pie = px.pie(pie_data, names="label", values="count", color="type_etab", color_discrete_map=TYPE_COLORS, height=380, hole=0.4)
-            fig_pie.update_traces(textposition="outside", textinfo="percent+label", pull=[0.03] * len(pie_data))
+            fig_pie.update_traces(
+                textposition="outside",
+                textinfo="percent+label",
+                pull=[0.03] * len(pie_data),
+                hovertemplate="<b>%{label}</b><br>Établissements : <b>%{value:,.0f}</b><br>Part : <b>%{percent}</b><extra></extra>"
+            )
             fig_pie.update_layout(showlegend=False, paper_bgcolor="rgba(0,0,0,0)", font_family="Sora", margin=dict(l=10, r=10, t=10, b=10))
             st.plotly_chart(fig_pie, use_container_width=True)
-
-        with st.expander("💡 Guide d'interprétation - Santé"):
-            st.markdown("""
-            * **Source des données** : OpenStreetMap (OSM). Ces données sont déclaratives et peuvent ne pas refléter l'intégralité de l'offre médicale (notamment les médecins libéraux isolés).
-            * **Couverture spatiale** : La carte permet d'identifier visuellement les éventuels "déserts médicaux" ou les fortes concentrations autour des pôles hospitaliers.
-            """)
 
     # ──────────────────────────────────────────────────────────────────────────
     # ONGLET 4 - PARTICIPATION (Élections)
@@ -3442,13 +3609,13 @@ if vue == "Solidarité et citoyenneté":
 
         # ── KPIs ──
         if not df_agg.empty:
-            total_inscrits  = int(df_agg["Inscrits"].sum())
-            total_votants   = int(df_agg["Votants"].sum())
-            total_exprimes  = int(df_agg["Exprimes"].sum())
+            total_inscrits    = int(df_agg["Inscrits"].sum())
+            total_votants     = int(df_agg["Votants"].sum())
+            total_exprimes    = int(df_agg["Exprimes"].sum())
             total_abstentions = int(df_agg["Abstentions"].sum())
-            total_non_exp   = int(df_agg["Non_Exprimes"].sum())
-            taux_part_global = round(total_votants / total_inscrits * 100, 1) if total_inscrits else 0
-            taux_abs_global  = round(total_abstentions / total_inscrits * 100, 1) if total_inscrits else 0
+            total_non_exp     = int(df_agg["Non_Exprimes"].sum())
+            taux_part_global  = round(total_votants / total_inscrits * 100, 1) if total_inscrits else 0
+            taux_abs_global   = round(total_abstentions / total_inscrits * 100, 1) if total_inscrits else 0
             taux_non_exp_global = round(total_non_exp / total_votants * 100, 1) if total_votants else 0
 
             st.markdown(f"#### Bilan Électoral - {sel_annee_part} (Tour {sel_tour_part})")
@@ -3466,16 +3633,50 @@ if vue == "Solidarité et citoyenneté":
             c1, c2 = st.columns(2)
             with c1:
                 st.markdown("##### Taux de participation", help="Pourcentage d'inscrits ayant déposé un bulletin dans l'urne (incluant les blancs et nuls).")
-                fig_part = px.bar(df_agg.sort_values("% Participation", ascending=True), x="% Participation", y="metropole", orientation="h", color="metropole", color_discrete_map=COULEURS, text=df_agg.sort_values("% Participation", ascending=True)["% Participation"].apply(lambda v: f"{v:.1f}%"), labels={"metropole": "", "% Participation": "Participation (%)"}, height=380)
-                fig_part.update_traces(textposition="outside")
-                fig_part.update_layout(showlegend=False, xaxis_range=[0, 100], paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"), margin=dict(l=10, r=40, t=40, b=10))
+                df_part_sorted = df_agg.sort_values("% Participation", ascending=True)
+                df_part_sorted["text_display"] = df_part_sorted["% Participation"].apply(lambda v: f"{v:.1f} %")
+                _part_color_map = COULEURS if mode_part == "Comparaison Métropoles" else None
+                _part_seq = px.colors.sequential.Greens_r if mode_part == "Détail Communal" else None
+                fig_part = px.bar(
+                    df_part_sorted, x="% Participation", y="metropole", orientation="h",
+                    color="metropole", color_discrete_map=_part_color_map, color_discrete_sequence=_part_seq,
+                    text="text_display",
+                    labels={"metropole": "", "% Participation": "Participation (%)"},
+                    height=380
+                )
+                fig_part.update_traces(
+                    textposition="outside",
+                    hovertemplate="<b>%{y}</b><br>Participation : <b>%{text}</b><extra></extra>"
+                )
+                fig_part.update_layout(
+                    showlegend=False, xaxis_range=[0, 100],
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"),
+                    margin=dict(l=10, r=40, t=40, b=10)
+                )
                 st.plotly_chart(style(fig_part, 40), use_container_width=True)
 
             with c2:
                 st.markdown("##### Qualité du vote", help="Parmi les votants, proportion de votes valides (Exprimés) vs proportion de votes blancs ou nuls (Non-Exprimés).")
                 df_qual = df_agg[["metropole", "% Exprimés", "% Non-Exprimés"]].melt(id_vars="metropole", var_name="Type", value_name="Taux")
-                fig_qual = px.bar(df_qual, x="metropole", y="Taux", color="Type", barmode="stack", color_discrete_map={"% Exprimés": "#2D6A4F", "% Non-Exprimés": "#95D5B2"}, labels={"metropole": "", "Taux": "%", "Type": ""}, height=380, text_auto=".1f")
-                fig_qual.update_layout(yaxis_range=[0, 100], legend=dict(orientation="h", y=1.1), paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora", yaxis=dict(gridcolor="#E8F5EE"), margin=dict(l=10, r=10, t=40, b=10))
+                df_qual["text_display"] = df_qual["Taux"].apply(lambda v: f"{v:.1f} %")
+                fig_qual = px.bar(
+                    df_qual, x="metropole", y="Taux", color="Type", barmode="stack",
+                    color_discrete_map={"% Exprimés": "#555555", "% Non-Exprimés": "#aaaaaa"} if mode_part == "Comparaison Métropoles" else {"% Exprimés": "#2D6A4F", "% Non-Exprimés": "#95D5B2"},
+                    text="text_display",
+                    labels={"metropole": "", "Taux": "%", "Type": ""},
+                    height=380
+                )
+                fig_qual.update_traces(
+                    hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>"
+                )
+                fig_qual.update_layout(
+                    yaxis_range=[0, 100],
+                    legend=dict(orientation="h", y=1.1),
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Sora", yaxis=dict(gridcolor="#E8F5EE"),
+                    margin=dict(l=10, r=10, t=40, b=10)
+                )
                 st.plotly_chart(style(fig_qual, 40), use_container_width=True)
 
             st.markdown("---")
@@ -3498,22 +3699,30 @@ if vue == "Solidarité et citoyenneté":
             df_delta.columns = ["entite", "Δ Participation (pts)"]
             df_delta = df_delta.sort_values("Δ Participation (pts)")
             df_delta["couleur"] = df_delta["Δ Participation (pts)"].apply(lambda v: "#e76f51" if v < 0 else "#2D6A4F")
+            df_delta["text_display"] = df_delta["Δ Participation (pts)"].apply(lambda v: f"{v:+.1f} pts")
 
             if not df_delta.empty:
-                fig_delta = px.bar(df_delta, x="Δ Participation (pts)", y="entite", orientation="h", color="couleur", color_discrete_map="identity", text=df_delta["Δ Participation (pts)"].apply(lambda v: f"{v:+.1f} pts"), labels={"entite": "", "Δ Participation (pts)": "Variation (pts)"}, height=max(300, len(df_delta) * 50))
-                fig_delta.update_traces(textposition="outside")
+                fig_delta = px.bar(
+                    df_delta, x="Δ Participation (pts)", y="entite", orientation="h",
+                    color="couleur", color_discrete_map="identity",
+                    text="text_display",
+                    labels={"entite": "", "Δ Participation (pts)": "Variation (pts)"},
+                    height=max(300, len(df_delta) * 50)
+                )
+                fig_delta.update_traces(
+                    textposition="outside",
+                    hovertemplate="<b>%{y}</b><br>Variation : <b>%{text}</b><extra></extra>"
+                )
                 fig_delta.add_vline(x=0, line_dash="dash", line_color="#888", line_width=1)
-                fig_delta.update_layout(showlegend=False, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"), margin=dict(l=10, r=60, t=40, b=10))
+                fig_delta.update_layout(
+                    showlegend=False,
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"),
+                    margin=dict(l=10, r=60, t=40, b=10)
+                )
                 st.plotly_chart(style(fig_delta), use_container_width=True)
             else:
                 st.info("Données insuffisantes pour calculer la variation.")
-
-            with st.expander("💡 Guide d'interprétation - Participation"):
-                st.markdown("""
-                * **Taux de participation** : Excellent indicateur de la santé démocratique locale et de l'intérêt porté aux enjeux de la commune.
-                * **Abstention** : En France, l'abstention aux élections municipales a fortement progressé en 2020, en partie à cause du contexte sanitaire (COVID-19). L'analyse de la variation 2014-2020 permet de mesurer ce recul sur chaque territoire.
-                * **Votes non-exprimés (Blancs et Nuls)** : Un taux anormalement élevé peut traduire une insatisfaction vis-à-vis de l'offre politique locale.
-                """)
 
     # ──────────────────────────────────────────────────────────────────────────
     # ONGLET 5 - REVENUS & PAUVRETÉ (FiLoSoFi)
@@ -3541,11 +3750,14 @@ if vue == "Solidarité et citoyenneté":
                     communes_gre_filo = sorted(df_filo[df_filo["metropole"] == "Grenoble"]["LIBCOM"].dropna().unique())
                     sel_entites_filo = st.multiselect("Communes de Grenoble", communes_gre_filo, default=communes_gre_filo[:5] if communes_gre_filo else [], key="filo_communes")
 
-                c1, c2 = st.columns(2)
-                with c1: filo_ind = st.selectbox("Indicateur principal", filo_cols, format_func=lambda c: FILO_LABELS.get(c, c), index=filo_cols.index("DEC_MED21") if "DEC_MED21" in filo_cols else 0, key="filo_ind")
-                with c2: 
-                    if mode_filo == "Comparaison Métropoles": filo_niveau = st.selectbox("Niveau d'analyse", ["Commune (médiane des IRIS)", "IRIS (détail)"], key="filo_niveau")
-                st.markdown('</div>', unsafe_allow_html=True)
+                filo_ind = st.selectbox(
+                    "Indicateur principal",
+                    filo_cols,
+                    format_func=lambda c: FILO_LABELS.get(c, c),
+                    index=filo_cols.index("DEC_MED21") if "DEC_MED21" in filo_cols else 0,
+                    key="filo_ind"
+                )
+            st.markdown('</div>', unsafe_allow_html=True)
 
             # ── Filtrage ──
             geo_col = "metropole" if mode_filo == "Comparaison Métropoles" else "LIBCOM"
@@ -3579,7 +3791,14 @@ if vue == "Solidarité et citoyenneté":
                 # ── Graphiques spécifiques ──
                 if is_metro:
                     st.markdown(f"##### Distribution par métropole", help="Boîte à moustaches montrant la dispersion de l'indicateur sélectionné au sein des IRIS de chaque agglomération.")
-                    fig_box = px.box(df_f.dropna(subset=[filo_ind]), x=geo_col, y=filo_ind, color=geo_col, color_discrete_map=COULEURS, labels={geo_col: "", filo_ind: lbl}, height=400)
+                    fig_box = px.box(
+                        df_f.dropna(subset=[filo_ind]), x=geo_col, y=filo_ind,
+                        color=geo_col, color_discrete_map=COULEURS,
+                        labels={geo_col: "", filo_ind: lbl}, height=400
+                    )
+                    fig_box.update_traces(
+                        hovertemplate="<b>%{x}</b><br>" + lbl + " : <b>%{y:,.1f}</b><extra></extra>"
+                    )
                     fig_box.update_layout(showlegend=False)
                     st.plotly_chart(style(fig_box, 40), use_container_width=True)
 
@@ -3589,8 +3808,18 @@ if vue == "Solidarité et citoyenneté":
                         st.markdown("##### Revenu médian vs Taux de bas revenus", help="Met en relation le niveau de vie global de la métropole avec sa précarité (taux de bas revenus).")
                         if "DEC_MED21" in df_f.columns and "DEC_TP6021" in df_f.columns:
                             df_sc = df_f.groupby(geo_col, as_index=False)[["DEC_MED21", "DEC_TP6021"]].median().dropna()
-                            fig_sc = px.scatter(df_sc, x="DEC_MED21", y="DEC_TP6021", color=geo_col, color_discrete_map=COULEURS, text=geo_col, labels={"DEC_MED21": "Revenu médian (€/UC)", "DEC_TP6021": "Taux bas revenus (%)", geo_col: ""}, height=400)
-                            fig_sc.update_traces(marker_size=12, textposition="top center")
+                            fig_sc = px.scatter(
+                                df_sc, x="DEC_MED21", y="DEC_TP6021",
+                                color=geo_col, color_discrete_map=COULEURS,
+                                text=geo_col,
+                                labels={"DEC_MED21": "Revenu médian (€/UC)", "DEC_TP6021": "Taux bas revenus (%)", geo_col: ""},
+                                height=400
+                            )
+                            fig_sc.update_traces(
+                                marker_size=12,
+                                textposition="top center",
+                                hovertemplate="<b>%{text}</b><br>Revenu médian : <b>%{x:,.0f} €</b><br>Taux bas revenus : <b>%{y:.1f} %</b><extra></extra>"
+                            )
                             fig_sc.update_layout(showlegend=False)
                             st.plotly_chart(style(fig_sc, 40), use_container_width=True)
 
@@ -3598,7 +3827,17 @@ if vue == "Solidarité et citoyenneté":
                         st.markdown("##### Inégalités - Indice de Gini", help="L'indice de Gini mesure les inégalités au sein du territoire. Un indice proche de 0 indique une égalité parfaite ; proche de 1, des inégalités très fortes.")
                         if "DEC_GI21" in df_f.columns:
                             df_gi = df_f.groupby(geo_col, as_index=False)["DEC_GI21"].median().dropna().sort_values("DEC_GI21", ascending=False)
-                            fig_gi = px.bar(df_gi, x="DEC_GI21", y=geo_col, color=geo_col, color_discrete_map=COULEURS, orientation="h", text_auto=".3f", labels={geo_col: "", "DEC_GI21": "Indice de Gini"}, height=400)
+                            df_gi["text_display"] = df_gi["DEC_GI21"].apply(lambda v: f"{v:.3f}")
+                            fig_gi = px.bar(
+                                df_gi, x="DEC_GI21", y=geo_col,
+                                color=geo_col, color_discrete_map=COULEURS,
+                                orientation="h", text="text_display",
+                                labels={geo_col: "", "DEC_GI21": "Indice de Gini"},
+                                height=400
+                            )
+                            fig_gi.update_traces(
+                                hovertemplate="<b>%{y}</b><br>Indice de Gini : <b>%{text}</b><extra></extra>"
+                            )
                             fig_gi.update_layout(yaxis={"categoryorder": "total ascending"}, showlegend=False)
                             st.plotly_chart(style(fig_gi, 40), use_container_width=True)
 
@@ -3607,7 +3846,17 @@ if vue == "Solidarité et citoyenneté":
                     with c1:
                         st.markdown(f"##### {lbl} par commune", help="Valeur médiane de l'indicateur sélectionné pour l'ensemble des IRIS de la commune.")
                         df_bar = df_f.groupby(geo_col, as_index=False)[filo_ind].median()
-                        fig_bar = px.bar(df_bar, x=geo_col, y=filo_ind, color=geo_col, color_discrete_sequence=px.colors.sequential.Greens_r, labels={geo_col: "", filo_ind: lbl}, height=400)
+                        df_bar["text_display"] = df_bar[filo_ind].apply(lambda v: f"{v:,.1f}".replace(",", " "))
+                        fig_bar = px.bar(
+                            df_bar, x=geo_col, y=filo_ind,
+                            color=geo_col, color_discrete_sequence=px.colors.sequential.Greens_r,
+                            text="text_display",
+                            labels={geo_col: "", filo_ind: lbl},
+                            height=400
+                        )
+                        fig_bar.update_traces(
+                            hovertemplate="<b>%{x}</b><br>" + lbl + " : <b>%{text}</b><extra></extra>"
+                        )
                         fig_bar.update_layout(showlegend=False)
                         st.plotly_chart(style(fig_bar, 40), use_container_width=True)
                         
@@ -3615,7 +3864,15 @@ if vue == "Solidarité et citoyenneté":
                         st.markdown(f"##### Dispersion au sein des quartiers (IRIS)", help=f"Boîte à moustaches montrant la variance du {lbl} entre les différents quartiers (IRIS) d'une même commune.")
                         df_dist = df_f.dropna(subset=[filo_ind])
                         if not df_dist.empty:
-                            fig_dist = px.box(df_dist, x=geo_col, y=filo_ind, color=geo_col, color_discrete_sequence=px.colors.sequential.Greens_r, labels={geo_col: "", filo_ind: lbl}, height=400)
+                            fig_dist = px.box(
+                                df_dist, x=geo_col, y=filo_ind,
+                                color=geo_col, color_discrete_sequence=px.colors.sequential.Greens_r,
+                                labels={geo_col: "", filo_ind: lbl},
+                                height=400
+                            )
+                            fig_dist.update_traces(
+                                hovertemplate="<b>%{x}</b><br>" + lbl + " : <b>%{y:,.1f}</b><extra></extra>"
+                            )
                             fig_dist.update_layout(showlegend=False)
                             st.plotly_chart(style(fig_dist, 40), use_container_width=True)
 
@@ -3628,7 +3885,7 @@ if vue == "Solidarité et citoyenneté":
                     if len(radar_avail) >= 3:
                         df_all_metro = df_filo[df_filo["metropole"] == "Grenoble"]
                         fig_rad = go.Figure()
-                        green_palette = px.colors.sequential.Greens_r
+                        green_palette = px.colors.sequential.Greens_r  # communes → vert
                         
                         for idx, comm in enumerate(sel_entites_filo):
                             df_c = df_f[df_f[geo_col] == comm]
@@ -3641,12 +3898,24 @@ if vue == "Solidarité et citoyenneté":
                                 else:
                                     vals_norm.append(float((v - col_data.min()) / (col_data.max() - col_data.min()) * 100))
                             cats = [FILO_LABELS.get(c, c).split(" (")[0][:20] for c in radar_avail]
-                            fig_rad.add_trace(go.Scatterpolar(r=vals_norm + [vals_norm[0]], theta=cats + [cats[0]], fill="toself", name=comm, line_color=green_palette[idx % len(green_palette)]))
+                            fig_rad.add_trace(go.Scatterpolar(
+                                r=vals_norm + [vals_norm[0]],
+                                theta=cats + [cats[0]],
+                                fill="toself",
+                                name=comm,
+                                line_color=green_palette[idx % len(green_palette)],
+                                hovertemplate="<b>%{theta}</b><br>Score normalisé : <b>%{r:.1f}</b><extra></extra>"
+                            ))
                             
-                        fig_rad.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), height=400, paper_bgcolor="rgba(0,0,0,0)", legend=dict(orientation="v", x=1.05, y=0.5, yanchor="middle"))
+                        fig_rad.update_layout(
+                            polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+                            height=400,
+                            paper_bgcolor="rgba(0,0,0,0)",
+                            legend=dict(orientation="v", x=1.05, y=0.5, yanchor="middle")
+                        )
                         st.plotly_chart(fig_rad, use_container_width=True)
 
-                with st.expander("💡 Guide d'interprétation - Revenus & Pauvreté (FiLoSoFi)"):
+                with st.expander("Note méthodologique"):
                     st.markdown("""
                     * **Revenu médian (€/UC)** : Niveau de revenu tel que 50% de la population gagne moins et 50% gagne plus. L'UC (Unité de Consommation) permet de pondérer selon la taille du foyer.
                     * **Indice de Gini** : Mesure synthétique des inégalités de revenus (entre 0 et 1). Plus il est proche de 1, plus les revenus sont inégalement répartis (quelques personnes concentrent l'essentiel de la richesse).
