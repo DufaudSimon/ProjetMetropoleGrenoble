@@ -1,3 +1,3 @@
 # ProjetMetropoleGrenoble
 
-https://projetmetropolegrenoble-2ihxwihxrrejxq4qzfyq62.streamlit.app/
+https://projetmetropolegrenoble.streamlit.app/
