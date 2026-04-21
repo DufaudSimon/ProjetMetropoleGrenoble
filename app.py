@@ -1125,7 +1125,7 @@ if vue == "Démographie":
                         trace.hovertemplate = "<b>Commune : %{x}</b><br>" + trace.name + " : %{y:.2f} %/an<extra></extra>"
                     fig_comp_c.add_hline(y=0, line_dash="dot", line_color="#AAAAAA")
                     fig_comp_c.update_layout(xaxis_title="Commune", yaxis_title="Taux (%/an)",
-                                             legend=dict(orientation="h", y=1.12), xaxis_tickangle=-20)
+                                             legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02), xaxis_tickangle=-20)
                     st.plotly_chart(style(fig_comp_c), use_container_width=True)
                 else:
                     st.info("Données de soldes non disponibles pour ces communes.")
@@ -1170,7 +1170,7 @@ if vue == "Démographie":
                         textposition="top center", textfont=dict(size=9, color="#1B4332"),
                         hovertemplate="<b>Commune : %{x}</b><br>Accroissement naturel : %{y:.2f} / 1 000 hab<extra></extra>",
                     ))
-                    fig_vit_c.update_layout(barmode="group", legend=dict(orientation="h", y=1.12),
+                    fig_vit_c.update_layout(barmode="group", legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
                                             yaxis_title="Pour 1 000 habitants", height=360)
                     st.plotly_chart(style(fig_vit_c), use_container_width=True)
                 else:
@@ -1320,7 +1320,7 @@ if vue == "Démographie":
                         g_pos = metros_comp.index("Grenoble")
                         fig_comp.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45, fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D", line_width=1.5, layer="below")
                     fig_comp.update_layout(xaxis_title="Métropole", yaxis_title="Taux (%/an)",
-                                           legend=dict(orientation="h", y=1.12))
+                                           legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02))
                     st.plotly_chart(style(fig_comp), use_container_width=True)
 
             with r2c2:
@@ -1367,7 +1367,7 @@ if vue == "Démographie":
                         fig_vit.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45,
                                           fillcolor="rgba(255,88,77,0.10)",
                                           line_color="#FF584D", line_width=1.5, layer="below")
-                    fig_vit.update_layout(barmode="group", legend=dict(orientation="h", y=1.12),
+                    fig_vit.update_layout(barmode="group", legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
                                           yaxis_title="Pour 1 000 habitants", height=360)
                     st.plotly_chart(style(fig_vit), use_container_width=True)
 
@@ -1451,7 +1451,7 @@ if vue == "Démographie":
                 fig = go.Figure()
                 fig.add_trace(go.Bar(y=labels, x=vals_h, name="Hommes", orientation="h", marker_color=color_h))
                 fig.add_trace(go.Bar(y=labels, x=vals_f, name="Femmes", orientation="h", marker_color=color_f))
-                fig.update_layout(barmode="relative", bargap=0.06, legend=dict(orientation="h", y=1.08),
+                fig.update_layout(barmode="relative", bargap=0.06, legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
                                   yaxis_title="Tranche d'âge (ans)", xaxis_title="Population",
                                   xaxis=dict(tickformat="~s"), title=dict(text=label_entity, font_size=13), height=480)
                 return fig
@@ -1856,7 +1856,7 @@ if vue == "Démographie":
                     if greno_vrect_args:
                         fig_vol.add_vrect(**greno_vrect_args)
                     fig_vol.update_layout(barmode="group", height=350, margin=dict(t=20, b=60),
-                                          legend=dict(orientation="h", y=1.2),
+                                          legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
                                           xaxis=dict(title="Territoire", showgrid=False),
                                           yaxis=dict(title="Nombre de flux", showgrid=True, gridcolor="#eeeeee"))
                     st.plotly_chart(fig_vol, use_container_width=True)
@@ -2138,7 +2138,7 @@ if vue == "Démographie":
                         category_orders={"Taille": list(TAILLES.keys())}, height=380,
                     )
                     fig_taille.update_traces(textposition="outside", textfont_size=9)
-                    fig_taille.update_layout(legend=dict(orientation="h", y=1.12, title=""),
+                    fig_taille.update_layout(legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title=""),
                                              xaxis_title="Taille du ménage",
                                              yaxis_title="Part des ménages (%)", margin=dict(t=20))
                     st.plotly_chart(style(fig_taille), use_container_width=True)
@@ -2166,7 +2166,7 @@ if vue == "Démographie":
                     if not df_type.empty:
                         fig_vol = px.bar(df_type, x="Type de ménage", y="Nombre", color="Territoire",
                                          barmode="group", color_discrete_map=COLOR_MAP_ENT, height=400)
-                        fig_vol.update_layout(legend=dict(orientation="h", y=1.12, title=""),
+                        fig_vol.update_layout(legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title=""),
                                               xaxis_title="", yaxis_title="Nombre de ménages",
                                               xaxis_tickangle=-15, margin=dict(t=20))
                         st.plotly_chart(style(fig_vol), use_container_width=True)
@@ -2187,7 +2187,7 @@ if vue == "Démographie":
                             fig_pct.add_hrect(y0=g_pos - 0.45, y1=g_pos + 0.45,
                                               fillcolor="rgba(255,88,77,0.10)",
                                               line_color="#FF584D", line_width=1.5, layer="below")
-                        fig_pct.update_layout(legend=dict(orientation="h", y=1.12, title=""),
+                        fig_pct.update_layout(legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title=""),
                                               xaxis_title="Part des ménages (%)",
                                               yaxis_title="", margin=dict(t=20))
                         st.plotly_chart(style(fig_pct), use_container_width=True)
@@ -2265,7 +2265,7 @@ if vue == "Démographie":
                         fig_pct_csp.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45,
                                               fillcolor="rgba(255,88,77,0.10)",
                                               line_color="#FF584D", line_width=1.5, layer="below")
-                    fig_pct_csp.update_layout(legend=dict(orientation="h", y=1.15, title=""),
+                    fig_pct_csp.update_layout(legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title=""),
                                               yaxis_title="Part des ménages (%)",
                                               xaxis_title="", margin=dict(t=20))
                     st.plotly_chart(style(fig_pct_csp), use_container_width=True)
@@ -2283,7 +2283,7 @@ if vue == "Démographie":
                                              orientation="h", barmode="group",
                                              color_discrete_map=COLOR_MAP_ENT,
                                              category_orders={"CSP": list(CSP_GROUPES.keys())}, height=420)
-                        fig_vol_csp.update_layout(legend=dict(orientation="h", y=1.12, title=""),
+                        fig_vol_csp.update_layout(legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title=""),
                                                   xaxis_title="Nombre de ménages",
                                                   yaxis_title="", margin=dict(t=20))
                         st.plotly_chart(style(fig_vol_csp), use_container_width=True)
@@ -2316,7 +2316,7 @@ if vue == "Démographie":
                                                 color_discrete_map=COLOR_MAP_ENT,
                                                 height=420, text_auto=".2f")
                         fig_taille_csp.update_traces(textposition="outside", textfont_size=9)
-                        fig_taille_csp.update_layout(legend=dict(orientation="h", y=1.12, title=""),
+                        fig_taille_csp.update_layout(legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title=""),
                                                      xaxis_title="Personnes par ménage (moyenne)",
                                                      yaxis_title="", margin=dict(t=20),
                                                      xaxis=dict(range=[0, 5]))
@@ -2698,7 +2698,7 @@ if vue == "Solidarité et citoyenneté":
                                         x=1.02,
                                         title=""
                                     ),
-                                    margin=dict(t=40, r=140, b=80)
+                                    margin=dict(t=40, r=40, b=80)
                                 )
                                 st.plotly_chart(style(fig_qf, 40), use_container_width=True)
 
@@ -2762,7 +2762,7 @@ if vue == "Solidarité et citoyenneté":
                                             trace.marker.line.color = "#FF584D"
                                 fig_bar_comp.update_layout(
                                     separators=", ",
-                                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
+                                    legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
                                     margin=dict(t=80, b=40, l=150),
                                     yaxis={"categoryorder": "total ascending"}
                                 )
@@ -2982,8 +2982,8 @@ if vue == "Solidarité et citoyenneté":
                         help="Nombre d'établissements classés en Réseau d'Éducation Prioritaire (REP) ou REP+ (renforcé) par territoire."
                     )
                     LABEL_REP = {
-                        "REP":  "REP – Réseau d'Éducation Prioritaire",
-                        "REP+": "REP+ – Éducation Prioritaire Renforcée",
+                        "REP":  "REP",
+                        "REP+": "REP+",
                     }
                     df_rep = df_e[df_e["Appartenance_Education_Prioritaire"].isin(["REP", "REP+"])].copy()
                     df_rep["libelle_rep"] = df_rep["Appartenance_Education_Prioritaire"].map(LABEL_REP)
@@ -3022,7 +3022,7 @@ if vue == "Solidarité et citoyenneté":
                         fig_rep.update_layout(
                             yaxis=dict(range=[0, y_max_rep * 1.15]),
                             xaxis=dict(categoryorder="array", categoryarray=order_rep),
-                            legend=dict(orientation="h", y=1.1)
+                            legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02)
                         )
                         if is_metro:
                             grenoble_agglo = next((a for a in order_rep if "Grenoble" in str(a)), None)
@@ -3077,7 +3077,7 @@ if vue == "Solidarité et citoyenneté":
                         )
                         fig_svc.update_layout(
                             xaxis=dict(categoryorder="array", categoryarray=order_svc),
-                            legend=dict(orientation="h", y=1.1)
+                            legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02)
                         )
                         if is_metro:
                             grenoble_agglo = next((a for a in order_svc if "Grenoble" in str(a)), None)
@@ -3251,7 +3251,7 @@ if vue == "Solidarité et citoyenneté":
                 mapbox_zoom=zoom_level,
                 mapbox_center={"lat": lat_c, "lon": lon_c},
                 mapbox_layers=mapbox_layers,
-                legend=dict(title="Type", orientation="v", x=0.01, y=0.99, bgcolor="rgba(255,255,255,0.85)", bordercolor="#C8E6D4", borderwidth=1, font=dict(size=11)),
+                legend=dict(title="Type", orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, bgcolor="rgba(255,255,255,0.85)", bordercolor="#C8E6D4", borderwidth=1, font=dict(size=11)),
                 margin=dict(l=0, r=0, t=0, b=0),
                 paper_bgcolor="rgba(0,0,0,0)",
                 font_family="Sora"
@@ -3285,7 +3285,7 @@ if vue == "Solidarité et citoyenneté":
                     paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora",
                     yaxis=dict(range=[0, y_max_stack * 1.1]),
                     xaxis=dict(tickangle=-30, categoryorder="array", categoryarray=order_stack),
-                    legend=dict(title="Type", font=dict(size=10))
+                    legend=dict(title="Type", orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, font=dict(size=10))
                 )
                 st.plotly_chart(style(fig_stack, 40), use_container_width=True)
             else:
@@ -3306,7 +3306,7 @@ if vue == "Solidarité et citoyenneté":
                     paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora",
                     yaxis=dict(range=[0, y_max_comm * 1.1]),
                     xaxis=dict(tickangle=-30, categoryorder="array", categoryarray=order_comm),
-                    legend=dict(title="Type", font=dict(size=10))
+                    legend=dict(title="Type", orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, font=dict(size=10))
                 )
                 st.plotly_chart(style(fig_comm, 40), use_container_width=True)
 
@@ -3475,7 +3475,7 @@ if vue == "Solidarité et citoyenneté":
                     fig_qual.update_layout(
                         yaxis_range=[0, 100],
                         xaxis=dict(categoryorder="array", categoryarray=order_qual),
-                        legend=dict(orientation="h", y=1.1),
+                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
                         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                         font_family="Sora", yaxis=dict(gridcolor="#E8F5EE"),
                         margin=dict(l=10, r=10, t=40, b=10)
