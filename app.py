@@ -670,8 +670,8 @@ if st.session_state.page == "home":
     <div class="info-card blue">
         <div class="info-card-title"> Objectif</div>
         <div class="info-card-body">
-            Analyser les données de démographie et de solidarité & citoyenneté afin de produire une analyse complète pour chaque commune de la métropole de Grenoble. 
-            Cette étude vise à permettre la comparaison des communes entre elles, ainsi qu'à situer la métropole de Grenoble par rapport à celles de Rouen, Saint-Étienne, Rennes et Montpellier. 
+            Analyser les données de démographie et de solidarité & citoyenneté afin de produire une analyse complète pour chaque Communes de Grenoble-Alpes Métropole. 
+            Cette étude vise à permettre la comparaison des communes entre elles, ainsi qu'à situer la métropole de Grenoble par rapport à celles de Rouen, Saint-Étienne, Rennes et Montpellier (métropoles relativement comparables en termes de population, de superficie et de densité). 
             Elle est également destinée à accompagner les nouveaux élus dans la compréhension des dynamiques territoriales.
         </div>
     </div>
@@ -992,14 +992,14 @@ if vue == "Démographie":
             with col_geo_options:
                 mode_pop = st.radio(
                     "",
-                    ["Comparaison Métropoles", "Comparaison communes métropole de Grenoble"],
+                    ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
                     key="pop_mode", horizontal=True, label_visibility="collapsed"
                 )
             if mode_pop == "Comparaison Métropoles":
                 sel = st.multiselect("Métropoles à comparer", TOUTES, default=TOUTES, key="sel_t1")
             else:
                 sel_communes_pop = st.multiselect(
-                    "Commune de la métropole de Grenoble", sorted(COMMUNES["Grenoble"]),
+                    "Communes de Grenoble-Alpes Métropole", sorted(COMMUNES["Grenoble"]),
                     default=sorted(COMMUNES["Grenoble"])[:2], key="pop_communes",
                 )
             st.markdown('</div>', unsafe_allow_html=True)
@@ -1008,7 +1008,7 @@ if vue == "Démographie":
         # ════════════════════════════════════════════════════════════════════
         # VUE COMMUNES
         # ════════════════════════════════════════════════════════════════════
-        if mode_pop == "Comparaison communes métropole de Grenoble":
+        if mode_pop == "Comparaison communes Grenoble-Alpes Métropole":
             if not sel_communes_pop:
                 st.warning("Sélectionnez au moins une commune.")
                 st.stop()
@@ -1122,7 +1122,7 @@ if vue == "Démographie":
                     fig_comp_c = px.bar(df_comp_c, x="Commune", y="Taux (%/an)", color="Composante",
                                         barmode="group", color_discrete_sequence=comp_colors, height=360)
                     for trace in fig_comp_c.data:
-                        trace.hovertemplate = "<b>Commune : %{x}</b><br>" + trace.name + " : %{y:.2f} %/an<extra></extra>"
+                        trace.hovertemplate = "<b>Commune : %{x}</b><br>" + trace.name + " : %{y:.1f} %/an<extra></extra>"
                     fig_comp_c.add_hline(y=0, line_dash="dot", line_color="#AAAAAA")
                     fig_comp_c.update_layout(xaxis_title="Commune", yaxis_title="Taux (%/an)",
                                              legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02), xaxis_tickangle=-20)
@@ -1313,7 +1313,7 @@ if vue == "Démographie":
                     fig_comp = px.bar(df_comp, x="Métropole", y="Taux (%/an)", color="Composante",
                                       barmode="group", color_discrete_sequence=comp_colors_m, height=360)
                     for trace in fig_comp.data:
-                        trace.hovertemplate = "<b>Métropole : %{x}</b><br>" + trace.name + " : %{y:.2f} %/an<extra></extra>"
+                        trace.hovertemplate = "<b>Métropole : %{x}</b><br>" + trace.name + " : %{y:.1f} %/an<extra></extra>"
                     fig_comp.add_hline(y=0, line_dash="dot", line_color="#AAAAAA")
                     metros_comp = list(dict.fromkeys(df_comp["Métropole"].tolist()))
                     if "Grenoble" in metros_comp:
@@ -1397,14 +1397,14 @@ if vue == "Démographie":
                     "Métropole": m,
                     "Population 2022": fmt(epci_val(m, "population_2022")),
                     "Densité (hab/km²)": fmt(dens),
-                    "Var. pop./an": f"{tx_v:+.2f}%" if not np.isnan(tx_v) else "N/D",
-                    "Solde naturel/an": f"{epci_val(m,'tx_solde_naturel'):+.2f}%" if not np.isnan(epci_val(m,'tx_solde_naturel')) else "N/D",
-                    "Solde migrat./an": f"{epci_val(m,'tx_solde_migratoire'):+.2f}%" if not np.isnan(epci_val(m,'tx_solde_migratoire')) else "N/D",
+                    "Var. pop./an": f"{tx_v:+.1f}%" if not np.isnan(tx_v) else "N/D",
+                    "Solde naturel/an": f"{epci_val(m,'tx_solde_naturel'):+.1f}%" if not np.isnan(epci_val(m,'tx_solde_naturel')) else "N/D",
+                    "Solde migrat./an": f"{epci_val(m,'tx_solde_migratoire'):+.1f}%" if not np.isnan(epci_val(m,'tx_solde_migratoire')) else "N/D",
                     "Taux chômage": f"{tc:.1f}%" if not np.isnan(tc) else "N/D",
                     "Revenu médian": fmt(rev, " €"),
                     "Taux pauvreté": f"{pauv:.1f}%" if not np.isnan(pauv) else "N/D",
                     "Nb. ménages": fmt(epci_val(m, "nb_menages_2022")),
-                    "Emploi total": fmt(epci_val(m, "emploi_total_2022")),
+                    "Nombre d'emplois": fmt(epci_val(m, "emploi_total_2022")),
                 })
             df_tab = pd.DataFrame(lignes_tab).set_index("Métropole")
             st.dataframe(df_tab, use_container_width=True)
@@ -1463,12 +1463,12 @@ if vue == "Démographie":
                     filter_row_label("Niveau géographique")
                 with fa2:
                     mode_age = st.radio("",
-                        ["Comparaison Métropoles", "Comparaison communes métropole de Grenoble"],
+                        ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
                         key="age_mode", horizontal=True, label_visibility="collapsed")
                 if mode_age == "Comparaison Métropoles":
-                    sel_metros_age = st.multiselect("Métropoles", TOUTES, default=TOUTES, key="age_metros")
+                    sel_metros_age = st.multiselect("Métropoles à comparer", TOUTES, default=TOUTES, key="age_metros")
                 else:
-                    sel_communes_age = st.multiselect("Commune de la métropole de Grenoble",
+                    sel_communes_age = st.multiselect("Communes de Grenoble-Alpes Métropole",
                                                       sorted(COMMUNES["Grenoble"]),
                                                       default=sorted(COMMUNES["Grenoble"])[:2],
                                                       key="age_communes")
@@ -1631,7 +1631,7 @@ if vue == "Démographie":
 
                 st.markdown("---")
                 st.subheader(
-                    "Pyramide(s) des âges",
+                    "Pyramides des âges",
                     help="Chaque barre horizontale représente une tranche d'âge quinquennale (ex : 0–4 ans, 5–9 ans…). Les hommes sont à gauche, les femmes à droite. La largeur de chaque barre est proportionnelle au nombre de personnes dans cette tranche. Une base large = beaucoup de jeunes. Un sommet large = fort vieillissement. Une forme en 'toupie' (ventre au milieu) = population en âge de travailler dominante."
                 )
 
@@ -1743,13 +1743,12 @@ if vue == "Démographie":
                                 unsafe_allow_html=True)
                 with col_geo_options:
                     mode_mob = st.radio("",
-                        ["Comparaison Métropoles", "Comparaison communes métropole de Grenoble"],
+                        ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
                         key="mob_mode", horizontal=True, label_visibility="collapsed")
 
-                if mode_mob == "Comparaison communes métropole de Grenoble":
+                if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
                     met_choice = "Grenoble"
-                    st.markdown("**Communes de la métropole de Grenoble**")
-                    sel_communes_mob = st.multiselect("Sélection des communes",
+                    sel_communes_mob = st.multiselect("Communes de Grenoble-Alpes Métropole",
                                                       sorted(COMMUNES[met_choice]),
                                                       default=sorted(COMMUNES[met_choice])[:2],
                                                       key="mob_communes")
@@ -1784,9 +1783,9 @@ if vue == "Démographie":
                 (current_mob_df["annee"] == sel_annee_mob)
             ]
             entities_mob = []
-            targets = sel_communes_mob if mode_mob == "Comparaison communes métropole de Grenoble" else sel_metros_mob
+            targets = sel_communes_mob if mode_mob == "Comparaison communes Grenoble-Alpes Métropole" else sel_metros_mob
             for target in targets:
-                coms = [target] if mode_mob == "Comparaison communes métropole de Grenoble" else COMMUNES[target]
+                coms = [target] if mode_mob == "Comparaison communes Grenoble-Alpes Métropole" else COMMUNES[target]
                 f_in  = int(df_mob_filtered[df_mob_filtered[col_dest].isin(coms)]["flux"].sum())
                 f_out = int(df_mob_filtered[df_mob_filtered[col_orig].isin(coms)]["flux"].sum())
                 entities_mob.append({"name": target, "in": f_in, "out": f_out, "solde": f_in - f_out})
@@ -1801,7 +1800,7 @@ if vue == "Démographie":
                 for i, row in df_plot_mob.iterrows():
                     color_solde = "#006400" if row["solde"] >= 0 else "#8B0000"
                     val_formatee = f"{row['solde']:+,d}".replace(",", " ")
-                    if mode_mob == "Comparaison communes métropole de Grenoble":
+                    if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
                         kpi_mob_color = PALETTE_COMMUNE[int(i * (len(PALETTE_COMMUNE)-1) / max(n_mob-1,1))]
                     else:
                         kpi_mob_color = COULEURS.get(row['name'], "#1B4332")
@@ -1827,7 +1826,7 @@ if vue == "Démographie":
                                             fillcolor="rgba(255,88,77,0.10)",
                                             line_color="#FF584D", line_width=1.5, layer="below")
 
-                if mode_mob == "Comparaison communes métropole de Grenoble":
+                if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
                     color_in_bar  = PALETTE_COMMUNE[0]
                     color_out_bar = PALETTE_COMMUNE[int(len(PALETTE_COMMUNE) * 0.5)]
                 else:
@@ -1905,7 +1904,7 @@ if vue == "Démographie":
                     else:
                         st.info("L'analyse géographique des flux est disponible uniquement pour **une seule commune** sélectionnée.")
                 else:
-                    if mode_mob == "Comparaison communes métropole de Grenoble":
+                    if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
                         color_top_in  = PALETTE_COMMUNE[0]
                         color_top_out = PALETTE_COMMUNE[int(len(PALETTE_COMMUNE) * 0.5)]
                     else:
@@ -2040,10 +2039,10 @@ if vue == "Démographie":
                                 unsafe_allow_html=True)
                 with col_geo_options:
                     mode_men = st.radio("",
-                        ["Comparaison Métropoles", "Comparaison communes métropole de Grenoble"],
+                        ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
                         key="men_mode", horizontal=True, label_visibility="collapsed")
-                if mode_men == "Comparaison communes métropole de Grenoble":
-                    sel_communes_men = st.multiselect("Commune de la métropole de Grenoble",
+                if mode_men == "Comparaison communes Grenoble-Alpes Métropole":
+                    sel_communes_men = st.multiselect("Communes de Grenoble-Alpes Métropole",
                                                       sorted(COMMUNES["Grenoble"]),
                                                       default=sorted(COMMUNES["Grenoble"])[:3],
                                                       key="men_communes")
@@ -2358,7 +2357,7 @@ if vue == "Démographie":
                     filter_row_label("Niveau géographique")
                 with csp_geo_r:
                     mode_analyse = st.radio("",
-                        ["Comparaison Métropoles", "Comparaison communes métropole de Grenoble"],
+                        ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
                         key="csp_mode", horizontal=True, label_visibility="collapsed")
                 csp_row1_c1, csp_row1_c2 = st.columns(2)
                 with csp_row1_c1:
@@ -2374,9 +2373,9 @@ if vue == "Démographie":
                     sel_annee_csp = st.selectbox("Année", annees_csp, key="csp_annee",
                                                  help="Année du recensement INSEE de référence. Les données disponibles sont généralement 2011, 2016 et 2022.") if annees_csp else None
 
-                if mode_analyse == "Comparaison communes métropole de Grenoble":
+                if mode_analyse == "Comparaison communes Grenoble-Alpes Métropole":
                     clist = sorted(COMMUNES["Grenoble"])
-                    sel_communes_csp = st.multiselect("Commune de la métropole de Grenoble", clist,
+                    sel_communes_csp = st.multiselect("Communes de Grenoble-Alpes Métropole", clist,
                                                       default=["Grenoble", "Meylan"], key="csp_communes",
                                                       help="Sélectionnez les communes à analyser.")
                     entities_names = sel_communes_csp
@@ -2398,7 +2397,7 @@ if vue == "Démographie":
                 entities_csp = []
 
                 for name in entities_names:
-                    if mode_analyse == "Comparaison communes métropole de Grenoble":
+                    if mode_analyse == "Comparaison communes Grenoble-Alpes Métropole":
                         subset = df_year_csp[(df_year_csp["LIB_NORM"] == normalize_name(name)) & (df_year_csp["DEP"] == "38")]
                         if not subset.empty:
                             entities_csp.append({"name": name, "data": subset.iloc[0]})
@@ -2588,14 +2587,14 @@ if vue == "Solidarité et citoyenneté":
                             filter_row_label("Niveau géographique")
                         with f2:
                             mode_caf = st.radio(
-                                "", ["Comparaison Métropoles", "Comparaison communes métropole de Grenoble"],
+                                "", ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
                                 key="caf_mode", horizontal=True, label_visibility="collapsed"
                             )
                         if mode_caf == "Comparaison Métropoles":
                             sel_entites_caf = st.multiselect("Métropoles à comparer", agglos_caf, default=agglos_caf, key="caf_agglos")
                         else:
                             communes_gre_caf = sorted(df_caf[df_caf["Agglomeration"] == gre_agglo]["Nom_Commune"].dropna().unique()) if "Nom_Commune" in df_caf.columns else []
-                            sel_entites_caf = st.multiselect("Communes de Grenoble", communes_gre_caf, default=communes_gre_caf[:5] if communes_gre_caf else [], key="caf_communes")
+                            sel_entites_caf = st.multiselect("Communes de Grenoble-Alpes Métropole", communes_gre_caf, default=communes_gre_caf[:5] if communes_gre_caf else [], key="caf_communes")
                         c1, c2 = st.columns(2)
                         with c1:
                             metric_key = st.selectbox("Indicateur", list(available_metrics.keys()), format_func=lambda k: available_metrics[k], index=0, key="caf_metric")
@@ -2811,7 +2810,7 @@ if vue == "Solidarité et citoyenneté":
                     filter_row_label("Niveau géographique")
                 with f2:
                     mode_eff = st.radio(
-                        "", ["Comparaison Métropoles", "Comparaison communes métropole de Grenoble"],
+                        "", ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
                         key="eff_mode", horizontal=True, label_visibility="collapsed"
                     )
                 if mode_eff == "Comparaison Métropoles":
@@ -2824,7 +2823,7 @@ if vue == "Solidarité et citoyenneté":
                         df_eff_w[df_eff_w["metropole"] == "Grenoble"]["Nom_commune"].dropna().unique()
                     )
                     sel_entites_eff = st.multiselect(
-                        "Communes de Grenoble", communes_gre,
+                        "Communes de Grenoble-Alpes Métropole", communes_gre,
                         default=communes_gre[:5] if communes_gre else [],
                         key="eff_communes"
                     )
@@ -3139,12 +3138,12 @@ if vue == "Solidarité et citoyenneté":
             fs1, fs2 = st.columns([1, 3])
             with fs1: filter_row_label("Niveau géographique")
             with fs2:
-                mode_sante = st.radio("", ["Comparaison Métropoles", "Comparaison communes métropole de Grenoble"], key="sante_mode", horizontal=True, label_visibility="collapsed")
+                mode_sante = st.radio("", ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"], key="sante_mode", horizontal=True, label_visibility="collapsed")
             if mode_sante == "Comparaison Métropoles":
                 sel_metros_sante = st.multiselect("Métropoles à comparer", metros_sante, default=metros_sante, key="sante_metros_multi")
             else:
                 communes_sante_dispo = sorted(df_sante[df_sante["metropole"] == "Grenoble"]["commune"].dropna().unique())
-                sel_communes_sante = st.multiselect("Communes de Grenoble", communes_sante_dispo, default=communes_sante_dispo[:5], key="sante_communes_t1")
+                sel_communes_sante = st.multiselect("Communes de Grenoble-Alpes Métropole", communes_sante_dispo, default=communes_sante_dispo[:5], key="sante_communes_t1")
             sel_types_sante = st.multiselect("Type d'établissement", options=types_sante, default=types_sante, format_func=lambda t: TYPE_LABELS.get(t, t), key="sante_types_t1")
             st.markdown('</div>', unsafe_allow_html=True)
 
@@ -3195,7 +3194,7 @@ if vue == "Solidarité et citoyenneté":
 
         if mode_sante == "Comparaison Métropoles" and geojson_metros is not None and sel_metros_sante:
             feats_zoom = [f for f in geojson_metros["features"] if f["properties"].get("METROPOLE") in sel_metros_sante]
-        elif mode_sante == "Comparaison communes métropole de Grenoble" and geojson_communes is not None and sel_communes_sante:
+        elif mode_sante == "Comparaison communes Grenoble-Alpes Métropole" and geojson_communes is not None and sel_communes_sante:
             feats_zoom = [f for f in geojson_communes["features"] if f["properties"].get("DCOE_L_LIB") in sel_communes_sante]
         else:
             feats_zoom = []
@@ -3215,7 +3214,7 @@ if vue == "Solidarité et citoyenneté":
             feats_filtrees = [f for f in geojson_metros["features"] if f["properties"].get("METROPOLE") in sel_metros_sante]
             if feats_filtrees:
                 mapbox_layers.append({"source": {"type": "FeatureCollection", "features": feats_filtrees}, "type": "line", "color": "#2D6A4F", "line": {"width": 2}, "opacity": 0.8})
-        elif mode_sante == "Comparaison communes métropole de Grenoble":
+        elif mode_sante == "Comparaison communes Grenoble-Alpes Métropole":
             if geojson_communes is not None:
                 feats_communes = [f for f in geojson_communes["features"] if f["properties"].get("DCOE_L_LIB") in sel_communes_sante]
                 if feats_communes:
@@ -3367,10 +3366,10 @@ if vue == "Solidarité et citoyenneté":
                 annees_elec = sorted(df_elec_type["Année"].dropna().unique().astype(int))
                 fp1, fp2 = st.columns([1, 3])
                 with fp1: filter_row_label("Niveau géographique")
-                with fp2: mode_part = st.radio("", ["Comparaison Métropoles", "Comparaison communes métropole de Grenoble"], key="part_mode", horizontal=True, label_visibility="collapsed")
-                if mode_part == "Comparaison communes métropole de Grenoble":
+                with fp2: mode_part = st.radio("", ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"], key="part_mode", horizontal=True, label_visibility="collapsed")
+                if mode_part == "Comparaison communes Grenoble-Alpes Métropole":
                     communes_elec_dispo = sorted(df_elec_type[df_elec_type["metropole"] == "Grenoble"]["Libellé de la commune"].dropna().unique())
-                    sel_communes_part = st.multiselect("Communes de Grenoble", communes_elec_dispo, default=communes_elec_dispo[:5], key="part_communes")
+                    sel_communes_part = st.multiselect("Communes de Grenoble-Alpes Métropole", communes_elec_dispo, default=communes_elec_dispo[:5], key="part_communes")
                 else:
                     sel_metros_part = st.multiselect("Métropoles à comparer", metros_elec, default=metros_elec, key="part_metros")
                 fc1, fc2 = st.columns(2)
@@ -3430,7 +3429,7 @@ if vue == "Solidarité et citoyenneté":
                     df_part_sorted = df_agg.sort_values("% Participation", ascending=True)
                     df_part_sorted["text_display"] = df_part_sorted["% Participation"].apply(lambda v: f"{v:.1f} %")
                     _part_color_map = COULEURS if mode_part == "Comparaison Métropoles" else None
-                    _part_seq = px.colors.sequential.Greens_r if mode_part == "Comparaison communes métropole de Grenoble" else None
+                    _part_seq = px.colors.sequential.Greens_r if mode_part == "Comparaison communes Grenoble-Alpes Métropole" else None
                     fig_part = px.bar(
                         df_part_sorted, x="% Participation", y="metropole", orientation="h",
                         color="metropole", color_discrete_map=_part_color_map, color_discrete_sequence=_part_seq,
