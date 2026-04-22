@@ -2596,18 +2596,18 @@ if vue == "Solidarité et citoyenneté":
                     "Nombre foyers NDUR": "Foyers aidés (toutes aides)",
                     "Nombre personnes NDUR": "Personnes concernées (toutes aides)",
                     "Montant total NDUR": "Montant total versé (€)",
-                    "Nombre foyers NDURPAJE": "Foyers aidés - Jeunes enfants",
-                    "Nombre personnes NDURPAJE": "Personnes concernées - Jeunes enfants",
-                    "Montant total NDURPAJE": "Montant versé - Jeunes enfants (€)",
-                    "Nombre foyers NDUREJ": "Foyers aidés - Enfance & jeunesse",
-                    "Nombre personnes NDUREJ": "Personnes concernées - Enfance & jeunesse",
-                    "Montant total NDUREJ": "Montant versé - Enfance & jeunesse (€)",
-                    "Nombre foyers NDURAL": "Foyers aidés - Logement",
-                    "Nombre personnes NDURAL": "Personnes concernées - Logement",
-                    "Montant total NDURAL": "Montant versé - Logement (€)",
-                    "Nombre foyers NDURINS": "Foyers aidés - Insertion",
-                    "Nombre personnes NDURINS": "Personnes concernées - Insertion",
-                    "Montant total NDURINS": "Montant versé - Insertion (€)",
+                    "Nombre foyers NDURPAJE": "Foyers aidés – Jeunes enfants",
+                    "Nombre personnes NDURPAJE": "Personnes concernées – Jeunes enfants",
+                    "Montant total NDURPAJE": "Montant versé – Jeunes enfants (€)",
+                    "Nombre foyers NDUREJ": "Foyers aidés – Enfance & jeunesse",
+                    "Nombre personnes NDUREJ": "Personnes concernées – Enfance & jeunesse",
+                    "Montant total NDUREJ": "Montant versé – Enfance & jeunesse (€)",
+                    "Nombre foyers NDURAL": "Foyers aidés – Logement",
+                    "Nombre personnes NDURAL": "Personnes concernées – Logement",
+                    "Montant total NDURAL": "Montant versé – Logement (€)",
+                    "Nombre foyers NDURINS": "Foyers aidés – Insertion",
+                    "Nombre personnes NDURINS": "Personnes concernées – Insertion",
+                    "Montant total NDURINS": "Montant versé – Insertion (€)",
                 }
                 available_metrics = {k: v for k, v in ALL_METRIC_LABELS.items() if k in df_caf.columns}
                 if not available_metrics:
@@ -2634,12 +2634,37 @@ if vue == "Solidarité et citoyenneté":
                         else:
                             communes_gre_caf = sorted(df_caf[df_caf["Agglomeration"] == gre_agglo]["Nom_Commune"].dropna().unique()) if "Nom_Commune" in df_caf.columns else []
                             sel_entites_caf = st.multiselect("Communes de Grenoble-Alpes Métropole", communes_gre_caf, default=communes_gre_caf[:5] if communes_gre_caf else [], key="caf_communes")
-                        c1, c2 = st.columns(2)
+                        MEASURE_TYPES = {
+                            "Nombre foyers":  "Foyers aidés",
+                            "Nombre personnes": "Personnes concernées",
+                            "Montant total":  "Montant versé (€)",
+                        }
+                        AID_CATEGORIES = {
+                            "NDUR":     "Toutes aides",
+                            "NDURPAJE": "Jeunes enfants (PAJE)",
+                            "NDUREJ":   "Enfance & jeunesse",
+                            "NDURAL":   "Logement",
+                            "NDURINS":  "Insertion",
+                        }
+
+                        c1, c2, c3 = st.columns(3)
                         with c1:
-                            metric_key = st.selectbox("Indicateur", list(available_metrics.keys()), format_func=lambda k: available_metrics[k], index=0, key="caf_metric")
+                            measure_label = st.selectbox(
+                                "Mesure", list(MEASURE_TYPES.values()), index=0, key="caf_measure"
+                            )
+                            measure_prefix = next(k for k, v in MEASURE_TYPES.items() if v == measure_label)
                         with c2:
+                            available_cats = {
+                                suffix: label for suffix, label in AID_CATEGORIES.items()
+                                if f"{measure_prefix} {suffix}" in available_metrics
+                            }
+                            cat_label = st.selectbox(
+                                "Catégorie d'aide", list(available_cats.values()), index=0, key="caf_cat"
+                            )
+                            cat_suffix = next(k for k, v in available_cats.items() if v == cat_label)
+                            metric_key = f"{measure_prefix} {cat_suffix}"
+                        with c3:
                             year_caf = st.selectbox("Année", years_caf, index=len(years_caf)-1, key="caf_year")
-                        st.markdown('</div>', unsafe_allow_html=True)
 
                     geo_col = "Agglomeration" if mode_caf == "Comparaison Métropoles" else "Nom_Commune"
                     is_metro = (mode_caf == "Comparaison Métropoles")
@@ -2709,9 +2734,14 @@ if vue == "Solidarité et citoyenneté":
                                     fig_qf = px.bar(qf_data.sort_values("QF_ord"), x=geo_col, y=metric_key, color="Quotient familial", color_discrete_sequence=color_seq, barmode="stack", labels={geo_col: "", metric_key: label_metric}, height=380)
                                     fig_qf.update_traces(marker_line_width=0)
 
-                                fig_qf.update_traces(
-                                    hovertemplate="<b>%{x}</b><br>" + label_metric + " : <b>%{y:,.0f}</b><extra></extra>"
-                                )
+                                for trace in fig_qf.data:
+                                    n = len(trace.y) if trace.y is not None else 0
+                                    trace.customdata = [[trace.name]] * n
+                                    trace.hovertemplate = (
+                                        "<b>%{x}</b><br>"
+                                        "QF : <b>%{customdata[0]}</b><br>"
+                                        + label_metric + " : <b>%{y:,.0f}</b><extra></extra>"
+                                    )
                                 fig_qf.update_layout(
                                     separators=", ",
                                     yaxis=dict(range=[0, y_max_qf * 1.1]),
@@ -2727,7 +2757,7 @@ if vue == "Solidarité et citoyenneté":
                                         y=0.5,
                                         xanchor="left",
                                         x=1.02,
-                                        title=""
+                                        title="QF"
                                     ),
                                     margin=dict(t=40, r=40, b=80)
                                 )
@@ -2820,8 +2850,7 @@ if vue == "Solidarité et citoyenneté":
         else:
             st.markdown("""
                         <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px;'>
-                        <strong>Note sur les données :</strong> Le nombre d'élèves est donné à titre indicatif, certains établissements ne renseignent pas cet effectif.
-                        Les totaux peuvent donc être sous-estimés et ne reflètent pas nécessairement la réalité exacte. De plus les données concernent seulement le premier et le second degré.
+                        <strong>Note sur les données :</strong> Les données sont issues de l'Annuaire de l'Éducation nationale (2019). Tous les établissements n'y figurent pas nécessairement, et certains de ceux qui y sont référencés ne renseignent pas leur effectif. Les chiffres présentés couvrent uniquement le premier et second degré et sont donc à considérer comme un ordre de grandeur, potentiellement sous-estimé, plutôt que comme un décompte exhaustif.
                         </div>""", unsafe_allow_html=True)
             df_eff_w   = df_eff.copy()
             metros_eff = sorted(df_eff_w["metropole"].dropna().unique())
@@ -2833,7 +2862,7 @@ if vue == "Solidarité et citoyenneté":
                 "ECOLE DE NIVEAU ELEMENTAIRE SPECIALISEE": "Élém. spécialisée",
                 "COLLEGE":                                 "Collège",
                 "LYCEE D ENSEIGNEMENT GENERAL":            "Lycée Général",
-                "LYCEE ENSEIGNT GENERAL ET TECHNOLOGIQUE": "Lycée GT",
+                "LYCEE ENSEIGNT GENERAL ET TECHNOLOGIQUE": "Lycée Général et Technologique",
                 "LYCEE PROFESSIONNEL":                     "Lycée Pro",
                 "LYCEE POLYVALENT":                        "Lycée Polyvalent",
                 "SECTION D ENSEIGNEMENT PROFESSIONNEL":    "SEP",
@@ -2866,18 +2895,19 @@ if vue == "Solidarité et citoyenneté":
                         default=communes_gre[:5] if communes_gre else [],
                         key="eff_communes"
                     )
-
                 natures_dispo = sorted(df_eff_w["libelle_nature"].dropna().unique())
                 c1, c2 = st.columns([1, 1])
                 with c1:
                     natures_connues = [n for n in TYPES_ETABLISSEMENTS if n in natures_dispo]
-                    nature_choices = ["Tous"] + natures_connues
-                    sel_nature = st.selectbox(
+                    sel_nature = st.multiselect(
                         "Type d'établissement",
-                        nature_choices,
-                        format_func=lambda n: "Tous" if n == "Tous" else LABEL_NATURE.get(n, n),
+                        natures_connues,
+                        default=natures_connues,
+                        format_func=lambda n: LABEL_NATURE.get(n, n),
                         key="eff_nature"
                     )
+                    if not sel_nature:
+                        sel_nature = natures_connues
                 with c2:
                     sel_secteur = st.selectbox(
                         "Secteur", ["Tous", "Public", "Privé"],
@@ -2890,8 +2920,7 @@ if vue == "Solidarité et citoyenneté":
 
             # ── Filtrage ────────────────────────────────────────────────────
             df_e = df_eff_w.copy()
-            if sel_nature != "Tous":
-                df_e = df_e[df_e["libelle_nature"] == sel_nature]
+            df_e = df_e[df_e["libelle_nature"].isin(sel_nature)]
             if sel_secteur != "Tous":
                 df_e = df_e[df_e["Statut_public_prive"] == sel_secteur]
             if is_metro:
@@ -3121,11 +3150,13 @@ if vue == "Solidarité et citoyenneté":
 
                 st.markdown("---")
                 with st.expander("Note méthodologique"):
-                                    st.markdown("""
-                                    - **SEP** (Section d'Enseignement Professionnel) : section rattachée à un lycée général ou technologique qui dispense une formation professionnelle, sans être un lycée professionnel à part entière.
-                                    - **EREA** (Établissement Régional d'Enseignement Adapté) : établissement spécialisé accueillant des élèves en situation de handicap ou en grande difficulté scolaire et sociale, avec un accompagnement pédagogique et éducatif renforcé.
-                                    """)
-
+                    st.markdown("""
+                    - **SEP** (Section d'Enseignement Professionnel) : section rattachée à un lycée général ou technologique qui dispense une formation professionnelle, sans être un lycée professionnel à part entière.
+                    - **EREA** (Établissement Régional d'Enseignement Adapté) : établissement spécialisé accueillant des élèves en situation de handicap ou en grande difficulté scolaire et sociale, avec un accompagnement pédagogique et éducatif renforcé.
+                    - **REP** (Réseau d'Éducation Prioritaire) : dispositif visant à renforcer l'action pédagogique dans les écoles et établissements confrontés à des difficultés sociales importantes.
+                    - **REP+** (Réseau d'Éducation Prioritaire renforcé) : niveau supérieur du dispositif REP, ciblant les territoires cumulant les plus grandes difficultés sociales et scolaires, avec des moyens humains et financiers accrus.
+                    - **ULIS** (Unité Localisée pour l'Inclusion Scolaire) : dispositif au sein d'un établissement ordinaire permettant la scolarisation d'élèves en situation de handicap, avec un accompagnement adapté tout en favorisant leur inclusion dans les classes classiques.
+                    """)
     # ──────────────────────────────────────────────────────────────────────────
     # ONGLET 3 - SANTÉ
     # ──────────────────────────────────────────────────────────────────────────
