@@ -2528,7 +2528,6 @@ if vue == "Démographie":
 # SOLIDARITÉ & CITOYENNETÉ
 # ==============================================================================
 if vue == "Solidarité et citoyenneté":
-    st.markdown('<p class="section-header">Solidarité & citoyenneté</p>', unsafe_allow_html=True)
     s1, s2, s3, s4 = st.tabs(["🤝 Solidarité", "🎓 Éducation", "🏥 Santé", "🗳️ Participation citoyenne"])
 
     def render_solidarite_kpi(title, value, subtitle, border_color="#1e5631"):
