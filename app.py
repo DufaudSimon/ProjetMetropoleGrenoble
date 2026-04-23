@@ -1251,8 +1251,8 @@ if vue == "Démographie":
                     "**Population totale (barres)** : une barre plus haute signifie simplement plus d'habitants. "
                     "Ce graphique permet de situer l'échelle de chaque territoire et de dimensionner les besoins en services publics (écoles, transports, logements).\n\n"
                     "**Densité vs Superficie (nuage de points)** : la position verticale indique la pression démographique par km². "
-                    "Un territoire dense et petit (en haut à gauche) a un profil urbain concentré, souvent avec des contraintes foncières. "
-                    "Un territoire peu dense et grand (en bas à droite) a un profil périurbain ou rural, avec des enjeux différents de mobilité et d'accès aux services. "
+                    "Un territoire dense et petit (en haut à gauche) a un profil urbain concentré."
+                    "Un territoire peu dense et grand (en bas à droite) a un profil périurbain ou rural. "
                     "La taille de la bulle permet de ne pas confondre densité et population totale : une commune peut être grande en superficie mais peu peuplée, et pourtant avoir une forte densité dans son centre."
                 )
 
@@ -1338,15 +1338,13 @@ if vue == "Démographie":
 
             with st.expander("💡 Comment interpréter ces deux graphiques ?"):
                 st.write(
-                    "**Soldes naturel et migratoire** : ce graphique décompose la croissance démographique en deux moteurs distincts. "
-                    "Le **solde naturel** (naissances − décès) reflète la vitalité biologique du territoire : s'il est négatif, la population vieillit et les décès dépassent les naissances. "
-                    "Le **solde migratoire** (arrivées − départs) révèle l'attractivité résidentielle : un solde positif signifie que le territoire attire plus de nouveaux résidents qu'il n'en perd. "
-                    "Un territoire peut croître même avec un solde naturel négatif s'il est très attractif (ex : communes résidentielles prisées). À l'inverse, une natalité dynamique peut masquer une fuite des actifs.\n\n"
-                    "**Naissances & Décès** : ce graphique complète la lecture en montrant les taux bruts pour 1 000 habitants. "
-                    "Le losange représente l'accroissement naturel net : au-dessus de zéro, les naissances dépassent les décès ; en dessous, c'est l'inverse. "
-                    "Un taux de natalité élevé (grande barre foncée) combiné à un faible taux de mortalité = territoire jeune et dynamique. "
-                    "Un territoire avec une barre claire (décès) plus haute que la barre foncée (naissances) est structurellement vieillissant."
-                )
+                        "**Soldes naturel et migratoire** : ce graphique montre d’où vient l’évolution de la population. "
+                        "Le **solde naturel** compare les naissances et les décès. "
+                        "Le **solde migratoire** montre si le territoire gagne ou perd des habitants.\n\n"
+                        "**Naissances & Décès** : ce graphique compare les taux pour 1 000 habitants. "
+                        "Au-dessus de 0, les naissances sont plus nombreuses que les décès. "
+                        "Quand les décès dépassent les naissances, cela traduit un vieillissement de la population."
+                    )
 
             st.markdown("---")
             st.markdown("#### Tableau récapitulatif - indicateurs clés")
@@ -1442,8 +1440,8 @@ if vue == "Démographie":
                     "**Population totale (barres)** : une barre plus haute signifie simplement plus d'habitants. "
                     "Ce graphique permet de situer l'échelle de chaque territoire et de dimensionner les besoins en services publics (écoles, transports, logements).\n\n"
                     "**Densité vs Superficie (nuage de points)** : la position verticale indique la pression démographique par km². "
-                    "Un territoire dense et petit (en haut à gauche) a un profil urbain concentré, souvent avec des contraintes foncières. "
-                    "Un territoire peu dense et grand (en bas à droite) a un profil périurbain ou rural, avec des enjeux différents de mobilité et d'accès aux services. "
+                    "Un territoire dense et petit (en haut à gauche) a un profil urbain concentré. "
+                    "Un territoire peu dense et grand (en bas à droite) a un profil périurbain ou rural. "
                     "La taille de la bulle permet de ne pas confondre densité et population totale : une métropole peut être grande en superficie mais peu peuplée, et pourtant avoir une forte densité dans son centre."
                 )
 
@@ -1533,17 +1531,13 @@ if vue == "Démographie":
 
             with st.expander("💡 Comment interpréter ces deux graphiques ?"):
                 st.write(
-                    "**Soldes naturel et migratoire** : ce graphique décompose la croissance démographique en deux moteurs distincts. "
-                    "Le **solde naturel** (naissances − décès) reflète la vitalité biologique du territoire : s'il est négatif, la population vieillit et les décès dépassent les naissances. "
-                    "Le **solde migratoire** (arrivées − départs) révèle l'attractivité résidentielle : un solde positif signifie que le territoire attire plus de nouveaux résidents qu'il n'en perd. "
-                    "Un territoire peut croître même avec un solde naturel négatif s'il est très attractif. À l'inverse, une natalité dynamique peut masquer une fuite des actifs. "
-                    "La zone rouge identifie Grenoble dans tous les graphiques de comparaison entre métropoles.\n\n"
-                    "**Naissances & Décès** : ce graphique complète la lecture en montrant les taux bruts pour 1 000 habitants. "
-                    "Le losange rouge représente l'accroissement naturel net : au-dessus de zéro, les naissances dépassent les décès. "
-                    "Un taux de natalité élevé combiné à un faible taux de mortalité = territoire jeune et dynamique. "
-                    "Un territoire avec des décès plus nombreux que les naissances est structurellement vieillissant et dépend davantage de son attractivité migratoire pour maintenir sa population."
-                )
-
+                        "**Soldes naturel et migratoire** : ce graphique montre d’où vient l’évolution de la population. "
+                        "Le **solde naturel** compare les naissances et les décès. "
+                        "Le **solde migratoire** montre si le territoire gagne ou perd des habitants.\n\n"
+                        "**Naissances & Décès** : ce graphique compare les taux pour 1 000 habitants. "
+                        "Au-dessus de 0, les naissances sont plus nombreuses que les décès. "
+                        "Quand les décès dépassent les naissances, cela traduit un vieillissement de la population."
+                    )
             st.markdown("---")
             st.markdown("#### Tableau récapitulatif - indicateurs clés")
             lignes_tab = []
@@ -1740,13 +1734,7 @@ if vue == "Démographie":
                         "La pyramide des âges est une photographie de la structure démographique d'un territoire à un instant donné. "
                         "Chaque tranche d'âge quinquennale est représentée par deux barres : les hommes (à gauche) et les femmes (à droite), "
                         "dont la longueur est proportionnelle à l'effectif concerné.\n\n"
-                        "**Formes caractéristiques :**\n"
-                        "- **Base large, sommet étroit** (forme triangulaire) : territoire jeune avec une natalité élevée - profil plutôt familial.\n"
-                        "- **Sommet large, base étroite** (forme d'urne) : territoire vieillissant avec peu de jeunes - souvent lié à un exode des familles ou à une faible natalité historique.\n"
-                        "- **Ventre large au milieu** (toupie) : forte concentration d'actifs (25-54 ans) - territoire attractif économiquement.\n"
-                        "- **Asymétrie hommes/femmes** : visible surtout chez les personnes âgées où les femmes ont une espérance de vie plus longue.\n\n"
-                        "Comparer deux pyramides côte à côte permet d'identifier rapidement quel territoire vieillit davantage et d'anticiper les besoins futurs (crèches, Ehpad, services de santé)."
-                    )
+                        )
 
                 st.markdown("---")
                 st.subheader(
@@ -1792,14 +1780,7 @@ if vue == "Démographie":
                 with st.expander("💡 Comment interpréter ces courbes d'évolution ?"):
                     st.write(
                         "Ces graphiques montrent comment la composition par âge de chaque territoire a évolué entre 2011 et 2022. Attention les ordonnées ne commencent pas à 0 car l'objectif est d'observer une évolution.\n\n"
-                        "**Part des moins de 25 ans** : une courbe qui descend indique que la proportion de jeunes diminue - soit parce que les familles quittent le territoire, soit parce que la natalité baisse, soit parce que d'autres tranches d'âge progressent plus vite. "
-                        "Une courbe stable ou montante signale un territoire qui maintient ou renforce son attractivité pour les familles avec enfants.\n\n"
-                        "**Part des 65 ans et plus** : une courbe qui monte = vieillissement progressif du territoire. "
-                        "Ce phénomène est naturel dans la plupart des territoires français, mais la vitesse de vieillissement varie selon l'attractivité économique et résidentielle. "
-                        "Un territoire qui vieillit vite devra anticiper des besoins accrus en soins, en accessibilité et en services à la personne.\n\n"
-                        "**Lire les deux ensemble** : si la part des jeunes baisse pendant que celle des seniors monte, le territoire se polarise vers les personnes âgées. "
-                        "Si les deux indicateurs restent stables, le territoire maintient un équilibre démographique."
-                    )
+                        )
 
             # ── VUE COMMUNES ──────────────────────────────────────────────────
             else:
@@ -1859,13 +1840,7 @@ if vue == "Démographie":
                         "La pyramide des âges est une photographie de la structure démographique d'un territoire à un instant donné. "
                         "Chaque tranche d'âge quinquennale est représentée par deux barres : les hommes (à gauche) et les femmes (à droite), "
                         "dont la longueur est proportionnelle à l'effectif concerné.\n\n"
-                        "**Formes caractéristiques :**\n"
-                        "- **Base large, sommet étroit** (forme triangulaire) : territoire jeune avec une natalité élevée - profil plutôt familial.\n"
-                        "- **Sommet large, base étroite** (forme d'urne) : territoire vieillissant avec peu de jeunes - souvent lié à un exode des familles ou à une faible natalité historique.\n"
-                        "- **Ventre large au milieu** (toupie) : forte concentration d'actifs (25-54 ans) - territoire attractif économiquement.\n"
-                        "- **Asymétrie hommes/femmes** : visible surtout chez les personnes âgées où les femmes ont une espérance de vie plus longue.\n\n"
-                        "Comparer deux pyramides côte à côte permet d'identifier rapidement quel territoire vieillit davantage et d'anticiper les besoins futurs (crèches, Ehpad, services de santé)."
-                    )
+                        )
 
                 st.markdown("---")
                 st.subheader(
@@ -1911,14 +1886,7 @@ if vue == "Démographie":
                 with st.expander("💡 Comment interpréter ces courbes d'évolution ?"):
                     st.write(
                         "Ces graphiques montrent comment la composition par âge de chaque territoire a évolué entre 2011 et 2022. Attention les ordonnées ne commencent pas à 0 car l'objectif est d'observer une évolution.\n\n"
-                        "**Part des moins de 25 ans** : une courbe qui descend indique que la proportion de jeunes diminue - soit parce que les familles quittent le territoire, soit parce que la natalité baisse, soit parce que d'autres tranches d'âge progressent plus vite. "
-                        "Une courbe stable ou montante signale un territoire qui maintient ou renforce son attractivité pour les familles avec enfants.\n\n"
-                        "**Part des 65 ans et plus** : une courbe qui monte = vieillissement progressif du territoire. "
-                        "Ce phénomène est naturel dans la plupart des territoires français, mais la vitesse de vieillissement varie selon l'attractivité économique et résidentielle. "
-                        "Un territoire qui vieillit vite devra anticiper des besoins accrus en soins, en accessibilité et en services à la personne.\n\n"
-                        "**Lire les deux ensemble** : si la part des jeunes baisse pendant que celle des seniors monte, le territoire se polarise vers les personnes âgées. "
-                        "Si les deux indicateurs restent stables, le territoire maintient un équilibre démographique."
-                    )
+                        )
 
 # ==============================================================================
 # ONGLET 3 - MOBILITÉS
@@ -2085,14 +2053,10 @@ if vue == "Démographie":
                     st.write(
                         "**Volume des échanges** : ce graphique compare les flux entrants (barres foncées) et sortants (barres claires) pour chaque territoire. "
                         "Il faut lire les deux barres ensemble pour comprendre la dynamique :\n"
-                        "- **Barres élevées et équilibrées** : le territoire est un pôle d'échange ou de transit - beaucoup de personnes entrent et sortent, mais peu restent. Typique d'une ville-étape ou d'un grand pôle d'emploi avec une forte rotation.\n"
-                        "- **Forte barre entrante > sortante** : territoire très attractif qui capte plus qu'il ne perd.\n"
-                        "- **Forte barre sortante > entrante** : territoire d'émission - les habitants partent davantage qu'ils n'arrivent (souvent une commune résidentielle dont les actifs travaillent ailleurs).\n\n"
                         "**Performance nette (solde)** : c'est la synthèse en un seul chiffre. "
-                        "Une barre verte (positive) signifie que le territoire gagne des flux nets - il est attractif. "
+                        "Une barre verte (positive) signifie que le territoire gagne des flux nets. "
                         "Une barre rouge (négative) signifie qu'il en perd. "
-                        "Ce graphique permet de classer rapidement les territoires du plus au moins attractif pour la thématique sélectionnée (résidentielle, professionnelle ou scolaire)."
-                    )
+                        )
 
                 st.markdown("---")
                 st.markdown("#### Analyse géographique des flux", help="Ces graphiques identifient les 10 principaux territoires d'origine (d'où viennent les personnes) et les 10 principales destinations (où vont les personnes) pour le territoire sélectionné.")
@@ -2391,16 +2355,12 @@ if vue == "Démographie":
 
                 with st.expander("💡 Comment interpréter ces graphiques ?"):
                     st.write(
-                        "**Distribution par taille** : ce graphique révèle si le territoire est peuplé de petits foyers (studios, couples âgés) ou de grandes familles. "
-                        "En France, la taille moyenne d'un ménage est d'environ **2,2 personnes**. "
-                        "Un territoire avec beaucoup de ménages à 1 ou 2 personnes a souvent un profil urbain ou vieillissant. "
-                        "Un territoire avec une forte part de 4 personnes et plus a un profil périurbain ou familial nécessitant plus d'équipements scolaires et de logements spacieux.\n\n"
-                        "**Volume (barres groupées)** : montre les besoins absolus en logements de chaque type pour chaque territoire. "
-                        "C'est l'indicateur à utiliser pour dimensionner une politique d'habitat : combien faut-il de studios ? de grands appartements ? de maisons ?\n\n"
-                        "**Structure % (barres empilées)** : neutralise l'effet de taille du territoire. "
-                        "Un territoire avec 40% de personnes seules a un profil social très différent d'un territoire à 40% de couples avec enfants, même si leurs populations totales sont très différentes. "
-                        "Ce graphique permet de comparer objectivement la 'sociologie' des territoires."
-                    )
+                            "**Distribution par taille** : montre si le territoire a des petits foyers (1-2 pers.) ou des familles (4+ pers.). "
+                            "En France, moyenne = **2,2 personnes/ménage**. "
+                            "Beaucoup de 1 personne = profil urbain/vieillissant. Beaucoup de 4+ = profil familial.\n\n"
+                            "**Volume** : besoins absolus en logements de chaque taille.\n\n"
+                            "**Structure %** : compare la 'sociologie' des territoires en neutralisant la taille totale."
+                        )
 
             # ════════════════════════════════════════════════════════════════
             # THÈME 2 - CSP DU CHEF DE MÉNAGE
@@ -2679,16 +2639,10 @@ if vue == "Démographie":
 
                     with st.expander("💡 Comment interpréter ces deux graphiques ?"):
                         st.write(
-                            "**Répartition en volume (barres groupées)** : ce graphique montre les effectifs réels par catégorie. "
-                            "Il est utile pour évaluer le poids économique d'une catégorie : "
-                            "un grand nombre d'ouvriers implique des besoins en logements abordables, en transports et en formations industrielles ; "
-                            "un grand nombre de cadres signale un territoire à fort potentiel d'innovation mais avec des tensions sur l'immobilier. "
-                            "Attention : ce graphique est sensible à la taille du territoire - une grande métropole aura toujours plus d'effectifs absolus qu'une petite commune.\n\n"
-                            "**Profil structurel en radar (%)** : ce graphique neutralise l'effet de taille en montrant la part relative de chaque catégorie dans la population active. "
-                            "Plus le polygone est étendu sur un axe, plus cette catégorie est surreprésentée par rapport aux autres. "
-                            "Deux territoires avec des polygones de forme similaire ont des structures socio-professionnelles proches, même si leurs populations totales sont très différentes. "
-                            "Comparer les formes des polygones permet d'identifier rapidement les spécialisations de chaque territoire.\n\n"
-                            "**Conseil de lecture** : utilisez le volume pour identifier les enjeux de service public, et le radar pour identifier les spécialisations et les similitudes/différences entre territoires."
+                            "**Volume (barres groupées)** : effectifs réels par catégorie. "
+                            "Utile pour les besoins en services publics (logements, transports, formations).\n\n"
+                            "**Radar (%)** : part relative de chaque catégorie dans la population active. "
+                            "Compare les profils socio-professionnels en neutralisant la taille des territoires.\n\n"
                         )
 
                     if len(entities_csp) == 2:
@@ -2993,6 +2947,8 @@ if vue == "Solidarité et citoyenneté":
                                     yaxis={"categoryorder": "total ascending"}
                                 )
                                 st.plotly_chart(style(fig_bar_comp, 40), use_container_width=True)
+
+                        st.markdown("---")
 
                         with st.expander("Note méthodologique"):
                             st.markdown("""
