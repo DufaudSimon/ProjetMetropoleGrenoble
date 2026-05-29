@@ -19,7 +19,7 @@ import unicodedata
 # ──────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Démographie · Métropoles françaises",
-    page_icon="🏙️",
+    page_icon="Logo_principal_Grenoble-Alpes_Métropole.png",
     layout="wide",
 )
 
@@ -216,7 +216,7 @@ PALETTE_COMMUNE = px.colors.sequential.Greens_r
 COULEURS = {
     "Montpellier": "#77818C",
     "Saint-Étienne": "#A2A6AE",
-    "Grenoble": "#FF584D",
+    "Grenoble": "#3D4550",
     "Rennes": "#C5C9CE",
     "Rouen": "#E8E8EB",
 }
@@ -829,7 +829,7 @@ if st.session_state.page == "home":
     <div class="info-card blue">
         <div class="info-card-title"> Objectif</div>
         <div class="info-card-body">
-            Analyser les données de démographie et de solidarité & citoyenneté afin de produire une analyse complète pour chaque Communes de Grenoble-Alpes Métropole. 
+            Analyser les données de démographie et de solidarité & citoyenneté afin de produire une analyse complète pour chaque Commune de Grenoble-Alpes Métropole. 
             Cette étude vise à permettre la comparaison des communes entre elles, ainsi qu'à situer la métropole de Grenoble par rapport à celles de Rouen, Saint-Étienne, Rennes et Montpellier (métropoles relativement comparables en termes de population, de superficie et de densité). 
             Elle est également destinée à accompagner les nouveaux élus dans la compréhension des dynamiques territoriales.
         </div>
@@ -1077,7 +1077,7 @@ if vue == "Description":
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Villes</div><div class="card-title"><b> Population globale</b></div>
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Population</div><div class="card-title"><b> Population globale</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;">Découvrez ici le nombre total d'habitants. Cela permet de voir la densité de population et de comparer les métropoles et communes entre elles.</div></div>""", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Foyers</div><div class="card-title"><b> Ménages</b></div>
@@ -1088,10 +1088,10 @@ if vue == "Description":
         <div class="card-body" style="font-size:0.9rem; color:#555;">Est-ce que la ville est plutôt jeune ou vieille ? Cette partie montre le nombre d'enfants, de travailleurs et de retraités pour chaque endroit étudié.</div></div>""", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Travail</div><div class="card-title"><b> Population active</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Ici, on s'intéresse aux personnes qui ont l'âge de travailler (25 à 54 ans). On analyse leurs métiers et leur niveau d'études ou leurs diplômes.</div></div>""", unsafe_allow_html=True)
+        <div class="card-body" style="font-size:0.9rem; color:#555;">ici, on s’intéresse aux 25-54 ans en activité. On analyse leurs métiers et leur niveau d'études ou leurs diplômes.</div></div>""", unsafe_allow_html=True)
 
     with col3:
-        st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Trajets</div><div class="card-title"><b> Mobilité</b></div>
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Mobilités</div><div class="card-title"><b> Mobilités</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;"><b>Toutes les mobilités :</b> On étudie les déplacements des habitants. Cela comprend les nouveaux arrivants, les trajets domicile-travail et les déplacements pour l'école.</div></div>""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -1128,7 +1128,12 @@ if vue == "Démographie":
 # ==============================================================================
 if vue == "Démographie":
     with tab1:
-
+        st.markdown("""
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source :</strong> INSEE -
+                <a href='https://www.insee.fr/fr/statistiques/1405599?geo=EPCI-200040715+EPCI-243500139' target='_blank' style='color: #1C3A27;'>Accéder aux données</a>
+            </div>""", unsafe_allow_html=True)
+        
         def commune_val(commune, col):
             if df_gen is None:
                 return np.nan
@@ -1183,7 +1188,7 @@ if vue == "Démographie":
             for i, comm in enumerate(sel_communes_pop):
                 pop22  = commune_val(comm, "population_2022")
                 tx_var = commune_val(comm, "tx_var_population_2016_2022")
-                delta_str   = f"{tx_var:+.2f}%/an" if not np.isnan(tx_var) else "N/D"
+                delta_str   = f"{tx_var:+.1f}%/an" if not np.isnan(tx_var) else "N/D"
                 color_delta = "#2D6A4F" if not np.isnan(tx_var) and tx_var >= 0 else ("#C45B2A" if not np.isnan(tx_var) else "#888")
                 kpi_color_c = commune_kpi_color(i, len(sel_communes_pop))
                 html_card = f"""
@@ -1193,7 +1198,7 @@ if vue == "Démographie":
                     <div style='font-size:11px;font-weight:700;letter-spacing:0.08em;color:#666;text-transform:uppercase;'>{comm}</div>
                     <div style='font-size:24px;font-weight:bold;color:#111;margin:4px 0;'>{fmt(pop22)}</div>
                     <div style='font-size:12px;font-weight:700;'>
-                        <span style='color:{color_delta};'>Var: {delta_str}</span>
+                        <span style='color:{color_delta};'>Var_2016_2022: {delta_str}</span>
                     </div>
                 </div>"""
                 with kpi_cols[i]:
@@ -1272,20 +1277,33 @@ if vue == "Démographie":
                     if not all(np.isnan(v) for v in [sn, sm, tot]):
                         rows_comp_c.append({"Commune": comm, "Solde naturel": sn,
                                             "Solde migratoire": sm, "Variation totale": tot})
+                
                 if rows_comp_c:
                     df_comp_c = pd.DataFrame(rows_comp_c).melt(
                         id_vars="Commune", var_name="Composante", value_name="Taux (%/an)"
                     ).dropna()
-                    n_comp = len(df_comp_c["Composante"].unique())
-                    comp_colors = [PALETTE_COMMUNE[int(i * (len(PALETTE_COMMUNE)-1) / max(n_comp-1,1))]
-                                   for i in range(n_comp)]
-                    fig_comp_c = px.bar(df_comp_c, x="Commune", y="Taux (%/an)", color="Composante",
-                                        barmode="group", color_discrete_sequence=comp_colors, height=360)
+                    
+                    color_map = {
+                        "Solde naturel": PALETTE_COMMUNE[0],
+                        "Solde migratoire": PALETTE_COMMUNE[int(len(PALETTE_COMMUNE) * 0.4)],
+                        "Variation totale": PALETTE_COMMUNE[-3] # Nuance la plus claire/proche du blanc
+                    }
+                    
+                    fig_comp_c = px.bar(
+                        df_comp_c, x="Commune", y="Taux (%/an)", color="Composante",
+                        barmode="group", color_discrete_map=color_map, height=360
+                    )
+                    
                     for trace in fig_comp_c.data:
                         trace.hovertemplate = "<b>Commune : %{x}</b><br>" + trace.name + " : %{y:.1f} %/an<extra></extra>"
+                    
                     fig_comp_c.add_hline(y=0, line_dash="dot", line_color="#AAAAAA")
-                    fig_comp_c.update_layout(xaxis_title="Commune", yaxis_title="Taux (%/an)",
-                                             legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02), xaxis_tickangle=-20)
+                    fig_comp_c.update_layout(
+                        xaxis_title="Commune", 
+                        yaxis_title="Taux (%/an)",
+                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02), 
+                        xaxis_tickangle=-20
+                    )
                     st.plotly_chart(style(fig_comp_c), use_container_width=True)
                 else:
                     st.info("Données de soldes non disponibles pour ces communes.")
@@ -1374,7 +1392,7 @@ if vue == "Démographie":
             for i, m in enumerate(sel):
                 pop22  = epci_val(m, "population_2022")
                 tx_var = epci_val(m, "tx_var_population_2016_2022")
-                delta_str   = f"{tx_var:+.2f}%/an" if not np.isnan(tx_var) else "N/D"
+                delta_str   = f"{tx_var:+.1f}%/an" if not np.isnan(tx_var) else "N/D"
                 color_delta = "#2D6A4F" if not np.isnan(tx_var) and tx_var >= 0 else ("#C45B2A" if not np.isnan(tx_var) else "#888")
                 kpi_color = COULEURS.get(m, "#888888")
                 html_card = f"""
@@ -1384,7 +1402,7 @@ if vue == "Démographie":
                     <div style='font-size:11px;font-weight:700;letter-spacing:0.08em;color:#666;text-transform:uppercase;'>{m}</div>
                     <div style='font-size:24px;font-weight:bold;color:#111;margin:4px 0;'>{fmt(pop22)}</div>
                     <div style='font-size:12px;font-weight:700;'>
-                        <span style='color:{color_delta};'>Var: {delta_str}</span>
+                        <span style='color:{color_delta};'>Var_2016_2022: {delta_str}</span>
                     </div>
                 </div>"""
                 with kpi_cols[i]:
@@ -1407,6 +1425,13 @@ if vue == "Démographie":
                         texttemplate="%{text:,.0f}", textposition="outside", showlegend=False,
                         hovertemplate="<b>Métropole : %{x}</b><br>Population 2022 : %{y:,.0f}<extra></extra>",
                     )
+                    for trace in fig_pop.data:
+                        if "Grenoble" in trace.name:
+                            trace.marker.pattern.shape = "/"
+                            trace.marker.pattern.fgcolor = "#FF584D"
+                            trace.marker.pattern.size = 20       # Plus grand = hachures plus espacées (ex: teste entre 12 et 20)
+                            trace.marker.pattern.solidity = 0.20 # Plus petit = traits plus fins (ex: teste entre 0.1 et 0.25)
+
                     fig_pop.update_layout(showlegend=False, xaxis_title="Métropole", yaxis_title="Habitants",
                                           yaxis=dict(tickformat=",d"), height=370)
                     st.plotly_chart(style(fig_pop), use_container_width=True)
@@ -1423,15 +1448,20 @@ if vue == "Démographie":
                     p = epci_val(m, "population_2022")
                     if not any(np.isnan(v) for v in [d, s, p]):
                         data_dens.append({"Métropole": m, "Densité (hab/km²)": d,
-                                          "Superficie (km²)": s, "Population": p})
+                                        "Superficie (km²)": s, "Population": p})
                 df_dens = pd.DataFrame(data_dens)
                 if not df_dens.empty:
                     fig_dens = px.scatter(df_dens, x="Superficie (km²)", y="Densité (hab/km²)",
-                                          size="Population", color="Métropole",
-                                          color_discrete_map=COULEURS, text="Métropole",
-                                          size_max=55, height=370)
+                                        size="Population", color="Métropole",
+                                        color_discrete_map=COULEURS, text="Métropole",
+                                        size_max=55, height=370)
                     fig_dens.update_traces(textposition="top center", textfont_size=11,
-                                           hovertemplate="<b>Métropole : %{text}</b><br>Superficie : %{x:.2f} km²<br>Densité : %{y:.2f} hab/km²<extra></extra>")
+                                        hovertemplate="<b>Métropole : %{text}</b><br>Superficie : %{x:.2f} km²<br>Densité : %{y:.2f} hab/km²<extra></extra>")
+                    
+                    for trace in fig_dens.data:
+                        if "Grenoble" in trace.name:
+                            trace.marker.line = dict(width=6, color="#FF584D")
+                    
                     fig_dens.update_layout(showlegend=False)
                     st.plotly_chart(style(fig_dens), use_container_width=True)
 
@@ -1476,7 +1506,7 @@ if vue == "Démographie":
                     metros_comp = list(dict.fromkeys(df_comp["Métropole"].tolist()))
                     if "Grenoble" in metros_comp:
                         g_pos = metros_comp.index("Grenoble")
-                        fig_comp.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45, fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D", line_width=1.5, layer="below")
+                        fig_comp.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45, fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
                     fig_comp.update_layout(xaxis_title="Métropole", yaxis_title="Taux (%/an)",
                                            legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02))
                     st.plotly_chart(style(fig_comp), use_container_width=True)
@@ -1524,7 +1554,7 @@ if vue == "Démographie":
                         g_pos = metros_vit.index("Grenoble")
                         fig_vit.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45,
                                           fillcolor="rgba(255,88,77,0.10)",
-                                          line_color="#FF584D", line_width=1.5, layer="below")
+                                          line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
                     fig_vit.update_layout(barmode="group", legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
                                           yaxis_title="Pour 1 000 habitants", height=360)
                     st.plotly_chart(style(fig_vit), use_container_width=True)
@@ -1572,6 +1602,12 @@ if vue == "Démographie":
         if df_pop is None:
             st.info("📂 Fichier `Population_tranche_age_clean.csv` introuvable.")
         else:
+            st.markdown("""
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source :</strong> INSEE -
+                <a href='https://www.insee.fr/fr/statistiques/1893204' target='_blank' style='color: #1C3A27;'>Accéder aux données</a>
+            </div>""", unsafe_allow_html=True)
+
             annees_dispo = sorted(df_pop["annee"].dropna().unique().astype(int).tolist())
             ch_all = cols_h(df_pop)
             cf_all = cols_f(df_pop)
@@ -1716,9 +1752,10 @@ if vue == "Démographie":
                 n_m = len(sel_metros_age)
                 metro_colors_h = [PALETTE_METRO[int(i * (len(PALETTE_METRO)-1) / max(n_m-1,1))] for i in range(n_m)]
                 metro_colors_f = [PALETTE_METRO[max(0, int(i * (len(PALETTE_METRO)-1) / max(n_m-1,1)) - 2)] for i in range(n_m)]
-                metro_h_map = {m: ("#FF584D" if m == "Grenoble" else metro_colors_h[i]) for i, m in enumerate(sel_metros_age)}
-                metro_f_map = {m: ("#FFBBB7" if m == "Grenoble" else metro_colors_f[i]) for i, m in enumerate(sel_metros_age)}
 
+                metro_h_map = {m: metro_colors_h[i] for i, m in enumerate(sel_metros_age)}
+                metro_f_map = {m: metro_colors_f[i] for i, m in enumerate(sel_metros_age)}
+                
                 ncols = min(len(sel_metros_age), 3)
                 rows_pyr = [sel_metros_age[i:i+ncols] for i in range(0, len(sel_metros_age), ncols)]
                 for row in rows_pyr:
@@ -1726,6 +1763,14 @@ if vue == "Démographie":
                     for j, m in enumerate(row):
                         df_m = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)]
                         fig = build_pyramide(df_m, m, metro_h_map[m], metro_f_map[m])
+                        
+                        if m == "Grenoble":
+                            for trace in fig.data:
+                                trace.marker.pattern.shape = "/"
+                                trace.marker.pattern.fgcolor = "#FF584D"  # Couleur des lignes de hachures
+                                trace.marker.pattern.size = 20
+                                trace.marker.pattern.solidity = 0.3
+                        
                         with cols[j]:
                             st.plotly_chart(style(fig, 30), use_container_width=True)
 
@@ -1734,7 +1779,7 @@ if vue == "Démographie":
                         "La pyramide des âges est une photographie de la structure démographique d'un territoire à un instant donné. "
                         "Chaque tranche d'âge quinquennale est représentée par deux barres : les hommes (à gauche) et les femmes (à droite), "
                         "dont la longueur est proportionnelle à l'effectif concerné.\n\n"
-                        )
+                    )
 
                 st.markdown("---")
                 st.subheader(
@@ -1751,14 +1796,28 @@ if vue == "Démographie":
                             tot = pop_totale_df(df_m)
                             p = pop_tranches(df_m, TRANCHES_M25)
                             if tot > 0:
-                                rows_ev.append({"Métropole": m, "Année": an, "Part (%)": p/tot*100})
+                                rows_ev.append({"Métropole": m, "Année": str(int(an)), "Part (%)": p/tot*100})
+                    
                     df_ev = pd.DataFrame(rows_ev)
                     if not df_ev.empty:
+                        # Le fait que "Année" soit une chaîne force l'affichage de chaque point
                         fig_ev1 = px.line(df_ev, x="Année", y="Part (%)", color="Métropole",
                                           markers=True, color_discrete_map=COULEURS)
+                        
+                        fig_ev1.update_layout(xaxis=dict(type='category'))
+                        
                         fig_ev1.update_traces(
                             hovertemplate="<b>Métropole : %{fullData.name}</b><br>Année : %{x}<br>Part : %{y:.2f}%<extra></extra>")
-                        st.plotly_chart(style(fig_ev1))
+                        
+                        for trace in fig_ev1.data:
+                            if "Grenoble" in trace.name:
+                                trace.line.dash = "dash"
+                                trace.line.color = "#FF584D"
+                                if trace.marker:
+                                    trace.marker.color = "#FF584D"
+                        
+                        st.plotly_chart(style(fig_ev1), use_container_width=True)
+
                 with c2:
                     st.markdown("##### Part des 65 ans et + (%)")
                     rows_ev2 = []
@@ -1768,14 +1827,27 @@ if vue == "Démographie":
                             tot = pop_totale_df(df_m)
                             p = pop_tranches(df_m, TRANCHES_SEN)
                             if tot > 0:
-                                rows_ev2.append({"Métropole": m, "Année": an, "Part (%)": p/tot*100})
+                                rows_ev2.append({"Métropole": m, "Année": str(int(an)), "Part (%)": p/tot*100})
+                    
                     df_ev2 = pd.DataFrame(rows_ev2)
                     if not df_ev2.empty:
                         fig_ev2 = px.line(df_ev2, x="Année", y="Part (%)", color="Métropole",
                                           markers=True, color_discrete_map=COULEURS)
+                        
+                        # Force l'axe en mode catégories pour afficher 2011, 2016 et 2022
+                        fig_ev2.update_layout(xaxis=dict(type='category'))
+                        
                         fig_ev2.update_traces(
                             hovertemplate="<b>Métropole : %{fullData.name}</b><br>Année : %{x}<br>Part : %{y:.2f}%<extra></extra>")
-                        st.plotly_chart(style(fig_ev2))
+                        
+                        for trace in fig_ev2.data:
+                            if "Grenoble" in trace.name:
+                                trace.line.dash = "dash"
+                                trace.line.color = "#FF584D"
+                                if trace.marker:
+                                    trace.marker.color = "#FF584D"
+                        
+                        st.plotly_chart(style(fig_ev2), use_container_width=True)
 
                 with st.expander("💡 Comment interpréter ces courbes d'évolution ?"):
                     st.write(
@@ -1857,14 +1929,21 @@ if vue == "Démographie":
                             tot = pop_totale_df(df_c)
                             p = pop_tranches(df_c, TRANCHES_M25)
                             if tot > 0:
-                                rows_evc.append({"Commune": comm, "Année": an, "Part (%)": p/tot*100})
+                                rows_evc.append({"Commune": comm, "Année": str(int(an)), "Part (%)": p/tot*100})
+                    
                     df_evc = pd.DataFrame(rows_evc)
                     if not df_evc.empty:
                         fig_evc1 = px.line(df_evc, x="Année", y="Part (%)", color="Commune",
                                            markers=True, color_discrete_sequence=PALETTE_COMMUNE)
+                        
+                        # Force l'axe en mode catégories pour afficher 2011, 2016 et 2022
+                        fig_evc1.update_layout(xaxis=dict(type='category'))
+                        
                         fig_evc1.update_traces(
                             hovertemplate="<b>Commune : %{fullData.name}</b><br>Année : %{x}<br>Part : %{y:.2f}%<extra></extra>")
-                        st.plotly_chart(style(fig_evc1))
+                        
+                        st.plotly_chart(style(fig_evc1), use_container_width=True)
+
                 with c2:
                     st.markdown("##### Part des 65 ans et + (%)")
                     rows_evc2 = []
@@ -1874,14 +1953,20 @@ if vue == "Démographie":
                             tot = pop_totale_df(df_c)
                             p = pop_tranches(df_c, TRANCHES_SEN)
                             if tot > 0:
-                                rows_evc2.append({"Commune": comm, "Année": an, "Part (%)": p/tot*100})
+                                rows_evc2.append({"Commune": comm, "Année": str(int(an)), "Part (%)": p/tot*100})
+                    
                     df_evc2 = pd.DataFrame(rows_evc2)
                     if not df_evc2.empty:
                         fig_evc2 = px.line(df_evc2, x="Année", y="Part (%)", color="Commune",
                                            markers=True, color_discrete_sequence=PALETTE_COMMUNE)
+                        
+                        # Force l'axe en mode catégories pour afficher 2011, 2016 et 2022
+                        fig_evc2.update_layout(xaxis=dict(type='category'))
+                        
                         fig_evc2.update_traces(
                             hovertemplate="<b>Commune : %{fullData.name}</b><br>Année : %{x}<br>Part : %{y:.2f}%<extra></extra>")
-                        st.plotly_chart(style(fig_evc2))
+                        
+                        st.plotly_chart(style(fig_evc2), use_container_width=True)
 
                 with st.expander("💡 Comment interpréter ces courbes d'évolution ?"):
                     st.write(
@@ -1898,12 +1983,27 @@ if vue == "Démographie":
         if not data_ok:
             st.info("📂 Fichiers de mobilité manquants.")
         else:
-            st.markdown("""
+            st.markdown(""" 
                 <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 14px;'>
-                    <strong>Comprendre les thématiques :</strong><br>
-                    • 🏠 <b>Migrations</b> : Analyse les changements de domicile observés sur un an.<br>
-                    • 💼 <b>Professionnelle</b> : Analyse les déplacements domicile-travail des actifs ayant un emploi ; il s’agit de mobilités quotidiennes ou habituelles, et non de déménagements.<br>
-                    • 🎓 <b>Scolaire</b> : Analyse les déplacements entre le lieu de résidence et le lieu d’études ; cela concerne les personnes scolarisées de 2 ans ou plus, de l’école maternelle à l’enseignement supérieur.
+                <strong>Source :</strong> INSEE <br><br>
+                <strong>Note sur les données :</strong><br>
+                🏠 <b>Migrations résidentielles</b> : 
+                    Cette thématique analyse les changements de lieu de résidence observés sur une année. 
+                    Elle concerne l’ensemble de la population ayant déménagé entre deux communes, départements ou régions, 
+                    y compris les nouveaux arrivants sur le territoire étudié. Ces données permettent d’identifier les dynamiques 
+                    d’attractivité résidentielle et les flux de population.
+                <a href='https://www.insee.fr/fr/statistiques/8582988' target='_blank' style='color: #1C3A27; font-size: 0.85em;'>Accéder aux données</a><br><br>
+                💼 <b>Mobilités professionnelles</b> : 
+                    Cette catégorie étudie les déplacements domicile-travail des actifs ayant un emploi. 
+                    Elle concerne les personnes en activité résidant sur le territoire, qu’elles travaillent dans leur commune 
+                    de résidence ou dans une autre commune. Ces données décrivent les mobilités quotidiennes ou habituelles 
+                    liées à l’emploi et les relations entre lieux de résidence et pôles d’activité.
+                <a href='https://www.insee.fr/fr/statistiques/8582949' target='_blank' style='color: #1C3A27; font-size: 0.85em;'>Accéder aux données</a><br><br>
+                🎓 <b>Mobilités scolaires</b> : 
+                    Cette analyse porte sur les déplacements entre le domicile et le lieu d’études. 
+                    Elle concerne les enfants scolarisés dès 2 ans, les collégiens, lycéens, apprentis et étudiants de l’enseignement supérieur. 
+                    Ces données permettent d’identifier les flux scolaires quotidiens et l’attractivité des établissements d’enseignement.
+                <a href='https://www.insee.fr/fr/statistiques/8582969' target='_blank' style='color: #1C3A27; font-size: 0.85em;'>Accéder aux données</a>
                 </div>""", unsafe_allow_html=True)
 
             with st.container():
@@ -1996,7 +2096,7 @@ if vue == "Démographie":
                     g_pos = noms_mob.index("Grenoble")
                     greno_vrect_args = dict(x0=g_pos - 0.45, x1=g_pos + 0.45,
                                             fillcolor="rgba(255,88,77,0.10)",
-                                            line_color="#FF584D", line_width=1.5, layer="below")
+                                            line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
 
                 if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
                     color_in_bar  = PALETTE_COMMUNE[0]
@@ -2120,6 +2220,12 @@ if vue == "Démographie":
         if not data_men_ok:
             st.info("📂 Fichiers de données sur les ménages introuvables.")
         else:
+            st.markdown("""
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source :</strong> INSEE -
+                <a href='https://www.insee.fr/fr/statistiques/8582448' target='_blank' style='color: #1C3A27;'>Accéder aux données</a>
+            </div>""", unsafe_allow_html=True)
+
             TYPE_GROUPES = {
                 "Personne seule":        lambda cols: [c for c in cols if "pers_seule" in c],
                 "Couple sans enfant":    lambda cols: [c for c in cols if "cpl_sans_enf" in c],
@@ -2128,7 +2234,7 @@ if vue == "Démographie":
                 "Autre ménage":          lambda cols: [c for c in cols if "autre_menage" in c],
             }
             CSP_GROUPES = {
-                "Agriculteurs":              ["agriculteurs"],
+                "Agriculteurs":               ["agriculteurs"],
                 "Artisans / Commerçants /\nChefs d'entreprise": ["artisans", "commercants", "chef_entreprise"],
                 "Cadres & Prof.\nintellectuelles sup.": [
                     "professions_liberales", "cadre_admin_fonction_pub", "prof_scientifique_sup",
@@ -2299,6 +2405,12 @@ if vue == "Démographie":
                         category_orders={"Taille": list(TAILLES.keys())}, height=380,
                     )
                     fig_taille.update_traces(textposition="outside", textfont_size=9)
+                    
+                    # Application des hachures UNIQUEMENT sur Grenoble si comparaison Métropoles
+                    for trace in fig_taille.data:
+                        if trace.name == "Grenoble" and mode_men == "Comparaison Métropoles":
+                            trace.marker.pattern = dict(shape="/", fgcolor="#FF584D", solidity=0.3, size=20)
+
                     fig_taille.update_layout(legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title=""),
                                              xaxis_title="Taille du ménage",
                                              yaxis_title="Part des ménages (%)", margin=dict(t=20))
@@ -2327,9 +2439,15 @@ if vue == "Démographie":
                     if not df_type.empty:
                         fig_vol = px.bar(df_type, x="Type de ménage", y="Nombre", color="Territoire",
                                          barmode="group", color_discrete_map=COLOR_MAP_ENT, height=400)
+                        
+                        # Application des hachures UNIQUEMENT sur Grenoble si comparaison Métropoles
+                        for trace in fig_vol.data:
+                            if trace.name == "Grenoble" and mode_men == "Comparaison Métropoles":
+                                trace.marker.pattern = dict(shape="/", fgcolor="#FF584D", solidity=0.3, size=20)
+
                         fig_vol.update_layout(legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title=""),
-                                              xaxis_title="", yaxis_title="Nombre de ménages",
-                                              xaxis_tickangle=-15, margin=dict(t=20))
+                                             xaxis_title="", yaxis_title="Nombre de ménages",
+                                             xaxis_tickangle=-15, margin=dict(t=20))
                         st.plotly_chart(style(fig_vol), use_container_width=True)
 
                 with c2:
@@ -2343,14 +2461,16 @@ if vue == "Démographie":
                                          color_discrete_sequence=PALETTE_TYPE, height=400)
                         fig_pct.update_traces(textposition="inside", textfont_size=9)
                         territoires_pct = list(dict.fromkeys(df_type["Territoire"].tolist()))
+                        
+                        # Graphique concerné par l'encadré en pointillé -> PAS de hachures
                         if "Grenoble" in territoires_pct and mode_men == "Comparaison Métropoles":
                             g_pos = territoires_pct.index("Grenoble")
                             fig_pct.add_hrect(y0=g_pos - 0.45, y1=g_pos + 0.45,
                                               fillcolor="rgba(255,88,77,0.10)",
-                                              line_color="#FF584D", line_width=1.5, layer="below")
+                                                  line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
                         fig_pct.update_layout(legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title=""),
-                                              xaxis_title="Part des ménages (%)",
-                                              yaxis_title="", margin=dict(t=20))
+                                             xaxis_title="Part des ménages (%)",
+                                             yaxis_title="", margin=dict(t=20))
                         st.plotly_chart(style(fig_pct), use_container_width=True)
 
                 with st.expander("💡 Comment interpréter ces graphiques ?"):
@@ -2417,14 +2537,16 @@ if vue == "Démographie":
                                          category_orders={"CSP": ordre_csp}, height=420)
                     fig_pct_csp.update_traces(textposition="inside", textfont_size=9)
                     territoires_csp = list(dict.fromkeys(df_csp_all["Territoire"].tolist()))
+                    
+                    # Graphique concerné par l'encadré en pointillé -> PAS de hachures
                     if "Grenoble" in territoires_csp and mode_men == "Comparaison Métropoles":
                         g_pos = territoires_csp.index("Grenoble")
                         fig_pct_csp.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45,
                                               fillcolor="rgba(255,88,77,0.10)",
-                                              line_color="#FF584D", line_width=1.5, layer="below")
+                                              line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
                     fig_pct_csp.update_layout(legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title=""),
-                                              yaxis_title="Part des ménages (%)",
-                                              xaxis_title="", margin=dict(t=20))
+                                             yaxis_title="Part des ménages (%)",
+                                             xaxis_title="", margin=dict(t=20))
                     st.plotly_chart(style(fig_pct_csp), use_container_width=True)
 
                 st.markdown("---")
@@ -2440,6 +2562,12 @@ if vue == "Démographie":
                                              orientation="h", barmode="group",
                                              color_discrete_map=COLOR_MAP_ENT,
                                              category_orders={"CSP": list(CSP_GROUPES.keys())}, height=420)
+                        
+                        # Application des hachures UNIQUEMENT sur Grenoble si comparaison Métropoles
+                        for trace in fig_vol_csp.data:
+                            if trace.name == "Grenoble" and mode_men == "Comparaison Métropoles":
+                                trace.marker.pattern = dict(shape="/", fgcolor="#FF584D", solidity=0.30, size=20)
+
                         fig_vol_csp.update_layout(legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title=""),
                                                   xaxis_title="Nombre de ménages",
                                                   yaxis_title="", margin=dict(t=20))
@@ -2473,6 +2601,12 @@ if vue == "Démographie":
                                                 color_discrete_map=COLOR_MAP_ENT,
                                                 height=420, text_auto=".2f")
                         fig_taille_csp.update_traces(textposition="outside", textfont_size=9)
+                        
+                        # Application des hachures UNIQUEMENT sur Grenoble si comparaison Métropoles
+                        for trace in fig_taille_csp.data:
+                            if trace.name == "Grenoble" and mode_men == "Comparaison Métropoles":
+                                trace.marker.pattern = dict(shape="/", fgcolor="#FF584D", solidity=0.30, size=20)
+
                         fig_taille_csp.update_layout(legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title=""),
                                                      xaxis_title="Personnes par ménage (moyenne)",
                                                      yaxis_title="", margin=dict(t=20),
@@ -2494,7 +2628,6 @@ if vue == "Démographie":
                         "tandis que retraités et employés vivent plus souvent seuls ou en couple sans enfant. "
                         "Comparer ces tailles entre territoires pour une même CSP met en évidence des différences sociales locales."
                     )
-
 # ==============================================================================
 # ONGLET 5 - Population active 25-54 ans
 # ==============================================================================
@@ -2505,10 +2638,11 @@ if vue == "Démographie":
             st.info("📂 Données CSP/Diplôme non trouvées. Vérifiez les fichiers.")
         else:
             st.markdown("""
-            <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px;'>
-                <strong>Origine des données :</strong> Ces chiffres sont issus des recensements de l'<b>INSEE</b>.
-                Ils recensent la <b>population active de 25 à 54 ans</b>, le cœur stable du marché du travail.
-                Quand vous comparez deux territoires, un graphique d'indice de spécialisation s'affiche en plus.
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source :</strong> INSEE - 
+                <a href='https://www.insee.fr/fr/statistiques/8582448' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
+                <strong>Note sur les données :</strong> Ces chiffres sont issus des recensements de l' INSEE. Ils recensent la <b>population active de 25 à 54 ans</b>, le cœur stable du marché du travail.
+                Quand vous comparez deux territoires, un graphique d'indice de spécialisation s'affiche en plus. 
             </div>""", unsafe_allow_html=True)
 
             with st.container():
@@ -2578,10 +2712,15 @@ if vue == "Démographie":
                     for i, entity in enumerate(entities_csp):
                         total_actifs = entity["data"][sel_cats].sum()
                         val_formatee = f"{int(total_actifs):,d}".replace(",", " ")
-                        if mode_analyse == "Comparaison Métropoles":
+                        
+                        # KPI Grenoble : Couleur noire uniforme
+                        if entity['name'] == "Grenoble":
+                            kpi_color5 = "#212529"
+                        elif mode_analyse == "Comparaison Métropoles":
                             kpi_color5 = COULEURS.get(entity['name'], "#888888")
                         else:
                             kpi_color5 = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
+                            
                         with kpi_cols_csp[i]:
                             st.markdown(f"""
                             <div style='display:flex;flex-direction:row;align-items:stretch;border-radius:8px;
@@ -2593,48 +2732,93 @@ if vue == "Démographie":
                                     <div style='color:{kpi_color5};font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;'>Actifs 25-54 ans</div>
                                 </div>
                             </div>""", unsafe_allow_html=True)
-
+                    
+                    st.markdown("---")
                     c1, c2 = st.columns(2)
                     with c1:
                         st.subheader(
                             "Répartition en volume",
-                            help="Nombre réel d'actifs 25-54 ans par catégorie (CSP ou niveau de diplôme). Permet de comparer les effectifs absolus et de dimensionner les besoins en formation, en emploi ou en services. Une catégorie très représentée en volume a un poids économique réel important sur le territoire."
+                            help="Nombre réel d'actifs 25-54 ans par catégorie (CSP ou niveau de diplôme)."
                         )
                         fig_bar_csp = go.Figure()
                         for i, ent in enumerate(entities_csp):
-                            if mode_analyse == "Comparaison Métropoles":
-                                bar_color = COULEURS.get(ent["name"], "#888888")
+                            if ent["name"] == "Grenoble":
+                                # CORRECTION ABSOLUE : Couleur de barre noire solide (#212529), contour de même couleur pour l'illusion "sans bordure"
+                                # et application des hachures rouges (#FF584D) calibrées
+                                marker_dict = dict(
+                                    color="#212529",
+                                    line=dict(color="#212529", width=1),
+                                    pattern=dict(
+                                        shape="/",
+                                        fgcolor="#FF584D",
+                                        fillmode="replace",
+                                        solidity=0.3,
+                                        size=20
+                                    )
+                                )
                             else:
-                                bar_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
+                                if mode_analyse == "Comparaison Métropoles":
+                                    bar_color = COULEURS.get(ent["name"], "#888888")
+                                else:
+                                    bar_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
+                                marker_dict = dict(color=bar_color)
+                                
                             fig_bar_csp.add_trace(go.Bar(
                                 x=sel_cats, y=ent["data"][sel_cats],
-                                name=ent["name"], marker_color=bar_color,
+                                name=ent["name"], marker=marker_dict,
                                 hovertemplate="<b>Territoire : " + ent["name"] + "</b><br>%{x} : %{y:.2s}<extra></extra>",
                             ))
-                        fig_bar_csp.update_layout(barmode="group", height=400, margin=dict(t=20, b=20))
+                        fig_bar_csp.update_layout(
+                            barmode="group", 
+                            height=400, 
+                            margin=dict(t=20, b=20),
+                            paper_bgcolor="rgba(0,0,0,0)",
+                            plot_bgcolor="rgba(0,0,0,0)",
+                            font_family="Sora",
+                            yaxis=dict(gridcolor="#E8F5EE")
+                        )
                         st.plotly_chart(fig_bar_csp, use_container_width=True)
 
                     with c2:
                         st.subheader(
                             "Profil structurel (%)",
-                            help="Répartition en pourcentage de chaque catégorie dans la population active du territoire (base 100%). Permet de comparer la spécialisation socio-professionnelle ou le niveau d'éducation indépendamment de la taille du territoire. Un territoire avec 30% de cadres a un profil très différent d'un territoire avec 30% d'ouvriers, même si leurs populations totales sont semblables."
+                            help="Répartition en pourcentage de chaque catégorie dans la population active du territoire (base 100%)."
                         )
                         fig_radar_csp = go.Figure()
                         for i, ent in enumerate(entities_csp):
                             v = ent["data"][sel_cats]
                             pct = (v / v.sum() * 100).fillna(0)
-                            if mode_analyse == "Comparaison Métropoles":
-                                radar_color = COULEURS.get(ent["name"], "#888888")
+                            
+                            if ent["name"] == "Grenoble":
+                                # Radar Grenoble : Bordure rouge vif en pointillés ("dash")
+                                fill_color = "rgba(255, 88, 77, 0.12)"
+                                line_dict = dict(color="#FF584D", width=4, dash="dash")
                             else:
-                                radar_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
+                                if mode_analyse == "Comparaison Métropoles":
+                                    radar_color = COULEURS.get(ent["name"], "#888888")
+                                else:
+                                    radar_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
+                                fill_color = None
+                                line_dict = dict(color=radar_color, width=2, dash="solid")
+                                
                             fig_radar_csp.add_trace(go.Scatterpolar(
                                 r=list(pct) + [pct.iloc[0]],
                                 theta=sel_cats + [sel_cats[0]],
-                                fill="toself", name=ent["name"],
-                                line_color=radar_color,
+                                fill="toself", fillcolor=fill_color, name=ent["name"],
+                                line=line_dict,
                                 hovertemplate="<b>Territoire : " + ent["name"] + "</b><br>%{theta} : %{r:.2f}%<extra></extra>",
                             ))
-                        fig_radar_csp.update_layout(height=400, margin=dict(t=50, b=50))
+                        fig_radar_csp.update_layout(
+                            height=400, 
+                            margin=dict(t=50, b=50),
+                            paper_bgcolor="rgba(0,0,0,0)",
+                            font_family="Sora",
+                            polar=dict(
+                                bgcolor="rgba(0,0,0,0)",
+                                radialaxis=dict(gridcolor="#E8F5EE"),
+                                angularaxis=dict(gridcolor="#E8F5EE")
+                            )
+                        )
                         st.plotly_chart(fig_radar_csp, use_container_width=True)
 
                     with st.expander("💡 Comment interpréter ces deux graphiques ?"):
@@ -2659,7 +2843,6 @@ if vue == "Démographie":
                                 <li><b>Indice = 100 :</b> Équilibre parfait.</li>
                                 <li><b>Indice < 100 :</b> La catégorie est <b>sous-représentée</b> dans le Territoire 1.</li>
                             </ul>
-                            <p style='font-size:14px;'><b>Important :</b> Une forte surreprésentation sur un petit nombre a moins d'impact qu'une légère spécialisation sur des milliers d'actifs.</p>
                         </div>""", unsafe_allow_html=True)
 
                         v1, v2 = entities_csp[0]["data"][sel_cats], entities_csp[1]["data"][sel_cats]
@@ -2682,7 +2865,7 @@ if vue == "Démographie":
                                 "Indice spécialisation": [str(int(spec[c])) if pd.notna(spec[c]) else "N/D" for c in sel_cats],
                             })
                             st.dataframe(table_df.set_index("Catégorie"), width='stretch')
-
+                            
 # ==============================================================================
 # SOLIDARITÉ & CITOYENNETÉ
 # ==============================================================================
@@ -2707,6 +2890,12 @@ if vue == "Solidarité et citoyenneté":
         if df_caf is None or df_caf.empty:
             st.info("📂 Fichier `CAF_5_Metropoles.csv` introuvable.")
         else:
+            st.markdown("""
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source :</strong> CAF -
+                <a href='https://data.caf.fr/explore/dataset/ndur_s_qf_400_com_f/table/' target='_blank' style='color: #1C3A27;'>Accéder aux données</a>
+            </div>""", unsafe_allow_html=True)
+            
             required_cols = {"Annee", "Agglomeration"}
             if not required_cols.issubset(set(df_caf.columns)):
                 st.error("Colonnes Annee / Agglomeration manquantes.")
@@ -2848,7 +3037,7 @@ if vue == "Solidarité et citoyenneté":
                                             g_pos_qf = order_x_qf.index(grenoble_agglo)
                                             fig_qf.add_vrect(x0=g_pos_qf - 0.45, x1=g_pos_qf + 0.45,
                                                              fillcolor="rgba(255,88,77,0.10)",
-                                                             line_color="#FF584D", line_width=1.5, layer="below")
+                                                             line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
                                 else:
                                     fig_qf = px.bar(qf_data.sort_values("QF_ord"), x=geo_col, y=metric_key, color="Quotient familial", color_discrete_sequence=color_seq, barmode="stack", labels={geo_col: "", metric_key: label_metric}, height=380)
                                     fig_qf.update_traces(marker_line_width=0)
@@ -2901,6 +3090,13 @@ if vue == "Solidarité et citoyenneté":
                                         showlegend=False,
                                         margin=dict(t=20, b=20, l=10, r=10)
                                     )
+                                    for trace in fig_top.data:
+                                        if "Grenoble" in trace.name:
+                                            trace.marker.pattern.shape = "/"
+                                            trace.marker.pattern.fgcolor = "#FF584D"
+                                            trace.marker.pattern.size = 20       # Plus grand = hachures plus espacées (ex: teste entre 12 et 20)
+                                            trace.marker.pattern.solidity = 0.20 # Plus petit = traits plus fins (ex: teste entre 0.1 et 0.25)
+
                                     st.plotly_chart(style(fig_top, 40), use_container_width=True)
 
                         INDICATEURS_GLOBAUX = ["Nombre foyers NDUR", "Nombre personnes NDUR", "Montant total NDUR"]
@@ -2935,17 +3131,19 @@ if vue == "Solidarité et citoyenneté":
                                 fig_bar_comp.update_traces(
                                     hovertemplate="<b>%{y}</b><br>Volume : <b>%{x:,.0f}</b><extra></extra>"
                                 )
-                                if is_metro:
-                                    for trace in fig_bar_comp.data:
-                                        if "Grenoble" in trace.name:
-                                            trace.marker.line.width = 2
-                                            trace.marker.line.color = "#FF584D"
                                 fig_bar_comp.update_layout(
                                     separators=", ",
                                     legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
                                     margin=dict(t=80, b=40, l=150),
                                     yaxis={"categoryorder": "total ascending"}
                                 )
+                                for trace in fig_bar_comp.data:
+                                        if "Grenoble" in trace.name:
+                                            trace.marker.pattern.shape = "/"
+                                            trace.marker.pattern.fgcolor = "#FF584D"
+                                            trace.marker.pattern.size = 20       # Plus grand = hachures plus espacées (ex: teste entre 12 et 20)
+                                            trace.marker.pattern.solidity = 0.20 # Plus petit = traits plus fins (ex: teste entre 0.1 et 0.25)
+
                                 st.plotly_chart(style(fig_bar_comp, 40), use_container_width=True)
 
                         st.markdown("---")
@@ -2970,7 +3168,9 @@ if vue == "Solidarité et citoyenneté":
             st.info("Fichier `education_filtre.csv` introuvable.")
         else:
             st.markdown("""
-                        <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px;'>
+                        <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                        <strong>Source :</strong> data.education.gouv -
+                        <a href='https://data.education.gouv.fr/explore/assets/fr-en-annuaire-education/view/' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
                         <strong>Note sur les données :</strong> Les données sont issues de l'Annuaire de l'Éducation nationale (2019). Tous les établissements n'y figurent pas nécessairement, et certains de ceux qui y sont référencés ne renseignent pas leur effectif. Les chiffres présentés couvrent uniquement le premier et second degré et sont donc à considérer comme un ordre de grandeur, potentiellement sous-estimé, plutôt que comme un décompte exhaustif.
                         </div>""", unsafe_allow_html=True)
             df_eff_w   = df_eff.copy()
@@ -3116,6 +3316,13 @@ if vue == "Solidarité et citoyenneté":
                     )
                     if is_metro:
                         grenoble_agglo = next((a for a in by_entite[geo_col].tolist() if "Grenoble" in str(a)), None)
+                    for trace in fig_bar.data:
+                                        if "Grenoble" in trace.name:
+                                            trace.marker.pattern.shape = "/"
+                                            trace.marker.pattern.fgcolor = "#FF584D"
+                                            trace.marker.pattern.size = 20       # Plus grand = hachures plus espacées (ex: teste entre 12 et 20)
+                                            trace.marker.pattern.solidity = 0.20 # Plus petit = traits plus fins (ex: teste entre 0.1 et 0.25)
+
                     st.plotly_chart(style(fig_bar, 40), use_container_width=True)
 
                 # ── Graphique 2 : Nombre d'établissements par territoire ───────
@@ -3151,6 +3358,13 @@ if vue == "Solidarité et citoyenneté":
                     )
                     if is_metro:
                         grenoble_agglo = next((a for a in by_etab[geo_col].tolist() if "Grenoble" in str(a)), None)
+                    for trace in fig_etab.data:
+                                        if "Grenoble" in trace.name:
+                                            trace.marker.pattern.shape = "/"
+                                            trace.marker.pattern.fgcolor = "#FF584D"
+                                            trace.marker.pattern.size = 20       # Plus grand = hachures plus espacées (ex: teste entre 12 et 20)
+                                            trace.marker.pattern.solidity = 0.20 # Plus petit = traits plus fins (ex: teste entre 0.1 et 0.25)
+
                     st.plotly_chart(style(fig_etab, 40), use_container_width=True)
 
                 st.markdown("---")
@@ -3212,7 +3426,7 @@ if vue == "Solidarité et citoyenneté":
                                 g_pos_rep = order_rep.index(grenoble_agglo)
                                 fig_rep.add_vrect(x0=g_pos_rep - 0.45, x1=g_pos_rep + 0.45,
                                                   fillcolor="rgba(255,88,77,0.10)",
-                                                  line_color="#FF584D", line_width=1.5, layer="below")
+                                                  line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
                         st.plotly_chart(style(fig_rep, 40), use_container_width=True)
 
                 # ── Graphique 4 : Services spécialisés ────────────────────────
@@ -3267,7 +3481,7 @@ if vue == "Solidarité et citoyenneté":
                                 g_pos_svc = order_svc.index(grenoble_agglo)
                                 fig_svc.add_vrect(x0=g_pos_svc - 0.45, x1=g_pos_svc + 0.45,
                                                   fillcolor="rgba(255,88,77,0.10)",
-                                                  line_color="#FF584D", line_width=1.5, layer="below")
+                                                  line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
                         st.plotly_chart(style(fig_svc, 40), use_container_width=True)
 
                 st.markdown("---")
@@ -3315,7 +3529,13 @@ if vue == "Solidarité et citoyenneté":
         def charger_geojson_communes():
             if not GEOJSON_COMMUNES_PATH.exists(): return None
             with open(GEOJSON_COMMUNES_PATH, "r", encoding="utf-8") as f: return json.load(f)
-
+        
+        st.markdown("""
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source :</strong>
+                <a href='https://smartregionidf.opendatasoft.com/explore/dataset/osm-france-healthcare/table/' target='_blank' style='color: #1C3A27;'>Accéder aux données</a>
+            </div>""", unsafe_allow_html=True)
+        
         df_sante = charger_sante()
         geojson_metros = charger_geojson_metros()
         geojson_communes = charger_geojson_communes()
@@ -3469,7 +3689,7 @@ if vue == "Solidarité et citoyenneté":
                     g_pos_sante = order_stack.index("Grenoble")
                     fig_stack.add_vrect(x0=g_pos_sante - 0.45, x1=g_pos_sante + 0.45,
                                        fillcolor="rgba(255,88,77,0.10)",
-                                       line_color="#FF584D", line_width=1.5, layer="below")
+                                       line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
                 fig_stack.update_layout(
                     paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora",
                     yaxis=dict(range=[0, y_max_stack * 1.1]),
@@ -3543,11 +3763,18 @@ if vue == "Solidarité et citoyenneté":
             metros_elec = sorted(df_elec["metropole"].dropna().unique())
 
             st.markdown("""
-                        <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px;'>
-                        <strong>Note sur les données :</strong> Les élections municipales de 2020 se sont tenues en pleine crise sanitaire COVID-19,
-                        ce qui a fortement impacté la participation. Les taux de participation sont donc exceptionnellement bas
-                        et ne reflètent pas le comportement électoral habituel de ces territoires. 
-                        </div>""", unsafe_allow_html=True)
+                <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 14px;'>
+                    <strong>Sources:</strong> data.gouv.fr<br>
+                    <b>Présidentielle 2022</b> :
+                        1er tour : <a href='https://www.data.gouv.fr/datasets/election-presidentielle-des-10-et-24-avril-2022-resultats-definitifs-du-1er-tour' target='_blank' style='color: #1C3A27;'>Accéder aux données</a> —
+                        2ème tour : <a href='https://www.data.gouv.fr/datasets/election-presidentielle-des-10-et-24-avril-2022-resultats-definitifs-du-2nd-tour' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br>
+                    <b>Municipales 2026</b> :
+                        1er tour : <a href='https://www.data.gouv.fr/datasets/elections-municipales-2026-resultats-du-premier-tour' target='_blank' style='color: #1C3A27;'>Accéder aux données</a> —
+                        2ème tour : <a href='https://www.data.gouv.fr/datasets/elections-municipales-2026-resultats-du-second-tour' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
+                    <strong>Note sur les données :</strong> Les élections municipales de 2020 se sont tenues en pleine crise sanitaire COVID-19,
+                    ce qui a fortement impacté la participation. Les taux de participation sont donc exceptionnellement bas
+                    et ne reflètent pas le comportement électoral habituel de ces territoires.
+                </div>""", unsafe_allow_html=True)
             
             with st.container():
                 filter_bar("Filtres - Participation citoyenne")
@@ -3639,6 +3866,13 @@ if vue == "Solidarité et citoyenneté":
                         font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"),
                         margin=dict(l=10, r=40, t=40, b=10)
                     )
+                    for trace in fig_part.data:
+                                        if "Grenoble" in trace.name:
+                                            trace.marker.pattern.shape = "/"
+                                            trace.marker.pattern.fgcolor = "#FF584D"
+                                            trace.marker.pattern.size = 20       # Plus grand = hachures plus espacées (ex: teste entre 12 et 20)
+                                            trace.marker.pattern.solidity = 0.20 # Plus petit = traits plus fins (ex: teste entre 0.1 et 0.25)
+
                     st.plotly_chart(style(fig_part, 40), use_container_width=True)
 
                 with c2:
@@ -3660,7 +3894,7 @@ if vue == "Solidarité et citoyenneté":
                         g_pos_qual = order_qual.index("Grenoble")
                         fig_qual.add_vrect(x0=g_pos_qual - 0.45, x1=g_pos_qual + 0.45,
                                         fillcolor="rgba(255,88,77,0.10)",
-                                        line_color="#FF584D", line_width=1.5, layer="below")
+                                        line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
                     fig_qual.update_layout(
                         yaxis_range=[0, 100],
                         xaxis=dict(categoryorder="array", categoryarray=order_qual),
@@ -3722,7 +3956,7 @@ if vue == "Solidarité et citoyenneté":
                             g_pos_delta = entites_delta.index("Grenoble")
                             fig_delta.add_hrect(y0=g_pos_delta - 0.45, y1=g_pos_delta + 0.45,
                                                 fillcolor="rgba(255,88,77,0.10)",
-                                                line_color="#FF584D", line_width=1.5, layer="below")
+                                                line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
                     fig_delta.update_layout(
                         showlegend=False,
                         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
