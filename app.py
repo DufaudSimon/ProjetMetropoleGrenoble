@@ -2124,22 +2124,23 @@ if vue == "Démographie":
                 <strong>Note sur les données :</strong><br>
                 🏠 <b>Migrations résidentielles</b> : 
                     Cette thématique analyse les changements de lieu de résidence observés sur une année. 
-                    Elle concerne l’ensemble de la population ayant déménagé entre deux communes, départements ou régions, 
-                    y compris les nouveaux arrivants sur le territoire étudié. Ces données permettent d’identifier les dynamiques 
-                    d’attractivité résidentielle et les flux de population.
+                    Elle concerne l'ensemble de la population ayant déménagé entre deux communes, départements ou régions, 
+                    y compris les nouveaux arrivants sur le territoire étudié. Ces données permettent d'identifier les dynamiques 
+                    d'attractivité résidentielle et les flux de population.
                 <a href='https://www.insee.fr/fr/statistiques/8582988' target='_blank' style='color: #1C3A27; font-size: 0.85em;'>Accéder aux données</a><br><br>
-                💼 <b>Mobilités professionnelles</b> : 
+                💼 <b>Trajets domicile-travail</b> : 
                     Cette catégorie étudie les déplacements domicile-travail des actifs ayant un emploi. 
-                    Elle concerne les personnes en activité résidant sur le territoire, qu’elles travaillent dans leur commune 
+                    Elle concerne les personnes en activité résidant sur le territoire, qu'elles travaillent dans leur commune 
                     de résidence ou dans une autre commune. Ces données décrivent les mobilités quotidiennes ou habituelles 
-                    liées à l’emploi et les relations entre lieux de résidence et pôles d’activité.
+                    liées à l'emploi et les relations entre lieux de résidence et pôles d'activité.
                 <a href='https://www.insee.fr/fr/statistiques/8582949' target='_blank' style='color: #1C3A27; font-size: 0.85em;'>Accéder aux données</a><br><br>
                 🎓 <b>Mobilités scolaires</b> : 
-                    Cette analyse porte sur les déplacements entre le domicile et le lieu d’études. 
-                    Elle concerne les enfants scolarisés dès 2 ans, les collégiens, lycéens, apprentis et étudiants de l’enseignement supérieur. 
-                    Ces données permettent d’identifier les flux scolaires quotidiens et l’attractivité des établissements d’enseignement.
+                    Cette analyse porte sur les déplacements entre le domicile et le lieu d'études. 
+                    Elle concerne les enfants scolarisés dès 2 ans, les collégiens, lycéens, apprentis et étudiants de l'enseignement supérieur. 
+                    Ces données permettent d'identifier les flux scolaires quotidiens et l'attractivité des établissements d'enseignement.
                 <a href='https://www.insee.fr/fr/statistiques/8582969' target='_blank' style='color: #1C3A27; font-size: 0.85em;'>Accéder aux données</a>
                 </div>""", unsafe_allow_html=True)
+
 
             with st.container():
                 filter_bar("Filtres - Mobilités")
@@ -2151,6 +2152,7 @@ if vue == "Démographie":
                     mode_mob = st.radio("",
                         ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
                         key="mob_mode", horizontal=True, label_visibility="collapsed")
+
 
                 if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
                     met_choice = "Grenoble"
@@ -2164,11 +2166,13 @@ if vue == "Démographie":
                     sel_metros_mob = st.multiselect("Métropoles à comparer", TOUTES, default=shared_default_demo(TOUTES), key="mob_metros", on_change=sync_metros_demo, args=("mob_metros",))
                     coms_selection = [c for m in sel_metros_mob for c in COMMUNES[m]]
 
+
                 mob_col1, mob_col2 = st.columns(2)
                 with mob_col1:
                     theme_mob = st.selectbox("Thématique d'analyse",
-                        ["🏠 Migrations Résidentielles", "💼 Mobilité Professionnelle", "🎓 Mobilité Scolaire"],
+                        ["🏠 Migrations Résidentielles", "💼 Trajets domicile-travail", "🎓 Mobilité Scolaire"],
                         key="mob_theme")
+
 
                 if "Migrations" in theme_mob:
                     current_mob_df, col_orig, col_dest = df_res, "commune_origine", "commune_destination"
@@ -2180,10 +2184,12 @@ if vue == "Démographie":
                     current_mob_df, col_orig, col_dest = df_scol, "commune_origine", "commune_destination"
                     label_in, label_out = "Élèves Entrants", "Élèves Sortants"
 
+
                 if current_mob_df is not None:
                     annees_mob = sorted(current_mob_df["annee"].dropna().unique().astype(int), reverse=True)
                     with mob_col2:
                         sel_annee_mob = st.selectbox("Année", annees_mob, key="mob_annee")
+
 
             df_mob_filtered = current_mob_df[
                 (current_mob_df[col_orig] != current_mob_df[col_dest]) &
@@ -2198,9 +2204,11 @@ if vue == "Démographie":
                 entities_mob.append({"name": target, "in": f_in, "out": f_out, "solde": f_in - f_out})
             df_plot_mob = pd.DataFrame(entities_mob)
 
+
             if not df_plot_mob.empty:
                 st.markdown(f"#### Bilan net - {theme_mob} ({sel_annee_mob})",
                             help="Le solde net = entrées − sorties. Un chiffre positif signifie que le territoire gagne des flux (attractivité). Un chiffre négatif signifie qu'il en perd (répulsion ou dépendance envers un pôle voisin).")
+
 
                 kpi_cols = st.columns(len(df_plot_mob))
                 n_mob = len(df_plot_mob)
@@ -2223,7 +2231,9 @@ if vue == "Démographie":
                             </div>
                         </div>""", unsafe_allow_html=True)
 
+
                 st.markdown("---")
+
 
                 noms_mob = df_plot_mob["name"].tolist()
                 greno_vrect_args = None
@@ -2233,12 +2243,14 @@ if vue == "Démographie":
                                             fillcolor="rgba(255,88,77,0.10)",
                                             line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
 
+
                 if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
                     color_in_bar  = PALETTE_COMMUNE[0]
                     color_out_bar = PALETTE_COMMUNE[int(len(PALETTE_COMMUNE) * 0.5)]
                 else:
                     color_in_bar  = PALETTE_METRO[int(len(PALETTE_METRO) * 0.3)]
                     color_out_bar = PALETTE_METRO[int(len(PALETTE_METRO) * 0.7)]
+
 
                 c1, c2 = st.columns(2)
                 with c1:
@@ -2265,6 +2277,7 @@ if vue == "Démographie":
                                           yaxis=dict(title="Nombre de flux", showgrid=True, gridcolor="#eeeeee"))
                     st.plotly_chart(fig_vol, use_container_width=True)
 
+
                 with c2:
                     st.markdown(
                         "##### Performance nette",
@@ -2284,6 +2297,7 @@ if vue == "Démographie":
                                           yaxis=dict(title="Solde (entrées − sorties)", showgrid=True, gridcolor="#eeeeee"))
                     st.plotly_chart(fig_net, use_container_width=True)
 
+
                 with st.expander("💡 Comment interpréter ces deux graphiques ?"):
                     st.write(
                         "**Volume des échanges** : ce graphique compare les flux entrants (barres foncées) et sortants (barres claires) pour chaque territoire. "
@@ -2293,13 +2307,16 @@ if vue == "Démographie":
                         "Une barre rouge (négative) signifie qu'il en perd. "
                         )
 
+
                 st.markdown("---")
-                st.markdown("#### Analyse géographique des flux", help="Ces graphiques identifient les 10 principaux territoires d'origine (d'où viennent les personnes) et les 10 principales destinations (où vont les personnes) pour le territoire sélectionné.")
+                st.markdown("#### Analyse géographique des flux", help="Ces graphiques identifient les 10 principaux territoires d'origine (d'où viennent les personnes) et les 10 principales destinations (où vont les personnes) pour le territoire sélectionné. Le recensement ne mesure pas les flux à destination de l'étranger : l'INSEE ne peut recenser que les personnes présentes sur le territoire français.")
+
 
                 if mode_mob == "Comparaison Métropoles":
                     selection_unique = len(sel_metros_mob) == 1
                 else:
                     selection_unique = len(sel_communes_mob) == 1
+
 
                 if not selection_unique:
                     if mode_mob == "Comparaison Métropoles":
@@ -2314,6 +2331,7 @@ if vue == "Démographie":
                         color_top_in  = PALETTE_METRO[int(len(PALETTE_METRO) * 0.3)]
                         color_top_out = PALETTE_METRO[int(len(PALETTE_METRO) * 0.7)]
 
+
                     col_l, col_r = st.columns(2)
                     with col_l:
                         st.markdown(
@@ -2324,11 +2342,38 @@ if vue == "Démographie":
                         grouped_in = raw_in.groupby(col_orig)["flux"].sum().reset_index()
                         top_in = grouped_in.nlargest(10, "flux")
                         if not top_in.empty:
-                            fig_in = px.bar(top_in, x="flux", y=col_orig, orientation="h",
-                                            color_discrete_sequence=[color_top_in], text_auto=".0f")
-                            fig_in.update_layout(yaxis=dict(categoryorder="total ascending", title=""),
-                                                 xaxis=dict(title="Nombre de flux"), height=350)
+                            # Raccourcir "Résidence antérieure" → "Résidence" dans les labels Y
+                            top_in = top_in.copy()
+                            top_in["label_display"] = top_in[col_orig].str.replace(
+                                "Résidence antérieure", "Résidence", regex=False
+                            )
+                            fig_in = go.Figure(go.Bar(
+                                x=top_in["flux"],
+                                y=top_in["label_display"],
+                                orientation="h",
+                                marker_color=color_top_in,
+                                # Texte affiché à l'extérieur de la barre, formaté à la française
+                                text=top_in["flux"].apply(lambda v: f"{int(v):,}".replace(",", " ")),
+                                textposition="outside",
+                                cliponaxis=False,
+                                hovertemplate="<b>%{y}</b><br>Flux : %{x:,.0f}<extra></extra>"
+                            ))
+                            # Lignes de référence verticales en filigrane
+                            max_in = int(top_in["flux"].max())
+                            for rv in [v for v in [1000, 2000, 3000, 4000, 5000, 6000] if v < max_in]:
+                                fig_in.add_vline(
+                                    x=rv,
+                                    line=dict(color="rgba(120,120,120,0.3)", width=1, dash="dot")
+                                )
+                            fig_in.update_layout(
+                                yaxis=dict(categoryorder="total ascending", title="", automargin=True),
+                                # Étendre l'axe X à 125 % du max pour laisser la place aux labels
+                                xaxis=dict(title="Nombre de flux", showgrid=False, range=[0, max_in * 1.25]),
+                                height=380,
+                                margin=dict(l=10, r=70, t=10, b=40)
+                            )
                             st.plotly_chart(fig_in, use_container_width=True)
+
 
                     with col_r:
                         st.markdown(
@@ -2339,10 +2384,36 @@ if vue == "Démographie":
                         grouped_out = raw_out.groupby(col_dest)["flux"].sum().reset_index()
                         top_out = grouped_out.nlargest(10, "flux")
                         if not top_out.empty:
-                            fig_out = px.bar(top_out, x="flux", y=col_dest, orientation="h",
-                                             color_discrete_sequence=[color_top_out], text_auto=".0f")
-                            fig_out.update_layout(yaxis=dict(categoryorder="total ascending", title=""),
-                                                  xaxis=dict(title="Nombre de flux"), height=350)
+                            # Raccourcir "Résidence antérieure" → "Résidence" dans les labels Y
+                            top_out = top_out.copy()
+                            top_out["label_display"] = top_out[col_dest].str.replace(
+                                "Résidence antérieure", "Résidence", regex=False
+                            )
+                            fig_out = go.Figure(go.Bar(
+                                x=top_out["flux"],
+                                y=top_out["label_display"],
+                                orientation="h",
+                                marker_color=color_top_out,
+                                # Texte affiché à l'extérieur de la barre, formaté à la française
+                                text=top_out["flux"].apply(lambda v: f"{int(v):,}".replace(",", " ")),
+                                textposition="outside",
+                                cliponaxis=False,
+                                hovertemplate="<b>%{y}</b><br>Flux : %{x:,.0f}<extra></extra>"
+                            ))
+                            # Lignes de référence verticales en filigrane
+                            max_out = int(top_out["flux"].max())
+                            for rv in [v for v in [500, 1000, 1500, 2000, 2500, 3000] if v < max_out]:
+                                fig_out.add_vline(
+                                    x=rv,
+                                    line=dict(color="rgba(120,120,120,0.3)", width=1, dash="dot")
+                                )
+                            fig_out.update_layout(
+                                yaxis=dict(categoryorder="total ascending", title="", automargin=True),
+                                # Étendre l'axe X à 125 % du max pour laisser la place aux labels
+                                xaxis=dict(title="Nombre de flux", showgrid=False, range=[0, max_out * 1.25]),
+                                height=380,
+                                margin=dict(l=10, r=70, t=10, b=40)
+                            )
                             st.plotly_chart(fig_out, use_container_width=True)
 
 # ==============================================================================
@@ -2775,7 +2846,7 @@ if vue == "Démographie":
             st.markdown("""
             <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
                 <strong>Source :</strong> INSEE - 
-                <a href='https://www.insee.fr/fr/statistiques/8582448' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
+                <a href='https://www.insee.fr/fr/statistiques/1893185' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
                 <strong>Note sur les données :</strong> Ces chiffres sont issus des recensements de l' INSEE. Ils recensent la <b>population active de 25 à 54 ans</b>, le cœur stable du marché du travail.
                 Quand vous comparez deux territoires, un graphique d'indice de spécialisation s'affiche en plus. 
             </div>""", unsafe_allow_html=True)
