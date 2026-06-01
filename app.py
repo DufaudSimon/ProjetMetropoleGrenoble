@@ -358,10 +358,13 @@ CSP_MAP_NEW = {
 }
 
 DIP_MAP = {
-    "Aucun diplôme": "Sans diplôme", "niveau CEP": "CEP", "niveau BEPC": "BEPC",
-    "niveau CAP-BEP": "CAP-BEP", "bac général ou technique": "Baccalauréat",
-    "universitaire de 1er cycle": "Bac + 2", "universitaire de 2ème": "Bac + 3/4",
-    "universitaire de 3ème": "Supérieur (Bac+5+)",
+    "Aucun diplôme":                      "Sans diplôme",
+    "de niveau CEP":                       "CEP",
+    "de niveau BEPC":                      "BEPC",
+    "de niveau CAP-BEP":                   "CAP-BEP",
+    "de niveau bac":                       "Baccalauréat",
+    "universitaire de 1er cycle":          "Bac+3",
+    "universitaire de 2":                  "Bac+5 et +",
 }
 
 LABEL_TRANCHE = {
@@ -2837,6 +2840,7 @@ if vue == "Démographie":
 # ==============================================================================
 # ONGLET 5 - Population active 25-54 ans
 # ==============================================================================
+
 if vue == "Démographie":
     with tab6:
 
@@ -2844,11 +2848,16 @@ if vue == "Démographie":
             st.info("📂 Données CSP/Diplôme non trouvées. Vérifiez les fichiers.")
         else:
             st.markdown("""
-            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
-                <strong>Source :</strong> INSEE - 
-                <a href='https://www.insee.fr/fr/statistiques/1893185' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
-                <strong>Note sur les données :</strong> Ces chiffres sont issus des recensements de l' INSEE. Ils recensent la <b>population active de 25 à 54 ans</b>, le cœur stable du marché du travail.
-                Quand vous comparez deux territoires, un graphique d'indice de spécialisation s'affiche en plus. 
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px;
+                        border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source :</strong> INSEE –
+                <a href='https://www.insee.fr/fr/statistiques/1893185' target='_blank'
+                   style='color: #1C3A27;'>Accéder aux données</a><br><br>
+                <strong>Note sur les données :</strong> Ces chiffres sont issus des recensements
+                de l'INSEE. Ils recensent la <b>population active de 25 à 54 ans</b>, le cœur
+                stable du marché du travail.
+                Quand vous comparez deux territoires, un graphique d'indice de spécialisation
+                s'affiche en plus.
             </div>""", unsafe_allow_html=True)
 
             with st.container():
@@ -2857,42 +2866,75 @@ if vue == "Démographie":
                 with csp_geo_l:
                     filter_row_label("Niveau géographique")
                 with csp_geo_r:
-                    mode_analyse = st.radio("",
-                        ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
-                        key="csp_mode", horizontal=True, label_visibility="collapsed")
+                    mode_analyse = st.radio(
+                        "",
+                        ["Comparaison Métropoles",
+                         "Comparaison communes Grenoble-Alpes Métropole"],
+                        key="csp_mode", horizontal=True, label_visibility="collapsed",
+                    )
                 csp_row1_c1, csp_row1_c2 = st.columns(2)
                 with csp_row1_c1:
-                    theme_analyse = st.selectbox("Thématique",
-                        ["Secteurs d'activité (CSP)", "Niveau de diplôme"], key="csp_theme",
-                        help="**Secteurs d'activité (CSP)** : répartition des actifs 25-54 ans par catégorie socio-professionnelle.\n\n**Niveau de diplôme** : répartition des actifs 25-54 ans par niveau d'études atteint.")
+                    theme_analyse = st.selectbox(
+                        "Thématique",
+                        ["Secteurs d'activité (CSP)", "Niveau de diplôme"],
+                        key="csp_theme",
+                        help=(
+                            "**Secteurs d'activité (CSP)** : répartition des actifs 25-54 ans "
+                            "par catégorie socio-professionnelle.\n\n"
+                            "**Niveau de diplôme** : répartition des actifs 25-54 ans par "
+                            "niveau d'études atteint (7 niveaux harmonisés INSEE)."
+                        ),
+                    )
 
-                current_df_csp  = df_csp_new if theme_analyse == "Secteurs d'activité (CSP)" else df_dip_new
-                current_map_csp = CSP_MAP_NEW if theme_analyse == "Secteurs d'activité (CSP)" else DIP_MAP
+                is_diplome = (theme_analyse == "Niveau de diplôme")
+                current_df_csp  = df_dip_new if is_diplome else df_csp_new
+                current_map_csp = DIP_MAP    if is_diplome else CSP_MAP_NEW
 
-                annees_csp = sorted(current_df_csp["ANNEE"].dropna().unique(), reverse=True) if not current_df_csp.empty else []
+                annees_csp = (
+                    sorted(current_df_csp["ANNEE"].dropna().unique(), reverse=True)
+                    if not current_df_csp.empty else []
+                )
                 with csp_row1_c2:
-                    sel_annee_csp = st.selectbox("Année", annees_csp, key="csp_annee",
-                                                 help="Année du recensement INSEE de référence. Les données disponibles sont généralement 2011, 2016 et 2022.") if annees_csp else None
+                    sel_annee_csp = (
+                        st.selectbox(
+                            "Année", annees_csp, key="csp_annee",
+                            help="Année du recensement INSEE. Données diplôme disponibles : 2011 et 2022.",
+                        )
+                        if annees_csp else None
+                    )
 
                 if mode_analyse == "Comparaison communes Grenoble-Alpes Métropole":
                     clist = sorted(COMMUNES["Grenoble"])
-                    sel_communes_csp = st.multiselect("Communes de Grenoble-Alpes Métropole", clist,
-                                                      default=shared_default_communes_demo(clist), key="csp_communes",
-                                                      help="Sélectionnez les communes à analyser.",
-                                                      on_change=sync_communes_demo, args=("csp_communes",))
+                    sel_communes_csp = st.multiselect(
+                        "Communes de Grenoble-Alpes Métropole", clist,
+                        default=shared_default_communes_demo(clist), key="csp_communes",
+                        help="Sélectionnez les communes à analyser.",
+                        on_change=sync_communes_demo, args=("csp_communes",),
+                    )
                     entities_names = sel_communes_csp
                 else:
-                    sel_metros_csp = st.multiselect("Métropoles", TOUTES, default=shared_default_demo(TOUTES),
-                                                    key="csp_metros", help="Sélectionnez les métropoles à comparer.", on_change=sync_metros_demo, args=("csp_metros",))
+                    sel_metros_csp = st.multiselect(
+                        "Métropoles", TOUTES, default=shared_default_demo(TOUTES),
+                        key="csp_metros", help="Sélectionnez les métropoles à comparer.",
+                        on_change=sync_metros_demo, args=("csp_metros",),
+                    )
                     entities_names = sel_metros_csp
 
-                sel_cats = st.multiselect("Catégories à afficher",
-                                          options=list(current_map_csp.values()),
-                                          default=list(current_map_csp.values()), key="csp_cats",
-                                          help="Filtrez les catégories pour simplifier la lecture des graphiques. Désélectionner une catégorie la retire de tous les graphiques.")
+                sel_cats = st.multiselect(
+                    "Catégories à afficher",
+                    options=list(current_map_csp.values()),
+                    default=list(current_map_csp.values()),
+                    key="csp_cats",
+                    help=(
+                        "Filtrez les catégories pour simplifier la lecture. "
+                        "Désélectionner une catégorie la retire de tous les graphiques."
+                    ),
+                )
 
-            COLORS_COMM_CSP5 = ["#081C15","#1B4332","#2D6A4F","#40916C","#52B788",
-                                 "#74C69D","#95D5B2","#B7E4C7","#D8F3DC"]
+            COLORS_COMM_CSP5 = [
+                "#081C15", "#1B4332", "#2D6A4F", "#40916C", "#52B788",
+                "#74C69D", "#95D5B2", "#B7E4C7", "#D8F3DC",
+            ]
 
             if sel_annee_csp:
                 df_year_csp = current_df_csp[current_df_csp["ANNEE"] == sel_annee_csp]
@@ -2900,13 +2942,19 @@ if vue == "Démographie":
 
                 for name in entities_names:
                     if mode_analyse == "Comparaison communes Grenoble-Alpes Métropole":
-                        subset = df_year_csp[(df_year_csp["LIB_NORM"] == normalize_name(name)) & (df_year_csp["DEP"] == "38")]
+                        subset = df_year_csp[
+                            (df_year_csp["LIB_NORM"] == normalize_name(name))
+                            & (df_year_csp["DEP"] == "38")
+                        ]
                         if not subset.empty:
                             entities_csp.append({"name": name, "data": subset.iloc[0]})
                     else:
-                        dep = DEP_MAP[name]
+                        dep   = DEP_MAP[name]
                         norms = [normalize_name(c) for c in COMMUNES[name]]
-                        subset = df_year_csp[(df_year_csp["DEP"] == dep) & (df_year_csp["LIB_NORM"].isin(norms))]
+                        subset = df_year_csp[
+                            (df_year_csp["DEP"] == dep)
+                            & (df_year_csp["LIB_NORM"].isin(norms))
+                        ]
                         if not subset.empty:
                             agg = subset[list(current_map_csp.values())].sum()
                             entities_csp.append({"name": name, "data": agg})
@@ -2914,163 +2962,338 @@ if vue == "Démographie":
                 if entities_csp and sel_cats:
                     st.markdown("---")
 
+                    # ── KPI ──────────────────────────────────────────────────
                     kpi_cols_csp = st.columns(len(entities_csp))
                     for i, entity in enumerate(entities_csp):
                         total_actifs = entity["data"][sel_cats].sum()
-                        val_formatee = f"{int(total_actifs):,d}".replace(",", " ")
-                        
-                        # KPI Grenoble : Couleur noire uniforme
-                        if entity['name'] == "Grenoble":
-                            kpi_color5 = "#212529"
-                        elif mode_analyse == "Comparaison Métropoles":
-                            kpi_color5 = COULEURS.get(entity['name'], "#888888")
+                        val_formatee = f"{int(total_actifs):,d}".replace(",", "\u202f")
+
+                        if mode_analyse == "Comparaison Métropoles":
+                            kpi_color5 = COULEURS.get(entity["name"], "#888888")
                         else:
                             kpi_color5 = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
-                            
+
                         with kpi_cols_csp[i]:
                             st.markdown(f"""
-                            <div style='display:flex;flex-direction:row;align-items:stretch;border-radius:8px;
-                                overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.1);background:#fff;
+                            <div style='display:flex;flex-direction:row;align-items:stretch;
+                                border-radius:8px;overflow:hidden;
+                                box-shadow:0 2px 6px rgba(0,0,0,0.1);background:#fff;
                                 min-height:80px;border-left:6px solid {kpi_color5};'>
-                                <div style='padding:10px 16px;display:flex;flex-direction:column;justify-content:center;'>
-                                    <div style='font-size:11px;font-weight:700;letter-spacing:0.08em;color:#666;text-transform:uppercase;'>{entity['name']}</div>
-                                    <div style='font-size:24px;font-weight:bold;color:#111;'>{val_formatee}</div>
-                                    <div style='color:{kpi_color5};font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;'>Actifs 25-54 ans</div>
+                                <div style='padding:10px 16px;display:flex;flex-direction:column;
+                                    justify-content:center;'>
+                                    <div style='font-size:11px;font-weight:700;
+                                        letter-spacing:0.08em;color:#666;
+                                        text-transform:uppercase;'>{entity['name']}</div>
+                                    <div style='font-size:24px;font-weight:bold;
+                                        color:#111;'>{val_formatee}</div>
+                                    <div style='color:{kpi_color5};font-size:11px;font-weight:700;
+                                        text-transform:uppercase;
+                                        letter-spacing:0.05em;'>Actifs 25-54 ans</div>
                                 </div>
                             </div>""", unsafe_allow_html=True)
-                    
+
                     st.markdown("---")
                     c1, c2 = st.columns(2)
+
+                    # ══════════════════════════════════════════════════════════
+                    # GRAPHIQUE 1 : RÉPARTITION EN VOLUME (barres groupées)
+                    # Couleur = couleur du territoire (COULEURS / COLORS_COMM_CSP5)
+                    # Grenoble : même couleur + hachures rouges overlay
+                    # ══════════════════════════════════════════════════════════
                     with c1:
                         st.subheader(
                             "Répartition en volume",
-                            help="Nombre réel d'actifs 25-54 ans par catégorie (CSP ou niveau de diplôme)."
+                            help="Nombre réel d'actifs 25-54 ans par catégorie (CSP ou niveau de diplôme).",
                         )
                         fig_bar_csp = go.Figure()
                         for i, ent in enumerate(entities_csp):
-                            if ent["name"] == "Grenoble":
-                                # CORRECTION ABSOLUE : Couleur de barre noire solide (#212529), contour de même couleur pour l'illusion "sans bordure"
-                                # et application des hachures rouges (#FF584D) calibrées
+                            if mode_analyse == "Comparaison Métropoles":
+                                bar_color = COULEURS.get(ent["name"], "#888888")
+                            else:
+                                bar_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
+
+                            if ent["name"] == "Grenoble" and mode_analyse == "Comparaison Métropoles":
                                 marker_dict = dict(
-                                    color="#212529",
-                                    line=dict(color="#212529", width=1),
+                                    color=bar_color,
+                                    line=dict(color=bar_color, width=1),
                                     pattern=dict(
-                                        shape="/",
-                                        fgcolor="#FF584D",
-                                        fillmode="replace",
-                                        solidity=0.3,
-                                        size=20
-                                    )
+                                        shape="/", fgcolor="#FF584D",
+                                        fillmode="overlay", solidity=0.3, size=20,
+                                    ),
                                 )
                             else:
-                                if mode_analyse == "Comparaison Métropoles":
-                                    bar_color = COULEURS.get(ent["name"], "#888888")
-                                else:
-                                    bar_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
                                 marker_dict = dict(color=bar_color)
-                                
+
                             fig_bar_csp.add_trace(go.Bar(
-                                x=sel_cats, y=ent["data"][sel_cats],
-                                name=ent["name"], marker=marker_dict,
-                                hovertemplate="<b>Territoire : " + ent["name"] + "</b><br>%{x} : %{y:.2s}<extra></extra>",
+                                x=sel_cats,
+                                y=ent["data"][sel_cats],
+                                name=ent["name"],
+                                marker=marker_dict,
+                                hovertemplate=(
+                                    "<b>Territoire : " + ent["name"] + "</b><br>"
+                                    "%{x} : %{y:.2s}<extra></extra>"
+                                ),
                             ))
                         fig_bar_csp.update_layout(
-                            barmode="group", 
-                            height=400, 
+                            barmode="group",
+                            height=420,
                             margin=dict(t=20, b=20),
                             paper_bgcolor="rgba(0,0,0,0)",
                             plot_bgcolor="rgba(0,0,0,0)",
                             font_family="Sora",
-                            yaxis=dict(gridcolor="#E8F5EE")
+                            xaxis=dict(tickangle=-20),
+                            yaxis=dict(gridcolor="#E8F5EE"),
+                            legend=dict(
+                                orientation="v", yanchor="middle", y=0.5,
+                                xanchor="left", x=1.02, title="",
+                            ),
                         )
                         st.plotly_chart(fig_bar_csp, use_container_width=True)
 
+                    # ══════════════════════════════════════════════════════════
+                    # GRAPHIQUE 2 : PROFIL STRUCTUREL (%)
+                    # CSP     → Radar (catégories sans ordre naturel)
+                    # Diplôme → Bubble chart
+                    #           x = niveau de diplôme (ordonné)
+                    #           y = territoire
+                    #           taille bulle = part (%)
+                    #           couleur = couleur du territoire (cohérent KPI)
+                    #           Grenoble = contour rouge + annotation
+                    # ══════════════════════════════════════════════════════════
                     with c2:
                         st.subheader(
                             "Profil structurel (%)",
-                            help="Répartition en pourcentage de chaque catégorie dans la population active du territoire (base 100%)."
+                            help=(
+                                "Part de chaque catégorie dans la population active totale du territoire "
+                                "(base 100 %). Neutralise l'effet de taille pour comparer les structures "
+                                "entre territoires."
+                            ),
                         )
-                        fig_radar_csp = go.Figure()
-                        for i, ent in enumerate(entities_csp):
-                            v = ent["data"][sel_cats]
-                            pct = (v / v.sum() * 100).fillna(0)
-                            
-                            if ent["name"] == "Grenoble":
-                                # Radar Grenoble : Bordure rouge vif en pointillés ("dash")
-                                fill_color = "rgba(255, 88, 77, 0.12)"
-                                line_dict = dict(color="#FF584D", width=4, dash="dash")
-                            else:
+
+                        if is_diplome:
+                            # ── Bubble chart ──────────────────────────────────
+                            # x = niveau de diplôme (axe ordonné)
+                            # y = nom du territoire
+                            # taille = part (%) → les gros volumes Bac+3 ressortent
+                            # couleur = couleur du territoire (cohérente avec KPI)
+                            # Grenoble : contour rouge vif
+                            fig_bubble = go.Figure()
+
+                            for i, ent in enumerate(entities_csp):
+                                v     = ent["data"][sel_cats]
+                                total = v.sum()
+                                pct   = (v / total * 100).fillna(0) if total > 0 else v * 0
+
+                                if mode_analyse == "Comparaison Métropoles":
+                                    bub_color = COULEURS.get(ent["name"], "#888888")
+                                else:
+                                    bub_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
+
+                                is_grenoble = (
+                                    ent["name"] == "Grenoble"
+                                    and mode_analyse == "Comparaison Métropoles"
+                                )
+
+                                # Convertir la couleur hex en rgba pour le fill semi-transparent
+                                r, g, b = [int(bub_color.lstrip("#")[j:j+2], 16) for j in (0, 2, 4)]
+                                fill_rgba   = f"rgba({r},{g},{b},0.75)"
+                                border_color = "#FF584D" if is_grenoble else bub_color
+
+                                fig_bubble.add_trace(go.Scatter(
+                                    x=sel_cats,
+                                    y=[ent["name"]] * len(sel_cats),
+                                    mode="markers+text",
+                                    name=ent["name"],
+                                    marker=dict(
+                                        size=list(pct * 2.8),   # facteur visuel
+                                        color=fill_rgba,
+                                        line=dict(
+                                            color=border_color,
+                                            width=3 if is_grenoble else 1,
+                                        ),
+                                        sizemode="diameter",
+                                        sizemin=6,
+                                    ),
+                                    text=[f"{v:.1f}%" for v in pct],
+                                    textposition="middle center",
+                                    textfont=dict(
+                                        size=8,
+                                        color="white" if not is_grenoble else "#FF584D",
+                                        family="Sora",
+                                    ),
+                                    hovertemplate=(
+                                        "<b>" + ent["name"] + "</b><br>"
+                                        "%{x} : <b>%{text}</b><extra></extra>"
+                                    ),
+                                    showlegend=True,
+                                ))
+
+                            fig_bubble.update_layout(
+                                height=420,
+                                margin=dict(t=20, b=20, l=20, r=20),
+                                paper_bgcolor="rgba(0,0,0,0)",
+                                plot_bgcolor="rgba(0,0,0,0)",
+                                font_family="Sora",
+                                xaxis=dict(
+                                    tickangle=-20,
+                                    gridcolor="#E8F5EE",
+                                    title="",
+                                    categoryorder="array",
+                                    categoryarray=sel_cats,
+                                ),
+                                yaxis=dict(
+                                    gridcolor="#E8F5EE",
+                                    title="",
+                                    autorange="reversed",
+                                ),
+                                legend=dict(
+                                    orientation="v", yanchor="middle", y=0.5,
+                                    xanchor="left", x=1.02, title="",
+                                ),
+                            )
+                            st.plotly_chart(fig_bubble, use_container_width=True)
+
+                        else:
+                            # ── Radar (CSP) ───────────────────────────────────
+                            fig_radar_csp = go.Figure()
+                            for i, ent in enumerate(entities_csp):
+                                v   = ent["data"][sel_cats]
+                                pct = (v / v.sum() * 100).fillna(0)
+
                                 if mode_analyse == "Comparaison Métropoles":
                                     radar_color = COULEURS.get(ent["name"], "#888888")
                                 else:
                                     radar_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
-                                fill_color = None
-                                line_dict = dict(color=radar_color, width=2, dash="solid")
-                                
-                            fig_radar_csp.add_trace(go.Scatterpolar(
-                                r=list(pct) + [pct.iloc[0]],
-                                theta=sel_cats + [sel_cats[0]],
-                                fill="toself", fillcolor=fill_color, name=ent["name"],
-                                line=line_dict,
-                                hovertemplate="<b>Territoire : " + ent["name"] + "</b><br>%{theta} : %{r:.2f}%<extra></extra>",
-                            ))
-                        fig_radar_csp.update_layout(
-                            height=400, 
-                            margin=dict(t=50, b=50),
-                            paper_bgcolor="rgba(0,0,0,0)",
-                            font_family="Sora",
-                            polar=dict(
-                                bgcolor="rgba(0,0,0,0)",
-                                radialaxis=dict(gridcolor="#E8F5EE"),
-                                angularaxis=dict(gridcolor="#E8F5EE")
+
+                                if ent["name"] == "Grenoble" and mode_analyse == "Comparaison Métropoles":
+                                    fill_color = "rgba(255, 88, 77, 0.12)"
+                                    line_dict  = dict(color="#FF584D", width=4, dash="dash")
+                                else:
+                                    r, g, b = [int(radar_color.lstrip("#")[j:j+2], 16) for j in (0, 2, 4)]
+                                    fill_color = f"rgba({r},{g},{b},0.08)"
+                                    line_dict  = dict(color=radar_color, width=2, dash="solid")
+
+                                fig_radar_csp.add_trace(go.Scatterpolar(
+                                    r=list(pct) + [pct.iloc[0]],
+                                    theta=sel_cats + [sel_cats[0]],
+                                    fill="toself",
+                                    fillcolor=fill_color,
+                                    name=ent["name"],
+                                    line=line_dict,
+                                    hovertemplate=(
+                                        "<b>Territoire : " + ent["name"] + "</b><br>"
+                                        "%{theta} : %{r:.2f} %<extra></extra>"
+                                    ),
+                                ))
+                            fig_radar_csp.update_layout(
+                                height=420,
+                                margin=dict(t=50, b=50),
+                                paper_bgcolor="rgba(0,0,0,0)",
+                                font_family="Sora",
+                                polar=dict(
+                                    bgcolor="rgba(0,0,0,0)",
+                                    radialaxis=dict(gridcolor="#E8F5EE"),
+                                    angularaxis=dict(gridcolor="#E8F5EE"),
+                                ),
+                                legend=dict(
+                                    orientation="v", yanchor="middle", y=0.5,
+                                    xanchor="left", x=1.02, title="",
+                                ),
                             )
-                        )
-                        st.plotly_chart(fig_radar_csp, use_container_width=True)
+                            st.plotly_chart(fig_radar_csp, use_container_width=True)
 
                     with st.expander("💡 Comment interpréter ces deux graphiques ?"):
-                        st.write(
-                            "**Volume (barres groupées)** : effectifs réels par catégorie. "
-                            "Utile pour les besoins en services publics (logements, transports, formations).\n\n"
-                            "**Radar (%)** : part relative de chaque catégorie dans la population active. "
-                            "Compare les profils socio-professionnels en neutralisant la taille des territoires.\n\n"
-                        )
+                        if is_diplome:
+                            st.write(
+                                "**Volume (barres groupées)** : effectifs réels par niveau de diplôme. "
+                                "Utile pour estimer les besoins absolus en formation ou en reconversion.\n\n"
+                                "**Bubble chart (%)** : chaque bulle représente la part (%) d'un territoire "
+                                "sur un niveau de diplôme. Plus la bulle est grande, plus ce niveau est "
+                                "représenté dans la population active. "
+                                "Les bulles à contour rouge désignent Grenoble. "
+                                "La lecture se fait de gauche (moins qualifié) à droite (plus qualifié) : "
+                                "les grandes bulles à droite indiquent un territoire très qualifié.\n\n"
+                            )
+                        else:
+                            st.write(
+                                "**Volume (barres groupées)** : effectifs réels par catégorie. "
+                                "Utile pour les besoins en services publics (logements, transports, formations).\n\n"
+                                "**Radar (%)** : part relative de chaque CSP dans la population active. "
+                                "Compare les profils socio-professionnels en neutralisant la taille "
+                                "des territoires. La surface rouge désigne Grenoble."
+                            )
 
+                    # ── Indice de spécialisation (2 territoires uniquement) ──
                     if len(entities_csp) == 2:
                         t1_name = entities_names[0]
                         t2_name = entities_names[1]
                         st.markdown("---")
-                        st.markdown(f"### Guide de lecture : Spécialisation du Territoire 1 ({t1_name}) face au Territoire 2 ({t2_name})")
+                        st.markdown(
+                            f"### Guide de lecture : Spécialisation du Territoire 1 "
+                            f"({t1_name}) face au Territoire 2 ({t2_name})"
+                        )
                         st.markdown(f"""
-                        <div style='background-color:#f8f9fa;padding:18px;border-radius:8px;border:1px solid #e0e0e0;margin-bottom:20px;'>
+                        <div style='background-color:#f8f9fa;padding:18px;border-radius:8px;
+                                    border:1px solid #e0e0e0;margin-bottom:20px;'>
                             <h5 style='margin-top:0;'>💡 Comment lire ce graphique et ce tableau ?</h5>
-                            <p style='font-size:14px;'>L'indice compare si une catégorie est plus ou moins présente en <b>proportion</b> dans le Territoire 1 par rapport au Territoire 2.</p>
+                            <p style='font-size:14px;'>L'indice compare si une catégorie est plus ou
+                            moins présente en <b>proportion</b> dans le Territoire 1 par rapport au
+                            Territoire 2.</p>
                             <ul style='font-size:14px;'>
-                                <li><b>Indice > 100 :</b> La catégorie est <b>surreprésentée</b> dans le Territoire 1 ({t1_name}).</li>
+                                <li><b>Indice &gt; 100 :</b> La catégorie est
+                                    <b>surreprésentée</b> dans le Territoire 1 ({t1_name}).</li>
                                 <li><b>Indice = 100 :</b> Équilibre parfait.</li>
-                                <li><b>Indice < 100 :</b> La catégorie est <b>sous-représentée</b> dans le Territoire 1.</li>
+                                <li><b>Indice &lt; 100 :</b> La catégorie est
+                                    <b>sous-représentée</b> dans le Territoire 1.</li>
                             </ul>
                         </div>""", unsafe_allow_html=True)
 
-                        v1, v2 = entities_csp[0]["data"][sel_cats], entities_csp[1]["data"][sel_cats]
+                        v1, v2     = entities_csp[0]["data"][sel_cats], entities_csp[1]["data"][sel_cats]
                         t1_total, t2_total = v1.sum(), v2.sum()
-                        with np.errstate(divide='ignore', invalid='ignore'):
-                            raw = ((v1 / t1_total) / (v2 / t2_total) * 100).astype(float)
-                            spec = pd.Series(np.where(np.isfinite(raw.values), raw.values, np.nan), index=raw.index)
+                        with np.errstate(divide="ignore", invalid="ignore"):
+                            raw  = ((v1 / t1_total) / (v2 / t2_total) * 100).astype(float)
+                            spec = pd.Series(
+                                np.where(np.isfinite(raw.values), raw.values, np.nan),
+                                index=raw.index,
+                            )
                         spec_plot = spec.fillna(0)
-                        fig_spec = px.bar(x=sel_cats, y=spec_plot, color=spec_plot, color_continuous_scale="RdYlGn",
-                                        title=f"Spécialisation : {t1_name} / {t2_name}")
+                        fig_spec  = px.bar(
+                            x=sel_cats, y=spec_plot,
+                            color=spec_plot, color_continuous_scale="RdYlGn",
+                            title=f"Spécialisation : {t1_name} / {t2_name}",
+                        )
                         fig_spec.add_hline(y=100, line_dash="dash", line_color="black")
-                        fig_spec.update_layout(height=450, coloraxis_showscale=False, yaxis_title="Indice (Base 100)")
-                        st.plotly_chart(fig_spec, width='stretch')
+                        fig_spec.update_layout(
+                            height=450,
+                            coloraxis_showscale=False,
+                            yaxis_title="Indice (Base 100)",
+                            paper_bgcolor="rgba(0,0,0,0)",
+                            plot_bgcolor="rgba(0,0,0,0)",
+                            font_family="Sora",
+                            xaxis=dict(tickangle=-20),
+                        )
+                        st.plotly_chart(fig_spec, use_container_width=True)
 
-                        with st.expander("Voir le tableau récapitulatif (Effectifs et Indice)", expanded=True):
+                        with st.expander(
+                            "Voir le tableau récapitulatif (Effectifs et Indice)",
+                            expanded=True,
+                        ):
                             table_df = pd.DataFrame({
                                 "Catégorie": sel_cats,
-                                f"{t1_name} (Territoire 1 - Eff.)": [f"{int(v1[c]):,d}".replace(",", " ") for c in sel_cats],
-                                f"{t2_name} (Territoire 2 - Eff.)": [f"{int(v2[c]):,d}".replace(",", " ") for c in sel_cats],
-                                "Indice spécialisation": [str(int(spec[c])) if pd.notna(spec[c]) else "N/D" for c in sel_cats],
+                                f"{t1_name} (T1 – Eff.)": [
+                                    f"{int(v1[c]):,d}".replace(",", "\u202f")
+                                    for c in sel_cats
+                                ],
+                                f"{t2_name} (T2 – Eff.)": [
+                                    f"{int(v2[c]):,d}".replace(",", "\u202f")
+                                    for c in sel_cats
+                                ],
+                                "Indice spécialisation": [
+                                    str(int(spec[c])) if pd.notna(spec[c]) else "N/D"
+                                    for c in sel_cats
+                                ],
                             })
-                            st.dataframe(table_df.set_index("Catégorie"), width='stretch')
+                            st.dataframe(table_df.set_index("Catégorie"), use_container_width=True)
                             
 # ==============================================================================
 # SOLIDARITÉ & CITOYENNETÉ
