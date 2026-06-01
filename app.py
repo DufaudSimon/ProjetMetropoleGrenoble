@@ -2838,8 +2838,99 @@ if vue == "Démographie":
                         "Comparer ces tailles entre territoires pour une même CSP met en évidence des différences sociales locales."
                     )
 # ==============================================================================
-# ONGLET 5 - Population active 25-54 ans
+# ONGLET 5 - Population active 25-54 ans  (VERSION CORRIGÉE)
 # ==============================================================================
+
+
+_DIP_FRAGS_ORDERED = [
+    ("Aucun diplôme",             "Sans diplôme"),
+    ("de niveau CEP",              "CEP"),
+    ("de niveau BEPC",             "BEPC"),
+    ("de niveau CAP-BEP",          "CAP-BEP"),
+    ("de niveau bac",              "Baccalauréat"),
+    ("universitaire de 1er cycle", "Bac+3"),
+    ("universitaire de 2",         "Bac+5 et +"),
+]
+_CSP_FRAGS_ORDERED = [
+    ("Agriculteurs",                "Agriculteurs"),
+    ("Artisans",                    "Artisans & Chefs"),
+    ("Cadres",                      "Cadres & Prof. Sup."),
+    ("Professions interm",          "Prof. Intermédiaires"),
+    ("Employ",                      "Employés"),
+    ("Ouvriers",                    "Ouvriers"),
+]
+
+@st.cache_data
+def _load_raw_dip(year):
+    """Charge le fichier brut diplôme pour une année donnée."""
+    path = FILES_DIP.get(year)
+    if path is None:
+        return pd.DataFrame()
+    p = Path(path)
+    if not p.exists():
+        return pd.DataFrame()
+    try:
+        df = pd.read_excel(p) if p.suffix.lower() in [".xlsx", ".xls"] else pd.read_csv(p, sep=None, engine="python", low_memory=False)
+        if not df.empty and "RR" in str(df.iloc[0, 0]):
+            df = df.drop(0).reset_index(drop=True)
+        return df
+    except Exception:
+        return pd.DataFrame()
+
+
+def _build_heatmap_matrix(df_raw, row_filter_col, row_filter_vals):
+    """
+    Construit une matrice (CSP × Diplôme) en % ligne pour les lignes filtrées.
+    row_filter_col : colonne sur laquelle filtrer (LIB_NORM ou DEP)
+    row_filter_vals : liste de valeurs à conserver
+    Retourne un DataFrame (CSP en index, Diplôme en colonnes), valeurs = % ligne.
+    """
+    if df_raw.empty:
+        return pd.DataFrame()
+
+    # Identifier colonnes dep et lib
+    cols = df_raw.columns.tolist()
+    c_dep = next((c for c in cols if any(x in str(c).upper() for x in ["DÉPARTEMENT", "DR24", "DEP"])), None)
+    c_lib = next((c for c in cols if any(x in str(c).upper() for x in ["LIBELLÉ", "LIBELLE"])), None)
+    if c_dep is None or c_lib is None:
+        return pd.DataFrame()
+
+    df_raw = df_raw.copy()
+    df_raw["_dep"]     = df_raw[c_dep].astype(str).str.zfill(2)
+    df_raw["_lib_norm"] = df_raw[c_lib].apply(normalize_name)
+
+    if row_filter_col == "DEP":
+        subset = df_raw[df_raw["_dep"].isin(row_filter_vals)]
+    else:
+        subset = df_raw[df_raw["_lib_norm"].isin(row_filter_vals)]
+
+    if subset.empty:
+        return pd.DataFrame()
+
+    matrix = {}
+    for csp_frag, csp_label in _CSP_FRAGS_ORDERED:
+        row_vals = {}
+        for dip_frag, dip_label in _DIP_FRAGS_ORDERED:
+            matching = [
+                c for c in cols
+                if csp_frag.lower() in str(c).lower()
+                and dip_frag.lower() in str(c).lower()
+            ]
+            val = subset[matching].apply(pd.to_numeric, errors="coerce").fillna(0).sum().sum() if matching else 0
+            row_vals[dip_label] = val
+        matrix[csp_label] = row_vals
+
+    df_mat = pd.DataFrame(matrix).T  # CSP en lignes, Diplôme en colonnes
+    # Ordre colonnes
+    dip_labels = [d for _, d in _DIP_FRAGS_ORDERED]
+    df_mat = df_mat[[d for d in dip_labels if d in df_mat.columns]]
+    # Convertir en % ligne (part de chaque diplôme dans la CSP)
+    row_totals = df_mat.sum(axis=1)
+    df_pct = df_mat.div(row_totals, axis=0).multiply(100).fillna(0)
+    return df_pct
+
+
+# ── Onglet 5 ──────────────────────────────────────────────────────────────────
 
 if vue == "Démographie":
     with tab6:
@@ -2882,7 +2973,7 @@ if vue == "Démographie":
                             "**Secteurs d'activité (CSP)** : répartition des actifs 25-54 ans "
                             "par catégorie socio-professionnelle.\n\n"
                             "**Niveau de diplôme** : répartition des actifs 25-54 ans par "
-                            "niveau d'études atteint (7 niveaux harmonisés INSEE)."
+                            "niveau d'études atteint, avec une heatmap croisant CSP et diplôme."
                         ),
                     )
 
@@ -2927,7 +3018,8 @@ if vue == "Démographie":
                     key="csp_cats",
                     help=(
                         "Filtrez les catégories pour simplifier la lecture. "
-                        "Désélectionner une catégorie la retire de tous les graphiques."
+                        "Désélectionner une catégorie la retire des graphiques de volume."
+                        + (" La heatmap affiche toujours toutes les CSP et tous les diplômes." if is_diplome else "")
                     ),
                 )
 
@@ -2993,234 +3085,280 @@ if vue == "Démographie":
                             </div>""", unsafe_allow_html=True)
 
                     st.markdown("---")
-                    c1, c2 = st.columns(2)
 
-                    # ══════════════════════════════════════════════════════════
-                    # GRAPHIQUE 1 : RÉPARTITION EN VOLUME (barres groupées)
-                    # Couleur = couleur du territoire (COULEURS / COLORS_COMM_CSP5)
-                    # Grenoble : même couleur + hachures rouges overlay
-                    # ══════════════════════════════════════════════════════════
-                    with c1:
+                    if is_diplome:
                         st.subheader(
                             "Répartition en volume",
-                            help="Nombre réel d'actifs 25-54 ans par catégorie (CSP ou niveau de diplôme).",
+                            help=(
+                                "Nombre réel d'actifs 25-54 ans par niveau de diplôme. "
+                                "Chaque groupe de barres correspond à un niveau, "
+                                "chaque couleur à un territoire."
+                            ),
                         )
-                        fig_bar_csp = go.Figure()
+                    else:
+                        st.subheader(
+                            "Répartition en volume",
+                            help="Nombre réel d'actifs 25-54 ans par catégorie socio-professionnelle.",
+                        )
+
+                    fig_bar_csp = go.Figure()
+                    for i, ent in enumerate(entities_csp):
+                        if mode_analyse == "Comparaison Métropoles":
+                            bar_color = COULEURS.get(ent["name"], "#888888")
+                        else:
+                            bar_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
+
+                        if ent["name"] == "Grenoble" and mode_analyse == "Comparaison Métropoles":
+                            marker_dict = dict(
+                                color=bar_color,
+                                line=dict(color=bar_color, width=1),
+                                pattern=dict(
+                                    shape="/", fgcolor="#FF584D",
+                                    fillmode="overlay", solidity=0.3, size=20,
+                                ),
+                            )
+                        else:
+                            marker_dict = dict(color=bar_color)
+
+                        fig_bar_csp.add_trace(go.Bar(
+                            x=sel_cats,
+                            y=ent["data"][sel_cats],
+                            name=ent["name"],
+                            marker=marker_dict,
+                            hovertemplate=(
+                                "<b>Territoire : " + ent["name"] + "</b><br>"
+                                "%{x} : %{y:.2s}<extra></extra>"
+                            ),
+                        ))
+                    fig_bar_csp.update_layout(
+                        barmode="group",
+                        height=400,
+                        margin=dict(t=10, b=10),
+                        paper_bgcolor="rgba(0,0,0,0)",
+                        plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora",
+                        xaxis=dict(tickangle=-20),
+                        yaxis=dict(gridcolor="#E8F5EE"),
+                        legend=dict(
+                            orientation="v", yanchor="middle", y=0.5,
+                            xanchor="left", x=1.02, title="",
+                        ),
+                    )
+                    st.plotly_chart(fig_bar_csp, use_container_width=True)
+
+                    if not is_diplome:
+                        # ── Radar CSP ─────────────────────────────────────────
+                        st.markdown("---")
+                        st.subheader(
+                            "Profil structurel (%)",
+                            help=(
+                                "Part relative (%) de chaque CSP dans la population active "
+                                "du territoire (base 100 %). Neutralise l'effet de taille "
+                                "pour comparer les structures entre territoires."
+                            ),
+                        )
+                        fig_radar_csp = go.Figure()
                         for i, ent in enumerate(entities_csp):
+                            v   = ent["data"][sel_cats]
+                            pct = (v / v.sum() * 100).fillna(0)
+
                             if mode_analyse == "Comparaison Métropoles":
-                                bar_color = COULEURS.get(ent["name"], "#888888")
+                                radar_color = COULEURS.get(ent["name"], "#888888")
                             else:
-                                bar_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
+                                radar_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
 
                             if ent["name"] == "Grenoble" and mode_analyse == "Comparaison Métropoles":
-                                marker_dict = dict(
-                                    color=bar_color,
-                                    line=dict(color=bar_color, width=1),
-                                    pattern=dict(
-                                        shape="/", fgcolor="#FF584D",
-                                        fillmode="overlay", solidity=0.3, size=20,
-                                    ),
-                                )
+                                fill_color = "rgba(255, 88, 77, 0.12)"
+                                line_dict  = dict(color="#FF584D", width=4, dash="dash")
                             else:
-                                marker_dict = dict(color=bar_color)
+                                r, g, b = [int(radar_color.lstrip("#")[j:j+2], 16) for j in (0, 2, 4)]
+                                fill_color = f"rgba({r},{g},{b},0.08)"
+                                line_dict  = dict(color=radar_color, width=2, dash="solid")
 
-                            fig_bar_csp.add_trace(go.Bar(
-                                x=sel_cats,
-                                y=ent["data"][sel_cats],
+                            fig_radar_csp.add_trace(go.Scatterpolar(
+                                r=list(pct) + [pct.iloc[0]],
+                                theta=sel_cats + [sel_cats[0]],
+                                fill="toself",
+                                fillcolor=fill_color,
                                 name=ent["name"],
-                                marker=marker_dict,
+                                line=line_dict,
                                 hovertemplate=(
                                     "<b>Territoire : " + ent["name"] + "</b><br>"
-                                    "%{x} : %{y:.2s}<extra></extra>"
+                                    "%{theta} : %{r:.2f} %<extra></extra>"
                                 ),
                             ))
-                        fig_bar_csp.update_layout(
-                            barmode="group",
-                            height=420,
-                            margin=dict(t=20, b=20),
+                        fig_radar_csp.update_layout(
+                            height=450,
+                            margin=dict(t=50, b=50),
                             paper_bgcolor="rgba(0,0,0,0)",
-                            plot_bgcolor="rgba(0,0,0,0)",
                             font_family="Sora",
-                            xaxis=dict(tickangle=-20),
-                            yaxis=dict(gridcolor="#E8F5EE"),
+                            polar=dict(
+                                bgcolor="rgba(0,0,0,0)",
+                                radialaxis=dict(gridcolor="#E8F5EE"),
+                                angularaxis=dict(gridcolor="#E8F5EE"),
+                            ),
                             legend=dict(
                                 orientation="v", yanchor="middle", y=0.5,
                                 xanchor="left", x=1.02, title="",
                             ),
                         )
-                        st.plotly_chart(fig_bar_csp, use_container_width=True)
+                        st.plotly_chart(fig_radar_csp, use_container_width=True)
 
-                    # ══════════════════════════════════════════════════════════
-                    # GRAPHIQUE 2 : PROFIL STRUCTUREL (%)
-                    # CSP     → Radar (catégories sans ordre naturel)
-                    # Diplôme → Bubble chart
-                    #           x = niveau de diplôme (ordonné)
-                    #           y = territoire
-                    #           taille bulle = part (%)
-                    #           couleur = couleur du territoire (cohérent KPI)
-                    #           Grenoble = contour rouge + annotation
-                    # ══════════════════════════════════════════════════════════
-                    with c2:
-                        st.subheader(
-                            "Profil structurel (%)",
-                            help=(
-                                "Part de chaque catégorie dans la population active totale du territoire "
-                                "(base 100 %). Neutralise l'effet de taille pour comparer les structures "
-                                "entre territoires."
-                            ),
-                        )
-
-                        if is_diplome:
-                            # ── Bubble chart ──────────────────────────────────
-                            # x = niveau de diplôme (axe ordonné)
-                            # y = nom du territoire
-                            # taille = part (%) → les gros volumes Bac+3 ressortent
-                            # couleur = couleur du territoire (cohérente avec KPI)
-                            # Grenoble : contour rouge vif
-                            fig_bubble = go.Figure()
-
-                            for i, ent in enumerate(entities_csp):
-                                v     = ent["data"][sel_cats]
-                                total = v.sum()
-                                pct   = (v / total * 100).fillna(0) if total > 0 else v * 0
-
-                                if mode_analyse == "Comparaison Métropoles":
-                                    bub_color = COULEURS.get(ent["name"], "#888888")
-                                else:
-                                    bub_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
-
-                                is_grenoble = (
-                                    ent["name"] == "Grenoble"
-                                    and mode_analyse == "Comparaison Métropoles"
-                                )
-
-                                # Convertir la couleur hex en rgba pour le fill semi-transparent
-                                r, g, b = [int(bub_color.lstrip("#")[j:j+2], 16) for j in (0, 2, 4)]
-                                fill_rgba   = f"rgba({r},{g},{b},0.75)"
-                                border_color = "#FF584D" if is_grenoble else bub_color
-
-                                fig_bubble.add_trace(go.Scatter(
-                                    x=sel_cats,
-                                    y=[ent["name"]] * len(sel_cats),
-                                    mode="markers+text",
-                                    name=ent["name"],
-                                    marker=dict(
-                                        size=list(pct * 2.8),   # facteur visuel
-                                        color=fill_rgba,
-                                        line=dict(
-                                            color=border_color,
-                                            width=3 if is_grenoble else 1,
-                                        ),
-                                        sizemode="diameter",
-                                        sizemin=6,
-                                    ),
-                                    text=[f"{v:.1f}%" for v in pct],
-                                    textposition="middle center",
-                                    textfont=dict(
-                                        size=8,
-                                        color="white" if not is_grenoble else "#FF584D",
-                                        family="Sora",
-                                    ),
-                                    hovertemplate=(
-                                        "<b>" + ent["name"] + "</b><br>"
-                                        "%{x} : <b>%{text}</b><extra></extra>"
-                                    ),
-                                    showlegend=True,
-                                ))
-
-                            fig_bubble.update_layout(
-                                height=420,
-                                margin=dict(t=20, b=20, l=20, r=20),
-                                paper_bgcolor="rgba(0,0,0,0)",
-                                plot_bgcolor="rgba(0,0,0,0)",
-                                font_family="Sora",
-                                xaxis=dict(
-                                    tickangle=-20,
-                                    gridcolor="#E8F5EE",
-                                    title="",
-                                    categoryorder="array",
-                                    categoryarray=sel_cats,
-                                ),
-                                yaxis=dict(
-                                    gridcolor="#E8F5EE",
-                                    title="",
-                                    autorange="reversed",
-                                ),
-                                legend=dict(
-                                    orientation="v", yanchor="middle", y=0.5,
-                                    xanchor="left", x=1.02, title="",
-                                ),
-                            )
-                            st.plotly_chart(fig_bubble, use_container_width=True)
-
-                        else:
-                            # ── Radar (CSP) ───────────────────────────────────
-                            fig_radar_csp = go.Figure()
-                            for i, ent in enumerate(entities_csp):
-                                v   = ent["data"][sel_cats]
-                                pct = (v / v.sum() * 100).fillna(0)
-
-                                if mode_analyse == "Comparaison Métropoles":
-                                    radar_color = COULEURS.get(ent["name"], "#888888")
-                                else:
-                                    radar_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)]
-
-                                if ent["name"] == "Grenoble" and mode_analyse == "Comparaison Métropoles":
-                                    fill_color = "rgba(255, 88, 77, 0.12)"
-                                    line_dict  = dict(color="#FF584D", width=4, dash="dash")
-                                else:
-                                    r, g, b = [int(radar_color.lstrip("#")[j:j+2], 16) for j in (0, 2, 4)]
-                                    fill_color = f"rgba({r},{g},{b},0.08)"
-                                    line_dict  = dict(color=radar_color, width=2, dash="solid")
-
-                                fig_radar_csp.add_trace(go.Scatterpolar(
-                                    r=list(pct) + [pct.iloc[0]],
-                                    theta=sel_cats + [sel_cats[0]],
-                                    fill="toself",
-                                    fillcolor=fill_color,
-                                    name=ent["name"],
-                                    line=line_dict,
-                                    hovertemplate=(
-                                        "<b>Territoire : " + ent["name"] + "</b><br>"
-                                        "%{theta} : %{r:.2f} %<extra></extra>"
-                                    ),
-                                ))
-                            fig_radar_csp.update_layout(
-                                height=420,
-                                margin=dict(t=50, b=50),
-                                paper_bgcolor="rgba(0,0,0,0)",
-                                font_family="Sora",
-                                polar=dict(
-                                    bgcolor="rgba(0,0,0,0)",
-                                    radialaxis=dict(gridcolor="#E8F5EE"),
-                                    angularaxis=dict(gridcolor="#E8F5EE"),
-                                ),
-                                legend=dict(
-                                    orientation="v", yanchor="middle", y=0.5,
-                                    xanchor="left", x=1.02, title="",
-                                ),
-                            )
-                            st.plotly_chart(fig_radar_csp, use_container_width=True)
-
-                    with st.expander("💡 Comment interpréter ces deux graphiques ?"):
-                        if is_diplome:
-                            st.write(
-                                "**Volume (barres groupées)** : effectifs réels par niveau de diplôme. "
-                                "Utile pour estimer les besoins absolus en formation ou en reconversion.\n\n"
-                                "**Bubble chart (%)** : chaque bulle représente la part (%) d'un territoire "
-                                "sur un niveau de diplôme. Plus la bulle est grande, plus ce niveau est "
-                                "représenté dans la population active. "
-                                "Les bulles à contour rouge désignent Grenoble. "
-                                "La lecture se fait de gauche (moins qualifié) à droite (plus qualifié) : "
-                                "les grandes bulles à droite indiquent un territoire très qualifié.\n\n"
-                            )
-                        else:
+                        with st.expander("💡 Comment interpréter ces deux graphiques ?"):
                             st.write(
                                 "**Volume (barres groupées)** : effectifs réels par catégorie. "
-                                "Utile pour les besoins en services publics (logements, transports, formations).\n\n"
+                                "Utile pour estimer les besoins en services publics "
+                                "(logements, transports, formations).\n\n"
                                 "**Radar (%)** : part relative de chaque CSP dans la population active. "
                                 "Compare les profils socio-professionnels en neutralisant la taille "
                                 "des territoires. La surface rouge désigne Grenoble."
+                            )
+
+                    else:
+                        # ── Heatmap CSP × Diplôme ─────────────────────────────
+                        st.markdown("---")
+                        st.subheader(
+                            "Répartition des diplômes par catégorie socio-professionnelle (%)",
+                            help=(
+                                "Pour chaque CSP (ligne) et chaque territoire, la heatmap montre "
+                                "la part (%) de chaque niveau de diplôme parmi les actifs de cette CSP. "
+                                "La lecture se fait ligne par ligne : chaque ligne somme à 100 %. "
+                                "Une case très foncée indique que ce diplôme est fortement représenté "
+                                "dans cette CSP."
+                            ),
+                        )
+
+                        # Charger le fichier brut pour l'année sélectionnée
+                        df_raw_dip = _load_raw_dip(sel_annee_csp)
+
+                        if df_raw_dip.empty:
+                            st.info("Données brutes non disponibles pour cette année.")
+                        else:
+                            # Une heatmap par territoire, disposées en colonnes (max 3 par ligne)
+                            n_ent    = len(entities_csp)
+                            n_cols_h = min(n_ent, 3)
+                            heat_cols = st.columns(n_cols_h)
+
+                            for idx, ent in enumerate(entities_csp):
+                                col_idx = idx % n_cols_h
+
+                                # Construire la matrice pour ce territoire
+                                if mode_analyse == "Comparaison communes Grenoble-Alpes Métropole":
+                                    df_mat = _build_heatmap_matrix(
+                                        df_raw_dip,
+                                        row_filter_col="LIB_NORM",
+                                        row_filter_vals=[normalize_name(ent["name"])],
+                                    )
+                                else:
+                                    dep   = DEP_MAP[ent["name"]]
+                                    norms = [normalize_name(c) for c in COMMUNES[ent["name"]]]
+                                    df_mat = _build_heatmap_matrix(
+                                        df_raw_dip,
+                                        row_filter_col="DEP",
+                                        row_filter_vals=[dep],
+                                    )
+
+                                if df_mat.empty:
+                                    with heat_cols[col_idx]:
+                                        st.warning(f"Pas de données pour {ent['name']}.")
+                                    continue
+
+                                # Couleur de titre = couleur du territoire
+                                if mode_analyse == "Comparaison Métropoles":
+                                    title_color = COULEURS.get(ent["name"], "#888888")
+                                else:
+                                    title_color = COLORS_COMM_CSP5[idx % len(COLORS_COMM_CSP5)]
+
+                                # Annotations texte dans les cellules
+                                annotations_heat = []
+                                for r_i, csp_name in enumerate(df_mat.index):
+                                    for c_i, dip_name in enumerate(df_mat.columns):
+                                        val = df_mat.loc[csp_name, dip_name]
+                                        annotations_heat.append(dict(
+                                            x=c_i, y=r_i,
+                                            text=f"{val:.1f}%",
+                                            showarrow=False,
+                                            font=dict(
+                                                size=9,
+                                                color="white" if val > 35 else "#333",
+                                                family="Sora",
+                                            ),
+                                            xref="x", yref="y",
+                                        ))
+
+                                fig_heat = go.Figure(go.Heatmap(
+                                    z=df_mat.values,
+                                    x=list(df_mat.columns),
+                                    y=list(df_mat.index),
+                                    colorscale=[
+                                        [0.0,  "#F8FBF9"],
+                                        [0.25, "#B7E4C7"],
+                                        [0.5,  "#52B788"],
+                                        [0.75, "#2D6A4F"],
+                                        [1.0,  "#1B4332"],
+                                    ],
+                                    zmin=0,
+                                    zmax=100,
+                                    showscale=(idx == len(entities_csp) - 1),
+                                    colorbar=dict(
+                                        title="%",
+                                        thickness=12,
+                                        len=0.8,
+                                        tickfont=dict(size=9, family="Sora"),
+                                    ),
+                                    hovertemplate=(
+                                        "<b>" + ent["name"] + "</b><br>"
+                                        "CSP : %{y}<br>"
+                                        "Diplôme : %{x}<br>"
+                                        "Part : <b>%{z:.1f} %</b><extra></extra>"
+                                    ),
+                                ))
+
+                                fig_heat.update_layout(
+                                    title=dict(
+                                        text=f"<b style='color:{title_color}'>{ent['name']}</b>",
+                                        font=dict(size=13, family="Sora"),
+                                        x=0.01,
+                                    ),
+                                    height=320,
+                                    margin=dict(t=40, b=10, l=10, r=10),
+                                    paper_bgcolor="rgba(0,0,0,0)",
+                                    plot_bgcolor="rgba(0,0,0,0)",
+                                    font_family="Sora",
+                                    xaxis=dict(
+                                        tickangle=-30,
+                                        tickfont=dict(size=9),
+                                        side="bottom",
+                                    ),
+                                    yaxis=dict(
+                                        tickfont=dict(size=9),
+                                        autorange="reversed",
+                                    ),
+                                    annotations=annotations_heat,
+                                )
+
+                                with heat_cols[col_idx]:
+                                    st.plotly_chart(fig_heat, use_container_width=True)
+
+                        with st.expander("💡 Comment interpréter ces deux graphiques ?"):
+                            st.write(
+                                "**Volume (barres groupées)** : effectifs réels par niveau de diplôme. "
+                                "Utile pour estimer les besoins absolus en formation ou en reconversion.\n\n"
+                                "**Heatmap CSP × Diplôme** : chaque ligne correspond à une catégorie "
+                                "socio-professionnelle, chaque colonne à un niveau de diplôme. "
+                                "La valeur dans chaque case est la **part (%) de ce diplôme parmi "
+                                "les actifs de cette CSP**. La lecture se fait ligne par ligne "
+                                "(chaque ligne somme à 100 %).\n\n"
+                                "Plus la case est foncée, plus ce diplôme est concentré dans cette CSP. "
+                                "Par exemple, une case très foncée en 'Cadres & Prof. Sup.' / 'Bac+3 et +' "
+                                "indique que l'immense majorité des cadres sont diplômés du supérieur long. "
+                                "À l'inverse, une case foncée en 'Ouvriers' / 'Sans diplôme' ou 'CAP-BEP' "
+                                "révèle une forte concentration des peu qualifiés dans cette CSP.\n\n"
+                                "Une heatmap est affichée par territoire sélectionné, ce qui permet "
+                                "de comparer visuellement les structures CSP × Diplôme entre métropoles.\n\n"
+                                "⚠️ *Note INSEE* : depuis 2022, le cycle universitaire est distingué en "
+                                "court (Bac+2) et long (Bac+3 et +). Pour les recensements antérieurs, "
+                                "ces deux niveaux sont regroupés dans **Bac+3 et +**."
                             )
 
                     # ── Indice de spécialisation (2 territoires uniquement) ──
