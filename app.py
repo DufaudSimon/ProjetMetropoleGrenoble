@@ -372,8 +372,8 @@ DIP_MAP = {
     "de niveau BEPC":                      "BEPC",
     "de niveau CAP-BEP":                   "CAP-BEP",
     "de niveau bac":                       "Baccalauréat",
-    "universitaire de 1er cycle":          "Bac+3",
-    "universitaire de 2":                  "Bac+5 et +",
+    "universitaire de 1er cycle":          "Bac+2",
+    "universitaire de 2":                  "Bac+3 et +",
 }
 
 LABEL_TRANCHE = {
@@ -2847,7 +2847,7 @@ if vue == "Démographie":
                         "Comparer ces tailles entre territoires pour une même CSP met en évidence des différences sociales locales."
                     )
 # ==============================================================================
-# ONGLET 5 - Population active 25-54 ans  (VERSION CORRIGÉE)
+# ONGLET 5 - Population active 25-54 ans
 # ==============================================================================
 
 
@@ -2857,8 +2857,8 @@ _DIP_FRAGS_ORDERED = [
     ("de niveau BEPC",             "BEPC"),
     ("de niveau CAP-BEP",          "CAP-BEP"),
     ("de niveau bac",              "Baccalauréat"),
-    ("universitaire de 1er cycle", "Bac+3"),
-    ("universitaire de 2",         "Bac+5 et +"),
+    ("universitaire de 1er cycle", "Bac+2"),
+    ("universitaire de 2",         "Bac+3 et +"),
 ]
 _CSP_FRAGS_ORDERED = [
     ("Agriculteurs",                "Agriculteurs"),
@@ -3097,7 +3097,7 @@ if vue == "Démographie":
 
                     if is_diplome:
                         st.subheader(
-                            "Répartition en volume",
+                            "Répartition des effectifs par niveau de diplôme et par métropole",
                             help=(
                                 "Nombre réel d'actifs 25-54 ans par niveau de diplôme. "
                                 "Chaque groupe de barres correspond à un niveau, "
@@ -3106,7 +3106,7 @@ if vue == "Démographie":
                         )
                     else:
                         st.subheader(
-                            "Répartition en volume",
+                            "Répartition des effectifs par niveau de diplôme et par commune",
                             help="Nombre réel d'actifs 25-54 ans par catégorie socio-professionnelle.",
                         )
 
