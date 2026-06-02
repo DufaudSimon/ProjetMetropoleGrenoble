@@ -292,7 +292,16 @@ COMMUNE_KEYS_SOLID = [
     ("part_communes",     None),
 ]
 
-_DEFAULT_COMMUNES = COMMUNES_GRENOBLE[:5]
+_DEFAULT_COMMUNES = [
+    c for c in [
+        "Échirolles",
+        "Saint-Martin-d'Hères",
+        "Fontaine",
+        "Meylan",
+        "Grenoble",
+    ]
+    if c in COMMUNES_GRENOBLE
+]
 
 if "shared_communes_demo" not in st.session_state:
     st.session_state.shared_communes_demo = _DEFAULT_COMMUNES[:]
@@ -1186,7 +1195,7 @@ if vue == "Démographie":
                 idx = int(i / max(n - 1, 1) * (len(pal) - 1))
                 return pal[idx]
 
-            st.markdown("##### Population en 2022")
+            st.markdown("##### Population en 2022 - Echelle communale")
             kpi_cols = st.columns(len(sel_communes_pop))
             for i, comm in enumerate(sel_communes_pop):
                 pop22  = commune_val(comm, "population_2022")
@@ -1212,7 +1221,7 @@ if vue == "Démographie":
             r1c1, r1c2 = st.columns(2)
             with r1c1:
                 st.subheader(
-                    "Population totale 2022 (habitants)",
+                    "Population des communes en 2022 (habitants)",
                     help="Nombre d'habitants recensés par l'INSEE au RP 2022. Permet de comparer directement le volume de population de chaque territoire sélectionné."
                 )
                 data_comm = [{"Commune": c, "Population": commune_val(c, "population_2022")}
@@ -1227,8 +1236,8 @@ if vue == "Démographie":
                         texttemplate="%{text:,.0f}", textposition="outside", showlegend=False,
                         hovertemplate="<b>Commune : %{x}</b><br>Population 2022 : %{y:,.0f}<extra></extra>",
                     )
-                    fig_pop_c.update_layout(showlegend=False, xaxis_title="Commune",
-                                            yaxis_title="Habitants", yaxis=dict(tickformat=",d"), height=370)
+                    fig_pop_c.update_layout(showlegend=False, xaxis_title="Echelle Communale",
+                                            yaxis_title="Habitants", yaxis=dict(tickformat=",d"), height=500)
                     st.plotly_chart(style(fig_pop_c), use_container_width=True)
 
             with r1c2:
@@ -1248,7 +1257,7 @@ if vue == "Démographie":
                 if not df_dens_c.empty:
                     fig_dens_c = px.scatter(df_dens_c, x="Superficie (km²)", y="Densité (hab/km²)",
                                             size="Population", color="Commune", text="Commune",
-                                            color_discrete_sequence=PALETTE_COMMUNE, size_max=55, height=370)
+                                            color_discrete_sequence=PALETTE_COMMUNE, size_max=55, height=500)
                     fig_dens_c.update_traces(textposition="top center", textfont_size=10,
                                              hovertemplate="<b>Commune : %{text}</b><br>Superficie : %{x:.2f} km²<br>Densité : %{y:.2f} hab/km²<extra></extra>")
                     fig_dens_c.update_layout(showlegend=False)
@@ -1294,7 +1303,7 @@ if vue == "Démographie":
                     
                     fig_comp_c = px.bar(
                         df_comp_c, x="Commune", y="Taux (%/an)", color="Composante",
-                        barmode="group", color_discrete_map=color_map, height=360
+                        barmode="group", color_discrete_map=color_map, height=500
                     )
                     
                     for trace in fig_comp_c.data:
@@ -1302,7 +1311,7 @@ if vue == "Démographie":
                     
                     fig_comp_c.add_hline(y=0, line_dash="dot", line_color="#AAAAAA")
                     fig_comp_c.update_layout(
-                        xaxis_title="Commune", 
+                        xaxis_title="Echelle communale", 
                         yaxis_title="Taux (%/an)",
                         legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02), 
                         xaxis_tickangle=-20
@@ -1313,7 +1322,7 @@ if vue == "Démographie":
 
             with r2c2:
                 st.subheader(
-                    "Naissances & Décès (pour 1 000 habitants)",
+                    "Naissances & Décès en 2024 (pour 1 000 habitants)",
                     help="Compare les taux vitaux rapportés à 1 000 habitants :\n• Barres foncées = taux de natalité\n• Barres claires = taux de mortalité\n• Losange = accroissement naturel (naissances − décès)\nUn losange au-dessus de zéro indique que les naissances dépassent les décès sur ce territoire."
                 )
                 rows_vit_c = []
@@ -1352,7 +1361,7 @@ if vue == "Démographie":
                         hovertemplate="<b>Commune : %{x}</b><br>Accroissement naturel : %{y:.2f} / 1 000 hab<extra></extra>",
                     ))
                     fig_vit_c.update_layout(barmode="group", legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
-                                            yaxis_title="Pour 1 000 habitants", height=360)
+                                            xaxis_title="Echelle communale", yaxis_title="Pour 1 000 habitants", height=500)
                     st.plotly_chart(style(fig_vit_c), use_container_width=True)
                 else:
                     st.info("Données de naissances/décès non disponibles pour ces communes.")
@@ -1390,7 +1399,7 @@ if vue == "Démographie":
                 st.warning("Sélectionnez au moins une métropole.")
                 st.stop()
 
-            st.markdown("##### Population en 2022")
+            st.markdown("##### Population en 2022 - Echelle métropolitaine")
             kpi_cols = st.columns(len(sel))
             for i, m in enumerate(sel):
                 pop22  = epci_val(m, "population_2022")
@@ -1416,7 +1425,7 @@ if vue == "Démographie":
             r1c1, r1c2 = st.columns(2)
             with r1c1:
                 st.subheader(
-                    "Population totale 2022 (habitants)",
+                    "Population des métropoles en 2022 (habitants)",
                     help="Nombre d'habitants recensés par l'INSEE au RP 2022. Permet de comparer directement le volume de population de chaque territoire sélectionné."
                 )
                 data_pop_df = [{"Métropole": m, "Population": epci_val(m, "population_2022")} for m in sel]
@@ -1435,8 +1444,8 @@ if vue == "Démographie":
                             trace.marker.pattern.size = 20       # Plus grand = hachures plus espacées (ex: teste entre 12 et 20)
                             trace.marker.pattern.solidity = 0.20 # Plus petit = traits plus fins (ex: teste entre 0.1 et 0.25)
 
-                    fig_pop.update_layout(showlegend=False, xaxis_title="Métropole", yaxis_title="Habitants",
-                                          yaxis=dict(tickformat=",d"), height=370)
+                    fig_pop.update_layout(showlegend=False, xaxis_title="Echelle métropolitaine", yaxis_title="Habitants",
+                                          yaxis=dict(tickformat=",d"), height=500)
                     st.plotly_chart(style(fig_pop), use_container_width=True)
 
             with r1c2:
@@ -1457,7 +1466,7 @@ if vue == "Démographie":
                     fig_dens = px.scatter(df_dens, x="Superficie (km²)", y="Densité (hab/km²)",
                                         size="Population", color="Métropole",
                                         color_discrete_map=COULEURS, text="Métropole",
-                                        size_max=55, height=370)
+                                        size_max=55, height=500)
                     fig_dens.update_traces(textposition="top center", textfont_size=11,
                                         hovertemplate="<b>Métropole : %{text}</b><br>Superficie : %{x:.2f} km²<br>Densité : %{y:.2f} hab/km²<extra></extra>")
                     
@@ -1502,7 +1511,7 @@ if vue == "Démographie":
                     comp_colors_m = [PALETTE_METRO[int(i * (len(PALETTE_METRO)-1) / max(n_comp_m-1,1))]
                                      for i in range(n_comp_m)]
                     fig_comp = px.bar(df_comp, x="Métropole", y="Taux (%/an)", color="Composante",
-                                      barmode="group", color_discrete_sequence=comp_colors_m, height=360)
+                                      barmode="group", color_discrete_sequence=comp_colors_m, height=500)
                     for trace in fig_comp.data:
                         trace.hovertemplate = "<b>Métropole : %{x}</b><br>" + trace.name + " : %{y:.1f} %/an<extra></extra>"
                     fig_comp.add_hline(y=0, line_dash="dot", line_color="#AAAAAA")
@@ -1510,13 +1519,13 @@ if vue == "Démographie":
                     if "Grenoble" in metros_comp:
                         g_pos = metros_comp.index("Grenoble")
                         fig_comp.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45, fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
-                    fig_comp.update_layout(xaxis_title="Métropole", yaxis_title="Taux (%/an)",
+                    fig_comp.update_layout(xaxis_title="Echelle métropolitaine", yaxis_title="Taux (%/an)",
                                            legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02))
                     st.plotly_chart(style(fig_comp), use_container_width=True)
 
             with r2c2:
                 st.subheader(
-                    "Naissances & Décès 2024 (pour 1 000 habitants)",
+                    "Naissances & Décès en 2024 (pour 1 000 habitants)",
                     help="Compare les taux vitaux rapportés à 1 000 habitants :\n• Barres foncées = taux de natalité\n• Barres claires = taux de mortalité\n• Losange rouge = accroissement naturel (naissances − décès)\nUn losange au-dessus de zéro indique que les naissances dépassent les décès. La zone rouge identifie Grenoble."
                 )
                 rows_vit = []
@@ -1559,7 +1568,7 @@ if vue == "Démographie":
                                           fillcolor="rgba(255,88,77,0.10)",
                                           line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
                     fig_vit.update_layout(barmode="group", legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
-                                          yaxis_title="Pour 1 000 habitants", height=360)
+                                          xaxis_title="Echelle métropolitaine", yaxis_title="Pour 1 000 habitants", height=500)
                     st.plotly_chart(style(fig_vit), use_container_width=True)
 
             with st.expander("💡 Comment interpréter ces deux graphiques ?"):
@@ -1816,7 +1825,7 @@ if vue == "Démographie":
                     st.warning("Sélectionnez au moins une métropole.")
                     st.stop()
 
-                st.subheader(f"Indicateurs démographiques - {annee_age}",
+                st.subheader(f"Indicateurs clés en {annee_age} - Echelle métropolitaine",
                              help="Synthèse des grands groupes d'âge, âge médian estimé et indice de dépendance.")
                 kpi_cols = st.columns(len(sel_metros_age))
                 for i, m in enumerate(sel_metros_age):
@@ -1840,38 +1849,12 @@ if vue == "Démographie":
                         "Estimé par interpolation à partir des tranches quinquennales.  \n"
                         "**Indice de dépendance** : (< 25 ans + ≥ 65 ans) / (25–64 ans) × 100. "
                         "Plus il est élevé, plus les actifs portent une part importante de population non active.  \n"
-                        "**Barre de structure** : répartition visuelle Jeunes / Actifs / Seniors."
                     )
 
                 st.markdown("---")
 
-                # ── Profils superposés métropoles ─────────────────────────────
-                st.subheader("Profils démographiques superposés",
-                             help="Distribution totale (H+F) de chaque métropole en % de la population totale par tranche d'âge. "
-                                  "L'affichage en % neutralise l'effet taille pour une comparaison directe.")
-
-                fig_ov_m = build_overlay_chart(
-                    territories    = sel_metros_age,
-                    df_filtered_fn = lambda m: df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)],
-                    color_fn       = lambda m, is_g: "#FF584D" if is_g else COULEURS.get(m, "#888"),
-                    is_grenoble_fn = lambda m: m == "Grenoble",
-                    legend_key     = "Territoire",
-                )
-                if fig_ov_m:
-                    st.plotly_chart(style(fig_ov_m, 20), use_container_width=True)
-
-                with st.expander("💡 Comment lire ce graphique ?"):
-                    st.write(
-                        "Chaque courbe montre la 'silhouette démographique' d'une métropole. "
-                        "Grenoble est en pointillés rouges avec des marqueurs losange. "
-                        "Les pics sur 20–34 ans caractérisent les villes étudiantes ou attractives pour les jeunes actifs. "
-                        "Les courbes décalées vers les 65+ signalent un vieillissement plus marqué."
-                    )
-
-                st.markdown("---")
-
-                # ── Pyramides métropoles - échelle commune ────────────────────
-                st.subheader("Pyramides des âges - échelle commune",
+                # ── Pyramides métropoles ────────────────────
+                st.subheader("Pyramides des âges des métropoles comparées",
                              help="Toutes les pyramides partagent le même axe X (%) pour une comparaison visuelle directe, "
                                   "quelle que soit la taille de la métropole.")
 
@@ -1911,6 +1894,33 @@ if vue == "Démographie":
                         "Base large = beaucoup de jeunes. Sommet large = fort vieillissement. "
                         "Forme en 'toupie' (ventre 25–55 ans) = dominance de la population active.\n\n"
                         "Grenoble est mise en valeur par des hachures rouges (/) sur ses barres."
+                    )
+
+                st.markdown("---")
+
+                # ── Profils superposés métropoles ─────────────────────────────
+                st.subheader("Répartition des métropoles par tranches d’âges",
+                             help="Distribution totale (H+F) de chaque métropole en % de la population totale par tranche d'âge. "
+                                  "L'affichage en % neutralise l'effet taille pour une comparaison directe.")
+
+                fig_ov_m = build_overlay_chart(
+                    territories    = sel_metros_age,
+                    df_filtered_fn = lambda m: df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)],
+                    color_fn       = lambda m, is_g: "#FF584D" if is_g else COULEURS.get(m, "#888"),
+                    is_grenoble_fn = lambda m: m == "Grenoble",
+                    legend_key     = "Territoire",
+                )
+                if fig_ov_m:
+                    fig_ov_m.update_layout(
+                        legend_title_text="Métropole")
+                    st.plotly_chart(style(fig_ov_m, 20), use_container_width=True)
+
+                with st.expander("💡 Comment lire ce graphique ?"):
+                    st.write(
+                        "Chaque courbe montre la 'silhouette démographique' d'une métropole. "
+                        "Grenoble est en pointillés rouges avec des marqueurs losange. "
+                        "Les pics sur 20–34 ans caractérisent les villes étudiantes ou attractives pour les jeunes actifs. "
+                        "Les courbes décalées vers les 65+ signalent un vieillissement plus marqué."
                     )
 
                 st.markdown("---")
@@ -1980,7 +1990,7 @@ if vue == "Démographie":
                 comm_palette = PALETTE_COMMUNE[:n_comm_age] if n_comm_age <= len(PALETTE_COMMUNE) else PALETTE_COMMUNE
 
                 # ── KPI enrichis communes ─────────────────────────────────────
-                st.subheader(f"Indicateurs démographiques - {annee_age}",
+                st.subheader(f"Indicateurs clés en {annee_age} - Echelle communale",
                              help="Synthèse des grands groupes d'âge, âge médian estimé et indice de dépendance pour chaque commune sélectionnée.")
                 kpi_cols = st.columns(n_comm_age)
                 for i, comm in enumerate(communes_age):
@@ -2004,38 +2014,12 @@ if vue == "Démographie":
                         "**Âge médian** : âge qui divise la population en deux moitiés égales. "
                         "Estimé par interpolation à partir des tranches quinquennales.  \n"
                         "**Indice de dépendance** : (< 25 ans + ≥ 65 ans) / (25–64 ans) × 100.  \n"
-                        "**Barre de structure** : répartition visuelle Jeunes / Actifs / Seniors."
                     )
 
                 st.markdown("---")
 
-                # ── Profils superposés communes ───────────────────────────────
-                st.subheader("Profils démographiques superposés",
-                             help="Distribution totale (H+F) de chaque commune en % de sa population totale par tranche d'âge. "
-                                  "L'affichage en % neutralise l'effet taille pour comparer des communes de tailles très différentes.")
-
-                fig_ov_c = build_overlay_chart(
-                    territories    = communes_age,
-                    df_filtered_fn = lambda c: df_pop[(df_pop["LIBELLE"] == c) & (df_pop["annee"] == annee_age)],
-                    color_fn       = lambda c, is_g: comm_palette[communes_age.index(c) % len(comm_palette)],
-                    is_grenoble_fn = None,
-                    legend_key     = "Territoire",
-                )
-                if fig_ov_c:
-                    st.plotly_chart(style(fig_ov_c, 20), use_container_width=True)
-
-                with st.expander("💡 Comment lire ce graphique ?"):
-                    st.write(
-                        "Chaque courbe montre la 'silhouette démographique' d'une commune en % de sa population totale. "
-                        "Cela permet de comparer des communes de tailles très différentes sur un pied d'égalité. "
-                        "Les pics sur les 20–34 ans révèlent des communes attractives pour les jeunes. "
-                        "Les profils étalés vers 65+ indiquent un vieillissement plus marqué."
-                    )
-
-                st.markdown("---")
-
-                # ── Pyramides communes - échelle commune ──────────────────────
-                st.subheader("Pyramides des âges - échelle commune",
+                # ── Pyramides communes ──────────────────────
+                st.subheader("Pyramides des âges des communes comparées",
                              help="Toutes les pyramides partagent le même axe X (%) pour une comparaison visuelle directe, "
                                   "quelle que soit la taille de chaque commune.")
 
@@ -2062,6 +2046,31 @@ if vue == "Démographie":
                         "indépendamment de la taille de chaque commune. "
                         "Base large = beaucoup de jeunes. Sommet large = fort vieillissement. "
                         "Forme en 'toupie' (ventre 25–55 ans) = dominance de la population active.\n\n"
+                    )
+
+                st.markdown("---")
+
+                # ── Profils superposés communes ───────────────────────────────
+                st.subheader("Répartition des communes par tranches d'âges",
+                             help="Distribution totale (H+F) de chaque commune en % de sa population totale par tranche d'âge. "
+                                  "L'affichage en % neutralise l'effet taille pour comparer des communes de tailles très différentes.")
+
+                fig_ov_c = build_overlay_chart(
+                    territories    = communes_age,
+                    df_filtered_fn = lambda c: df_pop[(df_pop["LIBELLE"] == c) & (df_pop["annee"] == annee_age)],
+                    color_fn       = lambda c, is_g: comm_palette[communes_age.index(c) % len(comm_palette)],
+                    is_grenoble_fn = None,
+                    legend_key     = "Territoire",
+                )
+                if fig_ov_c:
+                    st.plotly_chart(style(fig_ov_c, 20), use_container_width=True)
+
+                with st.expander("💡 Comment lire ce graphique ?"):
+                    st.write(
+                        "Chaque courbe montre la 'silhouette démographique' d'une commune en % de sa population totale. "
+                        "Cela permet de comparer des communes de tailles très différentes sur un pied d'égalité. "
+                        "Les pics sur les 20–34 ans révèlent des communes attractives pour les jeunes. "
+                        "Les profils étalés vers 65+ indiquent un vieillissement plus marqué."
                     )
 
                 st.markdown("---")
