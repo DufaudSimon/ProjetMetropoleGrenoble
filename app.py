@@ -2123,6 +2123,7 @@ if vue == "Démographie":
 # ==============================================================================
 # ONGLET 3 - MOBILITÉS
 # ==============================================================================
+
 if vue == "Démographie":
     with tab3:
 
@@ -2130,303 +2131,617 @@ if vue == "Démographie":
         if not data_ok:
             st.info("📂 Fichiers de mobilité manquants.")
         else:
-            st.markdown(""" 
-                <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 14px;'>
-                <strong>Source :</strong> INSEE <br><br>
+            st.markdown("""
+            <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px;
+                        border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 14px;'>
+                <strong>Source :</strong> INSEE<br><br>
                 <strong>Note sur les données :</strong><br>
-                🏠 <b>Migrations résidentielles</b> : 
-                    Cette thématique analyse les changements de lieu de résidence observés sur une année. 
-                    Elle concerne l'ensemble de la population ayant déménagé entre deux communes, départements ou régions, 
-                    y compris les nouveaux arrivants sur le territoire étudié. Ces données permettent d'identifier les dynamiques 
-                    d'attractivité résidentielle et les flux de population.
-                <a href='https://www.insee.fr/fr/statistiques/8582988' target='_blank' style='color: #1C3A27; font-size: 0.85em;'>Accéder aux données</a><br><br>
-                💼 <b>Trajets domicile-travail</b> : 
-                    Cette catégorie étudie les déplacements domicile-travail des actifs ayant un emploi. 
-                    Elle concerne les personnes en activité résidant sur le territoire, qu'elles travaillent dans leur commune 
-                    de résidence ou dans une autre commune. Ces données décrivent les mobilités quotidiennes ou habituelles 
-                    liées à l'emploi et les relations entre lieux de résidence et pôles d'activité.
-                <a href='https://www.insee.fr/fr/statistiques/8582949' target='_blank' style='color: #1C3A27; font-size: 0.85em;'>Accéder aux données</a><br><br>
-                🎓 <b>Mobilités scolaires</b> : 
-                    Cette analyse porte sur les déplacements entre le domicile et le lieu d'études. 
-                    Elle concerne les enfants scolarisés dès 2 ans, les collégiens, lycéens, apprentis et étudiants de l'enseignement supérieur. 
-                    Ces données permettent d'identifier les flux scolaires quotidiens et l'attractivité des établissements d'enseignement.
-                <a href='https://www.insee.fr/fr/statistiques/8582969' target='_blank' style='color: #1C3A27; font-size: 0.85em;'>Accéder aux données</a>
-                </div>""", unsafe_allow_html=True)
-
+                🏠 <b>Migrations résidentielles</b> : changements de lieu de résidence observés
+                sur une année. Identifie les dynamiques d'attractivité résidentielle et les flux
+                de population entre communes, départements ou régions.
+                <a href='https://www.insee.fr/fr/statistiques/8582988' target='_blank'
+                   style='color: #1C3A27; font-size: 0.85em;'>Accéder aux données</a><br><br>
+                💼 <b>Trajets domicile-travail</b> : déplacements domicile-travail des actifs
+                ayant un emploi. Décrit les mobilités quotidiennes liées à l'emploi et les
+                relations entre lieux de résidence et pôles d'activité.
+                <a href='https://www.insee.fr/fr/statistiques/8582949' target='_blank'
+                   style='color: #1C3A27; font-size: 0.85em;'>Accéder aux données</a><br><br>
+                🎓 <b>Mobilités scolaires</b> : déplacements entre le domicile et le lieu
+                d'études (de la maternelle au supérieur). Identifie les flux scolaires quotidiens
+                et l'attractivité des établissements d'enseignement.
+                <a href='https://www.insee.fr/fr/statistiques/8582969' target='_blank'
+                   style='color: #1C3A27; font-size: 0.85em;'>Accéder aux données</a>
+            </div>""", unsafe_allow_html=True)
 
             with st.container():
                 filter_bar("Filtres - Mobilités")
                 col_geo_label, col_geo_options = st.columns([1, 3])
                 with col_geo_label:
-                    st.markdown("<div style='padding-top:8px;font-weight:600;font-size:14px;'>Niveau géographique</div>",
-                                unsafe_allow_html=True)
+                    filter_row_label("Niveau géographique")
                 with col_geo_options:
-                    mode_mob = st.radio("",
-                        ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
-                        key="mob_mode", horizontal=True, label_visibility="collapsed")
-
+                    mode_mob = st.radio(
+                        "",
+                        ["Comparaison Métropoles",
+                         "Comparaison communes Grenoble-Alpes Métropole"],
+                        key="mob_mode", horizontal=True, label_visibility="collapsed",
+                    )
 
                 if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
                     met_choice = "Grenoble"
-                    sel_communes_mob = st.multiselect("Communes de Grenoble-Alpes Métropole",
-                                                      sorted(COMMUNES[met_choice]),
-                                                      default=shared_default_communes_demo(sorted(COMMUNES[met_choice])),
-                                                      key="mob_communes",
-                                                      on_change=sync_communes_demo, args=("mob_communes",))
+                    sel_communes_mob = st.multiselect(
+                        "Communes de Grenoble-Alpes Métropole",
+                        sorted(COMMUNES[met_choice]),
+                        default=shared_default_communes_demo(sorted(COMMUNES[met_choice])),
+                        key="mob_communes",
+                        on_change=sync_communes_demo, args=("mob_communes",),
+                    )
                     coms_selection = sel_communes_mob
                 else:
-                    sel_metros_mob = st.multiselect("Métropoles à comparer", TOUTES, default=shared_default_demo(TOUTES), key="mob_metros", on_change=sync_metros_demo, args=("mob_metros",))
+                    sel_metros_mob = st.multiselect(
+                        "Métropoles à comparer", TOUTES,
+                        default=shared_default_demo(TOUTES),
+                        key="mob_metros",
+                        on_change=sync_metros_demo, args=("mob_metros",),
+                    )
                     coms_selection = [c for m in sel_metros_mob for c in COMMUNES[m]]
-
 
                 mob_col1, mob_col2 = st.columns(2)
                 with mob_col1:
-                    theme_mob = st.selectbox("Thématique d'analyse",
-                        ["🏠 Migrations Résidentielles", "💼 Trajets domicile-travail", "🎓 Mobilité Scolaire"],
-                        key="mob_theme")
+                    theme_mob = st.selectbox(
+                        "Thématique d'analyse",
+                        ["🏠 Migrations Résidentielles",
+                         "💼 Trajets domicile-travail",
+                         "🎓 Mobilité Scolaire"],
+                        key="mob_theme",
+                    )
 
+            # ── Paramètres selon thématique ───────────────────────────────────
+            if "Migrations" in theme_mob:
+                current_mob_df = df_res
+                col_orig, col_dest = "commune_origine", "commune_destination"
+                label_in,  label_out  = "Arrivées",         "Départs"
+                label_int             = "Échanges internes"
+                help_in   = "Personnes arrivant sur le territoire depuis un autre territoire."
+                help_out  = "Personnes quittant le territoire vers un autre territoire."
+                help_int  = "Déménagements entre communes au sein de la même métropole."
+                help_ext  = "Migrations avec des communes appartenant à une autre métropole."
+            elif "domicile" in theme_mob or "Professionnel" in theme_mob:
+                current_mob_df = df_prof
+                col_orig, col_dest = "commune_residence", "commune_travail"
+                label_in,  label_out  = "Entrants (travaillent ici)", "Sortants (travaillent ailleurs)"
+                label_int             = "Actifs travaillant dans leur métropole"
+                help_in   = "Actifs résidant ailleurs mais travaillant dans ce territoire."
+                help_out  = "Actifs résidant ici mais travaillant dans un autre territoire."
+                help_int  = "Actifs dont le domicile et le lieu de travail sont dans la même métropole."
+                help_ext  = "Actifs dont le domicile et le lieu de travail sont dans deux métropoles différentes."
+            else:
+                current_mob_df = df_scol
+                col_orig, col_dest = "commune_origine", "commune_destination"
+                label_in,  label_out  = "Élèves scolarisés ici (venant d'ailleurs)", "Élèves allant étudier ailleurs"
+                label_int             = "Élèves scolarisés dans leur métropole"
+                help_in   = "Élèves résidant dans une autre commune/métropole mais scolarisés ici."
+                help_out  = "Élèves résidant ici mais scolarisés dans une autre commune/métropole."
+                help_int  = "Élèves dont le domicile et l'établissement sont dans la même métropole."
+                help_ext  = "Élèves dont le domicile et l'établissement sont dans deux métropoles différentes."
 
+            if current_mob_df is not None:
+                annees_mob = sorted(
+                    current_mob_df["annee"].dropna().unique().astype(int), reverse=True
+                )
+                with mob_col2:
+                    sel_annee_mob = st.selectbox("Année", annees_mob, key="mob_annee")
+
+                # On applique le filtre sur l'année sélectionnée
+                df_mob_filtered = current_mob_df[
+                    current_mob_df["annee"] == sel_annee_mob
+                ]
+
+                # ── CORRECTION DES MIGRATIONS RÉSIDENTIELLES ──────────────────
+                # On exclut impérativement les lignes où commune d'origine == destination.
+                # Sinon, cela comptabilise toute la population stable (qui n'a pas déménagé).
                 if "Migrations" in theme_mob:
-                    current_mob_df, col_orig, col_dest = df_res, "commune_origine", "commune_destination"
-                    label_in, label_out = "Arrivées", "Départs"
-                elif "Professionnelle" in theme_mob:
-                    current_mob_df, col_orig, col_dest = df_prof, "commune_residence", "commune_travail"
-                    label_in, label_out = "Entrants", "Sortants"
-                else:
-                    current_mob_df, col_orig, col_dest = df_scol, "commune_origine", "commune_destination"
-                    label_in, label_out = "Élèves Entrants", "Élèves Sortants"
+                    df_mob_filtered = df_mob_filtered[
+                        df_mob_filtered[col_orig] != df_mob_filtered[col_dest]
+                    ]
+                # ───────────────────────────────────────────────────────────────
 
+                # ── Construction des entités ──────────────────────────────────
+                targets = (
+                    sel_communes_mob
+                    if mode_mob == "Comparaison communes Grenoble-Alpes Métropole"
+                    else sel_metros_mob
+                )
 
-                if current_mob_df is not None:
-                    annees_mob = sorted(current_mob_df["annee"].dropna().unique().astype(int), reverse=True)
-                    with mob_col2:
-                        sel_annee_mob = st.selectbox("Année", annees_mob, key="mob_annee")
-
-
-            df_mob_filtered = current_mob_df[
-                (current_mob_df[col_orig] != current_mob_df[col_dest]) &
-                (current_mob_df["annee"] == sel_annee_mob)
-            ]
-            entities_mob = []
-            targets = sel_communes_mob if mode_mob == "Comparaison communes Grenoble-Alpes Métropole" else sel_metros_mob
-            for target in targets:
-                coms = [target] if mode_mob == "Comparaison communes Grenoble-Alpes Métropole" else COMMUNES[target]
-                f_in  = int(df_mob_filtered[df_mob_filtered[col_dest].isin(coms)]["flux"].sum())
-                f_out = int(df_mob_filtered[df_mob_filtered[col_orig].isin(coms)]["flux"].sum())
-                entities_mob.append({"name": target, "in": f_in, "out": f_out, "solde": f_in - f_out})
-            df_plot_mob = pd.DataFrame(entities_mob)
-
-
-            if not df_plot_mob.empty:
-                st.markdown(f"#### Bilan net - {theme_mob} ({sel_annee_mob})",
-                            help="Le solde net = entrées − sorties. Un chiffre positif signifie que le territoire gagne des flux (attractivité). Un chiffre négatif signifie qu'il en perd (répulsion ou dépendance envers un pôle voisin).")
-
-
-                kpi_cols = st.columns(len(df_plot_mob))
-                n_mob = len(df_plot_mob)
-                for i, row in df_plot_mob.iterrows():
-                    color_solde = "#006400" if row["solde"] >= 0 else "#8B0000"
-                    val_formatee = f"{row['solde']:+,d}".replace(",", " ")
+                entities_mob = []
+                for target in targets:
                     if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
-                        kpi_mob_color = PALETTE_COMMUNE[int(i * (len(PALETTE_COMMUNE)-1) / max(n_mob-1,1))]
+                        coms = [target]
                     else:
-                        kpi_mob_color = COULEURS.get(row['name'], "#1B4332")
-                    with kpi_cols[i]:
-                        st.markdown(f"""
-                        <div style='display:flex;flex-direction:row;align-items:stretch;border-radius:8px;
-                            overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.1);background:#fff;
-                            min-height:80px;border-left:6px solid {kpi_mob_color};'>
-                            <div style='padding:10px 16px;display:flex;flex-direction:column;justify-content:center;'>
-                                <div style='font-size:11px;font-weight:700;letter-spacing:0.08em;color:#666;text-transform:uppercase;'>{row['name']}</div>
-                                <div style='font-size:24px;font-weight:bold;color:#111;'>{val_formatee}</div>
-                                <div style='color:{color_solde};font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;'>SOLDE</div>
-                            </div>
-                        </div>""", unsafe_allow_html=True)
+                        coms = COMMUNES[target]
 
+                    coms_set = set(coms)
 
-                st.markdown("---")
-
-
-                noms_mob = df_plot_mob["name"].tolist()
-                greno_vrect_args = None
-                if "Grenoble" in noms_mob and mode_mob == "Comparaison Métropoles":
-                    g_pos = noms_mob.index("Grenoble")
-                    greno_vrect_args = dict(x0=g_pos - 0.45, x1=g_pos + 0.45,
-                                            fillcolor="rgba(255,88,77,0.10)",
-                                            line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
-
-
-                if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
-                    color_in_bar  = PALETTE_COMMUNE[0]
-                    color_out_bar = PALETTE_COMMUNE[int(len(PALETTE_COMMUNE) * 0.5)]
-                else:
-                    color_in_bar  = PALETTE_METRO[int(len(PALETTE_METRO) * 0.3)]
-                    color_out_bar = PALETTE_METRO[int(len(PALETTE_METRO) * 0.7)]
-
-
-                c1, c2 = st.columns(2)
-                with c1:
-                    st.markdown(
-                        "##### Volume des échanges",
-                        help="Compare, pour chaque territoire, le total des flux entrants (barres foncées) et sortants (barres claires). Un volume élevé avec des barres équilibrées = territoire de transit qui brasse beaucoup de flux sans en retenir. Un fort déséquilibre entrants > sortants = territoire très attractif."
+                    # Flux entrants : destination = territoire, origine ≠ territoire
+                    f_in = int(
+                        df_mob_filtered[
+                            df_mob_filtered[col_dest].isin(coms_set)
+                            & ~df_mob_filtered[col_orig].isin(coms_set)
+                        ]["flux"].sum()
                     )
-                    fig_vol = go.Figure()
-                    fig_vol.add_trace(go.Bar(
-                        x=noms_mob, y=df_plot_mob["in"], name=label_in,
-                        marker_color=color_in_bar,
-                        hovertemplate="<b>Territoire : %{x}</b><br>" + label_in + " : %{y:.2s}<extra></extra>",
-                    ))
-                    fig_vol.add_trace(go.Bar(
-                        x=noms_mob, y=df_plot_mob["out"], name=label_out,
-                        marker_color=color_out_bar,
-                        hovertemplate="<b>Territoire : %{x}</b><br>" + label_out + " : %{y:.2s}<extra></extra>",
-                    ))
-                    if greno_vrect_args:
-                        fig_vol.add_vrect(**greno_vrect_args)
-                    fig_vol.update_layout(barmode="group", height=350, margin=dict(t=20, b=60),
-                                          legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
-                                          xaxis=dict(title="Territoire", showgrid=False),
-                                          yaxis=dict(title="Nombre de flux", showgrid=True, gridcolor="#eeeeee"))
-                    st.plotly_chart(fig_vol, use_container_width=True)
-
-
-                with c2:
-                    st.markdown(
-                        "##### Performance nette",
-                        help="Solde net = entrées − sorties. Une barre positive (foncé) = le territoire gagne des flux et est attractif. Une barre négative (sombre) = le territoire perd des flux et dépend d'un pôle voisin. Ce graphique classe directement les territoires du plus au moins attractif en un seul indicateur."
+                    # Flux sortants : origine = territoire, destination ≠ territoire
+                    f_out = int(
+                        df_mob_filtered[
+                            df_mob_filtered[col_orig].isin(coms_set)
+                            & ~df_mob_filtered[col_dest].isin(coms_set)
+                        ]["flux"].sum()
                     )
-                    colors_net = ["#006400" if s >= 0 else "#8B0000" for s in df_plot_mob["solde"]]
-                    fig_net = go.Figure(go.Bar(
-                        x=noms_mob, y=df_plot_mob["solde"],
-                        marker_color=colors_net,
-                        hovertemplate="<b>Territoire : %{x}</b><br>Solde net : %{y:.2s}<extra></extra>",
-                    ))
-                    fig_net.add_hline(y=0, line_dash="dash", line_color="#888")
-                    if greno_vrect_args:
-                        fig_net.add_vrect(**greno_vrect_args)
-                    fig_net.update_layout(height=350, margin=dict(t=20, b=60),
-                                          xaxis=dict(title="Territoire", showgrid=False),
-                                          yaxis=dict(title="Solde (entrées − sorties)", showgrid=True, gridcolor="#eeeeee"))
-                    st.plotly_chart(fig_net, use_container_width=True)
+                    # Flux internes : origine ET destination dans le territoire
+                    f_int = int(
+                        df_mob_filtered[
+                            df_mob_filtered[col_orig].isin(coms_set)
+                            & df_mob_filtered[col_dest].isin(coms_set)
+                        ]["flux"].sum()
+                    )
 
+                    entities_mob.append({
+                        "name":     target,
+                        "in":       f_in,
+                        "out":      f_out,
+                        "interne":  f_int,
+                        "solde":    f_in - f_out,
+                    })
 
-                with st.expander("💡 Comment interpréter ces deux graphiques ?"):
-                    st.write(
-                        "**Volume des échanges** : ce graphique compare les flux entrants (barres foncées) et sortants (barres claires) pour chaque territoire. "
-                        "Il faut lire les deux barres ensemble pour comprendre la dynamique :\n"
-                        "**Performance nette (solde)** : c'est la synthèse en un seul chiffre. "
-                        "Une barre verte (positive) signifie que le territoire gagne des flux nets. "
-                        "Une barre rouge (négative) signifie qu'il en perd. "
+                df_plot_mob = pd.DataFrame(entities_mob)
+
+                if not df_plot_mob.empty:
+
+                    # ── KPI solde net ─────────────────────────────────────────
+                    st.markdown(
+                        f"#### Bilan net — {theme_mob} ({sel_annee_mob})",
+                        help=(
+                            "Le solde net = flux entrants (externes) − flux sortants (externes). "
+                            "Positif = territoire attractif. Négatif = territoire dépendant d'un pôle voisin. "
+                            "Les flux internes à la métropole sont exclus de ce calcul."
+                        ),
+                    )
+
+                    kpi_cols = st.columns(len(df_plot_mob))
+                    n_mob = len(df_plot_mob)
+                    for i, row in df_plot_mob.iterrows():
+                        color_solde = "#006400" if row["solde"] >= 0 else "#8B0000"
+                        val_formatee = f"{row['solde']:+,d}".replace(",", "\u202f")
+                        if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
+                            kpi_mob_color = COLORS_COMM_CSP5[i % len(COLORS_COMM_CSP5)] \
+                                if "COLORS_COMM_CSP5" in dir() \
+                                else PALETTE_COMMUNE[int(i * (len(PALETTE_COMMUNE)-1) / max(n_mob-1,1))]
+                        else:
+                            kpi_mob_color = COULEURS.get(row["name"], "#1B4332")
+                        with kpi_cols[i]:
+                            st.markdown(f"""
+                            <div style='display:flex;flex-direction:row;align-items:stretch;
+                                border-radius:8px;overflow:hidden;
+                                box-shadow:0 2px 6px rgba(0,0,0,0.1);background:#fff;
+                                min-height:80px;border-left:6px solid {kpi_mob_color};'>
+                                <div style='padding:10px 16px;display:flex;flex-direction:column;
+                                    justify-content:center;'>
+                                    <div style='font-size:11px;font-weight:700;letter-spacing:0.08em;
+                                        color:#666;text-transform:uppercase;'>{row['name']}</div>
+                                    <div style='font-size:24px;font-weight:bold;color:#111;'>{val_formatee}</div>
+                                    <div style='color:{color_solde};font-size:11px;font-weight:700;
+                                        text-transform:uppercase;letter-spacing:0.05em;'>SOLDE EXTERNE</div>
+                                </div>
+                            </div>""", unsafe_allow_html=True)
+
+                    st.markdown("---")
+
+                    # ── Mise en valeur Grenoble ───────────────────────────────
+                    noms_mob = df_plot_mob["name"].tolist()
+                    greno_vrect_args = None
+                    if "Grenoble" in noms_mob and mode_mob == "Comparaison Métropoles":
+                        g_pos = noms_mob.index("Grenoble")
+                        greno_vrect_args = dict(
+                            x0=g_pos - 0.45, x1=g_pos + 0.45,
+                            fillcolor="rgba(255,88,77,0.10)",
+                            line_color="#FF584D", line_width=1.5,
+                            line_dash="dash", layer="below",
                         )
 
-
-                st.markdown("---")
-                st.markdown("#### Analyse géographique des flux", help="Ces graphiques identifient les 10 principaux territoires d'origine (d'où viennent les personnes) et les 10 principales destinations (où vont les personnes) pour le territoire sélectionné. Le recensement ne mesure pas les flux à destination de l'étranger : l'INSEE ne peut recenser que les personnes présentes sur le territoire français.")
-
-
-                if mode_mob == "Comparaison Métropoles":
-                    selection_unique = len(sel_metros_mob) == 1
-                else:
-                    selection_unique = len(sel_communes_mob) == 1
-
-
-                if not selection_unique:
-                    if mode_mob == "Comparaison Métropoles":
-                        st.info("L'analyse géographique des flux est disponible uniquement pour **une seule métropole** sélectionnée.")
-                    else:
-                        st.info("L'analyse géographique des flux est disponible uniquement pour **une seule commune** sélectionnée.")
-                else:
+                    # Couleurs barres
                     if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
-                        color_top_in  = PALETTE_COMMUNE[0]
-                        color_top_out = PALETTE_COMMUNE[int(len(PALETTE_COMMUNE) * 0.5)]
+                        color_in_bar  = PALETTE_COMMUNE[0]
+                        color_out_bar = PALETTE_COMMUNE[int(len(PALETTE_COMMUNE) * 0.5)]
+                        color_int_bar = PALETTE_COMMUNE[int(len(PALETTE_COMMUNE) * 0.8)]
                     else:
-                        color_top_in  = PALETTE_METRO[int(len(PALETTE_METRO) * 0.3)]
-                        color_top_out = PALETTE_METRO[int(len(PALETTE_METRO) * 0.7)]
+                        color_in_bar  = PALETTE_METRO[int(len(PALETTE_METRO) * 0.3)]
+                        color_out_bar = PALETTE_METRO[int(len(PALETTE_METRO) * 0.7)]
+                        color_int_bar = PALETTE_METRO[int(len(PALETTE_METRO) * 0.1)]
 
+                    # ══════════════════════════════════════════════════════════
+                    # GRAPHIQUE 1 : Volume des échanges EXTERNES
+                    # ══════════════════════════════════════════════════════════
+                    st.subheader(
+                        "📤 Échanges avec l'extérieur",
+                        help=help_ext,
+                    )
+                    c1, c2 = st.columns(2)
 
-                    col_l, col_r = st.columns(2)
-                    with col_l:
+                    with c1:
                         st.markdown(
-                            f"<h5 style='text-align:center;'> Top 10 provenances ({label_in})</h5>",
-                            unsafe_allow_html=True
+                            "##### Volume des échanges externes",
+                            help=(
+                                f"**{label_in}** : {help_in}\n\n"
+                                f"**{label_out}** : {help_out}\n\n"
+                                "Les flux internes à la métropole (entre communes du même territoire) "
+                                "sont exclus de ce graphique."
+                            ),
                         )
-                        raw_in = df_mob_filtered[df_mob_filtered[col_dest].isin(coms_selection)]
-                        grouped_in = raw_in.groupby(col_orig)["flux"].sum().reset_index()
-                        top_in = grouped_in.nlargest(10, "flux")
-                        if not top_in.empty:
-                            # Raccourcir "Résidence antérieure" → "Résidence" dans les labels Y
-                            top_in = top_in.copy()
-                            top_in["label_display"] = top_in[col_orig].str.replace(
-                                "Résidence antérieure", "Résidence", regex=False
-                            )
-                            fig_in = go.Figure(go.Bar(
-                                x=top_in["flux"],
-                                y=top_in["label_display"],
-                                orientation="h",
-                                marker_color=color_top_in,
-                                # Texte affiché à l'extérieur de la barre, formaté à la française
-                                text=top_in["flux"].apply(lambda v: f"{int(v):,}".replace(",", " ")),
-                                textposition="outside",
-                                cliponaxis=False,
-                                hovertemplate="<b>%{y}</b><br>Flux : %{x:,.0f}<extra></extra>"
-                            ))
-                            # Lignes de référence verticales en filigrane
-                            max_in = int(top_in["flux"].max())
-                            for rv in [v for v in [1000, 2000, 3000, 4000, 5000, 6000] if v < max_in]:
-                                fig_in.add_vline(
-                                    x=rv,
-                                    line=dict(color="rgba(120,120,120,0.3)", width=1, dash="dot")
-                                )
-                            fig_in.update_layout(
-                                yaxis=dict(categoryorder="total ascending", title="", automargin=True),
-                                # Étendre l'axe X à 125 % du max pour laisser la place aux labels
-                                xaxis=dict(title="Nombre de flux", showgrid=False, range=[0, max_in * 1.25]),
-                                height=380,
-                                margin=dict(l=10, r=70, t=10, b=40)
-                            )
-                            st.plotly_chart(fig_in, use_container_width=True)
+                        fig_vol = go.Figure()
+                        fig_vol.add_trace(go.Bar(
+                            x=noms_mob, y=df_plot_mob["in"],
+                            name=label_in,
+                            marker_color=color_in_bar,
+                            hovertemplate=(
+                                "<b>%{x}</b><br>" + label_in + " : %{y:,.0f}<extra></extra>"
+                            ),
+                        ))
+                        fig_vol.add_trace(go.Bar(
+                            x=noms_mob, y=df_plot_mob["out"],
+                            name=label_out,
+                            marker_color=color_out_bar,
+                            hovertemplate=(
+                                "<b>%{x}</b><br>" + label_out + " : %{y:,.0f}<extra></extra>"
+                            ),
+                        ))
+                        if greno_vrect_args:
+                            fig_vol.add_vrect(**greno_vrect_args)
+                        fig_vol.update_layout(
+                            barmode="group", height=360,
+                            margin=dict(t=10, b=60),
+                            paper_bgcolor="rgba(0,0,0,0)",
+                            plot_bgcolor="rgba(0,0,0,0)",
+                            font_family="Sora",
+                            legend=dict(orientation="v", yanchor="middle", y=0.5,
+                                        xanchor="left", x=1.02),
+                            xaxis=dict(showgrid=False),
+                            yaxis=dict(gridcolor="#E8F5EE", title="Nombre de flux"),
+                        )
+                        st.plotly_chart(fig_vol, use_container_width=True)
 
-
-                    with col_r:
+                    with c2:
                         st.markdown(
-                            f"<h5 style='text-align:center;'> Top 10 destinations ({label_out})</h5>",
-                            unsafe_allow_html=True
+                            "##### Solde net externe",
+                            help=(
+                                "Solde = flux entrants externes − flux sortants externes. "
+                                "Barre verte = territoire attractif (gagne des flux). "
+                                "Barre rouge = territoire dépendant (perd des flux)."
+                            ),
                         )
-                        raw_out = df_mob_filtered[df_mob_filtered[col_orig].isin(coms_selection)]
-                        grouped_out = raw_out.groupby(col_dest)["flux"].sum().reset_index()
-                        top_out = grouped_out.nlargest(10, "flux")
-                        if not top_out.empty:
-                            # Raccourcir "Résidence antérieure" → "Résidence" dans les labels Y
-                            top_out = top_out.copy()
-                            top_out["label_display"] = top_out[col_dest].str.replace(
-                                "Résidence antérieure", "Résidence", regex=False
+                        colors_net = [
+                            "#006400" if s >= 0 else "#8B0000"
+                            for s in df_plot_mob["solde"]
+                        ]
+                        fig_net = go.Figure(go.Bar(
+                            x=noms_mob, y=df_plot_mob["solde"],
+                            marker_color=colors_net,
+                            text=[
+                                f"{int(v):+,d}".replace(",", "\u202f")
+                                for v in df_plot_mob["solde"]
+                            ],
+                            textposition="outside",
+                            cliponaxis=False,
+                            hovertemplate=(
+                                "<b>%{x}</b><br>Solde externe : %{y:+,.0f}<extra></extra>"
+                            ),
+                        ))
+                        fig_net.add_hline(y=0, line_dash="dash", line_color="#888")
+                        if greno_vrect_args:
+                            fig_net.add_vrect(**greno_vrect_args)
+                        fig_net.update_layout(
+                            height=360, margin=dict(t=10, b=60),
+                            paper_bgcolor="rgba(0,0,0,0)",
+                            plot_bgcolor="rgba(0,0,0,0)",
+                            font_family="Sora",
+                            xaxis=dict(showgrid=False),
+                            yaxis=dict(
+                                gridcolor="#E8F5EE",
+                                title="Solde (entrants − sortants)",
+                            ),
+                        )
+                        st.plotly_chart(fig_net, use_container_width=True)
+
+                    with st.expander("💡 Comment interpréter ces graphiques ?"):
+                        st.write(
+                            f"**Volume des échanges externes** : compare les {label_in.lower()} "
+                            f"(barres foncées) et les {label_out.lower()} (barres claires) "
+                            "avec des territoires situés HORS de la métropole. "
+                            "Les flux internes (entre communes du même territoire) sont exclus "
+                            "pour ne pas gonfler artificiellement les volumes.\n\n"
+                            "**Solde net** : synthèse en un seul indicateur. "
+                            "Vert = le territoire gagne des flux et est attractif. "
+                            "Rouge = il en perd et dépend d'un pôle extérieur."
+                        )
+
+                    # ══════════════════════════════════════════════════════════
+                    # GRAPHIQUE 2 : Flux INTERNES à la métropole
+                    # ══════════════════════════════════════════════════════════
+                    if mode_mob == "Comparaison Métropoles" and df_plot_mob["interne"].sum() > 0:
+                        st.markdown("---")
+                        st.subheader(
+                            "🔄 Flux internes à la métropole",
+                            help=help_int,
+                        )
+
+                        col_i1, col_i2 = st.columns(2)
+
+                        with col_i1:
+                            st.markdown(
+                                f"##### Volume des flux internes",
+                                help=(
+                                    f"{help_int}\n\n"
+                                    "Un volume interne élevé indique une forte mobility "
+                                    "intra-métropolitaine : le territoire est dense et interconnecté. "
+                                    "Un volume faible peut indiquer un territoire moins étendu "
+                                    "ou moins mobile en interne."
+                                ),
                             )
-                            fig_out = go.Figure(go.Bar(
-                                x=top_out["flux"],
-                                y=top_out["label_display"],
-                                orientation="h",
-                                marker_color=color_top_out,
-                                # Texte affiché à l'extérieur de la barre, formaté à la française
-                                text=top_out["flux"].apply(lambda v: f"{int(v):,}".replace(",", " ")),
-                                textposition="outside",
-                                cliponaxis=False,
-                                hovertemplate="<b>%{y}</b><br>Flux : %{x:,.0f}<extra></extra>"
-                            ))
-                            # Lignes de référence verticales en filigrane
-                            max_out = int(top_out["flux"].max())
-                            for rv in [v for v in [500, 1000, 1500, 2000, 2500, 3000] if v < max_out]:
-                                fig_out.add_vline(
-                                    x=rv,
-                                    line=dict(color="rgba(120,120,120,0.3)", width=1, dash="dot")
+                            fig_int = go.Figure()
+                            for i, row in df_plot_mob.iterrows():
+                                if mode_mob == "Comparaison Métropoles":
+                                    bar_c = COULEURS.get(row["name"], "#888888")
+                                else:
+                                    bar_c = PALETTE_COMMUNE[
+                                        int(i * (len(PALETTE_COMMUNE)-1) / max(n_mob-1,1))
+                                    ]
+
+                                is_greno = (row["name"] == "Grenoble")
+                                mkr = dict(
+                                    color=bar_c,
+                                    line=dict(color=bar_c, width=1),
+                                    pattern=dict(
+                                        shape="/", fgcolor="#FF584D",
+                                        fillmode="overlay", solidity=0.3, size=20,
+                                    ) if is_greno else dict(),
                                 )
-                            fig_out.update_layout(
-                                yaxis=dict(categoryorder="total ascending", title="", automargin=True),
-                                # Étendre l'axe X à 125 % du max pour laisser la place aux labels
-                                xaxis=dict(title="Nombre de flux", showgrid=False, range=[0, max_out * 1.25]),
-                                height=380,
-                                margin=dict(l=10, r=70, t=10, b=40)
+                                fig_int.add_trace(go.Bar(
+                                    x=[row["name"]],
+                                    y=[row["interne"]],
+                                    name=row["name"],
+                                    marker=mkr,
+                                    showlegend=False,
+                                    hovertemplate=(
+                                        f"<b>{row['name']}</b><br>"
+                                        f"Flux internes : %{{y:,.0f}}<extra></extra>"
+                                    ),
+                                ))
+
+                            if greno_vrect_args:
+                                fig_int.add_vrect(**greno_vrect_args)
+                            fig_int.update_layout(
+                                height=360, margin=dict(t=10, b=60),
+                                paper_bgcolor="rgba(0,0,0,0)",
+                                plot_bgcolor="rgba(0,0,0,0)",
+                                font_family="Sora",
+                                xaxis=dict(showgrid=False),
+                                yaxis=dict(gridcolor="#E8F5EE", title="Nombre de flux internes"),
                             )
-                            st.plotly_chart(fig_out, use_container_width=True)
+                            st.plotly_chart(fig_int, use_container_width=True)
+
+                        with col_i2:
+                            st.markdown(
+                                "##### Rapport interne / externe (%)",
+                                help=(
+                                    "Part des flux internes dans le total des flux du territoire "
+                                    "(internes + sortants externes). "
+                                    "Une part élevée signifie que la majorité des "
+                                    "déplacements se font au sein de la métropole elle-même : "
+                                    "territoire auto-suffisant. "
+                                    "Une part faible indique une forte dépendance aux territoires voisins."
+                                ),
+                            )
+                            df_plot_mob["total_mob"]  = df_plot_mob["interne"] + df_plot_mob["out"]
+                            df_plot_mob["ratio_int"]  = (
+                                df_plot_mob["interne"] / df_plot_mob["total_mob"] * 100
+                            ).fillna(0)
+                            df_plot_mob["ratio_ext"]  = 100 - df_plot_mob["ratio_int"]
+
+                            fig_ratio = go.Figure()
+                            fig_ratio.add_trace(go.Bar(
+                                x=noms_mob,
+                                y=df_plot_mob["ratio_int"],
+                                name="Flux internes (%)",
+                                marker_color=color_int_bar,
+                                hovertemplate=(
+                                    "<b>%{x}</b><br>Part interne : %{y:.1f} %<extra></extra>"
+                                ),
+                            ))
+                            fig_ratio.add_trace(go.Bar(
+                                x=noms_mob,
+                                y=df_plot_mob["ratio_ext"],
+                                name="Flux externes (%)",
+                                marker_color=color_out_bar,
+                                hovertemplate=(
+                                    "<b>%{x}</b><br>Part externe : %{y:.1f} %<extra></extra>"
+                                ),
+                            ))
+                            if greno_vrect_args:
+                                fig_ratio.add_vrect(**greno_vrect_args)
+                            fig_ratio.update_layout(
+                                barmode="stack",
+                                height=360, margin=dict(t=10, b=60),
+                                paper_bgcolor="rgba(0,0,0,0)",
+                                plot_bgcolor="rgba(0,0,0,0)",
+                                font_family="Sora",
+                                legend=dict(orientation="v", yanchor="middle", y=0.5,
+                                            xanchor="left", x=1.02),
+                                xaxis=dict(showgrid=False),
+                                yaxis=dict(
+                                    gridcolor="#E8F5EE",
+                                    title="Part des flux (%)",
+                                    range=[0, 100],
+                                ),
+                            )
+                            st.plotly_chart(fig_ratio, use_container_width=True)
+
+                        with st.expander("💡 Comment interpréter ces graphiques ?"):
+                            st.write(
+                                f"**Volume interne** : nombre de {label_int.lower()} au sein "
+                                "de la même métropole (ex. habitant d'une commune qui travaille "
+                                "dans une autre commune de la même métropole). "
+                                "Ces flux sont exclus du bilan net mais révèlent la cohésion "
+                                "et la densité fonctionnelle du territoire.\n\n"
+                                "**Rapport interne / externe** : part des flux internes dans "
+                                "l'ensemble des déplacements. "
+                                "Une métropole à forte part interne est auto-suffisante "
+                                "(ses résidents restent sur son territoire pour travailler/étudier). "
+                                "Une faible part interne indique des flux importants vers l'extérieur, "
+                                "typique des territoires péri-urbains ou de petite taille."
+                            )
+
+                    # ══════════════════════════════════════════════════════════
+                    # GRAPHIQUE 3 : Analyse géographique (Top 10 origines/dest.)
+                    # ══════════════════════════════════════════════════════════
+                    st.markdown("---")
+                    st.markdown(
+                        "#### Analyse géographique des flux",
+                        help=(
+                            "Top 10 des territoires d'origine (d'où viennent les flux) "
+                            "et des destinations (où vont les flux) pour le territoire sélectionné. "
+                            "Uniquement disponible pour une seule sélection. "
+                            "Note : l'INSEE ne mesure pas les flux vers l'étranger."
+                        ),
+                    )
+
+                    selection_unique = (
+                        len(sel_communes_mob) == 1
+                        if mode_mob == "Comparaison communes Grenoble-Alpes Métropole"
+                        else len(sel_metros_mob) == 1
+                    )
+
+                    if not selection_unique:
+                        st.info(
+                            "L'analyse géographique des flux est disponible uniquement pour "
+                            "**une seule métropole** (ou commune) sélectionnée."
+                        )
+                    else:
+                        if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
+                            color_top_in  = PALETTE_COMMUNE[0]
+                            color_top_out = PALETTE_COMMUNE[int(len(PALETTE_COMMUNE) * 0.5)]
+                        else:
+                            color_top_in  = PALETTE_METRO[int(len(PALETTE_METRO) * 0.3)]
+                            color_top_out = PALETTE_METRO[int(len(PALETTE_METRO) * 0.7)]
+
+                        # Exclure les flux internes de la sélection pour les graphiques de Top 10
+                        coms_sel_set = set(coms_selection)
+                        df_ext_only = df_mob_filtered[
+                            ~(
+                                df_mob_filtered[col_orig].isin(coms_sel_set)
+                                & df_mob_filtered[col_dest].isin(coms_sel_set)
+                            )
+                        ]
+
+                        col_l, col_r = st.columns(2)
+                        with col_l:
+                            st.markdown(
+                                f"<h5 style='text-align:center;'>Top 10 provenances ({label_in})</h5>",
+                                unsafe_allow_html=True,
+                            )
+                            raw_in = df_ext_only[
+                                df_ext_only[col_dest].isin(coms_sel_set)
+                            ]
+                            grouped_in = raw_in.groupby(col_orig)["flux"].sum().reset_index()
+                            top_in = grouped_in.nlargest(10, "flux").copy()
+                            if not top_in.empty:
+                                top_in["label_display"] = top_in[col_orig].str.replace(
+                                    "Résidence antérieure", "Résidence", regex=False
+                                )
+                                max_in = int(top_in["flux"].max())
+                                fig_in = go.Figure(go.Bar(
+                                    x=top_in["flux"],
+                                    y=top_in["label_display"],
+                                    orientation="h",
+                                    marker_color=color_top_in,
+                                    text=top_in["flux"].apply(
+                                        lambda v: f"{int(v):,}".replace(",", "\u202f")
+                                    ),
+                                    textposition="outside",
+                                    cliponaxis=False,
+                                    hovertemplate="<b>%{y}</b><br>Flux : %{x:,.0f}<extra></extra>",
+                                ))
+                                for rv in [v for v in [500,1000,2000,3000,5000,10000] if v < max_in]:
+                                    fig_in.add_vline(
+                                        x=rv,
+                                        line=dict(color="rgba(120,120,120,0.3)", width=1, dash="dot"),
+                                    )
+                                fig_in.update_layout(
+                                    yaxis=dict(categoryorder="total ascending",
+                                               title="", automargin=True),
+                                    xaxis=dict(title="Nombre de flux", showgrid=False,
+                                               range=[0, max_in * 1.25]),
+                                    height=400,
+                                    margin=dict(l=10, r=70, t=10, b=40),
+                                    paper_bgcolor="rgba(0,0,0,0)",
+                                    plot_bgcolor="rgba(0,0,0,0)",
+                                    font_family="Sora",
+                                )
+                                st.plotly_chart(fig_in, use_container_width=True)
+
+                        with col_r:
+                            st.markdown(
+                                f"<h5 style='text-align:center;'>Top 10 destinations ({label_out})</h5>",
+                                unsafe_allow_html=True,
+                            )
+                            raw_out = df_ext_only[
+                                df_ext_only[col_orig].isin(coms_sel_set)
+                            ]
+                            grouped_out = raw_out.groupby(col_dest)["flux"].sum().reset_index()
+                            top_out = grouped_out.nlargest(10, "flux").copy()
+                            if not top_out.empty:
+                                top_out["label_display"] = top_out[col_dest].str.replace(
+                                    "Résidence antérieure", "Résidence", regex=False
+                                )
+                                max_out = int(top_out["flux"].max())
+                                fig_out = go.Figure(go.Bar(
+                                    x=top_out["flux"],
+                                    y=top_out["label_display"],
+                                    orientation="h",
+                                    marker_color=color_top_out,
+                                    text=top_out["flux"].apply(
+                                        lambda v: f"{int(v):,}".replace(",", "\u202f")
+                                    ),
+                                    textposition="outside",
+                                    cliponaxis=False,
+                                    hovertemplate="<b>%{y}</b><br>Flux : %{x:,.0f}<extra></extra>",
+                                ))
+                                for rv in [v for v in [500,1000,2000,3000,5000,10000] if v < max_out]:
+                                    fig_out.add_vline(
+                                        x=rv,
+                                        line=dict(color="rgba(120,120,120,0.3)", width=1, dash="dot"),
+                                    )
+                                fig_out.update_layout(
+                                    yaxis=dict(categoryorder="total ascending",
+                                               title="", automargin=True),
+                                    xaxis=dict(title="Nombre de flux", showgrid=False,
+                                               range=[0, max_out * 1.25]),
+                                    height=400,
+                                    margin=dict(l=10, r=70, t=10, b=40),
+                                    paper_bgcolor="rgba(0,0,0,0)",
+                                    plot_bgcolor="rgba(0,0,0,0)",
+                                    font_family="Sora",
+                                )
+                                st.plotly_chart(fig_out, use_container_width=True)
+
+                        with st.expander("💡 Comment interpréter ces graphiques ?"):
+                            st.write(
+                                f"**Top 10 provenances** : les 10 territoires qui envoient le plus "
+                                f"de {label_in.lower()} vers ce territoire. "
+                                "Les flux internes à la métropole sont exclus.\n\n"
+                                f"**Top 10 destinations** : les 10 territoires qui reçoivent le plus "
+                                f"de {label_out.lower()} depuis ce territoire. "
+                                "Les flux internes sont également exclus.\n\n"
+                                "Note : l'INSEE mesure uniquement les flux entre communes françaises. "
+                                "Les flux vers l'étranger ne sont pas comptabilisés."
+                            )
+
 
 # ==============================================================================
 # ONGLET 4 - MÉNAGES
