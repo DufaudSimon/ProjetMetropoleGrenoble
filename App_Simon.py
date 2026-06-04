@@ -3673,10 +3673,13 @@ if vue == "Démographie":
                             st.dataframe(table_df.set_index("Catégorie"), use_container_width=True)
                             
 # ==============================================================================
-# SOLIDARITÉ & CITOYENNETÉ
+# PAGE SOLIDARITÉ & CITOYENNETÉ
 # ==============================================================================
 if vue == "Solidarité et citoyenneté":
-    s1, s2, s3, s4 = st.tabs(["🤝 Solidarité", "🎓 Éducation", "🏥 Santé", "🗳️ Participation citoyenne"])
+    s1, s2, s3, s4 = st.tabs(["🤝 Solidarité", 
+                              "🎓 Éducation", 
+                              "🏥 Santé", 
+                              "🗳️ Participation citoyenne"])
 
     def render_solidarite_kpi(title, value, subtitle, border_color="#1e5631"):
         return f"""
@@ -4772,3 +4775,4 @@ if vue == "Solidarité et citoyenneté":
                     st.plotly_chart(style(fig_delta), use_container_width=True)
                 else:
                     st.info("Données insuffisantes pour calculer la variation.")
+
