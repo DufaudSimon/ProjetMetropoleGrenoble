@@ -18,15 +18,13 @@ import unicodedata
 # 1. CONFIGURATION
 # ──────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Démographie · Métropoles françaises",
+    page_title="Démographie & Environnement · Métropoles",
     page_icon="Logo_principal_Grenoble-Alpes_Métropole.png",
     layout="wide",
 )
 
 if "page" not in st.session_state:
     st.session_state.page = "home"
-
-
 
 st.markdown("""
 <style>
@@ -127,6 +125,20 @@ section[data-testid="stSidebar"] div[data-testid="stRadio"] div[data-testid="stW
 section[data-testid="stSidebar"] div[data-testid="stRadio"] input[type="radio"] {
     display: none !important;
 }
+
+/* Badges de thématiques */
+.theme-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.badge-demo { background: #E6FFFA; color: #2D6A4F; }
+.badge-solid { background: #FFF5F5; color: #C45B2A; }
+.badge-env { background: #E8F5E9; color: #1B5E20; } /* Style Environnement */
 </style>
 """, unsafe_allow_html=True)
 
@@ -212,7 +224,6 @@ DR24_MAP = {"Grenoble": 38, "Rennes": 35, "Rouen": 76, "Saint-Étienne": 42, "Mo
 PALETTE_METRO   = px.colors.sequential.Greys[2:]
 PALETTE_COMMUNE = px.colors.sequential.Greens_r
 
-# Palette spécifique appliquée aux 5 métropoles (pour les KPI et COULEURS-based charts)
 COULEURS = {
     "Montpellier": "#77818C",
     "Saint-Étienne": "#A2A6AE",
@@ -227,7 +238,7 @@ TOUTES = list(COMMUNES.keys())
 if "shared_metros" not in st.session_state:
     st.session_state.shared_metros = list(TOUTES)
 
-# Clés widget par thématique
+# Clés widget par thématique (ajout de la thématique Environnement)
 METRO_KEYS_DEMO = [
     ("sel_t1",   TOUTES),
     ("age_metros", TOUTES),
@@ -241,11 +252,18 @@ METRO_KEYS_SOLID = [
     ("sante_metros_multi", None),
     ("part_metros",        None),
 ]
+METRO_KEYS_ENV = [
+    ("env_air_metros",     TOUTES),
+    ("env_verts_metros",   TOUTES),
+    ("env_dechets_metros", TOUTES),
+]
 
 if "shared_metros_demo" not in st.session_state:
     st.session_state.shared_metros_demo = list(TOUTES)
 if "shared_metros_solid" not in st.session_state:
     st.session_state.shared_metros_solid = list(TOUTES)
+if "shared_metros_env" not in st.session_state:
+    st.session_state.shared_metros_env = list(TOUTES)
 
 def _propagate(key, widget_keys, shared_key):
     new_val = list(st.session_state[key])
@@ -265,6 +283,9 @@ def sync_metros_demo(key):
 def sync_metros_solid(key):
     _propagate(key, METRO_KEYS_SOLID, "shared_metros_solid")
 
+def sync_metros_env(key):
+    _propagate(key, METRO_KEYS_ENV, "shared_metros_env")
+
 def shared_default_demo(options):
     current = st.session_state.get("shared_metros_demo", list(TOUTES))
     filtered = [m for m in current if m in options]
@@ -272,6 +293,11 @@ def shared_default_demo(options):
 
 def shared_default_solid(options):
     current = st.session_state.get("shared_metros_solid", list(TOUTES))
+    filtered = [m for m in current if m in options]
+    return filtered if filtered else list(options)
+
+def shared_default_env(options):
+    current = st.session_state.get("shared_metros_env", list(TOUTES))
     filtered = [m for m in current if m in options]
     return filtered if filtered else list(options)
 
@@ -291,6 +317,11 @@ COMMUNE_KEYS_SOLID = [
     ("sante_communes_t1", None),
     ("part_communes",     None),
 ]
+COMMUNE_KEYS_ENV = [
+    ("env_air_communes",     COMMUNES_GRENOBLE),
+    ("env_verts_communes",   COMMUNES_GRENOBLE),
+    ("env_dechets_communes", COMMUNES_GRENOBLE),
+]
 
 _DEFAULT_COMMUNES = [
     c for c in [
@@ -307,6 +338,8 @@ if "shared_communes_demo" not in st.session_state:
     st.session_state.shared_communes_demo = _DEFAULT_COMMUNES[:]
 if "shared_communes_solid" not in st.session_state:
     st.session_state.shared_communes_solid = _DEFAULT_COMMUNES[:]
+if "shared_communes_env" not in st.session_state:
+    st.session_state.shared_communes_env = _DEFAULT_COMMUNES[:]
 
 def _propagate_communes(key, widget_keys, shared_key):
     new_val = list(st.session_state[key])
@@ -324,16 +357,16 @@ def sync_communes_demo(key):
     _propagate_communes(key, COMMUNE_KEYS_DEMO, "shared_communes_demo")
 
 def sync_communes_solid(key):
-    """Stocke des noms de référence dans shared_communes_solid et propage vers les autres widgets."""
     raw_val = list(st.session_state[key])
-    # Convertir les noms source → noms de référence
     ref_val = [source_to_ref(v) for v in raw_val]
     st.session_state["shared_communes_solid"] = ref_val
-    # Propager vers les autres clés - on stocke les refs, shared_default_communes_solid fera la conv
     for wkey, _ in COMMUNE_KEYS_SOLID:
         if wkey == key:
             continue
         st.session_state[wkey] = ref_val
+
+def sync_communes_env(key):
+    _propagate_communes(key, COMMUNE_KEYS_ENV, "shared_communes_env")
 
 def shared_default_communes_demo(options):
     current = st.session_state.get("shared_communes_demo", _DEFAULT_COMMUNES)
@@ -341,19 +374,19 @@ def shared_default_communes_demo(options):
     return filtered if filtered else list(options[:2])
 
 def shared_default_communes_solid(options, widget_key=None):
-    """Retourne les options correspondant aux noms de référence stockés, dans le format de la source.
-    Si widget_key est fourni, pré-écrit la valeur convertie dans session_state pour que Streamlit
-    l'utilise directement (contourne la limitation du paramètre default)."""
     current_refs = st.session_state.get("shared_communes_solid", _DEFAULT_COMMUNES)
-    # Normaliser les refs stockées (elles peuvent être dans n'importe quel format)
     normalized_current = [source_to_ref(v) for v in current_refs]
     result = refs_to_source_list(normalized_current, options)
     if not result:
         result = list(options[:5]) if len(options) >= 5 else list(options)
-    # Pré-écrire dans session_state pour forcer Streamlit à afficher la bonne valeur
     if widget_key is not None:
         st.session_state[widget_key] = result
     return result
+
+def shared_default_communes_env(options):
+    current = st.session_state.get("shared_communes_env", _DEFAULT_COMMUNES)
+    filtered = [c for c in current if c in options]
+    return filtered if filtered else list(options[:2])
 
 DEP_MAP = {
     "Grenoble": "38", "Rennes": "35", "Rouen": "76",
@@ -513,24 +546,18 @@ def normalize_name(text):
 normalize_csp_name = normalize_name
 
 def norm_commune(text):
-    """Normalisation pour comparaison de noms de communes :
-    sans accents, minuscules, tirets et apostrophes → espaces, espaces multiples nettoyés."""
     if pd.isna(text):
         return ""
     s = unicodedata.normalize("NFKD", str(text)).encode("ascii", "ignore").decode("utf-8")
     s = s.lower().replace("-", " ").replace("'", " ").replace("'", " ")
     return " ".join(s.split())
 
-# Table de correspondance : norm → nom de référence (COMMUNES["Grenoble"])
-# Construite une seule fois, utilisée par tous les onglets Solidarité
 _NORM_TO_REF = {norm_commune(c): c for c in COMMUNES["Grenoble"]}
 
 def source_to_ref(name):
-    """Convertit un nom de commune source (n'importe quel format) vers le nom de référence."""
     return _NORM_TO_REF.get(norm_commune(name), name)
 
 def ref_to_source(ref_name, source_options):
-    """Trouve dans source_options le nom correspondant au nom de référence ref_name."""
     norm_ref = norm_commune(ref_name)
     for opt in source_options:
         if norm_commune(opt) == norm_ref:
@@ -538,7 +565,6 @@ def ref_to_source(ref_name, source_options):
     return None
 
 def refs_to_source_list(ref_names, source_options):
-    """Convertit une liste de noms de référence vers les noms trouvés dans source_options."""
     result = []
     for r in ref_names:
         match = ref_to_source(r, source_options)
@@ -702,7 +728,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-
 # ──────────────────────────────────────────────────────────────────────────────
 # 6. PAGE D'ACCUEIL
 # ──────────────────────────────────────────────────────────────────────────────
@@ -746,7 +771,7 @@ if st.session_state.page == "home":
     }
     .hero-subtitle { font-size: 13px; color: #95D5B2; font-weight: 400; line-height: 1.6; }
 
-    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
     .stat-box {
         background: #F0F7F3; border: 1px solid #C8E6D4; border-radius: 10px;
         padding: 14px 10px; text-align: center;
@@ -755,7 +780,7 @@ if st.session_state.page == "home":
     .stat-lbl { font-size: 11px; color: #4A7C59; font-weight: 700;
         text-transform: uppercase; letter-spacing: 0.07em; margin-top: 2px; }
 
-    .cards-grid-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .cards-grid-bottom { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 16px; }
     
     .info-card {
         background: white; border: 1px solid #C8E6D4; border-radius: 12px;
@@ -776,12 +801,14 @@ if st.session_state.page == "home":
     }
 
     .info-card.orange { border-left-color: #C45B2A; }
+    .info-card.darkgreen { border-left-color: #1B5E20; }
     
     .info-card-title {
         font-size: 12px; font-weight: 700; color: #2D6A4F; text-transform: uppercase;
         letter-spacing: 0.08em; margin-bottom: 12px;
     }
     .info-card.orange .info-card-title { color: #C45B2A; }
+    .info-card.darkgreen .info-card-title { color: #1B5E20; }
     
     .info-card-body { font-size: 13px; color: #2c2c2c; line-height: 1.7; text-align: justify; }
     
@@ -793,6 +820,10 @@ if st.session_state.page == "home":
     .tag-orange {
         font-size: 11px; font-weight: 600; padding: 3px 11px; border-radius: 20px;
         background: #FEF3ED; color: #C45B2A; border: 1px solid #F5C4B3;
+    }
+    .tag-darkgreen {
+        font-size: 11px; font-weight: 600; padding: 3px 11px; border-radius: 20px;
+        background: #E8F5E9; color: #1B5E20; border: 1px solid #C8E6D4;
     }
     
     .cta-wrapper { margin-top: 20px; }
@@ -833,7 +864,8 @@ if st.session_state.page == "home":
     <div class="stats-row">
         <div class="stat-box"><div class="stat-num">5</div><div class="stat-lbl">Métropoles</div></div>
         <div class="stat-box"><div class="stat-num">49</div><div class="stat-lbl">Communes</div></div>
-        <div class="stat-box"><div class="stat-num">2</div><div class="stat-lbl">Thématiques</div></div>
+        <div class="stat-box"><div class="stat-num">3</div><div class="stat-lbl">Thématiques</div></div>
+        <div class="stat-box"><div class="stat-num">En cours</div><div class="stat-lbl">Environnement</div></div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -841,7 +873,7 @@ if st.session_state.page == "home":
     <div class="info-card blue">
         <div class="info-card-title"> Objectif</div>
         <div class="info-card-body">
-            Analyser les données de démographie et de solidarité & citoyenneté afin de produire une analyse complète pour chaque Commune de Grenoble-Alpes Métropole. 
+            Analyser les données de démographie, de solidarité & citoyenneté ainsi que d'environnement afin de produire une analyse complète pour chaque Commune de Grenoble-Alpes Métropole. 
             Cette étude vise à permettre la comparaison des communes entre elles, ainsi qu'à situer la métropole de Grenoble par rapport à celles de Rouen, Saint-Étienne, Rennes et Montpellier (métropoles relativement comparables en termes de population, de superficie et de densité). 
             Elle est également destinée à accompagner les nouveaux élus dans la compréhension des dynamiques territoriales.
         </div>
@@ -860,7 +892,6 @@ if st.session_state.page == "home":
                 <span class="tag-green">Âges</span>
                 <span class="tag-green">Actifs</span>
                 <span class="tag-green">Mobilités</span>
-                <span class="tag-green">Population active 25-54 ans</span>
             </div>
         </div>
         <div class="info-card orange">
@@ -873,6 +904,18 @@ if st.session_state.page == "home":
                 <span class="tag-orange">Education</span>
                 <span class="tag-orange">Santé</span>
                 <span class="tag-orange">Participation</span>
+            </div>
+        </div>
+        <div class="info-card darkgreen">
+            <div class="info-card-title"> Environnement & Transition</div>
+            <div class="info-card-body">
+                Suivi de la qualité de l'air, de la présence de la biodiversité, des espaces verts et de la gestion locale des déchets.
+            </div>
+            <div class="tag-row">
+                <span class="tag-darkgreen">Qualité de l'air</span>
+                <span class="tag-darkgreen">Espaces Verts</span>
+                <span class="tag-darkgreen">Déchets</span>
+                <span class="tag-darkgreen">Transition</span>
             </div>
         </div>
     </div>
@@ -957,7 +1000,7 @@ with st.sidebar:
     
     vue = st.radio(
         "Navigation",
-        ["Description", "Démographie", "Solidarité et citoyenneté"],
+        ["Description", "Démographie", "Solidarité et citoyenneté", "Environnement"],
         index=0,
         label_visibility="collapsed",
     )
@@ -1037,24 +1080,13 @@ if vue == "Description":
             height: 100%;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .theme-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-        .badge-demo { background: #E6FFFA; color: #2D6A4F; }
-        .badge-solid { background: #FFF5F5; color: #C45B2A; }
         </style>
     """, unsafe_allow_html=True)
 
     st.markdown("""
         <div class="main-intro">
             <p style="font-size: 1.1rem; color: #1C3A27; margin: 0;">
-                Cette application présente des analyses comparatives sur <b>5 métropoles françaises et 49 communes de la métropole de Grenoble</b> à partir des données de l'INSEE, la CAF, Data.gouv et OSM France. 
+                Cette application presents des analyses comparatives sur <b>5 métropoles françaises et 49 communes de la métropole de Grenoble</b> à partir des données de l'INSEE, la CAF, Data.gouv et OSM France. 
                 Chaque page dispose de ses propres filtres en haut de page, adaptés aux données présentées. 
                 Selon les onglets, il est possible de filtrer par métropole, par commune, par année ou par thématique.
             </p>
@@ -1087,21 +1119,18 @@ if vue == "Description":
     st.markdown('<p style="font-size:1.5rem; font-weight:700; color:#2D6A4F; border-bottom: 2px solid #2D6A4F;"> Thématique 1 : Démographie</p>', unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
-    
     with col1:
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Population</div><div class="card-title"><b> Population globale</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;">Découvrez ici le nombre total d'habitants. Cela permet de voir la densité de population et de comparer les métropoles et communes entre elles.</div></div>""", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Foyers</div><div class="card-title"><b> Ménages</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;">On regarde ici comment vivent les gens chez eux. Cela montre s'il y a beaucoup de familles ou de personnes seules, et combien il y a d'habitants par logement.</div></div>""", unsafe_allow_html=True)
-
     with col2:
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Âges</div><div class="card-title"><b> Structure par âge</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;">Est-ce que la ville est plutôt jeune ou vieille ? Cette partie montre le nombre d'enfants, de travailleurs et de retraités pour chaque endroit étudié.</div></div>""", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Travail</div><div class="card-title"><b> Population active</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">ici, on s’intéresse aux 25-54 ans en activité. On analyse leurs métiers et leur niveau d'études ou leurs diplômes.</div></div>""", unsafe_allow_html=True)
-
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Ici, on s’intéresse aux 25-54 ans en activité. On analyse leurs métiers et leur niveau d'études ou leurs diplômes.</div></div>""", unsafe_allow_html=True)
     with col3:
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Mobilités</div><div class="card-title"><b> Mobilités</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;"><b>Toutes les mobilités :</b> On étudie les déplacements des habitants. Cela comprend les nouveaux arrivants, les trajets domicile-travail et les déplacements pour l'école.</div></div>""", unsafe_allow_html=True)
@@ -1119,12 +1148,29 @@ if vue == "Description":
     with c2:
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-solid">École</div><div class="card-title"><b> Éducation</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;">Analyse des établissements du premier et du second degré, publics et privés, afin d’observer leur répartition et leurs caractéristiques.</div></div>""", unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
     with c3:
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-solid">Soin</div><div class="card-title"><b> Santé</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;">Cette page liste les établissements de santés disponibles. Cela sert à voir si l'on peut se soigner facilement près de chez soi dans chaque quartier.</div></div>""", unsafe_allow_html=True)
 
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<p style="font-size:1.5rem; font-weight:700; color:#1B5E20; border-bottom: 2px solid #1B5E20;"> Thématique 3 : Environnement & Transition</p>', unsafe_allow_html=True)
+    
+    env1, env2, env3 = st.columns(3)
+    with env1:
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Air</div><div class="card-title"><b> Qualité de l'air</b></div>
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Suivi des indices de pollution atmosphérique (PM2.5, PM10, NO2) et exposition des populations locales.</div></div>""", unsafe_allow_html=True)
+    with env2:
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Nature</div><div class="card-title"><b> Espaces verts & Biodiversité</b></div>
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Analyse du taux de canopée, de l'accès aux parcs publics et de la préservation de la faune et flore urbaines.</div></div>""", unsafe_allow_html=True)
+    with env3:
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Transition</div><div class="card-title"><b> Déchets & Énergie</b></div>
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Performances de tri sélectif, volume de déchets produits par habitant et déploiement des énergies renouvelables.</div></div>""", unsafe_allow_html=True)
+
     st.stop()   
+
+# ==============================================================================
+# PAGE DÉMOGRAPHIE
+# ==============================================================================
 
 if vue == "Démographie":
     tab1, tab2, tab3, tab4, tab6 = st.tabs([
@@ -3673,10 +3719,13 @@ if vue == "Démographie":
                             st.dataframe(table_df.set_index("Catégorie"), use_container_width=True)
                             
 # ==============================================================================
-# SOLIDARITÉ & CITOYENNETÉ
+# PAGE SOLIDARITÉ & CITOYENNETÉ
 # ==============================================================================
 if vue == "Solidarité et citoyenneté":
-    s1, s2, s3, s4 = st.tabs(["🤝 Solidarité", "🎓 Éducation", "🏥 Santé", "🗳️ Participation citoyenne"])
+    s1, s2, s3, s4 = st.tabs(["🤝 Solidarité", 
+                              "🎓 Éducation", 
+                              "🏥 Santé", 
+                              "🗳️ Participation citoyenne"])
 
     def render_solidarite_kpi(title, value, subtitle, border_color="#1e5631"):
         return f"""
@@ -4772,3 +4821,80 @@ if vue == "Solidarité et citoyenneté":
                     st.plotly_chart(style(fig_delta), use_container_width=True)
                 else:
                     st.info("Données insuffisantes pour calculer la variation.")
+
+
+# ==============================================================================
+# PAGE ENVIRONNEMENT
+# ==============================================================================
+if vue == "Environnement":
+    tab_env1, tab_env2, tab_env3 = st.tabs([
+        "🌱  Qualité de l'air",
+        "🌳  Espaces verts & Biodiversité",
+        "♻️  Déchets & Transition",
+    ])
+
+    # ── Onglet 1 : Qualité de l'air ──────────────────────────────────────────
+    with tab_env1:
+        st.markdown('<div class="section-header">Qualité de l\'air et Indices Atmo</div>', unsafe_allow_html=True)
+        
+        # Bandeau de filtres haut de page synchronisés
+        st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
+        filter_bar("Filtres - Qualité de l'air")
+        f_col1, f_col2 = st.columns(2)
+        with f_col1:
+            metros_air = st.multiselect(
+                "Sélectionner les métropoles :", TOUTES,
+                default=shared_default_env(TOUTES), key="env_air_metros", on_change=sync_metros_env, args=("env_air_metros",)
+            )
+        with f_col2:
+            communes_air = st.multiselect(
+                "Sélectionner les communes (Grenoble) :", COMMUNES_GRENOBLE,
+                default=shared_default_communes_env(COMMUNES_GRENOBLE), key="env_air_communes", on_change=sync_communes_env, args=("env_air_communes",)
+            )
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.info("Données en cours de traitement. Intégrez vos futurs indicateurs de qualité de l'air ici.")
+
+    # ── Onglet 2 : Espaces verts ─────────────────────────────────────────────
+    with tab_env2:
+        st.markdown('<div class="section-header">Indice de canopée et accès à la nature</div>', unsafe_allow_html=True)
+        
+        # Bandeau de filtres haut de page synchronisés
+        st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
+        filter_bar("Filtres - Espaces verts")
+        f_col3, f_col4 = st.columns(2)
+        with f_col3:
+            metros_verts = st.multiselect(
+                "Sélectionner les métropoles :", TOUTES,
+                default=shared_default_env(TOUTES), key="env_verts_metros", on_change=sync_metros_env, args=("env_verts_metros",)
+            )
+        with f_col4:
+            communes_verts = st.multiselect(
+                "Sélectionner les communes (Grenoble) :", COMMUNES_GRENOBLE,
+                default=shared_default_communes_env(COMMUNES_GRENOBLE), key="env_verts_communes", on_change=sync_communes_env, args=("env_verts_communes",)
+            )
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.info("Données en cours de traitement. Intégrez vos analyses géographiques de végétation urbaine ici.")
+
+    # ── Onglet 3 : Déchets & Transition ──────────────────────────────────────
+    with tab_env3:
+        st.markdown('<div class="section-header">Gestion des déchets et énergies renouvelables</div>', unsafe_allow_html=True)
+        
+        # Bandeau de filtres haut de page synchronisés
+        st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
+        filter_bar("Filtres - Déchets & Transition")
+        f_col5, f_col6 = st.columns(2)
+        with f_col5:
+            metros_dech = st.multiselect(
+                "Sélectionner les métropoles :", TOUTES,
+                default=shared_default_env(TOUTES), key="env_dechets_metros", on_change=sync_metros_env, args=("env_dechets_metros",)
+            )
+        with f_col6:
+            communes_dech = st.multiselect(
+                "Sélectionner les communes (Grenoble) :", COMMUNES_GRENOBLE,
+                default=shared_default_communes_env(COMMUNES_GRENOBLE), key="env_dechets_communes", on_change=sync_communes_env, args=("env_dechets_communes",)
+            )
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.info("Données en cours de traitement. Intégrez vos graphiques de production de déchets ménagers et de tri sélectif ici.")   
