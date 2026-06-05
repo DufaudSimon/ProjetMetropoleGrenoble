@@ -689,6 +689,25 @@ def style(fig, marge_t=20):
                       margin=dict(t=marge_t, b=20, l=10, r=10))
     return fig
 
+def apply_grenoble_hatch(fig, grenoble_key="Grenoble", active=True):
+    """Ajoute des hachures rouges (/) sur les barres Grenoble - uniquement si active=True."""
+    if not active:
+        return fig
+    for trace in fig.data:
+        if not hasattr(trace, 'type') or trace.type != "bar":
+            continue
+        if grenoble_key in str(trace.name):
+            trace.marker.pattern = dict(shape="/", fgcolor="#FF584D", size=20, solidity=0.3)
+        elif trace.orientation == "h" and trace.y is not None:
+            shapes = ["/" if grenoble_key in str(v) else "" for v in trace.y]
+            if "/" in shapes:
+                trace.marker.pattern = dict(shape=shapes, fgcolor="#FF584D", size=20, solidity=0.3)
+        elif trace.x is not None:
+            shapes = ["/" if grenoble_key in str(v) else "" for v in trace.x]
+            if "/" in shapes:
+                trace.marker.pattern = dict(shape=shapes, fgcolor="#FF584D", size=20, solidity=0.3)
+    return fig
+
 def filter_bar(label="Filtres"):
     st.markdown(f'<div class="filter-bar-title">{label}</div>', unsafe_allow_html=True)
 
@@ -2385,7 +2404,7 @@ if vue == "Démographie":
                     # KPI : Solde + volumes IN/OUT
                     # ══════════════════════════════════════════════════════════
                     st.markdown(
-                        f"#### Bilan — {theme_mob} ({sel_annee_mob})",
+                        f"#### Bilan - {theme_mob} ({sel_annee_mob})",
                         help=help_kpi,
                     )
                     kpi_cols = st.columns(n_mob)
@@ -3771,26 +3790,37 @@ if vue == "Solidarité et citoyenneté":
                 <a href='https://data.caf.fr/explore/dataset/ndur_s_qf_400_com_f/table/' target='_blank' style='color: #1C3A27;'>Accéder aux données</a>
             </div>""", unsafe_allow_html=True)
 
+            # ── Attention : biais taille ──────────────────────────────────────
+            st.markdown("""
+            <div style='background-color: #fff8e1; padding: 13px 16px; border-radius: 10px;
+                border-left: 5px solid #f0a500; margin-bottom: 18px; font-size: 0.88em;'>
+                ⚠️ <strong>Attention - biais de taille :</strong> les volumes (foyers aidés, personnes concernées,
+                montants versés) dépendent directement de la taille de la métropole. Une agglomération plus grande
+                comptera mécaniquement plus de bénéficiaires, même si sa proportion d'habitants aidés est similaire
+                aux autres. Pour contextualiser ces chiffres, consultez l'onglet <strong>Ménages</strong> qui donne
+                un ordre de grandeur du nombre de ménages par territoire.
+            </div>""", unsafe_allow_html=True)
+
             required_cols = {"Annee", "Agglomeration"}
             if not required_cols.issubset(set(df_caf.columns)):
                 st.error("Colonnes Annee / Agglomeration manquantes.")
             else:
                 ALL_METRIC_LABELS = {
-                    "Nombre foyers NDUR":      "Foyers aidés (toutes aides)",
-                    "Nombre personnes NDUR":   "Personnes concernées (toutes aides)",
-                    "Montant total NDUR":       "Montant total versé (€)",
-                    "Nombre foyers NDURPAJE":  "Foyers aidés – Jeunes enfants",
+                    "Nombre foyers NDUR":       "Foyers aidés (toutes aides)",
+                    "Nombre personnes NDUR":    "Personnes concernées (toutes aides)",
+                    "Montant total NDUR":        "Montant total versé (€)",
+                    "Nombre foyers NDURPAJE":   "Foyers aidés – Jeunes enfants",
                     "Nombre personnes NDURPAJE":"Personnes concernées – Jeunes enfants",
-                    "Montant total NDURPAJE":   "Montant versé – Jeunes enfants (€)",
-                    "Nombre foyers NDUREJ":    "Foyers aidés – Enfance & jeunesse",
-                    "Nombre personnes NDUREJ": "Personnes concernées – Enfance & jeunesse",
-                    "Montant total NDUREJ":     "Montant versé – Enfance & jeunesse (€)",
-                    "Nombre foyers NDURAL":    "Foyers aidés – Logement",
-                    "Nombre personnes NDURAL": "Personnes concernées – Logement",
-                    "Montant total NDURAL":     "Montant versé – Logement (€)",
-                    "Nombre foyers NDURINS":   "Foyers aidés – Insertion",
-                    "Nombre personnes NDURINS":"Personnes concernées – Insertion",
-                    "Montant total NDURINS":    "Montant versé – Insertion (€)",
+                    "Montant total NDURPAJE":    "Montant versé – Jeunes enfants (€)",
+                    "Nombre foyers NDUREJ":     "Foyers aidés – Enfance & jeunesse",
+                    "Nombre personnes NDUREJ":  "Personnes concernées – Enfance & jeunesse",
+                    "Montant total NDUREJ":      "Montant versé – Enfance & jeunesse (€)",
+                    "Nombre foyers NDURAL":     "Foyers aidés – Logement",
+                    "Nombre personnes NDURAL":  "Personnes concernées – Logement",
+                    "Montant total NDURAL":      "Montant versé – Logement (€)",
+                    "Nombre foyers NDURINS":    "Foyers aidés – Insertion",
+                    "Nombre personnes NDURINS": "Personnes concernées – Insertion",
+                    "Montant total NDURINS":     "Montant versé – Insertion (€)",
                 }
                 available_metrics = {k: v for k, v in ALL_METRIC_LABELS.items() if k in df_caf.columns}
                 if not available_metrics:
@@ -3813,10 +3843,21 @@ if vue == "Solidarité et citoyenneté":
                                 key="caf_mode", horizontal=True, label_visibility="collapsed"
                             )
                         if mode_caf == "Comparaison Métropoles":
-                            sel_entites_caf = st.multiselect("Métropoles à comparer", agglos_caf, default=shared_default_solid(agglos_caf), key="caf_agglos", on_change=sync_metros_solid, args=("caf_agglos",))
+                            sel_entites_caf = st.multiselect(
+                                "Métropoles à comparer", agglos_caf,
+                                default=shared_default_solid(agglos_caf),
+                                key="caf_agglos", on_change=sync_metros_solid, args=("caf_agglos",)
+                            )
                         else:
-                            communes_gre_caf = sorted(df_caf[df_caf["Agglomeration"] == gre_agglo]["Nom_Commune"].dropna().unique()) if "Nom_Commune" in df_caf.columns else []
-                            sel_entites_caf  = st.multiselect("Communes de Grenoble-Alpes Métropole", communes_gre_caf, default=shared_default_communes_solid(communes_gre_caf, "caf_communes"), key="caf_communes", on_change=sync_communes_solid, args=("caf_communes",))
+                            communes_gre_caf = (
+                                sorted(df_caf[df_caf["Agglomeration"] == gre_agglo]["Nom_Commune"].dropna().unique())
+                                if "Nom_Commune" in df_caf.columns else []
+                            )
+                            sel_entites_caf = st.multiselect(
+                                "Communes de Grenoble-Alpes Métropole", communes_gre_caf,
+                                default=shared_default_communes_solid(communes_gre_caf, "caf_communes"),
+                                key="caf_communes", on_change=sync_communes_solid, args=("caf_communes",)
+                            )
                         MEASURE_TYPES = {
                             "Nombre foyers":    "Foyers aidés",
                             "Nombre personnes": "Personnes concernées",
@@ -3849,7 +3890,10 @@ if vue == "Solidarité et citoyenneté":
                     if is_metro:
                         df_fil = df_fil[df_fil["Agglomeration"].isin(sel_entites_caf)]
                     else:
-                        df_fil = df_fil[(df_fil["Agglomeration"] == gre_agglo) & (df_fil["Nom_Commune"].isin(sel_entites_caf))]
+                        df_fil = df_fil[
+                            (df_fil["Agglomeration"] == gre_agglo) &
+                            (df_fil["Nom_Commune"].isin(sel_entites_caf))
+                        ]
 
                     st.markdown("---")
 
@@ -3860,57 +3904,76 @@ if vue == "Solidarité et citoyenneté":
                         suffix_euro  = " €" if "Montant" in metric_key else ""
 
                         # ── KPI globaux ───────────────────────────────────────
-                        total_val   = df_fil[metric_key].sum()
-                        nb_entites  = df_fil[geo_col].nunique()
-                        moy_entite  = total_val / nb_entites if nb_entites > 0 else 0
-                        max_entite  = df_fil.groupby(geo_col)[metric_key].sum().idxmax()
+                        total_val  = df_fil[metric_key].sum()
+                        nb_entites = df_fil[geo_col].nunique()
+                        moy_entite = total_val / nb_entites if nb_entites > 0 else 0
+                        max_entite = df_fil.groupby(geo_col)[metric_key].sum().idxmax()
 
-                        st.markdown(f"#### Synthèse des allocations — {year_caf}")
+                        st.markdown(f"#### Synthèse des allocations - {year_caf}")
                         k1, k2, k3, k4 = st.columns(4)
                         kpi_border_color = "#666" if is_metro else "#1e5631"
                         with k1:
-                            st.markdown(render_solidarite_kpi(f"Total {year_caf}", fmt(total_val, suffix=suffix_euro), label_metric, kpi_border_color), unsafe_allow_html=True)
+                            st.markdown(render_solidarite_kpi(
+                                f"Total {year_caf}", fmt(total_val, suffix=suffix_euro),
+                                label_metric, kpi_border_color), unsafe_allow_html=True)
                         with k2:
-                            st.markdown(render_solidarite_kpi("Périmètre", fmt(nb_entites), "Unités comparées", kpi_border_color), unsafe_allow_html=True)
+                            st.markdown(render_solidarite_kpi(
+                                "Périmètre", fmt(nb_entites),
+                                "Unités comparées", kpi_border_color), unsafe_allow_html=True)
                         with k3:
-                            st.markdown(render_solidarite_kpi("Moyenne / territoire", fmt(moy_entite, suffix=suffix_euro), label_metric, kpi_border_color), unsafe_allow_html=True)
+                            st.markdown(render_solidarite_kpi(
+                                "Moyenne / territoire", fmt(moy_entite, suffix=suffix_euro),
+                                label_metric, kpi_border_color), unsafe_allow_html=True)
                         with k4:
-                            st.markdown(render_solidarite_kpi("Top territoire", max_entite, "Volume le plus élevé", kpi_border_color), unsafe_allow_html=True)
+                            st.markdown(render_solidarite_kpi(
+                                "Top territoire", max_entite,
+                                "Volume le plus élevé", kpi_border_color), unsafe_allow_html=True)
 
                         # ── KPI par métropole ─────────────────────────────────
                         if is_metro and len(sel_entites_caf) > 0:
                             st.markdown("#### Indicateurs par métropole")
                             df_by_metro = df_fil.groupby(geo_col, as_index=False)[metric_key].sum()
+
                             # Variation vs année précédente
                             prev_year = year_caf - 1 if (year_caf - 1) in years_caf else None
                             df_prev   = None
                             if prev_year:
-                                df_prev_fil = df_caf[df_caf["Annee"] == prev_year]
-                                df_prev_fil = df_prev_fil[df_prev_fil["Agglomeration"].isin(sel_entites_caf)]
-                                df_prev     = df_prev_fil.groupby(geo_col, as_index=False)[metric_key].sum().set_index(geo_col)[metric_key]
+                                df_prev_fil = df_caf[
+                                    (df_caf["Annee"] == prev_year) &
+                                    (df_caf["Agglomeration"].isin(sel_entites_caf))
+                                ]
+                                df_prev = (
+                                    df_prev_fil.groupby(geo_col, as_index=False)[metric_key]
+                                    .sum().set_index(geo_col)[metric_key]
+                                )
 
                             kpi_metro_cols = st.columns(len(sel_entites_caf))
                             for idx_m, agglo in enumerate(sel_entites_caf):
                                 val_m     = df_by_metro[df_by_metro[geo_col] == agglo][metric_key].sum()
                                 metro_key = next((m for m in COULEURS.keys() if m in agglo), agglo)
-                                col_m     = COULEURS.get(metro_key, "#888888")
                                 is_gren   = ("Grenoble" in agglo)
+
+                                # ▶ Grenoble : bordure rouge pointillée comme les graphiques
+                                col_m = "#FF584D" if is_gren else COULEURS.get(metro_key, "#888888")
+
                                 if df_prev is not None and agglo in df_prev.index:
                                     val_prev  = df_prev[agglo]
                                     delta_pct = ((val_m - val_prev) / val_prev * 100) if val_prev > 0 else 0
                                     delta_str = f"{delta_pct:+.1f}% vs {prev_year}"
                                 else:
-                                    delta_str = "—"
+                                    delta_str = "-"
+
                                 with kpi_metro_cols[idx_m]:
                                     st.markdown(
                                         render_metro_kpi_card(
-                                            metro_name      = agglo,
-                                            val_principal   = fmt(val_m, suffix=suffix_euro),
-                                            label_principal = label_metric[:20] + "…" if len(label_metric) > 20 else label_metric,
-                                            val_secondaire  = delta_str,
-                                            label_secondaire= "Évolution annuelle",
-                                            border_color    = col_m,
-                                            dashed          = is_gren,
+                                            metro_name       = agglo,
+                                            val_principal    = fmt(val_m, suffix=suffix_euro),
+                                            label_principal  = (label_metric[:20] + "…"
+                                                                if len(label_metric) > 20 else label_metric),
+                                            val_secondaire   = delta_str,
+                                            label_secondaire = "Évolution annuelle",
+                                            border_color     = col_m,
+                                            dashed           = is_gren,
                                         ),
                                         unsafe_allow_html=True
                                     )
@@ -3922,65 +3985,111 @@ if vue == "Solidarité et citoyenneté":
                         color_seq_caf       = PALETTE_METRO_CAF if is_metro else PALETTE_COMMUNE_CAF
 
                         if is_metro:
-                            df_fil["Metropole_Key"] = df_fil["Agglomeration"].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
+                            df_fil["Metropole_Key"] = df_fil["Agglomeration"].apply(
+                                lambda x: next((m for m in COULEURS.keys() if m in x), x)
+                            )
 
                         # ── Ligne 1 : QF distribution + Comparaison aides ─────
                         c1, c2 = st.columns(2)
 
                         with c1:
-                            st.markdown(f"##### Répartition par quotient familial ({year_caf})",
-                                        help="Répartition des bénéficiaires selon leur tranche de revenus (Quotient Familial CAF).")
+                            st.markdown(
+                                f"##### Répartition par quotient familial ({year_caf})",
+                                help="Répartition des bénéficiaires selon leur tranche de revenus (Quotient Familial CAF)."
+                            )
                             if "Quotient familial" in df_fil.columns:
-                                qf_order = ["Moins de 400 euros","Entre 400 et 799 euros","Entre 800 et 1199 euros",
-                                            "Entre 1200 et 1599 euros","Entre 1600 et 1999 euros",
-                                            "Entre 2000 et 3999 euros","4000 euros ou plus","Inconnu"]
-                                qf_data  = df_fil.groupby([geo_col, "Quotient familial"], as_index=False)[metric_key].sum()
-                                qf_data["QF_ord"] = pd.Categorical(qf_data["Quotient familial"], categories=qf_order, ordered=True)
-                                order_x   = qf_data.groupby(geo_col)[metric_key].sum().sort_values(ascending=False).index.tolist()
-                                y_max_qf  = qf_data.groupby(geo_col)[metric_key].sum().max()
+                                qf_order = [
+                                    "Moins de 400 euros", "Entre 400 et 799 euros",
+                                    "Entre 800 et 1199 euros", "Entre 1200 et 1599 euros",
+                                    "Entre 1600 et 1999 euros", "Entre 2000 et 3999 euros",
+                                    "4000 euros ou plus", "Inconnu",
+                                ]
+                                qf_data = df_fil.groupby(
+                                    [geo_col, "Quotient familial"], as_index=False
+                                )[metric_key].sum()
+                                qf_data["QF_ord"] = pd.Categorical(
+                                    qf_data["Quotient familial"], categories=qf_order, ordered=True
+                                )
+                                order_x  = (
+                                    qf_data.groupby(geo_col)[metric_key]
+                                    .sum().sort_values(ascending=False).index.tolist()
+                                )
+                                y_max_qf = qf_data.groupby(geo_col)[metric_key].sum().max()
+
                                 if is_metro:
                                     n_t   = len(qf_order)
-                                    greys = [f"#{v:02x}{v:02x}{v:02x}" for v in [int(0x77 + (220 - 0x77) * i / max(n_t-1,1)) for i in range(n_t)]]
+                                    greys = [
+                                        f"#{v:02x}{v:02x}{v:02x}"
+                                        for v in [int(0x77 + (220 - 0x77) * i / max(n_t-1, 1))
+                                                  for i in range(n_t)]
+                                    ]
                                     qf_color_map = {t: greys[j] for j, t in enumerate(qf_order)}
-                                    fig_qf = px.bar(qf_data.sort_values("QF_ord"), x=geo_col, y=metric_key,
-                                                    color="Quotient familial", color_discrete_map=qf_color_map,
-                                                    barmode="stack", labels={geo_col: "", metric_key: label_metric}, height=360)
-                                    grenoble_agglo = next((a for a in qf_data[geo_col].unique() if "Grenoble" in a), None)
+                                    fig_qf = px.bar(
+                                        qf_data.sort_values("QF_ord"), x=geo_col, y=metric_key,
+                                        color="Quotient familial", color_discrete_map=qf_color_map,
+                                        barmode="stack",
+                                        labels={geo_col: "", metric_key: label_metric}, height=360
+                                    )
+                                    grenoble_agglo = next(
+                                        (a for a in qf_data[geo_col].unique() if "Grenoble" in a), None
+                                    )
                                     if grenoble_agglo and grenoble_agglo in order_x:
                                         g_pos_qf = order_x.index(grenoble_agglo)
-                                        fig_qf.add_vrect(x0=g_pos_qf - 0.45, x1=g_pos_qf + 0.45,
-                                                         fillcolor="rgba(255,88,77,0.10)",
-                                                         line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
+                                        fig_qf.add_vrect(
+                                            x0=g_pos_qf - 0.45, x1=g_pos_qf + 0.45,
+                                            fillcolor="rgba(255,88,77,0.10)",
+                                            line_color="#FF584D", line_width=1.5,
+                                            line_dash="dash", layer="below"
+                                        )
                                 else:
-                                    fig_qf = px.bar(qf_data.sort_values("QF_ord"), x=geo_col, y=metric_key,
-                                                    color="Quotient familial", color_discrete_sequence=color_seq_caf,
-                                                    barmode="stack", labels={geo_col: "", metric_key: label_metric}, height=360)
+                                    fig_qf = px.bar(
+                                        qf_data.sort_values("QF_ord"), x=geo_col, y=metric_key,
+                                        color="Quotient familial",
+                                        color_discrete_sequence=color_seq_caf,
+                                        barmode="stack",
+                                        labels={geo_col: "", metric_key: label_metric}, height=360
+                                    )
+
                                 for trace in fig_qf.data:
                                     n = len(trace.y) if trace.y is not None else 0
                                     trace.customdata = [[trace.name]] * n
-                                    trace.hovertemplate = "<b>%{x}</b><br>Tranche : <b>%{customdata[0]}</b><br>" + label_metric + " : <b>%{y:,.0f}</b><extra></extra>"
+                                    trace.hovertemplate = (
+                                        "<b>%{x}</b><br>Tranche : <b>%{customdata[0]}</b><br>"
+                                        + label_metric + " : <b>%{y:,.0f}</b><extra></extra>"
+                                    )
                                 fig_qf.update_layout(
-                                    separators=", ", yaxis=dict(range=[0, y_max_qf * 1.1]),
-                                    xaxis=dict(categoryorder="array", categoryarray=order_x, tickangle=-30, title=""),
-                                    legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02, title="Tranche"),
+                                    separators=", ",
+                                    yaxis=dict(range=[0, y_max_qf * 1.1]),
+                                    xaxis=dict(
+                                        categoryorder="array", categoryarray=order_x,
+                                        tickangle=-30, title=""
+                                    ),
+                                    legend=dict(
+                                        orientation="v", yanchor="middle", y=0.5,
+                                        xanchor="left", x=1.02, title="Tranche"
+                                    ),
                                     margin=dict(t=30, r=40, b=80)
                                 )
                                 st.plotly_chart(style(fig_qf, 30), use_container_width=True)
 
                         with c2:
-                            st.markdown(f"##### Comparaison toutes catégories d'aides ({year_caf})",
-                                        help="Permet de comparer en un seul coup d'œil la répartition de chaque aide entre les territoires.")
+                            st.markdown(
+                                f"##### Comparaison toutes catégories d'aides ({year_caf})",
+                                help="Permet de comparer en un seul coup d'œil la répartition de chaque aide entre les territoires."
+                            )
                             AIDES_COMP = {
-                                "Insertion":        f"{measure_prefix} NDURINS",
-                                "Logement":         f"{measure_prefix} NDURAL",
-                                "Jeunes enfants":   f"{measure_prefix} NDURPAJE",
+                                "Insertion":          f"{measure_prefix} NDURINS",
+                                "Logement":           f"{measure_prefix} NDURAL",
+                                "Jeunes enfants":     f"{measure_prefix} NDURPAJE",
                                 "Enfance & Jeunesse": f"{measure_prefix} NDUREJ",
                             }
                             aides_disp = {lab: col for lab, col in AIDES_COMP.items() if col in df_fil.columns}
                             if aides_disp:
                                 bcomp = df_fil.groupby(geo_col, as_index=False)[list(aides_disp.values())].sum()
                                 if is_metro:
-                                    bcomp["Metropole_Key"] = bcomp[geo_col].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
+                                    bcomp["Metropole_Key"] = bcomp[geo_col].apply(
+                                        lambda x: next((m for m in COULEURS.keys() if m in x), x)
+                                    )
                                 bcomp = bcomp.rename(columns={v: k for k, v in aides_disp.items()})
                                 bcomp_long = bcomp.melt(
                                     id_vars=[geo_col] + (["Metropole_Key"] if is_metro else []),
@@ -3995,57 +4104,109 @@ if vue == "Solidarité et citoyenneté":
                                     color_discrete_map=color_map_comp,
                                     color_discrete_sequence=color_seq_caf,
                                     barmode="group", orientation="h", text_auto=",.0f",
-                                    labels={"Valeur": label_metric, "Catégorie": "", color_group_comp: "Territoire"},
+                                    labels={
+                                        "Valeur": label_metric,
+                                        "Catégorie": "",
+                                        color_group_comp: "Territoire"
+                                    },
                                     height=360
                                 )
-                                fig_comp.update_traces(hovertemplate="<b>%{y}</b><br>%{fullData.name} : <b>%{x:,.0f}</b><extra></extra>")
+                                fig_comp.update_traces(
+                                    hovertemplate="<b>%{y}</b><br>%{fullData.name} : <b>%{x:,.0f}</b><extra></extra>"
+                                )
                                 fig_comp.update_layout(
                                     separators=", ",
-                                    legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
+                                    legend=dict(
+                                        orientation="v", yanchor="middle", y=0.5,
+                                        xanchor="left", x=1.02
+                                    ),
                                     margin=dict(t=30, b=30, l=120),
                                     yaxis={"categoryorder": "total ascending"}
                                 )
+                                if is_metro:
+                                    apply_grenoble_hatch(fig_comp)
                                 st.plotly_chart(style(fig_comp, 30), use_container_width=True)
 
                         st.markdown("---")
 
-                        # ── Ligne 2 : Évolution temporelle + Taux recours ──────
+                        # ── Ligne 2 : Évolution temporelle + Structure ─────────
                         c3, c4 = st.columns(2)
 
                         with c3:
-                            st.markdown(f"##### Évolution temporelle — {label_metric}",
-                                        help="Évolution de l'indicateur sélectionné sur toutes les années disponibles.")
+                            st.markdown(
+                                f"##### Évolution temporelle - {label_metric}",
+                                help="Évolution de l'indicateur sélectionné sur toutes les années disponibles."
+                            )
                             df_evol = df_caf.copy()
                             if is_metro:
                                 df_evol = df_evol[df_evol["Agglomeration"].isin(sel_entites_caf)]
-                                df_evol["Metropole_Key"] = df_evol["Agglomeration"].apply(lambda x: next((m for m in COULEURS.keys() if m in x), x))
-                                df_evol_agg = df_evol.groupby(["Annee", "Metropole_Key"], as_index=False)[metric_key].sum()
-                                fig_evol = px.line(df_evol_agg, x="Annee", y=metric_key, color="Metropole_Key",
-                                                   markers=True, color_discrete_map=COULEURS,
-                                                   labels={"Annee": "Année", metric_key: label_metric, "Metropole_Key": "Métropole"},
-                                                   height=360)
+                                df_evol["Metropole_Key"] = df_evol["Agglomeration"].apply(
+                                    lambda x: next((m for m in COULEURS.keys() if m in x), x)
+                                )
+                                df_evol_agg = df_evol.groupby(
+                                    ["Annee", "Metropole_Key"], as_index=False
+                                )[metric_key].sum()
+                                fig_evol = px.line(
+                                    df_evol_agg, x="Annee", y=metric_key, color="Metropole_Key",
+                                    markers=True, color_discrete_map=COULEURS,
+                                    labels={
+                                        "Annee": "Année", metric_key: label_metric,
+                                        "Metropole_Key": "Métropole"
+                                    },
+                                    height=360
+                                )
                                 for trace in fig_evol.data:
                                     if "Grenoble" in trace.name:
-                                        trace.line.dash = "dash"; trace.line.color = "#FF584D"; trace.line.width = 2.5
-                                        if trace.marker: trace.marker.color = "#FF584D"; trace.marker.symbol = "diamond"; trace.marker.size = 8
+                                        trace.line.dash  = "dash"
+                                        trace.line.color = "#FF584D"
+                                        trace.line.width = 2.5
+                                        if trace.marker:
+                                            trace.marker.color  = "#FF584D"
+                                            trace.marker.symbol = "diamond"
+                                            trace.marker.size   = 8
                             else:
-                                df_evol = df_evol[(df_evol["Agglomeration"] == gre_agglo) & (df_evol["Nom_Commune"].isin(sel_entites_caf))] if "Nom_Commune" in df_evol.columns else df_evol
-                                df_evol_agg = df_evol.groupby(["Annee", "Nom_Commune"], as_index=False)[metric_key].sum()
-                                fig_evol = px.line(df_evol_agg, x="Annee", y=metric_key, color="Nom_Commune",
-                                                   markers=True, color_discrete_sequence=PALETTE_COMMUNE_CAF,
-                                                   labels={"Annee": "Année", metric_key: label_metric, "Nom_Commune": "Commune"},
-                                                   height=360)
-                            fig_evol.update_traces(hovertemplate="<b>%{fullData.name}</b><br>Année : %{x}<br>" + label_metric + " : %{y:,.0f}<extra></extra>")
+                                if "Nom_Commune" in df_evol.columns:
+                                    df_evol = df_evol[
+                                        (df_evol["Agglomeration"] == gre_agglo) &
+                                        (df_evol["Nom_Commune"].isin(sel_entites_caf))
+                                    ]
+                                df_evol_agg = df_evol.groupby(
+                                    ["Annee", "Nom_Commune"], as_index=False
+                                )[metric_key].sum()
+                                fig_evol = px.line(
+                                    df_evol_agg, x="Annee", y=metric_key, color="Nom_Commune",
+                                    markers=True, color_discrete_sequence=PALETTE_COMMUNE_CAF,
+                                    labels={
+                                        "Annee": "Année", metric_key: label_metric,
+                                        "Nom_Commune": "Commune"
+                                    },
+                                    height=360
+                                )
+                            fig_evol.update_traces(
+                                hovertemplate=(
+                                    "<b>%{fullData.name}</b><br>Année : %{x}<br>"
+                                    + label_metric + " : %{y:,.0f}<extra></extra>"
+                                )
+                            )
                             fig_evol.update_layout(
-                                legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
+                                legend=dict(
+                                    orientation="v", yanchor="middle", y=0.5,
+                                    xanchor="left", x=1.02
+                                ),
                                 margin=dict(t=30, r=40, b=30)
                             )
                             st.plotly_chart(style(fig_evol, 30), use_container_width=True)
 
                         with c4:
-                            st.markdown(f"##### Structure détaillée de la solidarité ({year_caf})",
-                                        help="Répartition en % du total par grande catégorie d'allocation.")
-                            INDICATEURS_GLOBAUX = ["Nombre foyers NDUR", "Nombre personnes NDUR", "Montant total NDUR"]
+                            st.markdown(
+                                f"##### Structure détaillée de la solidarité ({year_caf})",
+                                help="Répartition en % du total par grande catégorie d'allocation."
+                            )
+                            INDICATEURS_GLOBAUX = [
+                                "Nombre foyers NDUR",
+                                "Nombre personnes NDUR",
+                                "Montant total NDUR",
+                            ]
                             if metric_key in INDICATEURS_GLOBAUX:
                                 current_root = metric_key.split("NDUR")[0]
                                 aides_struct = {
@@ -4054,38 +4215,52 @@ if vue == "Solidarité et citoyenneté":
                                     "Jeunes enfants (PAJE)":  current_root + "NDURPAJE",
                                     "Enfance & Jeunesse":     current_root + "NDUREJ",
                                 }
-                                aides_d = {lab: col for lab, col in aides_struct.items() if col in df_fil.columns}
+                                aides_d = {
+                                    lab: col for lab, col in aides_struct.items()
+                                    if col in df_fil.columns
+                                }
                                 if aides_d:
-                                    tot_struct = df_fil[list(aides_d.values())].sum().sum()
-                                    rows_struct = [{"Catégorie": lab, "Valeur": df_fil[col].sum(), "Part": df_fil[col].sum() / tot_struct * 100 if tot_struct > 0 else 0} for lab, col in aides_d.items()]
-                                    df_struct = pd.DataFrame(rows_struct)
+                                    tot_struct  = df_fil[list(aides_d.values())].sum().sum()
+                                    rows_struct = [
+                                        {
+                                            "Catégorie": lab,
+                                            "Valeur":    df_fil[col].sum(),
+                                            "Part":      df_fil[col].sum() / tot_struct * 100
+                                                         if tot_struct > 0 else 0,
+                                        }
+                                        for lab, col in aides_d.items()
+                                    ]
+                                    df_struct   = pd.DataFrame(rows_struct)
                                     grey_struct = ["#444444", "#777777", "#aaaaaa", "#cccccc"]
-                                    fig_struct = px.bar(
+                                    fig_struct  = px.bar(
                                         df_struct, x="Part", y="Catégorie", orientation="h",
                                         color="Catégorie", color_discrete_sequence=grey_struct,
                                         text=df_struct["Part"].apply(lambda v: f"{v:.1f}%"),
                                         labels={"Part": "% du total", "Catégorie": ""},
                                         height=360
                                     )
-                                    fig_struct.update_traces(textposition="outside", hovertemplate="<b>%{y}</b><br>Part : <b>%{text}</b><extra></extra>")
+                                    fig_struct.update_traces(
+                                        textposition="outside",
+                                        hovertemplate="<b>%{y}</b><br>Part : <b>%{text}</b><extra></extra>"
+                                    )
                                     fig_struct.update_layout(
-                                        showlegend=False, xaxis=dict(range=[0, 60], title="% du total"),
+                                        showlegend=False,
+                                        xaxis=dict(range=[0, 60], title="% du total"),
                                         yaxis={"categoryorder": "total ascending"},
                                         margin=dict(t=30, b=30, l=10, r=60)
                                     )
                                     st.plotly_chart(style(fig_struct, 30), use_container_width=True)
                             else:
                                 st.info("Sélectionnez 'Toutes aides' pour voir la structure détaillée.")
-                        
-                        st.markdown("---")
 
+                        st.markdown("---")
                         with st.expander("Note méthodologique"):
                             st.markdown("""
                             - **Foyers aidés** : ménages percevant au moins une aide CAF  
                             - **Personnes concernées** : individus vivant dans ces foyers  
                             - **Montants (€)** : total des aides versées  
                             - **Quotient familial** : niveau de vie du foyer (revenus / parts)
-                            - **Logement** : APL, ALS, ALF — **Insertion** : RSA, AAH, prime d'activité  
+                            - **Logement** : APL, ALS, ALF - **Insertion** : RSA, AAH, prime d'activité  
                             - **Jeunes enfants (PAJE)** : naissance, garde, petite enfance  
                             - **Enfance & jeunesse** : allocations familiales, rentrée scolaire
                             """)
@@ -4199,6 +4374,8 @@ if vue == "Solidarité et citoyenneté":
                     fig_bar.update_traces(textposition="inside", hovertemplate="<b>%{x}</b><br>Élèves : <b>%{text}</b><extra></extra>")
                     fig_bar.update_layout(showlegend=False, yaxis=dict(range=[0, y_max_vol * 1.15]),
                                           xaxis=dict(categoryorder="array", categoryarray=by_entite[geo_col].tolist()))
+                    if is_metro:
+                        apply_grenoble_hatch(fig_bar)
                     st.plotly_chart(style(fig_bar, 40), use_container_width=True)
 
                 with c2:
@@ -4212,6 +4389,8 @@ if vue == "Solidarité et citoyenneté":
                     fig_etab.update_traces(textposition="inside", hovertemplate="<b>%{x}</b><br>Établissements : <b>%{text}</b><extra></extra>")
                     fig_etab.update_layout(showlegend=False, yaxis=dict(range=[0, y_max_etab * 1.15]),
                                            xaxis=dict(categoryorder="array", categoryarray=by_etab[geo_col].tolist()))
+                    if is_metro:
+                        apply_grenoble_hatch(fig_etab)
                     st.plotly_chart(style(fig_etab, 40), use_container_width=True)
 
                 st.markdown("---")
@@ -4625,7 +4804,10 @@ if vue == "Solidarité et citoyenneté":
             return pd.concat([df_muni_2014, df_muni_2020, df_muni_2026, df_p17, df_p22], ignore_index=True)
 
         df_elec = charger_elections()
-        DEP_METRO_ELEC = {"Isère": "Grenoble", "Ille-et-Vilaine": "Rennes", "Seine-Maritime": "Rouen", "Loire": "Saint-Étienne", "Hérault": "Montpellier"}
+        DEP_METRO_ELEC = {
+            "Isère": "Grenoble", "Ille-et-Vilaine": "Rennes",
+            "Seine-Maritime": "Rouen", "Loire": "Saint-Étienne", "Hérault": "Montpellier"
+        }
         df_elec["metropole"]       = df_elec["Libellé du département"].map(DEP_METRO_ELEC)
         df_elec["% Participation"] = 100 - df_elec["% Abs/Ins"]
 
@@ -4636,79 +4818,117 @@ if vue == "Solidarité et citoyenneté":
             <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 14px;'>
                 <strong>Sources :</strong> data.gouv.fr<br>
                 <b>Présidentielle 2022</b> :
-                    1er tour : <a href='https://www.data.gouv.fr/datasets/election-presidentielle-des-10-et-24-avril-2022-resultats-definitifs-du-1er-tour' target='_blank' style='color: #1C3A27;'>Accéder aux données</a> —
+                    1er tour : <a href='https://www.data.gouv.fr/datasets/election-presidentielle-des-10-et-24-avril-2022-resultats-definitifs-du-1er-tour' target='_blank' style='color: #1C3A27;'>Accéder aux données</a> -
                     2ème tour : <a href='https://www.data.gouv.fr/datasets/election-presidentielle-des-10-et-24-avril-2022-resultats-definitifs-du-2nd-tour' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br>
                 <b>Municipales 2026</b> :
-                    1er tour : <a href='https://www.data.gouv.fr/datasets/elections-municipales-2026-resultats-du-premier-tour' target='_blank' style='color: #1C3A27;'>Accéder aux données</a> —
+                    1er tour : <a href='https://www.data.gouv.fr/datasets/elections-municipales-2026-resultats-du-premier-tour' target='_blank' style='color: #1C3A27;'>Accéder aux données</a> -
                     2ème tour : <a href='https://www.data.gouv.fr/datasets/elections-municipales-2026-resultats-du-second-tour' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
-                <strong>Note :</strong> Les élections municipales de 2020 se sont tenues en pleine crise sanitaire COVID-19, ce qui a fortement impacté la participation. Les taux sont donc exceptionnellement bas et ne reflètent pas le comportement électoral habituel.
+                <strong>Note :</strong> Les élections municipales de 2020 se sont tenues en pleine crise sanitaire COVID-19,
+                ce qui a fortement impacté la participation. Les taux sont donc exceptionnellement bas
+                et ne reflètent pas le comportement électoral habituel.
             </div>""", unsafe_allow_html=True)
 
         with st.container():
             filter_bar("Filtres - Participation citoyenne")
             ft1, ft2 = st.columns([1, 3])
-            with ft1: filter_row_label("Type d'élection")
-            with ft2: type_election = st.radio("", ["Municipales", "Présidentielles"], key="part_type_election", horizontal=True, label_visibility="collapsed")
+            with ft1:
+                filter_row_label("Type d'élection")
+            with ft2:
+                type_election = st.radio(
+                    "", ["Municipales", "Présidentielles"],
+                    key="part_type_election", horizontal=True, label_visibility="collapsed"
+                )
             df_elec_type = df_elec[df_elec["Type d'élection"] == type_election]
             annees_elec  = sorted(df_elec_type["Année"].dropna().unique().astype(int))
+
             fp1, fp2 = st.columns([1, 3])
-            with fp1: filter_row_label("Niveau géographique")
-            with fp2: mode_part = st.radio("", ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
-                                           key="part_mode", horizontal=True, label_visibility="collapsed")
+            with fp1:
+                filter_row_label("Niveau géographique")
+            with fp2:
+                mode_part = st.radio(
+                    "", ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
+                    key="part_mode", horizontal=True, label_visibility="collapsed"
+                )
+
             if mode_part == "Comparaison communes Grenoble-Alpes Métropole":
-                communes_elec_dispo = sorted(df_elec_type[df_elec_type["metropole"] == "Grenoble"]["Libellé de la commune"].dropna().unique())
-                sel_communes_part   = st.multiselect("Communes de Grenoble-Alpes Métropole", communes_elec_dispo,
-                                                     default=shared_default_communes_solid(communes_elec_dispo, "part_communes"),
-                                                     key="part_communes", on_change=sync_communes_solid, args=("part_communes",))
+                communes_elec_dispo = sorted(
+                    df_elec_type[df_elec_type["metropole"] == "Grenoble"]["Libellé de la commune"]
+                    .dropna().unique()
+                )
+                sel_communes_part = st.multiselect(
+                    "Communes de Grenoble-Alpes Métropole", communes_elec_dispo,
+                    default=shared_default_communes_solid(communes_elec_dispo, "part_communes"),
+                    key="part_communes", on_change=sync_communes_solid, args=("part_communes",)
+                )
             else:
-                sel_metros_part = st.multiselect("Métropoles à comparer", metros_elec,
-                                                 default=shared_default_solid(metros_elec),
-                                                 key="part_metros", on_change=sync_metros_solid, args=("part_metros",))
+                sel_metros_part = st.multiselect(
+                    "Métropoles à comparer", metros_elec,
+                    default=shared_default_solid(metros_elec),
+                    key="part_metros", on_change=sync_metros_solid, args=("part_metros",)
+                )
+
             fc1, fc2 = st.columns(2)
             with fc1:
-                label_annee   = "Année (Municipales)" if type_election == "Municipales" else "Année (Présidentielles)"
+                label_annee    = "Année (Municipales)" if type_election == "Municipales" else "Année (Présidentielles)"
                 sel_annee_part = st.selectbox(label_annee, annees_elec, index=len(annees_elec)-1, key="part_annee")
             with fc2:
                 sel_tour_part  = st.selectbox("Tour", tours_elec, format_func=lambda t: f"Tour {t}", key="part_tour")
             st.markdown('</div>', unsafe_allow_html=True)
 
-        df_elec_f = df_elec_type[(df_elec_type["Année"] == sel_annee_part) & (df_elec_type["Numéro de tour"] == sel_tour_part)]
-        if mode_part == "Comparaison Métropoles":
+        # ── Variable booléenne locale pour ce scope ───────────────────────────
+        part_is_metro = (mode_part == "Comparaison Métropoles")
+
+        df_elec_f = df_elec_type[
+            (df_elec_type["Année"] == sel_annee_part) &
+            (df_elec_type["Numéro de tour"] == sel_tour_part)
+        ]
+
+        if part_is_metro:
             df_elec_f = df_elec_f[df_elec_f["metropole"].isin(sel_metros_part)]
             df_agg    = df_elec_f.groupby("metropole", as_index=False).agg(
-                Inscrits=("Inscrits","sum"), Votants=("Votants","sum"),
-                Abstentions=("Abstentions","sum"), Non_Exprimes=("Non-Exprimés","sum"), Exprimes=("Exprimés","sum"))
+                Inscrits=("Inscrits", "sum"), Votants=("Votants", "sum"),
+                Abstentions=("Abstentions", "sum"),
+                Non_Exprimes=("Non-Exprimés", "sum"),
+                Exprimes=("Exprimés", "sum")
+            )
             kpi_border_color = "#666"
         else:
             df_elec_f = df_elec_f[df_elec_f["Libellé de la commune"].isin(sel_communes_part)]
             df_agg    = df_elec_f.groupby("Libellé de la commune", as_index=False).agg(
-                Inscrits=("Inscrits","sum"), Votants=("Votants","sum"),
-                Abstentions=("Abstentions","sum"), Non_Exprimes=("Non-Exprimés","sum"), Exprimes=("Exprimés","sum"))
-            df_agg    = df_agg.rename(columns={"Libellé de la commune": "metropole"})
+                Inscrits=("Inscrits", "sum"), Votants=("Votants", "sum"),
+                Abstentions=("Abstentions", "sum"),
+                Non_Exprimes=("Non-Exprimés", "sum"),
+                Exprimes=("Exprimés", "sum")
+            )
+            df_agg = df_agg.rename(columns={"Libellé de la commune": "metropole"})
             kpi_border_color = "#1e5631"
 
-        df_agg["% Participation"] = (df_agg["Votants"]      / df_agg["Inscrits"] * 100).round(2)
-        df_agg["% Abstention"]    = (df_agg["Abstentions"]   / df_agg["Inscrits"] * 100).round(2)
-        df_agg["% Non-Exprimés"]  = (df_agg["Non_Exprimes"]  / df_agg["Votants"]  * 100).round(2)
-        df_agg["% Exprimés"]      = (df_agg["Exprimes"]      / df_agg["Votants"]  * 100).round(2)
+        df_agg["% Participation"] = (df_agg["Votants"]     / df_agg["Inscrits"] * 100).round(2)
+        df_agg["% Abstention"]    = (df_agg["Abstentions"] / df_agg["Inscrits"] * 100).round(2)
+        df_agg["% Non-Exprimés"]  = (df_agg["Non_Exprimes"] / df_agg["Votants"] * 100).round(2)
+        df_agg["% Exprimés"]      = (df_agg["Exprimes"]    / df_agg["Votants"]  * 100).round(2)
 
         st.markdown("---")
 
         if not df_agg.empty:
-            total_inscrits   = int(df_agg["Inscrits"].sum())
-            total_votants    = int(df_agg["Votants"].sum())
-            total_non_exp    = int(df_agg["Non_Exprimes"].sum())
-            total_abstentions= int(df_agg["Abstentions"].sum())
-            taux_part_global = round(total_votants / total_inscrits * 100, 1) if total_inscrits else 0
-            taux_abs_global  = round(total_abstentions / total_inscrits * 100, 1) if total_inscrits else 0
-            taux_non_exp_gl  = round(total_non_exp / total_votants * 100, 1) if total_votants else 0
+            total_inscrits    = int(df_agg["Inscrits"].sum())
+            total_votants     = int(df_agg["Votants"].sum())
+            total_non_exp     = int(df_agg["Non_Exprimes"].sum())
+            total_abstentions = int(df_agg["Abstentions"].sum())
+            taux_part_global  = round(total_votants     / total_inscrits * 100, 1) if total_inscrits else 0
+            taux_abs_global   = round(total_abstentions / total_inscrits * 100, 1) if total_inscrits else 0
+            taux_non_exp_gl   = round(total_non_exp     / total_votants  * 100, 1) if total_votants  else 0
 
-            st.markdown(f"#### Bilan Électoral — {type_election} {sel_annee_part} (Tour {sel_tour_part})")
+            st.markdown(f"#### Bilan Électoral - {type_election} {sel_annee_part} (Tour {sel_tour_part})")
             kpi_cols = st.columns(4)
-            with kpi_cols[0]: st.markdown(render_solidarite_kpi("Inscrits",      fmt(total_inscrits),   "Listes électorales",    kpi_border_color), unsafe_allow_html=True)
-            with kpi_cols[1]: st.markdown(render_solidarite_kpi("Participation", f"{taux_part_global} %","Votants / Inscrits",   kpi_border_color), unsafe_allow_html=True)
-            with kpi_cols[2]: st.markdown(render_solidarite_kpi("Abstention",    f"{taux_abs_global} %", "Absents / Inscrits",   kpi_border_color), unsafe_allow_html=True)
-            with kpi_cols[3]: st.markdown(render_solidarite_kpi("Blancs & Nuls", f"{taux_non_exp_gl} %", "Non-exprimés / Votants",kpi_border_color), unsafe_allow_html=True)
+            with kpi_cols[0]:
+                st.markdown(render_solidarite_kpi("Inscrits",      fmt(total_inscrits),    "Listes électorales",     kpi_border_color), unsafe_allow_html=True)
+            with kpi_cols[1]:
+                st.markdown(render_solidarite_kpi("Participation", f"{taux_part_global} %", "Votants / Inscrits",    kpi_border_color), unsafe_allow_html=True)
+            with kpi_cols[2]:
+                st.markdown(render_solidarite_kpi("Abstention",    f"{taux_abs_global} %",  "Absents / Inscrits",    kpi_border_color), unsafe_allow_html=True)
+            with kpi_cols[3]:
+                st.markdown(render_solidarite_kpi("Blancs & Nuls", f"{taux_non_exp_gl} %",  "Non-exprimés / Votants",kpi_border_color), unsafe_allow_html=True)
 
         st.markdown("---")
 
@@ -4716,50 +4936,77 @@ if vue == "Solidarité et citoyenneté":
             st.warning("⚠️ Aucune donnée pour les filtres sélectionnés.")
         else:
             c1, c2 = st.columns(2)
+
+            # ── Taux de participation ─────────────────────────────────────────
             with c1:
-                st.markdown("##### Taux de participation", help="Pourcentage d'inscrits ayant déposé un bulletin dans l'urne.")
+                st.markdown("##### Taux de participation",
+                            help="Votants / Inscrits × 100. Inclut les votes blancs et nuls.")
                 df_part_sorted = df_agg.sort_values("% Participation", ascending=True)
                 df_part_sorted["text_display"] = df_part_sorted["% Participation"].apply(lambda v: f"{v:.1f} %")
-                _part_color_map = COULEURS if mode_part == "Comparaison Métropoles" else None
-                _part_seq = px.colors.sequential.Greens_r if mode_part == "Comparaison communes Grenoble-Alpes Métropole" else None
+                _part_color_map = COULEURS if part_is_metro else None
+                _part_seq       = px.colors.sequential.Greens_r if not part_is_metro else None
                 fig_part = px.bar(
                     df_part_sorted, x="% Participation", y="metropole", orientation="h",
-                    color="metropole", color_discrete_map=_part_color_map, color_discrete_sequence=_part_seq,
-                    text="text_display", labels={"metropole": "", "% Participation": "Participation (%)"}, height=380
+                    color="metropole",
+                    color_discrete_map=_part_color_map,
+                    color_discrete_sequence=_part_seq,
+                    text="text_display",
+                    labels={"metropole": "", "% Participation": "Participation (%)"},
+                    height=380
                 )
-                fig_part.update_traces(textposition="outside", hovertemplate="<b>%{y}</b><br>Participation : <b>%{text}</b><extra></extra>")
+                fig_part.update_traces(
+                    textposition="outside",
+                    hovertemplate="<b>%{y}</b><br>Participation : <b>%{text}</b><extra></extra>"
+                )
                 fig_part.update_layout(
                     showlegend=False, xaxis_range=[0, 100],
-                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora",
-                    xaxis=dict(gridcolor="#E8F5EE"), margin=dict(l=10, r=40, t=40, b=10)
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"),
+                    margin=dict(l=10, r=40, t=40, b=10)
                 )
-                # Correction effectuée ici : Affichage inconditionnel du graphique
+                # Hachures uniquement en mode métropoles (évite la commune "Grenoble")
+                apply_grenoble_hatch(fig_part, active=part_is_metro)
                 st.plotly_chart(style(fig_part, 40), use_container_width=True)
 
+            # ── Qualité du vote ───────────────────────────────────────────────
             with c2:
-                st.markdown("##### Qualité du vote", help="Parmi les votants : proportion de votes valides (Exprimés) vs blancs/nuls (Non-Exprimés).")
-                df_qual = df_agg[["metropole", "% Exprimés", "% Non-Exprimés"]].melt(id_vars="metropole", var_name="Type", value_name="Taux")
+                st.markdown("##### Qualité du vote",
+                            help="Parmi les votants : proportion de votes valides (Exprimés) vs blancs/nuls (Non-Exprimés).")
+                df_qual = df_agg[["metropole", "% Exprimés", "% Non-Exprimés"]].melt(
+                    id_vars="metropole", var_name="Type", value_name="Taux"
+                )
                 df_qual["text_display"] = df_qual["Taux"].apply(lambda v: f"{v:.1f} %")
                 order_qual = df_agg.sort_values("% Exprimés", ascending=False)["metropole"].tolist()
+
                 fig_qual = px.bar(
                     df_qual, x="metropole", y="Taux", color="Type", barmode="stack",
-                    color_discrete_map={"% Exprimés": "#555555", "% Non-Exprimés": "#aaaaaa"} if mode_part == "Comparaison Métropoles" else {"% Exprimés": "#2D6A4F", "% Non-Exprimés": "#95D5B2"},
-                    text="text_display", labels={"metropole": "", "Taux": "%", "Type": ""}, height=380
+                    color_discrete_map=(
+                        {"% Exprimés": "#555555", "% Non-Exprimés": "#aaaaaa"}
+                        if part_is_metro else
+                        {"% Exprimés": "#2D6A4F", "% Non-Exprimés": "#95D5B2"}
+                    ),
+                    text="text_display",
+                    labels={"metropole": "", "Taux": "%", "Type": ""},
+                    height=380
                 )
-                fig_qual.update_traces(hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>")
-                if mode_part == "Comparaison Métropoles" and "Grenoble" in order_qual:
+                fig_qual.update_traces(
+                    hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>"
+                )
+                if part_is_metro and "Grenoble" in order_qual:
                     g_pos_qual = order_qual.index("Grenoble")
-                    fig_qual.add_vrect(x0=g_pos_qual - 0.45, x1=g_pos_qual + 0.45,
-                                      fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D",
-                                      line_width=1.5, line_dash="dash", layer="below")
+                    fig_qual.add_vrect(
+                        x0=g_pos_qual - 0.45, x1=g_pos_qual + 0.45,
+                        fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D",
+                        line_width=1.5, line_dash="dash", layer="below"
+                    )
                 fig_qual.update_layout(
                     yaxis_range=[0, 100],
                     xaxis=dict(categoryorder="array", categoryarray=order_qual),
                     legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
-                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora",
-                    yaxis=dict(gridcolor="#E8F5EE"), margin=dict(l=10, r=10, t=40, b=10)
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Sora", yaxis=dict(gridcolor="#E8F5EE"),
+                    margin=dict(l=10, r=10, t=40, b=10)
                 )
-                # Correction effectuée ici : Affichage inconditionnel du graphique
                 st.plotly_chart(style(fig_qual, 40), use_container_width=True)
 
             st.markdown("---")
@@ -4775,36 +5022,44 @@ if vue == "Solidarité et citoyenneté":
                 help_evolution  = f"Variation en points de pourcentage entre les présidentielles {annee_debut} et {annee_fin} (tour {sel_tour_part})."
 
             st.markdown(
-                f"##### Évolution de la participation — *{elections_label}*",
+                f"##### Évolution de la participation - *{elections_label}*",
                 help=help_evolution
             )
             st.markdown(
                 f"<p style='font-size:11px;color:#888;margin-top:-10px;margin-bottom:10px;'>"
                 f"📋 Élections : <b>{type_election}</b> · Périmètre : <b>"
-                f"{'Comparaison Métropoles' if mode_part == 'Comparaison Métropoles' else 'Communes Grenoble-Alpes Métropole'}</b> · "
+                f"{'Comparaison Métropoles' if part_is_metro else 'Communes Grenoble-Alpes Métropole'}</b> · "
                 f"Tour <b>{sel_tour_part}</b> · Variation entre <b>{annee_debut}</b> et <b>{annee_fin}</b>"
                 f"</p>",
                 unsafe_allow_html=True
             )
 
             df_delta_base = df_elec_type[df_elec_type["Numéro de tour"] == sel_tour_part].copy()
-            if mode_part == "Comparaison Métropoles":
+            if part_is_metro:
                 df_delta_base = df_delta_base[df_delta_base["metropole"].isin(sel_metros_part)]
                 grp_col = "metropole"
             else:
                 df_delta_base = df_delta_base[df_delta_base["Libellé de la commune"].isin(sel_communes_part)]
                 grp_col = "Libellé de la commune"
 
-            df_delta_agg = df_delta_base.groupby(["Année", grp_col], as_index=False).agg(Inscrits=("Inscrits","sum"), Votants=("Votants","sum"))
-            df_delta_agg["% Participation"] = (df_delta_agg["Votants"] / df_delta_agg["Inscrits"] * 100).round(2)
+            df_delta_agg = df_delta_base.groupby(["Année", grp_col], as_index=False).agg(
+                Inscrits=("Inscrits", "sum"), Votants=("Votants", "sum")
+            )
+            df_delta_agg["% Participation"] = (
+                df_delta_agg["Votants"] / df_delta_agg["Inscrits"] * 100
+            ).round(2)
 
             df_debut = df_delta_agg[df_delta_agg["Année"] == annee_debut].set_index(grp_col)["% Participation"]
             df_fin   = df_delta_agg[df_delta_agg["Année"] == annee_fin].set_index(grp_col)["% Participation"]
             df_delta = (df_fin - df_debut).dropna().reset_index()
-            df_delta.columns = ["entite", "Δ Participation (pts)"]
-            df_delta = df_delta.sort_values("Δ Participation (pts)")
-            df_delta["couleur"]      = df_delta["Δ Participation (pts)"].apply(lambda v: "#e76f51" if v < 0 else "#2D6A4F")
-            df_delta["text_display"] = df_delta["Δ Participation (pts)"].apply(lambda v: f"{v:+.1f} pts")
+            df_delta.columns    = ["entite", "Δ Participation (pts)"]
+            df_delta            = df_delta.sort_values("Δ Participation (pts)")
+            df_delta["couleur"] = df_delta["Δ Participation (pts)"].apply(
+                lambda v: "#e76f51" if v < 0 else "#2D6A4F"
+            )
+            df_delta["text_display"] = df_delta["Δ Participation (pts)"].apply(
+                lambda v: f"{v:+.1f} pts"
+            )
 
             if not df_delta.empty:
                 fig_delta = px.bar(
@@ -4814,26 +5069,66 @@ if vue == "Solidarité et citoyenneté":
                     labels={"entite": "", "Δ Participation (pts)": f"Variation (pts) {annee_debut}→{annee_fin}"},
                     height=max(300, len(df_delta) * 50)
                 )
-                fig_delta.update_traces(textposition="outside", hovertemplate="<b>%{y}</b><br>Variation : <b>%{text}</b><extra></extra>")
+                fig_delta.update_traces(
+                    textposition="outside",
+                    hovertemplate="<b>%{y}</b><br>Variation : <b>%{text}</b><extra></extra>"
+                )
                 fig_delta.add_vline(x=0, line_dash="dash", line_color="#888", line_width=1)
-                
-                if mode_part == "Comparaison Métropoles":
+
+                if part_is_metro:
                     entites_delta = df_delta["entite"].tolist()
                     if "Grenoble" in entites_delta:
                         g_pos_delta = entites_delta.index("Grenoble")
-                        fig_delta.add_hrect(y0=g_pos_delta - 0.45, y1=g_pos_delta + 0.45,
-                                            fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D",
-                                            line_width=1.5, line_dash="dash", layer="below")
+                        fig_delta.add_hrect(
+                            y0=g_pos_delta - 0.45, y1=g_pos_delta + 0.45,
+                            fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D",
+                            line_width=1.5, line_dash="dash", layer="below"
+                        )
                 fig_delta.update_layout(
                     showlegend=False,
-                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Sora",
-                    xaxis=dict(gridcolor="#E8F5EE"),
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"),
                     margin=dict(l=10, r=60, t=40, b=10)
                 )
-                # Correction effectuée ici : Affichage inconditionnel du graphique d'évolution
+                # Hachures uniquement en mode métropoles
+                apply_grenoble_hatch(fig_delta, active=part_is_metro)
                 st.plotly_chart(style(fig_delta), use_container_width=True)
             else:
                 st.info("Données insuffisantes pour calculer la variation.")
+
+            st.markdown("---")
+
+            # ── Fiche méthodologique ──────────────────────────────────────────
+            with st.expander("Fiche méthodologique - Définitions et calculs des indicateurs"):
+                st.markdown(f"""
+**Périmètre des données**
+
+Les données proviennent des résultats officiels publiés sur data.gouv.fr.
+Chaque ligne correspond aux résultats agrégés d'une commune pour un tour donné.
+En mode *Comparaison Métropoles*, les résultats de toutes les communes du département
+de référence sont sommés pour reconstituer un indicateur métropolitain.
+
+---
+
+**Indicateurs affichés**
+
+| Indicateur | Formule | Interprétation |
+|---|---|---|
+| **Taux de participation** | Votants ÷ Inscrits × 100 | Part des électeurs inscrits ayant effectivement voté (bulletins blancs et nuls inclus) |
+| **Taux d'abstention** | Abstentions ÷ Inscrits × 100 | Part des inscrits n'ayant pas voté - complément du taux de participation |
+| **Blancs & Nuls** | Non-exprimés ÷ Votants × 100 | Parmi ceux qui se sont déplacés, part des votes non comptabilisés dans les suffrages exprimés |
+| **Exprimés** | Exprimés ÷ Votants × 100 | Parmi ceux qui se sont déplacés, part des votes valides (hors blancs et nuls) |
+| **Évolution (pts)** | Participation {annee_fin} − Participation {annee_debut} | Variation en points de pourcentage entre les deux scrutins de même nature et de même tour |
+
+---
+
+**Note sur les municipales 2020**
+
+Le 1er tour des municipales 2020 s'est tenu le 15 mars 2020, en pleine première vague de Covid-19.
+Le 2nd tour a été repoussé au 28 juin 2020. La participation a chuté de manière exceptionnelle
+(−16 pts en moyenne nationale par rapport à 2014). Ces chiffres ne reflètent pas
+le comportement électoral structurel des territoires et doivent être interprétés avec précaution.
+                """)
 
 # ==============================================================================
 # PAGE ENVIRONNEMENT
