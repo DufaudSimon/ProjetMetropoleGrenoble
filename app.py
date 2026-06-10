@@ -1177,13 +1177,13 @@ if vue == "Description":
     env1, env2, env3 = st.columns(3)
     with env1:
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Air</div><div class="card-title"><b> Qualité de l'air</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Suivi des indices de pollution atmosphérique (PM2.5, PM10, NO2) et exposition des populations locales.</div></div>""", unsafe_allow_html=True)
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Suivi des indices de pollution atmosphérique.</div></div>""", unsafe_allow_html=True)
     with env2:
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Nature</div><div class="card-title"><b> Espaces verts & Biodiversité</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Analyse du taux de canopée, de l'accès aux parcs publics et de la préservation de la faune et flore urbaines.</div></div>""", unsafe_allow_html=True)
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Analyse</div></div>""", unsafe_allow_html=True)
     with env3:
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Transition</div><div class="card-title"><b> Déchets & Énergie</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Performances de tri sélectif, volume de déchets produits par habitant et déploiement des énergies renouvelables.</div></div>""", unsafe_allow_html=True)
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Analyse.</div></div>""", unsafe_allow_html=True)
 
     st.stop()   
 
@@ -1210,7 +1210,7 @@ if vue == "Démographie":
                 <strong>Source :</strong> INSEE -
                 <a href='https://www.insee.fr/fr/statistiques/1405599?geo=EPCI-200040715+EPCI-243500139' target='_blank' style='color: #1C3A27;'>Accéder aux données</a>
             </div>""", unsafe_allow_html=True)
-        
+
         def commune_val(commune, col):
             if df_gen is None:
                 return np.nan
@@ -1283,6 +1283,7 @@ if vue == "Démographie":
 
             st.markdown("---")
 
+            # ── Graphiques 1 : Population & Densité ──────────────────────────
             r1c1, r1c2 = st.columns(2)
             with r1c1:
                 st.subheader(
@@ -1333,13 +1334,14 @@ if vue == "Démographie":
                     "**Population totale (barres)** : une barre plus haute signifie simplement plus d'habitants. "
                     "Ce graphique permet de situer l'échelle de chaque territoire et de dimensionner les besoins en services publics (écoles, transports, logements).\n\n"
                     "**Densité vs Superficie (nuage de points)** : la position verticale indique la pression démographique par km². "
-                    "Un territoire dense et petit (en haut à gauche) a un profil urbain concentré."
+                    "Un territoire dense et petit (en haut à gauche) a un profil urbain concentré. "
                     "Un territoire peu dense et grand (en bas à droite) a un profil périurbain ou rural. "
                     "La taille de la bulle permet de ne pas confondre densité et population totale : une commune peut être grande en superficie mais peu peuplée, et pourtant avoir une forte densité dans son centre."
                 )
 
             st.markdown("---")
 
+            # ── Graphiques 2 : Soldes ─────────────────────────────────────────
             r2c1, r2c2 = st.columns(2)
             with r2c1:
                 st.subheader(
@@ -1354,33 +1356,24 @@ if vue == "Démographie":
                     if not all(np.isnan(v) for v in [sn, sm, tot]):
                         rows_comp_c.append({"Commune": comm, "Solde naturel": sn,
                                             "Solde migratoire": sm, "Variation totale": tot})
-                
                 if rows_comp_c:
                     df_comp_c = pd.DataFrame(rows_comp_c).melt(
                         id_vars="Commune", var_name="Composante", value_name="Taux (%/an)"
                     ).dropna()
-                    
                     color_map = {
                         "Solde naturel": PALETTE_COMMUNE[0],
                         "Solde migratoire": PALETTE_COMMUNE[int(len(PALETTE_COMMUNE) * 0.4)],
-                        "Variation totale": PALETTE_COMMUNE[-3] # Nuance la plus claire/proche du blanc
+                        "Variation totale": PALETTE_COMMUNE[-3],
                     }
-                    
-                    fig_comp_c = px.bar(
-                        df_comp_c, x="Commune", y="Taux (%/an)", color="Composante",
-                        barmode="group", color_discrete_map=color_map, height=500
-                    )
-                    
+                    fig_comp_c = px.bar(df_comp_c, x="Commune", y="Taux (%/an)", color="Composante",
+                                        barmode="group", color_discrete_map=color_map, height=500)
                     for trace in fig_comp_c.data:
                         trace.hovertemplate = "<b>Commune : %{x}</b><br>" + trace.name + " : %{y:.1f} %/an<extra></extra>"
-                    
                     fig_comp_c.add_hline(y=0, line_dash="dot", line_color="#AAAAAA")
                     fig_comp_c.update_layout(
-                        xaxis_title="Echelle communale", 
-                        yaxis_title="Taux (%/an)",
-                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02), 
-                        xaxis_tickangle=-20
-                    )
+                        xaxis_title="Echelle communale", yaxis_title="Taux (%/an)",
+                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
+                        xaxis_tickangle=-20)
                     st.plotly_chart(style(fig_comp_c), use_container_width=True)
                 else:
                     st.info("Données de soldes non disponibles pour ces communes.")
@@ -1408,38 +1401,123 @@ if vue == "Démographie":
                     col_accr = PALETTE_COMMUNE[int(len(PALETTE_COMMUNE) * 0.7)]
                     fig_vit_c = go.Figure()
                     fig_vit_c.add_trace(go.Bar(
-                        x=comms_vit, y=df_vit_c["Naissances"],
-                        name="Naissances / 1 000 hab", marker_color=col_nais,
+                        x=comms_vit, y=df_vit_c["Naissances"], name="Naissances / 1 000 hab",
+                        marker_color=col_nais,
                         hovertemplate="<b>Commune : %{x}</b><br>Naissances : %{y:.2f} / 1 000 hab<extra></extra>",
                     ))
                     fig_vit_c.add_trace(go.Bar(
-                        x=comms_vit, y=df_vit_c["Décès"],
-                        name="Décès / 1 000 hab", marker_color=col_decs,
+                        x=comms_vit, y=df_vit_c["Décès"], name="Décès / 1 000 hab",
+                        marker_color=col_decs,
                         hovertemplate="<b>Commune : %{x}</b><br>Décès : %{y:.2f} / 1 000 hab<extra></extra>",
                     ))
                     fig_vit_c.add_trace(go.Scatter(
-                        x=comms_vit, y=df_vit_c["Accroissement"],
-                        mode="markers+text", name="Accroissement naturel",
+                        x=comms_vit, y=df_vit_c["Accroissement"], mode="markers+text",
+                        name="Accroissement naturel",
                         marker=dict(symbol="diamond", size=12, color=col_accr, line=dict(color="white", width=1.5)),
                         text=[f"{v:+.2f}" for v in df_vit_c["Accroissement"]],
                         textposition="top center", textfont=dict(size=9, color="#1B4332"),
                         hovertemplate="<b>Commune : %{x}</b><br>Accroissement naturel : %{y:.2f} / 1 000 hab<extra></extra>",
                     ))
-                    fig_vit_c.update_layout(barmode="group", legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
-                                            xaxis_title="Echelle communale", yaxis_title="Pour 1 000 habitants", height=500)
+                    fig_vit_c.update_layout(
+                        barmode="group",
+                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
+                        xaxis_title="Echelle communale", yaxis_title="Pour 1 000 habitants", height=500)
                     st.plotly_chart(style(fig_vit_c), use_container_width=True)
                 else:
                     st.info("Données de naissances/décès non disponibles pour ces communes.")
 
             with st.expander("💡 Comment interpréter ces deux graphiques ?"):
                 st.write(
-                        "**Soldes naturel et migratoire** : ce graphique montre d’où vient l’évolution de la population. "
-                        "Le **solde naturel** compare les naissances et les décès. "
-                        "Le **solde migratoire** montre si le territoire gagne ou perd des habitants.\n\n"
-                        "**Naissances & Décès** : ce graphique compare les taux pour 1 000 habitants. "
-                        "Au-dessus de 0, les naissances sont plus nombreuses que les décès. "
-                        "Quand les décès dépassent les naissances, cela traduit un vieillissement de la population."
+                    "**Soldes naturel et migratoire** : ce graphique montre d'où vient l'évolution de la population. "
+                    "Le **solde naturel** compare les naissances et les décès. "
+                    "Le **solde migratoire** montre si le territoire gagne ou perd des habitants.\n\n"
+                    "**Naissances & Décès** : ce graphique compare les taux pour 1 000 habitants. "
+                    "Au-dessus de 0, les naissances sont plus nombreuses que les décès. "
+                    "Quand les décès dépassent les naissances, cela traduit un vieillissement de la population."
+                )
+
+            st.markdown("---")
+
+            # ── Graphiques 3 : Niveau de vie ──────────────────────────────────
+            r3c1, r3c2 = st.columns(2)
+            with r3c1:
+                st.subheader(
+                    "Taux de chômage et taux de pauvreté (%)",
+                    help="Le **taux de chômage** (15–64 ans) est la part des actifs sans emploi. Le **taux de pauvreté** est la part de la population dont le revenu est inférieur à 60% du revenu médian national. Ces deux indicateurs mesurent les fragilités sociales d'un territoire : un taux de chômage élevé pèse sur le revenu des ménages et fait mécaniquement augmenter le taux de pauvreté."
+                )
+                rows_social_c = []
+                for comm in sel_communes_pop:
+                    tc   = commune_val(comm, "tx_chomage_15_64")
+                    pauv = commune_val(comm, "tx_pauvrete_2021")
+                    rows_social_c.append({"Commune": comm,
+                                          "Taux de chômage (%)": tc if not np.isnan(tc) else None,
+                                          "Taux de pauvreté (%)": pauv if not np.isnan(pauv) else None})
+                df_social_c = pd.DataFrame(rows_social_c)
+                df_social_melt_c = df_social_c.melt(
+                    id_vars="Commune", var_name="Indicateur", value_name="Taux (%)"
+                ).dropna()
+
+                if not df_social_melt_c.empty:
+                    color_social_c = {
+                        "Taux de chômage (%)": PALETTE_COMMUNE[0],
+                        "Taux de pauvreté (%)": PALETTE_COMMUNE[int(len(PALETTE_COMMUNE) * 0.5)],
+                    }
+                    fig_social_c = px.bar(
+                        df_social_melt_c, x="Commune", y="Taux (%)", color="Indicateur",
+                        barmode="group", color_discrete_map=color_social_c,
+                        text="Taux (%)", height=500,
                     )
+                    fig_social_c.update_traces(
+                        texttemplate="%{text:.1f}%", textposition="outside",
+                        hovertemplate="<b>Commune : %{x}</b><br>%{fullData.name} : %{y:.1f}%<extra></extra>",
+                    )
+                    fig_social_c.update_layout(
+                        xaxis_title="Echelle communale", yaxis_title="Taux (%)",
+                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
+                        xaxis_tickangle=-20,
+                    )
+                    st.plotly_chart(style(fig_social_c), use_container_width=True)
+                else:
+                    st.info("Données sociales non disponibles pour ces communes.")
+
+            with r3c2:
+                st.subheader(
+                    "Revenu médian vs Taux de pauvreté",
+                    help="Chaque bulle représente une commune. L'axe horizontal indique le revenu médian annuel par unité de consommation (en €) ; l'axe vertical indique le taux de pauvreté (%). La taille de la bulle est proportionnelle à la population. On s'attend à une relation inverse : plus le revenu médian est élevé, plus le taux de pauvreté est faible. Un point qui s'écarte de cette tendance signale une situation atypique (ex : forte inégalité interne, population très hétérogène)."
+                )
+                data_rev_c = []
+                for c in sel_communes_pop:
+                    rev  = commune_val(c, "revenu_median_2021")
+                    pauv = commune_val(c, "tx_pauvrete_2021")
+                    pop  = commune_val(c, "population_2022")
+                    if not any(np.isnan(v) for v in [rev, pauv, pop]):
+                        data_rev_c.append({"Commune": c, "Revenu médian (€)": rev,
+                                           "Taux de pauvreté (%)": pauv, "Population": pop})
+                df_rev_c = pd.DataFrame(data_rev_c)
+                if not df_rev_c.empty:
+                    fig_rev_c = px.scatter(
+                        df_rev_c, x="Revenu médian (€)", y="Taux de pauvreté (%)",
+                        size="Population", color="Commune", text="Commune",
+                        color_discrete_sequence=PALETTE_COMMUNE, size_max=55, height=500,
+                    )
+                    fig_rev_c.update_traces(
+                        textposition="top center", textfont_size=10,
+                        hovertemplate="<b>%{text}</b><br>Revenu médian : %{x:,.0f} €<br>Taux de pauvreté : %{y:.1f}%<br>Population : %{marker.size:,.0f}<extra></extra>",
+                    )
+                    fig_rev_c.update_layout(showlegend=False)
+                    st.plotly_chart(style(fig_rev_c), use_container_width=True)
+                else:
+                    st.info("Données de revenu non disponibles pour ces communes.")
+
+            with st.expander("💡 Comment interpréter ces deux graphiques ?"):
+                st.write(
+                    "**Taux de chômage et taux de pauvreté (barres groupées)** : comparer ces deux indicateurs côte à côte permet de distinguer les territoires en difficulté économique structurelle (chômage et pauvreté élevés simultanément) "
+                    "de ceux où la pauvreté est présente malgré un faible chômage. \n\n"
+                    "**Revenu médian vs Taux de pauvreté (nuage de points)** : ce graphique révèle la relation entre niveau de vie et précarité. "
+                    "En règle générale, les deux indicateurs évoluent en sens inverse : plus le revenu médian est élevé, moins il y a de pauvreté. "
+                    "Un territoire situé au-dessus de la tendance (pauvreté élevée malgré un revenu médian correct) présente souvent de fortes inégalités internes. "
+                    "La taille des bulles permet de pondérer visuellement l'importance démographique de chaque commune dans l'analyse."
+                )
 
             st.markdown("---")
             st.markdown("#### Tableau récapitulatif - indicateurs clés")
@@ -1487,6 +1565,7 @@ if vue == "Démographie":
 
             st.markdown("---")
 
+            # ── Graphiques 1 : Population & Densité ──────────────────────────
             r1c1, r1c2 = st.columns(2)
             with r1c1:
                 st.subheader(
@@ -1506,11 +1585,10 @@ if vue == "Démographie":
                         if "Grenoble" in trace.name:
                             trace.marker.pattern.shape = "/"
                             trace.marker.pattern.fgcolor = "#FF584D"
-                            trace.marker.pattern.size = 20       # Plus grand = hachures plus espacées (ex: teste entre 12 et 20)
-                            trace.marker.pattern.solidity = 0.20 # Plus petit = traits plus fins (ex: teste entre 0.1 et 0.25)
-
-                    fig_pop.update_layout(showlegend=False, xaxis_title="Echelle métropolitaine", yaxis_title="Habitants",
-                                          yaxis=dict(tickformat=",d"), height=500)
+                            trace.marker.pattern.size = 20
+                            trace.marker.pattern.solidity = 0.20
+                    fig_pop.update_layout(showlegend=False, xaxis_title="Echelle métropolitaine",
+                                          yaxis_title="Habitants", yaxis=dict(tickformat=",d"), height=500)
                     st.plotly_chart(style(fig_pop), use_container_width=True)
 
             with r1c2:
@@ -1525,20 +1603,20 @@ if vue == "Démographie":
                     p = epci_val(m, "population_2022")
                     if not any(np.isnan(v) for v in [d, s, p]):
                         data_dens.append({"Métropole": m, "Densité (hab/km²)": d,
-                                        "Superficie (km²)": s, "Population": p})
+                                          "Superficie (km²)": s, "Population": p})
                 df_dens = pd.DataFrame(data_dens)
                 if not df_dens.empty:
                     fig_dens = px.scatter(df_dens, x="Superficie (km²)", y="Densité (hab/km²)",
-                                        size="Population", color="Métropole",
-                                        color_discrete_map=COULEURS, text="Métropole",
-                                        size_max=55, height=500)
-                    fig_dens.update_traces(textposition="top center", textfont_size=11,
-                                        hovertemplate="<b>Métropole : %{text}</b><br>Superficie : %{x:.2f} km²<br>Densité : %{y:.2f} hab/km²<extra></extra>")
-                    
+                                          size="Population", color="Métropole",
+                                          color_discrete_map=COULEURS, text="Métropole",
+                                          size_max=55, height=500)
+                    fig_dens.update_traces(
+                        textposition="top center", textfont_size=11,
+                        hovertemplate="<b>Métropole : %{text}</b><br>Superficie : %{x:.2f} km²<br>Densité : %{y:.2f} hab/km²<extra></extra>",
+                    )
                     for trace in fig_dens.data:
                         if "Grenoble" in trace.name:
                             trace.marker.line = dict(width=6, color="#FF584D")
-                    
                     fig_dens.update_layout(showlegend=False)
                     st.plotly_chart(style(fig_dens), use_container_width=True)
 
@@ -1554,6 +1632,7 @@ if vue == "Démographie":
 
             st.markdown("---")
 
+            # ── Graphiques 2 : Soldes ─────────────────────────────────────────
             r2c1, r2c2 = st.columns(2)
             with r2c1:
                 st.subheader(
@@ -1583,9 +1662,12 @@ if vue == "Démographie":
                     metros_comp = list(dict.fromkeys(df_comp["Métropole"].tolist()))
                     if "Grenoble" in metros_comp:
                         g_pos = metros_comp.index("Grenoble")
-                        fig_comp.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45, fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
-                    fig_comp.update_layout(xaxis_title="Echelle métropolitaine", yaxis_title="Taux (%/an)",
-                                           legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02))
+                        fig_comp.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45,
+                                           fillcolor="rgba(255,88,77,0.10)",
+                                           line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
+                    fig_comp.update_layout(
+                        xaxis_title="Echelle métropolitaine", yaxis_title="Taux (%/an)",
+                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02))
                     st.plotly_chart(style(fig_comp), use_container_width=True)
 
             with r2c2:
@@ -1610,18 +1692,18 @@ if vue == "Démographie":
                     col_decs_m = PALETTE_METRO[int(len(PALETTE_METRO) * 0.7)]
                     fig_vit = go.Figure()
                     fig_vit.add_trace(go.Bar(
-                        x=metros_vit, y=df_vit["Naissances"],
-                        name="Naissances / 1 000 hab", marker_color=col_nais_m,
+                        x=metros_vit, y=df_vit["Naissances"], name="Naissances / 1 000 hab",
+                        marker_color=col_nais_m,
                         hovertemplate="<b>Métropole : %{x}</b><br>Naissances : %{y:.2f} / 1 000 hab<extra></extra>",
                     ))
                     fig_vit.add_trace(go.Bar(
-                        x=metros_vit, y=df_vit["Décès"],
-                        name="Décès / 1 000 hab", marker_color=col_decs_m,
+                        x=metros_vit, y=df_vit["Décès"], name="Décès / 1 000 hab",
+                        marker_color=col_decs_m,
                         hovertemplate="<b>Métropole : %{x}</b><br>Décès : %{y:.2f} / 1 000 hab<extra></extra>",
                     ))
                     fig_vit.add_trace(go.Scatter(
-                        x=metros_vit, y=df_vit["Accroissement"],
-                        mode="markers+text", name="Accroissement naturel",
+                        x=metros_vit, y=df_vit["Accroissement"], mode="markers+text",
+                        name="Accroissement naturel",
                         marker=dict(symbol="diamond", size=12, color="#FF584D", line=dict(color="white", width=1.5)),
                         text=[f"{v:+.2f}" for v in df_vit["Accroissement"]],
                         textposition="top center", textfont=dict(size=9, color="#8B2E2E"),
@@ -1632,19 +1714,119 @@ if vue == "Démographie":
                         fig_vit.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45,
                                           fillcolor="rgba(255,88,77,0.10)",
                                           line_color="#FF584D", line_width=1.5, line_dash="dash", layer="below")
-                    fig_vit.update_layout(barmode="group", legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
-                                          xaxis_title="Echelle métropolitaine", yaxis_title="Pour 1 000 habitants", height=500)
+                    fig_vit.update_layout(
+                        barmode="group",
+                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
+                        xaxis_title="Echelle métropolitaine", yaxis_title="Pour 1 000 habitants", height=500)
                     st.plotly_chart(style(fig_vit), use_container_width=True)
 
             with st.expander("💡 Comment interpréter ces deux graphiques ?"):
                 st.write(
-                        "**Soldes naturel et migratoire** : ce graphique montre d’où vient l’évolution de la population. "
-                        "Le **solde naturel** compare les naissances et les décès. "
-                        "Le **solde migratoire** montre si le territoire gagne ou perd des habitants.\n\n"
-                        "**Naissances & Décès** : ce graphique compare les taux pour 1 000 habitants. "
-                        "Au-dessus de 0, les naissances sont plus nombreuses que les décès. "
-                        "Quand les décès dépassent les naissances, cela traduit un vieillissement de la population."
+                    "**Soldes naturel et migratoire** : ce graphique montre d'où vient l'évolution de la population. "
+                    "Le **solde naturel** compare les naissances et les décès. "
+                    "Le **solde migratoire** montre si le territoire gagne ou perd des habitants.\n\n"
+                    "**Naissances & Décès** : ce graphique compare les taux pour 1 000 habitants. "
+                    "Au-dessus de 0, les naissances sont plus nombreuses que les décès. "
+                    "Quand les décès dépassent les naissances, cela traduit un vieillissement de la population."
+                )
+
+            st.markdown("---")
+
+            # ── Graphiques 3 : Niveau de vie ──────────────────────────────────
+            r3c1, r3c2 = st.columns(2)
+            with r3c1:
+                st.subheader(
+                    "Taux de chômage et taux de pauvreté (%)",
+                    help="Le **taux de chômage** (15–64 ans) est la part des actifs sans emploi. Le **taux de pauvreté** est la part de la population dont le revenu est inférieur à 60% du revenu médian national. Ces deux indicateurs mesurent les fragilités sociales d'un territoire : un taux de chômage élevé pèse sur le revenu des ménages et fait mécaniquement augmenter le taux de pauvreté."
+                )
+                rows_social = []
+                for m in sel:
+                    tc   = epci_val(m, "tx_chomage_15_64")
+                    pauv = epci_val(m, "tx_pauvrete_2021")
+                    rows_social.append({"Métropole": m,
+                                        "Taux de chômage (%)": tc if not np.isnan(tc) else None,
+                                        "Taux de pauvreté (%)": pauv if not np.isnan(pauv) else None})
+                df_social = pd.DataFrame(rows_social)
+                df_social_melt = df_social.melt(
+                    id_vars="Métropole", var_name="Indicateur", value_name="Taux (%)"
+                ).dropna()
+
+                if not df_social_melt.empty:
+                    # Barres groupées par métropole, teinte selon indicateur
+                    col_chomage = PALETTE_METRO[int(len(PALETTE_METRO) * 0.2)]
+                    col_pauvrete = PALETTE_METRO[int(len(PALETTE_METRO) * 0.7)]
+                    color_social = {
+                        "Taux de chômage (%)":  col_chomage,
+                        "Taux de pauvreté (%)": col_pauvrete,
+                    }
+                    fig_social = px.bar(
+                        df_social_melt, x="Métropole", y="Taux (%)", color="Indicateur",
+                        barmode="group", color_discrete_map=color_social,
+                        text="Taux (%)", height=500,
                     )
+                    fig_social.update_traces(
+                        texttemplate="%{text:.1f}%", textposition="outside",
+                        hovertemplate="<b>Métropole : %{x}</b><br>%{fullData.name} : %{y:.1f}%<extra></extra>",
+                    )
+
+                    metros_social = list(dict.fromkeys(df_social_melt["Métropole"].tolist()))
+                    if "Grenoble" in metros_social:
+                        g_pos = metros_social.index("Grenoble")
+                        fig_social.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45,
+                                             fillcolor="rgba(255,88,77,0.10)",
+                                             line_color="#FF584D", line_width=1.5,
+                                             line_dash="dash", layer="below")
+                    fig_social.update_layout(
+                        xaxis_title="Echelle métropolitaine", yaxis_title="Taux (%)",
+                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
+                    )
+                    st.plotly_chart(style(fig_social), use_container_width=True)
+                else:
+                    st.info("Données sociales non disponibles pour les métropoles sélectionnées.")
+
+            with r3c2:
+                st.subheader(
+                    "Revenu médian vs Taux de pauvreté",
+                    help="Chaque bulle représente une métropole. L'axe horizontal indique le revenu médian annuel par unité de consommation (en €) ; l'axe vertical indique le taux de pauvreté (%). La taille de la bulle est proportionnelle à la population. On s'attend à une relation inverse : plus le revenu médian est élevé, plus le taux de pauvreté est faible. Un point qui s'écarte de cette tendance signale une situation atypique (forte inégalité interne, population très hétérogène)."
+                )
+                data_rev = []
+                for m in sel:
+                    rev  = epci_val(m, "revenu_median_2021")
+                    pauv = epci_val(m, "tx_pauvrete_2021")
+                    pop  = epci_val(m, "population_2022")
+                    if not any(np.isnan(v) for v in [rev, pauv, pop]):
+                        data_rev.append({"Métropole": m, "Revenu médian (€)": rev,
+                                         "Taux de pauvreté (%)": pauv, "Population": pop})
+                df_rev = pd.DataFrame(data_rev)
+                if not df_rev.empty:
+                    fig_rev = px.scatter(
+                        df_rev, x="Revenu médian (€)", y="Taux de pauvreté (%)",
+                        size="Population", color="Métropole", text="Métropole",
+                        color_discrete_map=COULEURS, size_max=55, height=500,
+                    )
+                    fig_rev.update_traces(
+                        textposition="top center", textfont_size=11,
+                        hovertemplate="<b>%{text}</b><br>Revenu médian : %{x:,.0f} €<br>Taux de pauvreté : %{y:.1f}%<br>Population : %{marker.size:,.0f}<extra></extra>",
+                    )
+                    # Bordure Grenoble sur la bulle
+                    for trace in fig_rev.data:
+                        if "Grenoble" in trace.name:
+                            trace.marker.line = dict(width=6, color="#FF584D")
+                    fig_rev.update_layout(showlegend=False)
+                    st.plotly_chart(style(fig_rev), use_container_width=True)
+                else:
+                    st.info("Données de revenu non disponibles pour les métropoles sélectionnées.")
+
+            with st.expander("💡 Comment interpréter ces deux graphiques ?"):
+                st.write(
+                    "**Taux de chômage et taux de pauvreté (barres groupées)** : comparer ces deux indicateurs côte à côte permet de distinguer les territoires en difficulté économique structurelle (chômage et pauvreté élevés simultanément) "
+                    "de ceux où la pauvreté est présente malgré un faible chômage.\n\n"
+                    "**Revenu médian vs Taux de pauvreté (nuage de points)** : ce graphique révèle la relation entre niveau de vie et précarité. "
+                    "En règle générale, les deux indicateurs évoluent en sens inverse : plus le revenu médian est élevé, moins il y a de pauvreté. "
+                    "Un territoire situé au-dessus de la tendance générale (pauvreté élevée malgré un revenu médian correct) présente souvent de fortes inégalités internes. "
+                    "La taille des bulles permet de pondérer visuellement l'importance démographique de chaque métropole dans l'analyse."
+                )
+
             st.markdown("---")
             st.markdown("#### Tableau récapitulatif - indicateurs clés")
             lignes_tab = []
@@ -2200,13 +2382,14 @@ if vue == "Démographie":
             <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px;
                         border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 14px;'>
                 <strong>Source :</strong> INSEE<br><br>
-                🏠 <b>Migrations résidentielles</b> : changements de lieu de résidence sur une année.
+                🏠 <b>Migrations résidentielles</b> : mesure l'origine et la destination des habitants ayant déménagé au cours de l'année. L'analyse sépare les flux de proximité (internes à la métropole) des flux d'échanges nationaux (entrants et sortants de la métropole).
                 <a href='https://www.insee.fr/fr/statistiques/8582988' target='_blank'
-                   style='color:#1C3A27;font-size:0.85em;'>Données INSEE</a><br>
-                💼 <b>Trajets domicile-travail</b> : déplacements domicile–lieu de travail des actifs.
+                   style='color:#1C3A27;font-size:0.85em;'>Données INSEE</a><br><br>
+                💼 <b>Trajets domicile-travail</b> : représente les déplacements quotidiens de la population active. Elle comptabilise les actifs stables (travaillant dans leur territoire de résidence) et les flux alternants (actifs entrants et sortants d'autres métropoles).
                 <a href='https://www.insee.fr/fr/statistiques/8582949' target='_blank'
-                   style='color:#1C3A27;font-size:0.85em;'>Données INSEE</a><br>
-                🎓 <b>Mobilités scolaires</b> : déplacements domicile–lieu d'études (maternelle → supérieur).
+                   style='color:#1C3A27;font-size:0.85em;'>Données INSEE</a><br><br>
+                🎓 <b>Mobilités scolaires</b> : analyse les déplacements quotidiens des élèves et étudiants (de la maternelle au supérieur) entre leur domicile et leur lieu d'études.<br> 
+                        Les données comptabilisent la totalité de la population scolarisée en isolant les jeunes qui étudient dans leur propre commune de résidence des flux alternants (élèves venant de territoires extérieurs et élèves locaux se déplaçant hors de la métropole).
                 <a href='https://www.insee.fr/fr/statistiques/8582969' target='_blank'
                    style='color:#1C3A27;font-size:0.85em;'>Données INSEE</a>
             </div>""", unsafe_allow_html=True)
