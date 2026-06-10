@@ -457,6 +457,19 @@ def charger_men_csp():
     return df
 
 @st.cache_data
+def charger_log():
+    # 1. Utilisation du bon dossier et du bon nom de fichier pour le logement
+    p = DATA_DIR / "logement" / "logements_metropoles_clean.csv"
+    if not p.exists():
+        return None
+    df = pd.read_csv(p)
+    if "metropole" in df.columns:
+        df["metropole"] = df["metropole"].replace("Saint-Etienne", "Saint-Étienne")
+    if "annee" in df.columns:
+        df["annee"] = pd.to_numeric(df["annee"], errors="coerce").fillna(0).astype(int)
+    return df
+
+@st.cache_data
 def charger_mobilites():
     p_res  = DATA_DIR / "mobilite" / "Migrations_resid_clean.csv"
     p_prof = DATA_DIR / "mobilite" / "Mobilite_profess_clean.csv"
@@ -604,6 +617,7 @@ df_gen     = charger_generales()
 df_pop     = charger_pop_age()
 df_men_age = charger_men_age()
 df_men_csp = charger_men_csp()
+df_log     = charger_log()
 df_caf     = charger_caf()
 df_eff     = charger_effectifs()
 df_filo    = charger_filo()
@@ -904,13 +918,14 @@ if st.session_state.page == "home":
         <div class="info-card">
             <div class="info-card-title"> Démographie</div>
             <div class="info-card-body">
-                Analyse de la population, de la structure par âge, des ménages, des mobilités résidentielles, professionnelles et scolaires.
+                Analyse de la population, de la structure par âge, des ménage, des logements, des mobilités résidentielles, professionnelles et scolaires.
             </div>
             <div class="tag-row">
                 <span class="tag-green">Population</span>
                 <span class="tag-green">Âges</span>
                 <span class="tag-green">Actifs</span>
                 <span class="tag-green">Mobilités</span>
+                <span class="tag-green">Logements</span>
             </div>
         </div>
         <div class="info-card orange">
@@ -1153,6 +1168,9 @@ if vue == "Description":
     with col3:
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Mobilités</div><div class="card-title"><b> Mobilités</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;"><b>Toutes les mobilités :</b> On étudie les déplacements des habitants. Cela comprend les nouveaux arrivants, les trajets domicile-travail et les déplacements pour l'école.</div></div>""", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Habitation</div><div class="card-title"><b>Logement</b></div>
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Ici, on s’intéresse à</div></div>""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('<p style="font-size:1.5rem; font-weight:700; color:#C45B2A; border-bottom: 2px solid #C45B2A;"> Thématique 2 : Solidarité & Citoyenneté</p>', unsafe_allow_html=True)
@@ -1192,12 +1210,13 @@ if vue == "Description":
 # ==============================================================================
 
 if vue == "Démographie":
-    tab1, tab2, tab3, tab4, tab6 = st.tabs([
-        "🏙️  Population globale",
-        "👥  Structure par âge",
-        "🚌  Mobilités",
-        "🏠  Ménages",
-        "📊  Population active 25-54 ans",
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+        "🏙️   Population globale",
+        "👥   Structure par âge",
+        "🚌   Mobilités",
+        "🏠   Ménages",
+        "🏢   Logements",
+        "📊   Population active 25-54 ans",
     ])
 
 # ==============================================================================
@@ -3325,7 +3344,337 @@ if vue == "Démographie":
                         "Comparer ces tailles entre territoires pour une même CSP met en évidence des différences sociales locales."
                     )
 # ==============================================================================
-# ONGLET 5 - Population active 25-54 ans
+# ONGLET 5 - LOGEMENT (INDICE DE PEUPLEMENT)
+# ==============================================================================
+
+if vue == "Démographie":  # À ajuster selon votre variable de menu globale
+    with tab5:
+
+        if df_log is None:
+            st.info("📂 Fichier `logements_metropoles_clean.csv` introuvable.")
+        else:
+            # Encart Insee avec lien catalogue
+            st.markdown("""
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source  :</strong> INSEE - 
+                <a href='https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_LOGEMENT_COMPL' target='_blank' style='color: #1C3A27;'>Accéder aux données</a>
+            </div>""", unsafe_allow_html=True)
+
+            # Extraction des années disponibles
+            annees_dispo = sorted(df_log["annee"].dropna().unique().astype(int).tolist())
+
+            COULEURS_OCCUPATION = {
+                "Sous-occupation très accentuée": "#0D47A1",
+                "Sous-occupation accentuée": "#1E88E5",
+                "Sous-occupation modérée": "#90CAF9",
+                "Occupation dans la norme": "#E0E0E0",
+                "Suroccupation modérée": "#FFB74D",
+                "Suroccupation accentuée": "#E65100"
+            }
+            
+            COULEURS_MACRO = {
+                "Sous-occupation globale": "#1E88E5",
+                "Dans la norme": "#E0E0E0",
+                "Suroccupation globale": "#E65100"
+            }
+
+            HELP_INDICE = (
+                "L'indice de peuplement de l'INSEE mesure l'adéquation entre la taille du logement "
+                "et la composition du ménage qui y réside.\n\n"
+                "Il compare :\n"
+                "- Le nombre de pièces réelles du logement.\n"
+                "- Le nombre de pièces théoriquement nécessaires.\n\n"
+            )
+
+            def get_log_data_pct(df_src, annee):
+                df_year = df_src[df_src["annee"] == annee]
+                sums = df_year.groupby("indicateur_occupation")["valeur"].sum()
+                total_rp = sums.sum()
+                
+                labels_codes = [
+                    ("VSEV_UNDER_OCC", "Sous-occupation très accentuée"),
+                    ("SEV_UNDER_OCC", "Sous-occupation accentuée"),
+                    ("MOD_UNDER_OCC", "Sous-occupation modérée"),
+                    ("STD_OCC", "Occupation dans la norme"),
+                    ("MOD_OVER_OCC", "Suroccupation modérée"),
+                    ("SEV_OVER_OCC", "Suroccupation accentuée")
+                ]
+                
+                vals = []
+                labels = []
+                kpis = {"norme": 0.0, "surocc": 0.0, "sousocc": 0.0}
+                
+                for code, label in labels_codes:
+                    val_abs = sums.get(code, 0.0)
+                    pct = (val_abs / total_rp * 100) if total_rp > 0 else 0.0
+                    vals.append(pct)
+                    labels.append(label)
+                    
+                    if code == "STD_OCC":
+                        kpis["norme"] += pct
+                    elif "OVER" in code:
+                        kpis["surocc"] += pct
+                    elif "UNDER" in code:
+                        kpis["sousocc"] += pct
+                        
+                return vals, labels, total_rp, kpis
+
+            # Graphique 1 : Macro-regroupement en barres empilées
+            def build_macro_stacked_chart(territories, df_filtered_fn, annee, group_name="Territoire"):
+                data_list = []
+                for t in territories:
+                    df_t = df_filtered_fn(t)
+                    _, _, tot, kpis = get_log_data_pct(df_t, annee)
+                    if tot > 0:
+                        data_list.append({
+                            group_name: t,
+                            "Sous-occupation globale": kpis["sousocc"],
+                            "Dans la norme": kpis["norme"],
+                            "Suroccupation globale": kpis["surocc"]
+                        })
+                
+                df_macro = pd.DataFrame(data_list)
+                if df_macro.empty:
+                    return None
+                
+                fig = go.Figure()
+                for cat in ["Sous-occupation globale", "Dans la norme", "Suroccupation globale"]:
+                    fig.add_trace(go.Bar(
+                        name=cat, y=df_macro[group_name], x=df_macro[cat], orientation='h',
+                        marker_color=COULEURS_MACRO[cat],
+                        hovertemplate=f"<b>%{{y}}</b><br>{cat} : <b>%{{x:.1f}}%</b><extra></extra>"
+                    ))
+                
+                fig.update_layout(
+                    barmode='stack',
+                    xaxis=dict(title="Pourcentage du parc (%)", range=[0, 100], showgrid=True, gridcolor="#eee"),
+                    yaxis=dict(title=""),
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
+                    height=130 + (len(territories) * 38),
+                    margin=dict(t=10, b=40, l=120, r=20),
+                    plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)"
+                )
+                return fig
+
+            # Graphique 2 : Profils détaillés (6 catégories Insee)
+            def build_bar_log_pct(df_src, label_entity, annee, x_max=None):
+                vals, labels, _, _ = get_log_data_pct(df_src, annee)
+                if x_max is None:
+                    x_max = max(vals) * 1.15 if vals else 100
+                
+                colors_list = [COULEURS_OCCUPATION.get(lbl, "#888") for lbl in labels]
+                
+                fig = go.Figure()
+                fig.add_trace(go.Bar(
+                    y=labels, x=vals, orientation="h", marker=dict(color=colors_list),
+                    hovertemplate=f"<b>{label_entity}</b><br>%{{y}}<br>Part : %{{x:.2f}}%<extra></extra>"
+                ))
+                
+                fig.update_layout(
+                    xaxis=dict(title="% des résidences principales", range=[0, x_max], showgrid=True, gridcolor="#eee"),
+                    yaxis=dict(title="", tickfont_size=10, categoryorder="array", categoryarray=labels),
+                    title=dict(text=f"<b>{label_entity}</b>", font_size=12, x=0.5, xanchor="center"),
+                    height=280, margin=dict(t=40, b=40, l=150, r=20),
+                    plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                )
+                return fig
+
+            # Composant des cartes KPI
+            def render_kpi_card_log(label, tot, kpis, border_color):
+                tot_str = f"{int(tot):,}".replace(",", " ") if tot > 0 else "N/D"
+                st.markdown(f"""
+                <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08); border-left:6px solid {border_color}; background:#fff; margin-bottom:12px; padding:12px 16px;'>
+                    <div style='font-size:13px;font-weight:700;color:#1C3A27;margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:5px;'>{label}</div>
+                    <div style='display:grid;grid-template-columns:1fr 1fr;gap:6px;'>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Total RP</div>
+                            <div style='font-size:15px;font-weight:800;color:#555;'>{tot_str}</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Dans la norme</div>
+                            <div style='font-size:15px;font-weight:800;color:#757575;'>{kpis['norme']:.1f}%</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Suroccupation</div>
+                            <div style='font-size:15px;font-weight:800;color:#E65100;'>{kpis['surocc']:.1f}%</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Sous-occupation</div>
+                            <div style='font-size:15px;font-weight:800;color:#1E88E5;'>{kpis['sousocc']:.1f}%</div>
+                        </div>
+                    </div>
+                </div>""", unsafe_allow_html=True)
+
+
+            # --- Barre de filtres unifiée ---
+            with st.container():
+                filter_bar("Filtres - Indice de peuplement des résidences principales")
+                fa1, fa2 = st.columns([1, 3])
+                with fa1: filter_row_label("Niveau géographique")
+                with fa2: mode_log = st.radio("", ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"], key="log_mode", horizontal=True, label_visibility="collapsed")
+                
+                if mode_log == "Comparaison Métropoles":
+                    sel_metros_log = st.multiselect("Métropoles à comparer", TOUTES, default=shared_default_demo(TOUTES), key="log_metros")
+                else:
+                    communes_dispo = sorted(df_log[df_log["metropole"] == "Grenoble"]["nom_commune"].dropna().unique().tolist())
+                    sel_communes_log = st.multiselect("Communes de Grenoble-Alpes Métropole", communes_dispo, default=shared_default_communes_demo(communes_dispo), key="log_communes")
+                
+                annee_log = st.selectbox("Année d'analyse", annees_dispo, index=len(annees_dispo)-1, key="an_log")
+
+            st.markdown("---")
+
+
+            # ── VUE 1 : INTER-MÉTROPOLES ──────────────────────────────────────
+            if mode_log == "Comparaison Métropoles":
+                if not sel_metros_log:
+                    st.warning("Sélectionnez au moins une métropole.")
+                    st.stop()
+
+                st.subheader(f"Indicateurs synthétiques de peuplement en {annee_log}")
+                kpi_cols = st.columns(len(sel_metros_log))
+                for i, m in enumerate(sel_metros_log):
+                    df_m = df_log[(df_log["metropole"] == m) & (df_log["annee"] == annee_log)]
+                    _, _, tot, kpis_m = get_log_data_pct(df_m, annee_log)
+                    with kpi_cols[i]:
+                        render_kpi_card_log(m, tot, kpis_m, border_color=COULEURS.get(m, "#888888"))
+
+                st.markdown("---")
+                
+                # --- GRAPH_1 : MACRO STACKED ---
+                st.subheader(
+                    "Équilibre macro-synthétique des parcs", 
+                    help=HELP_INDICE + "\n\nCe graphique regroupe les indices en 3 grandes masses (Sous-occupation, Norme, Suroccupation)."
+                )
+                fig_macro_m = build_macro_stacked_chart(
+                    territories=sel_metros_log,
+                    df_filtered_fn=lambda m: df_log[(df_log["metropole"] == m) & (df_log["annee"] == annee_log)],
+                    annee=annee_log,
+                    group_name="Métropole"
+                )
+                if fig_macro_m:
+                    st.plotly_chart(style(fig_macro_m), use_container_width=True)
+                
+                # Aide à l'interprétation Macro
+                with st.expander("💡 Comment interpréter ce graphique ?"):
+                    st.markdown("""
+                    **Comprendre les grandes masses de peuplement :**
+                    * **Sous-occupation globale (Bleu) :** Reflète souvent des territoires à forte proportion de maisons individuelles ou marqués par le vieillissement démographique (par exemple, des couples de retraités restés seuls dans la grande maison familiale après le départ des enfants).
+                    * **Suroccupation globale (Orange) :** Révèle des zones de fortes tensions immobilières ou des spécificités de peuplement (parcs denses, forte présence d'étudiants en petits studios ou de familles nombreuses contraintes de vivre dans des espaces trop exigus).
+                    """)
+
+                st.markdown("---")
+
+                # --- GRAPH_2 : STRUCTURE DÉTAILLÉE ---
+                st.subheader(
+                    "Profils détaillés par niveau d'occupation", 
+                    help="Décomposition fine selon la nomenclature officielle de l'INSEE en 6 niveaux."
+                )
+                all_maxes = []
+                for m in sel_metros_log:
+                    df_m = df_log[(df_log["metropole"] == m) & (df_log["annee"] == annee_log)]
+                    vals, _, _, _ = get_log_data_pct(df_m, annee_log)
+                    if vals: all_maxes.append(max(vals))
+                shared_x_max = max(all_maxes) * 1.10 if all_maxes else 100
+
+                ncols = min(len(sel_metros_log), 3)
+                rows_pyr = [sel_metros_log[i:i+ncols] for i in range(0, len(sel_metros_log), ncols)]
+                for row in rows_pyr:
+                    cols = st.columns(len(row))
+                    for j, m in enumerate(row):
+                        df_m = df_log[(df_log["metropole"] == m) & (df_log["annee"] == annee_log)]
+                        fig = build_bar_log_pct(df_m, m, annee_log, x_max=shared_x_max)
+                        
+                        if m == "Grenoble":
+                            for trace in fig.data:
+                                if trace.type == "bar":
+                                    trace.marker.pattern.shape = "/"
+                                    trace.marker.pattern.fgcolor = "#FF584D"
+                                    trace.marker.pattern.size = 15
+                                    trace.marker.pattern.solidity = 0.25
+                        
+                        with cols[j]: 
+                            st.plotly_chart(style(fig, 30), use_container_width=True)
+                
+                # Aide à l'interprétation Détaillée
+                with st.expander("💡 Comment interpréter ce graphique ?"):
+                    st.markdown("""
+                    | Code Indicateur | Signification officielle | Explication & Exemple |
+                    | :--- | :--- | :--- |
+                    | **VSEV_UNDER_OCC** | Sous-occupation très accentuée | Le logement est beaucoup plus grand que nécessaire (ex: 1 personne seule dans un T5). |
+                    | **SEV_UNDER_OCC** | Sous-occupation accentuée | Il comporte au moins 2 pièces de plus que le besoin théorique (ex: couple dans un T4+). |
+                    | **MOD_UNDER_OCC** | Sous-occupation modérée | Il y a une pièce excédentaire par rapport à la norme (ex: couple seul dans un T3). |
+                    | **STD_OCC** | Occupation dans la norme | Le nombre de pièces correspond exactement aux besoins (ex: couple seul dans un T2). |
+                    | **MOD_OVER_OCC** | Suroccupation modérée | Il manque une pièce (ex: couple avec deux enfants vivant dans un T3). |
+                    | **SEV_OVER_OCC** | Suroccupation accentuée | Alerte critique : il manque plusieurs pièces par rapport aux besoins du ménage. |
+                    """)
+
+
+            # ── VUE 2 : INTRA-COMMUNES (GRENOBLE) ─────────────────────────────
+            else:
+                communes_log = sel_communes_log if sel_communes_log else []
+                if not communes_log:
+                    st.info("Sélectionnez au moins une commune pour afficher les données.")
+                    st.stop()
+
+                n_comm = len(communes_log)
+                comm_palette = PALETTE_COMMUNE[:n_comm] if n_comm <= len(PALETTE_COMMUNE) else PALETTE_COMMUNE
+
+                st.subheader(f"Indicateurs synthétiques communaux en {annee_log}")
+                kpi_cols = st.columns(n_comm)
+                for i, comm in enumerate(communes_log):
+                    df_c = df_log[(df_log["nom_commune"] == comm) & (df_log["annee"] == annee_log)]
+                    _, _, tot, kpis_c = get_log_data_pct(df_c, annee_log)
+                    with kpi_cols[i]:
+                        render_kpi_card_log(comm, tot, kpis_c, border_color=comm_palette[i % len(comm_palette)])
+
+                st.markdown("---")
+
+                # --- GRAPH_1 : MACRO STACKED COMMUNES ---
+                st.subheader(
+                    "⚖️ Équilibre macro-synthétique des communes", 
+                    help=HELP_INDICE + "\n\nMet en lumière les disparités d'occupation au sein même de la métropole grenobloise."
+                )
+                fig_macro_c = build_macro_stacked_chart(
+                    territories=communes_log,
+                    df_filtered_fn=lambda c: df_log[(df_log["nom_commune"] == c) & (df_log["annee"] == annee_log)],
+                    annee=annee_log,
+                    group_name="Commune"
+                )
+                if fig_macro_c:
+                    st.plotly_chart(style(fig_macro_c), use_container_width=True)
+                
+                with st.expander("💡 Comment interpréter ce graphique ?"):
+                    st.markdown("""
+                    **Les communes résidentielles ou périurbaines** affichent structurellement des taux de sous-occupation élevés, portés par un parc composé majoritairement de maisons individuelles et de ménages propriétaires stabilisés.
+                    **Les centres urbains denses ou les secteurs universitaires** concentrent à l'inverse les taux de suroccupation les plus marqués, en raison de la prépondérance des petits logements locatifs et d'une rotation importante des ménages.
+                    """)
+
+                st.markdown("---")
+
+                # --- GRAPH_2 : STRUCTURE DÉTAILLÉE COMMUNES ---
+                st.subheader(
+                    "Profils communaux détaillés par niveau d'occupation", 
+                    help="Décomposition en 6 classes pour observer précisément la typologie fine du peuplement de chaque commune."
+                )
+                all_maxes_c = []
+                for comm in communes_log:
+                    df_c = df_log[(df_log["nom_commune"] == comm) & (df_log["annee"] == annee_log)]
+                    vals, _, _, _ = get_log_data_pct(df_c, annee_log)
+                    if vals: all_maxes_c.append(max(vals))
+                shared_x_max_c = max(all_maxes_c) * 1.10 if all_maxes_c else 100
+
+                ncols = min(n_comm, 3)
+                rows_pyr_c = [communes_log[i:i+ncols] for i in range(0, n_comm, ncols)]
+                for row in rows_pyr_c:
+                    cols = st.columns(len(row))
+                    for j, comm in enumerate(row):
+                        df_c = df_log[(df_log["nom_commune"] == comm) & (df_log["annee"] == annee_log)]
+                        fig = build_bar_log_pct(df_c, comm, annee_log, x_max=shared_x_max_c)
+                        with cols[j]: 
+                            st.plotly_chart(style(fig, 30), use_container_width=True)
+
+# ==============================================================================
+# ONGLET 6 - Population active 25-54 ans 
 # ==============================================================================
 
 
@@ -3417,7 +3766,7 @@ def _build_heatmap_matrix(df_raw, row_filter_col, row_filter_vals):
     return df_pct
 
 
-# ── Onglet 5 ──────────────────────────────────────────────────────────────────
+# ── Onglet 6 ──────────────────────────────────────────────────────────────────
 
 if vue == "Démographie":
     with tab6:
