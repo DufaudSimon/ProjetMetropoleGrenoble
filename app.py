@@ -470,6 +470,25 @@ def charger_log():
     return df
 
 @st.cache_data
+def charger_log_social():
+    p = DATA_DIR / "logement" / "rpls_metropoles_clean.csv"
+
+    if not p.exists():
+        return None
+
+    # Séparateur forcé : le fichier est un CSV standard (virgules),
+    # ne JAMAIS utiliser sep=None ici (le sniffer peut échouer et
+    # renvoyer une seule colonne contenant tout l'en-tête).
+    df = pd.read_csv(p, sep=",", encoding="utf-8-sig")
+
+    df.columns = df.columns.str.strip()
+
+    if "metropole" in df.columns:
+        df["metropole"] = df["metropole"].replace("Saint-Etienne", "Saint-Étienne")
+
+    return df
+
+@st.cache_data
 def charger_mobilites():
     p_res  = DATA_DIR / "mobilite" / "Migrations_resid_clean.csv"
     p_prof = DATA_DIR / "mobilite" / "Mobilite_profess_clean.csv"
@@ -618,6 +637,7 @@ df_pop     = charger_pop_age()
 df_men_age = charger_men_age()
 df_men_csp = charger_men_csp()
 df_log     = charger_log()
+df_social  = charger_log_social()
 df_caf     = charger_caf()
 df_eff     = charger_effectifs()
 df_filo    = charger_filo()
@@ -1765,12 +1785,12 @@ if vue == "Démographie":
                     rows_social.append({"Métropole": m,
                                         "Taux de chômage (%)": tc if not np.isnan(tc) else None,
                                         "Taux de pauvreté (%)": pauv if not np.isnan(pauv) else None})
-                df_social = pd.DataFrame(rows_social)
-                df_social_melt = df_social.melt(
+                df_niveau_vie = pd.DataFrame(rows_social)
+                df_niveau_vie_melt = df_niveau_vie.melt(
                     id_vars="Métropole", var_name="Indicateur", value_name="Taux (%)"
                 ).dropna()
 
-                if not df_social_melt.empty:
+                if not df_niveau_vie_melt.empty:
                     # Barres groupées par métropole, teinte selon indicateur
                     col_chomage = PALETTE_METRO[int(len(PALETTE_METRO) * 0.2)]
                     col_pauvrete = PALETTE_METRO[int(len(PALETTE_METRO) * 0.7)]
@@ -1779,7 +1799,7 @@ if vue == "Démographie":
                         "Taux de pauvreté (%)": col_pauvrete,
                     }
                     fig_social = px.bar(
-                        df_social_melt, x="Métropole", y="Taux (%)", color="Indicateur",
+                        df_niveau_vie_melt, x="Métropole", y="Taux (%)", color="Indicateur",
                         barmode="group", color_discrete_map=color_social,
                         text="Taux (%)", height=500,
                     )
@@ -1788,7 +1808,7 @@ if vue == "Démographie":
                         hovertemplate="<b>Métropole : %{x}</b><br>%{fullData.name} : %{y:.1f}%<extra></extra>",
                     )
 
-                    metros_social = list(dict.fromkeys(df_social_melt["Métropole"].tolist()))
+                    metros_social = list(dict.fromkeys(df_niveau_vie_melt["Métropole"].tolist()))
                     if "Grenoble" in metros_social:
                         g_pos = metros_social.index("Grenoble")
                         fig_social.add_vrect(x0=g_pos - 0.45, x1=g_pos + 0.45,
@@ -3344,24 +3364,34 @@ if vue == "Démographie":
                         "Comparer ces tailles entre territoires pour une même CSP met en évidence des différences sociales locales."
                     )
 # ==============================================================================
-# ONGLET 5 - LOGEMENT (INDICE DE PEUPLEMENT)
+# ONGLET 5 - LOGEMENT
 # ==============================================================================
 
-if vue == "Démographie":  # À ajuster selon votre variable de menu globale
+if vue == "Démographie":
     with tab5:
 
-        if df_log is None:
-            st.info("📂 Fichier `logements_metropoles_clean.csv` introuvable.")
+        if df_log is None and df_social is None:
+            st.info("📂 Fichiers `logements_metropoles_clean.csv` et `rpls_metropoles_clean.csv` introuvables.")
         else:
-            # Encart Insee avec lien catalogue
+            # ── Normalisation défensive du nom "Saint-Étienne" ────────────────
+            # (les deux fichiers sources utilisent parfois "Saint-Etienne" sans accent)
+            if df_log is not None and "metropole" in df_log.columns:
+                df_log = df_log.copy()
+                df_log["metropole"] = df_log["metropole"].replace({"Saint-Etienne": "Saint-Étienne"})
+            if df_social is not None and "metropole" in df_social.columns:
+                df_social = df_social.copy()
+                df_social["metropole"] = df_social["metropole"].replace({"Saint-Etienne": "Saint-Étienne"})
+
+            # ── Encart Sources ─────────────────────────────────────────────
             st.markdown("""
             <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
-                <strong>Source  :</strong> INSEE - 
-                <a href='https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_LOGEMENT_COMPL' target='_blank' style='color: #1C3A27;'>Accéder aux données</a>
+                <strong>Sources :</strong><br>
+                🏠 <b>Résidences principales (indice de peuplement)</b> — INSEE, recensements 2011 / 2016 / 2022 :
+                <a href='https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_LOGEMENT_COMPL' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br>
+                🏢 <b>Logements sociaux (RPLS)</b> — SDES, millésime unique 2024 :
+                <a href='https://www.insee.fr/fr/statistiques/8736658' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br>
+                <em>Les deux sources portant sur des années différentes, elles sont présentées dans deux thématiques distinctes.</em>
             </div>""", unsafe_allow_html=True)
-
-            # Extraction des années disponibles
-            annees_dispo = sorted(df_log["annee"].dropna().unique().astype(int).tolist())
 
             COULEURS_OCCUPATION = {
                 "Sous-occupation très accentuée": "#0D47A1",
@@ -3369,15 +3399,13 @@ if vue == "Démographie":  # À ajuster selon votre variable de menu globale
                 "Sous-occupation modérée": "#90CAF9",
                 "Occupation dans la norme": "#E0E0E0",
                 "Suroccupation modérée": "#FFB74D",
-                "Suroccupation accentuée": "#E65100"
+                "Suroccupation accentuée": "#E65100",
             }
-            
             COULEURS_MACRO = {
                 "Sous-occupation globale": "#1E88E5",
                 "Dans la norme": "#E0E0E0",
-                "Suroccupation globale": "#E65100"
+                "Suroccupation globale": "#E65100",
             }
-
             HELP_INDICE = (
                 "L'indice de peuplement de l'INSEE mesure l'adéquation entre la taille du logement "
                 "et la composition du ménage qui y réside.\n\n"
@@ -3386,40 +3414,40 @@ if vue == "Démographie":  # À ajuster selon votre variable de menu globale
                 "- Le nombre de pièces théoriquement nécessaires.\n\n"
             )
 
+            # ─────────────────────────────────────────────────────────────
+            # FONCTIONS — THÈME 1 : RÉSIDENCES PRINCIPALES (PEUPLEMENT)
+            # ─────────────────────────────────────────────────────────────
             def get_log_data_pct(df_src, annee):
                 df_year = df_src[df_src["annee"] == annee]
                 sums = df_year.groupby("indicateur_occupation")["valeur"].sum()
                 total_rp = sums.sum()
-                
+
                 labels_codes = [
                     ("VSEV_UNDER_OCC", "Sous-occupation très accentuée"),
                     ("SEV_UNDER_OCC", "Sous-occupation accentuée"),
                     ("MOD_UNDER_OCC", "Sous-occupation modérée"),
                     ("STD_OCC", "Occupation dans la norme"),
                     ("MOD_OVER_OCC", "Suroccupation modérée"),
-                    ("SEV_OVER_OCC", "Suroccupation accentuée")
+                    ("SEV_OVER_OCC", "Suroccupation accentuée"),
                 ]
-                
-                vals = []
-                labels = []
+
+                vals, labels = [], []
                 kpis = {"norme": 0.0, "surocc": 0.0, "sousocc": 0.0}
-                
+
                 for code, label in labels_codes:
                     val_abs = sums.get(code, 0.0)
                     pct = (val_abs / total_rp * 100) if total_rp > 0 else 0.0
                     vals.append(pct)
                     labels.append(label)
-                    
                     if code == "STD_OCC":
                         kpis["norme"] += pct
                     elif "OVER" in code:
                         kpis["surocc"] += pct
                     elif "UNDER" in code:
                         kpis["sousocc"] += pct
-                        
+
                 return vals, labels, total_rp, kpis
 
-            # Graphique 1 : Macro-regroupement en barres empilées
             def build_macro_stacked_chart(territories, df_filtered_fn, annee, group_name="Territoire"):
                 data_list = []
                 for t in territories:
@@ -3430,46 +3458,41 @@ if vue == "Démographie":  # À ajuster selon votre variable de menu globale
                             group_name: t,
                             "Sous-occupation globale": kpis["sousocc"],
                             "Dans la norme": kpis["norme"],
-                            "Suroccupation globale": kpis["surocc"]
+                            "Suroccupation globale": kpis["surocc"],
                         })
-                
                 df_macro = pd.DataFrame(data_list)
                 if df_macro.empty:
                     return None
-                
+
                 fig = go.Figure()
                 for cat in ["Sous-occupation globale", "Dans la norme", "Suroccupation globale"]:
                     fig.add_trace(go.Bar(
-                        name=cat, y=df_macro[group_name], x=df_macro[cat], orientation='h',
+                        name=cat, y=df_macro[group_name], x=df_macro[cat], orientation="h",
                         marker_color=COULEURS_MACRO[cat],
-                        hovertemplate=f"<b>%{{y}}</b><br>{cat} : <b>%{{x:.1f}}%</b><extra></extra>"
+                        hovertemplate=f"<b>%{{y}}</b><br>{cat} : <b>%{{x:.1f}}%</b><extra></extra>",
                     ))
-                
                 fig.update_layout(
-                    barmode='stack',
+                    barmode="stack",
                     xaxis=dict(title="Pourcentage du parc (%)", range=[0, 100], showgrid=True, gridcolor="#eee"),
                     yaxis=dict(title=""),
                     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
                     height=130 + (len(territories) * 38),
                     margin=dict(t=10, b=40, l=120, r=20),
-                    plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)"
+                    plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                 )
                 return fig
 
-            # Graphique 2 : Profils détaillés (6 catégories Insee)
             def build_bar_log_pct(df_src, label_entity, annee, x_max=None):
                 vals, labels, _, _ = get_log_data_pct(df_src, annee)
                 if x_max is None:
                     x_max = max(vals) * 1.15 if vals else 100
-                
                 colors_list = [COULEURS_OCCUPATION.get(lbl, "#888") for lbl in labels]
-                
+
                 fig = go.Figure()
                 fig.add_trace(go.Bar(
                     y=labels, x=vals, orientation="h", marker=dict(color=colors_list),
-                    hovertemplate=f"<b>{label_entity}</b><br>%{{y}}<br>Part : %{{x:.2f}}%<extra></extra>"
+                    hovertemplate=f"<b>{label_entity}</b><br>%{{y}}<br>Part : %{{x:.2f}}%<extra></extra>",
                 ))
-                
                 fig.update_layout(
                     xaxis=dict(title="% des résidences principales", range=[0, x_max], showgrid=True, gridcolor="#eee"),
                     yaxis=dict(title="", tickfont_size=10, categoryorder="array", categoryarray=labels),
@@ -3479,9 +3502,8 @@ if vue == "Démographie":  # À ajuster selon votre variable de menu globale
                 )
                 return fig
 
-            # Composant des cartes KPI
-            def render_kpi_card_log(label, tot, kpis, border_color):
-                tot_str = f"{int(tot):,}".replace(",", " ") if tot > 0 else "N/D"
+            def render_kpi_card_peuplement(label, tot_rp, kpis, border_color):
+                tot_str = f"{int(tot_rp):,}".replace(",", "\u202f") if tot_rp > 0 else "N/D"
                 st.markdown(f"""
                 <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08); border-left:6px solid {border_color}; background:#fff; margin-bottom:12px; padding:12px 16px;'>
                     <div style='font-size:13px;font-weight:700;color:#1C3A27;margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:5px;'>{label}</div>
@@ -3505,173 +3527,661 @@ if vue == "Démographie":  # À ajuster selon votre variable de menu globale
                     </div>
                 </div>""", unsafe_allow_html=True)
 
+            # ─────────────────────────────────────────────────────────────
+            # FONCTIONS — THÈME 2 : LOGEMENTS SOCIAUX (RPLS)
+            # ─────────────────────────────────────────────────────────────
+            def get_social_metrics(df_s, filter_col, filter_val):
+                """Agrège les indicateurs RPLS pour un territoire.
+                Retourne None si aucune donnée (commune sans parc social)."""
+                df_sub = df_s[df_s[filter_col] == filter_val]
+                if df_sub.empty:
+                    return None
 
-            # --- Barre de filtres unifiée ---
+                weights = df_sub["nb_logements_sociaux"]
+                w_sum = weights.sum()
+
+                def wavg(col):
+                    if w_sum == 0:
+                        return df_sub[col].mean()
+                    return (df_sub[col] * weights).sum() / w_sum
+
+                return {
+                    "nb_soc":              w_sum,
+                    "n_communes":          len(df_sub),
+                    "taux_vacance":        wavg("taux_vacance"),
+                    "taux_rotation":       wavg("taux_rotation"),
+                    "loyer_median":        wavg("loyer_median"),
+                    "loyer_q1":            wavg("loyer_q1"),
+                    "loyer_q3":            wavg("loyer_q3"),
+                    "part_T1":             wavg("part_T1"),
+                    "part_T2":             wavg("part_T2"),
+                    "part_T3":             wavg("part_T3"),
+                    "part_T4":             wavg("part_T4"),
+                    "part_T5plus":         wavg("part_T5plus"),
+                    "part_PLAI":           wavg("part_PLAI"),
+                    "part_HLM_avant_1977": wavg("part_HLM_avant_1977"),
+                    "part_HLM_apres_1977": wavg("part_HLM_apres_1977"),
+                    "part_PLS":            wavg("part_PLS"),
+                    "part_PLI":            wavg("part_PLI"),
+                    "part_avant_1949":     wavg("part_avant_1949"),
+                    "part_1949_1975":      wavg("part_1949_1975"),
+                    "part_1976_1988":      wavg("part_1976_1988"),
+                    "part_1989_2000":      wavg("part_1989_2000"),
+                    "part_2001_2013":      wavg("part_2001_2013"),
+                    "part_apres_2013":     wavg("part_apres_2013"),
+                }
+
+            def get_total_rp(df_log_src, filter_col, filter_val, annee_ref):
+                df_sub = df_log_src[
+                    (df_log_src[filter_col] == filter_val) & (df_log_src["annee"] == annee_ref)
+                ]
+                return df_sub["valeur"].sum()
+
+            def render_kpi_card_social(label, stats, total_rp, border_color):
+                if stats is None:
+                    st.markdown(f"""
+                    <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);
+                        border-left:6px solid {border_color}; background:#fff;
+                        margin-bottom:12px; padding:12px 16px;min-height:120px;
+                        display:flex;flex-direction:column;justify-content:center;'>
+                        <div style='font-size:13px;font-weight:700;color:#1C3A27;margin-bottom:8px;'>{label}</div>
+                        <div style='font-size:12px;color:#888;'>Aucun parc social recensé</div>
+                    </div>""", unsafe_allow_html=True)
+                    return
+
+                nb_soc_str = f"{int(stats['nb_soc']):,}".replace(",", "\u202f")
+                taux_soc   = (stats["nb_soc"] / total_rp * 100) if total_rp > 0 else float("nan")
+                taux_soc_str = f"{taux_soc:.1f}%" if total_rp > 0 else "N/D"
+                loyer_str  = f"{stats['loyer_median']:.2f} €/m²" if pd.notna(stats["loyer_median"]) else "N/D"
+                vacance_str = f"{stats['taux_vacance']:.1f}%" if pd.notna(stats["taux_vacance"]) else "N/D"
+
+                st.markdown(f"""
+                <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08); border-left:6px solid {border_color}; background:#fff; margin-bottom:12px; padding:12px 16px;'>
+                    <div style='font-size:13px;font-weight:700;color:#1C3A27;margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:5px;'>{label}</div>
+                    <div style='display:grid;grid-template-columns:1fr 1fr;gap:6px;'>
+                        <div style='text-align:center;' title='Nombre de logements sociaux (RPLS 2024)'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Logements sociaux</div>
+                            <div style='font-size:15px;font-weight:800;color:#555;'>{nb_soc_str}</div>
+                        </div>
+                        <div style='text-align:center;' title='Part du parc social parmi les résidences principales (RP 2022)'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Taux Log. Social</div>
+                            <div style='font-size:15px;font-weight:800;color:#2E7D32;'>{taux_soc_str}</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Loyer médian</div>
+                            <div style='font-size:15px;font-weight:800;color:#1565C0;'>{loyer_str}</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Taux vacance</div>
+                            <div style='font-size:15px;font-weight:800;color:#C62828;'>{vacance_str}</div>
+                        </div>
+                    </div>
+                </div>""", unsafe_allow_html=True)
+
+            # ─────────────────────────────────────────────────────────────
+            # BANDEAU FILTRES
+            # ─────────────────────────────────────────────────────────────
             with st.container():
-                filter_bar("Filtres - Indice de peuplement des résidences principales")
+                filter_bar("Filtres - Logement")
                 fa1, fa2 = st.columns([1, 3])
-                with fa1: filter_row_label("Niveau géographique")
-                with fa2: mode_log = st.radio("", ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"], key="log_mode", horizontal=True, label_visibility="collapsed")
-                
+                with fa1:
+                    filter_row_label("Niveau géographique")
+                with fa2:
+                    mode_log = st.radio(
+                        "",
+                        ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
+                        key="log_mode", horizontal=True, label_visibility="collapsed",
+                    )
+
                 if mode_log == "Comparaison Métropoles":
-                    sel_metros_log = st.multiselect("Métropoles à comparer", TOUTES, default=shared_default_demo(TOUTES), key="log_metros")
+                    sel_metros_log = st.multiselect(
+                        "Métropoles à comparer", TOUTES, default=shared_default_demo(TOUTES),
+                        key="log_metros", on_change=sync_metros_demo, args=("log_metros",),
+                    )
+                    targets_log = sel_metros_log
                 else:
-                    communes_dispo = sorted(df_log[df_log["metropole"] == "Grenoble"]["nom_commune"].dropna().unique().tolist())
-                    sel_communes_log = st.multiselect("Communes de Grenoble-Alpes Métropole", communes_dispo, default=shared_default_communes_demo(communes_dispo), key="log_communes")
-                
-                annee_log = st.selectbox("Année d'analyse", annees_dispo, index=len(annees_dispo)-1, key="an_log")
+                    communes_dispo = sorted(COMMUNES["Grenoble"])
+                    sel_communes_log = st.multiselect(
+                        "Communes de Grenoble-Alpes Métropole", communes_dispo,
+                        default=shared_default_communes_demo(communes_dispo),
+                        key="log_communes", on_change=sync_communes_demo, args=("log_communes",),
+                    )
+                    targets_log = sel_communes_log
+
+                fb1, fb2 = st.columns(2)
+                with fb1:
+                    theme_log = st.selectbox(
+                        "Thématique d'analyse",
+                        ["🏠 Résidences principales (Indice de peuplement)",
+                         "🏢 Logements sociaux (Parc locatif social)"],
+                        key="log_theme",
+                        help=(
+                            "**Résidences principales** : indice de peuplement INSEE "
+                            "(adéquation taille du logement / composition du ménage), "
+                            "millésimes 2011/2016/2022.\n\n"
+                            "**Logements sociaux** : parc locatif social (RPLS), "
+                            "millésime unique 2024 (typologie, financement, ancienneté, loyers)."
+                        ),
+                    )
+
+                annees_dispo = sorted(df_log["annee"].dropna().unique().astype(int).tolist()) if df_log is not None else []
+                annee_ref    = max(annees_dispo) if annees_dispo else None
+
+                if "Résidences principales" in theme_log:
+                    with fb2:
+                        annee_log = st.selectbox(
+                            "Année d'analyse", annees_dispo,
+                            index=len(annees_dispo) - 1, key="an_log",
+                        )
+                else:
+                    with fb2:
+                        st.markdown(
+                            "<div style='padding-top:28px;font-size:13px;color:#666;'>"
+                            "📅 Données RPLS — millésime unique <b>2024</b></div>",
+                            unsafe_allow_html=True,
+                        )
 
             st.markdown("---")
 
+            if not targets_log:
+                st.warning("Sélectionnez au moins un territoire.")
+                st.stop()
 
-            # ── VUE 1 : INTER-MÉTROPOLES ──────────────────────────────────────
+            # ─────────────────────────────────────────────────────────────
+            # Couleurs / mise en évidence Grenoble
+            # ─────────────────────────────────────────────────────────────
+            n_targets = len(targets_log)
             if mode_log == "Comparaison Métropoles":
-                if not sel_metros_log:
-                    st.warning("Sélectionnez au moins une métropole.")
+                bar_colors = [COULEURS.get(t, "#888888") for t in targets_log]
+            else:
+                bar_colors = [PALETTE_COMMUNE[i % len(PALETTE_COMMUNE)] for i in range(n_targets)]
+
+            greno_vrect = None
+            if "Grenoble" in targets_log and mode_log == "Comparaison Métropoles":
+                g_pos = targets_log.index("Grenoble")
+                greno_vrect = dict(
+                    x0=g_pos - 0.45, x1=g_pos + 0.45,
+                    fillcolor="rgba(255,88,77,0.10)",
+                    line_color="#FF584D", line_width=1.5,
+                    line_dash="dash", layer="below",
+                )
+
+            # ═════════════════════════════════════════════════════════════
+            # THÈME 1 — RÉSIDENCES PRINCIPALES (INDICE DE PEUPLEMENT)
+            # ═════════════════════════════════════════════════════════════
+            if "Résidences principales" in theme_log:
+
+                if df_log is None:
+                    st.info("📂 Fichier `logements_metropoles_clean.csv` introuvable.")
                     st.stop()
 
+                if mode_log == "Comparaison Métropoles":
+                    def df_filter_peuplement(t):
+                        return df_log[(df_log["metropole"] == t) & (df_log["annee"] == annee_log)]
+                else:
+                    def df_filter_peuplement(t):
+                        return df_log[
+                            (df_log["nom_commune"] == t) &
+                            (df_log["metropole"] == "Grenoble") &
+                            (df_log["annee"] == annee_log)
+                        ]
+
+                group_label = "Métropole" if mode_log == "Comparaison Métropoles" else "Commune"
+
+                # ── KPI ──────────────────────────────────────────────────
                 st.subheader(f"Indicateurs synthétiques de peuplement en {annee_log}")
-                kpi_cols = st.columns(len(sel_metros_log))
-                for i, m in enumerate(sel_metros_log):
-                    df_m = df_log[(df_log["metropole"] == m) & (df_log["annee"] == annee_log)]
-                    _, _, tot, kpis_m = get_log_data_pct(df_m, annee_log)
+                kpi_cols = st.columns(n_targets)
+                for i, t in enumerate(targets_log):
+                    df_t = df_filter_peuplement(t)
+                    _, _, tot, kpis_t = get_log_data_pct(df_t, annee_log)
                     with kpi_cols[i]:
-                        render_kpi_card_log(m, tot, kpis_m, border_color=COULEURS.get(m, "#888888"))
+                        render_kpi_card_peuplement(t, tot, kpis_t, border_color=bar_colors[i])
 
                 st.markdown("---")
-                
-                # --- GRAPH_1 : MACRO STACKED ---
+
+                # ── GRAPH 1 : MACRO STACKED ────────────────────────────────
                 st.subheader(
-                    "Équilibre macro-synthétique des parcs", 
-                    help=HELP_INDICE + "\n\nCe graphique regroupe les indices en 3 grandes masses (Sous-occupation, Norme, Suroccupation)."
+                    "Équilibre macro-synthétique des parcs",
+                    help=HELP_INDICE + "\n\nCe graphique regroupe les indices en 3 grandes masses (Sous-occupation, Norme, Suroccupation).",
                 )
-                fig_macro_m = build_macro_stacked_chart(
-                    territories=sel_metros_log,
-                    df_filtered_fn=lambda m: df_log[(df_log["metropole"] == m) & (df_log["annee"] == annee_log)],
+                fig_macro = build_macro_stacked_chart(
+                    territories=targets_log,
+                    df_filtered_fn=df_filter_peuplement,
                     annee=annee_log,
-                    group_name="Métropole"
+                    group_name=group_label,
                 )
-                if fig_macro_m:
-                    st.plotly_chart(style(fig_macro_m), use_container_width=True)
-                
-                # Aide à l'interprétation Macro
+                if fig_macro:
+                    st.plotly_chart(style(fig_macro), use_container_width=True)
+                else:
+                    st.info("Aucune donnée disponible pour cette sélection et cette année.")
+
                 with st.expander("💡 Comment interpréter ce graphique ?"):
-                    st.markdown("""
-                    **Comprendre les grandes masses de peuplement :**
-                    * **Sous-occupation globale (Bleu) :** Reflète souvent des territoires à forte proportion de maisons individuelles ou marqués par le vieillissement démographique (par exemple, des couples de retraités restés seuls dans la grande maison familiale après le départ des enfants).
-                    * **Suroccupation globale (Orange) :** Révèle des zones de fortes tensions immobilières ou des spécificités de peuplement (parcs denses, forte présence d'étudiants en petits studios ou de familles nombreuses contraintes de vivre dans des espaces trop exigus).
-                    """)
+                    st.markdown(
+                        "**Comprendre les grandes masses de peuplement :**\n\n"
+                        "- **Sous-occupation globale (bleu)** : reflète souvent des territoires à forte "
+                        "proportion de maisons individuelles ou marqués par le vieillissement démographique "
+                        "(ex : couples de retraités restés seuls dans la grande maison familiale après le "
+                        "départ des enfants).\n\n"
+                        "- **Dans la norme (gris)** : le nombre de pièces correspond aux besoins théoriques "
+                        "du ménage — situation d'équilibre.\n\n"
+                        "- **Suroccupation globale (orange)** : révèle des zones de fortes tensions "
+                        "immobilières ou des spécificités de peuplement (parcs denses, forte présence "
+                        "d'étudiants en petits studios ou de familles nombreuses contraintes de vivre dans "
+                        "des espaces trop exigus). " +
+                        ("Les bordures rouges identifient Grenoble." if mode_log == "Comparaison Métropoles" else "")
+                    )
 
                 st.markdown("---")
 
-                # --- GRAPH_2 : STRUCTURE DÉTAILLÉE ---
+                # ── GRAPH 2 : PROFILS DÉTAILLÉS ────────────────────────────
                 st.subheader(
-                    "Profils détaillés par niveau d'occupation", 
-                    help="Décomposition fine selon la nomenclature officielle de l'INSEE en 6 niveaux."
+                    "Profils détaillés par niveau d'occupation",
+                    help="Décomposition fine selon la nomenclature officielle de l'INSEE en 6 niveaux.",
                 )
                 all_maxes = []
-                for m in sel_metros_log:
-                    df_m = df_log[(df_log["metropole"] == m) & (df_log["annee"] == annee_log)]
-                    vals, _, _, _ = get_log_data_pct(df_m, annee_log)
-                    if vals: all_maxes.append(max(vals))
+                for t in targets_log:
+                    df_t = df_filter_peuplement(t)
+                    vals, _, _, _ = get_log_data_pct(df_t, annee_log)
+                    if vals:
+                        all_maxes.append(max(vals))
                 shared_x_max = max(all_maxes) * 1.10 if all_maxes else 100
 
-                ncols = min(len(sel_metros_log), 3)
-                rows_pyr = [sel_metros_log[i:i+ncols] for i in range(0, len(sel_metros_log), ncols)]
+                ncols = min(n_targets, 3)
+                rows_pyr = [targets_log[i:i + ncols] for i in range(0, n_targets, ncols)]
                 for row in rows_pyr:
                     cols = st.columns(len(row))
-                    for j, m in enumerate(row):
-                        df_m = df_log[(df_log["metropole"] == m) & (df_log["annee"] == annee_log)]
-                        fig = build_bar_log_pct(df_m, m, annee_log, x_max=shared_x_max)
-                        
-                        if m == "Grenoble":
+                    for j, t in enumerate(row):
+                        df_t = df_filter_peuplement(t)
+                        fig = build_bar_log_pct(df_t, t, annee_log, x_max=shared_x_max)
+
+                        if t == "Grenoble" and mode_log == "Comparaison Métropoles":
                             for trace in fig.data:
                                 if trace.type == "bar":
                                     trace.marker.pattern.shape = "/"
                                     trace.marker.pattern.fgcolor = "#FF584D"
                                     trace.marker.pattern.size = 15
                                     trace.marker.pattern.solidity = 0.25
-                        
-                        with cols[j]: 
+
+                        with cols[j]:
                             st.plotly_chart(style(fig, 30), use_container_width=True)
-                
-                # Aide à l'interprétation Détaillée
+
                 with st.expander("💡 Comment interpréter ce graphique ?"):
                     st.markdown("""
                     | Code Indicateur | Signification officielle | Explication & Exemple |
                     | :--- | :--- | :--- |
-                    | **VSEV_UNDER_OCC** | Sous-occupation très accentuée | Le logement est beaucoup plus grand que nécessaire (ex: 1 personne seule dans un T5). |
-                    | **SEV_UNDER_OCC** | Sous-occupation accentuée | Il comporte au moins 2 pièces de plus que le besoin théorique (ex: couple dans un T4+). |
-                    | **MOD_UNDER_OCC** | Sous-occupation modérée | Il y a une pièce excédentaire par rapport à la norme (ex: couple seul dans un T3). |
-                    | **STD_OCC** | Occupation dans la norme | Le nombre de pièces correspond exactement aux besoins (ex: couple seul dans un T2). |
-                    | **MOD_OVER_OCC** | Suroccupation modérée | Il manque une pièce (ex: couple avec deux enfants vivant dans un T3). |
-                    | **SEV_OVER_OCC** | Suroccupation accentuée | Alerte critique : il manque plusieurs pièces par rapport aux besoins du ménage. |
+                    | **VSEV_UNDER_OCC** | Sous-occupation très accentuée | Le logement est beaucoup plus grand que nécessaire (ex : 1 personne seule dans un T5). |
+                    | **SEV_UNDER_OCC** | Sous-occupation accentuée | Au moins 2 pièces de plus que le besoin théorique (ex : couple dans un T4+). |
+                    | **MOD_UNDER_OCC** | Sous-occupation modérée | Une pièce excédentaire par rapport à la norme (ex : couple seul dans un T3). |
+                    | **STD_OCC** | Occupation dans la norme | Le nombre de pièces correspond exactement aux besoins (ex : couple seul dans un T2). |
+                    | **MOD_OVER_OCC** | Suroccupation modérée | Il manque une pièce (ex : couple avec deux enfants dans un T3). |
+                    | **SEV_OVER_OCC** | Suroccupation accentuée | Alerte critique : plusieurs pièces manquantes par rapport aux besoins du ménage. |
                     """)
 
-
-            # ── VUE 2 : INTRA-COMMUNES (GRENOBLE) ─────────────────────────────
+            # ═════════════════════════════════════════════════════════════
+            # THÈME 2 — LOGEMENTS SOCIAUX (RPLS 2024)
+            # ═════════════════════════════════════════════════════════════
             else:
-                communes_log = sel_communes_log if sel_communes_log else []
-                if not communes_log:
-                    st.info("Sélectionnez au moins une commune pour afficher les données.")
+
+                if df_social is None:
+                    st.info("📂 Fichier `rpls_metropoles_clean.csv` introuvable.")
                     st.stop()
 
-                n_comm = len(communes_log)
-                comm_palette = PALETTE_COMMUNE[:n_comm] if n_comm <= len(PALETTE_COMMUNE) else PALETTE_COMMUNE
+                # ── Garde-fou : vérifie que le fichier a été correctement parsé ─────
+                # (protège contre un échec du sniffer pandas qui renverrait un
+                # DataFrame à une seule colonne contenant tout l'en-tête)
+                required_cols = {"metropole", "nom_commune", "nb_logements_sociaux"}
+                if not required_cols.issubset(df_social.columns):
+                    st.error(
+                        "⚠️ Le fichier `rpls_metropoles_clean.csv` n'a pas été lu correctement "
+                        f"(colonnes trouvées : {df_social.columns.tolist()}). "
+                        "Vérifiez que `charger_log_social()` utilise `sep=\",\"` et non `sep=None`."
+                    )
+                    st.stop()
 
-                st.subheader(f"Indicateurs synthétiques communaux en {annee_log}")
-                kpi_cols = st.columns(n_comm)
-                for i, comm in enumerate(communes_log):
-                    df_c = df_log[(df_log["nom_commune"] == comm) & (df_log["annee"] == annee_log)]
-                    _, _, tot, kpis_c = get_log_data_pct(df_c, annee_log)
+                if mode_log == "Comparaison Métropoles":
+                    filter_col_social = "metropole"
+                else:
+                    df_social_view = df_social[df_social["metropole"] == "Grenoble"]
+
+                # Collecte des stats par territoire
+                stats_by_target = {}
+                rp_by_target = {}
+                for t in targets_log:
+                    if mode_log == "Comparaison Métropoles":
+                        stats_by_target[t] = get_social_metrics(df_social, "metropole", t)
+                        rp_by_target[t] = get_total_rp(df_log, "metropole", t, annee_ref) if df_log is not None else 0
+                    else:
+                        stats_by_target[t] = get_social_metrics(df_social_view, "nom_commune", t)
+                        rp_by_target[t] = get_total_rp(df_log, "nom_commune", t, annee_ref) if df_log is not None else 0
+
+                # Territoires avec données RPLS exploitables
+                entities_with_data = [t for t in targets_log if stats_by_target[t] is not None]
+                entities_no_data   = [t for t in targets_log if stats_by_target[t] is None]
+
+                # ── KPI ──────────────────────────────────────────────────
+                st.subheader(
+                    "Indicateurs du parc locatif social (RPLS 2024)",
+                    help=(
+                        "**Logements sociaux** : nombre total de logements locatifs sociaux recensés.\n\n"
+                        "**Taux Log. Social** : part du parc social parmi les résidences principales "
+                        f"(référence : RP {annee_ref}).\n\n"
+                        "**Loyer médian** : loyer médian au m² du parc social.\n\n"
+                        "**Taux vacance** : part de logements sociaux vacants (tous types confondus)."
+                    ),
+                )
+                kpi_cols = st.columns(n_targets)
+                for i, t in enumerate(targets_log):
                     with kpi_cols[i]:
-                        render_kpi_card_log(comm, tot, kpis_c, border_color=comm_palette[i % len(comm_palette)])
+                        render_kpi_card_social(t, stats_by_target[t], rp_by_target.get(t, 0), border_color=bar_colors[i])
+
+                if entities_no_data:
+                    st.caption(
+                        "ℹ️ Aucun parc social recensé (RPLS) pour : " + ", ".join(entities_no_data)
+                    )
+
+                if not entities_with_data:
+                    st.warning("Aucune donnée RPLS disponible pour cette sélection.")
+                    st.stop()
 
                 st.markdown("---")
 
-                # --- GRAPH_1 : MACRO STACKED COMMUNES ---
+                # ── GRAPH 1 / 2 : Taux logement social + Typologie ─────────
+                gc1, gc2 = st.columns(2)
+
+                with gc1:
+                    st.subheader(
+                        "Taux de logement social",
+                        help=(
+                            "Part du parc locatif social (RPLS 2024) parmi l'ensemble des résidences "
+                            f"principales du territoire (RP {annee_ref}, INSEE). "
+                            "Un taux élevé indique une offre sociale importante au regard du parc total. "
+                            "La loi SRU fixe un objectif de 20 à 25 % selon les communes concernées."
+                        ),
+                    )
+                    rows_taux = []
+                    for t in entities_with_data:
+                        rp = rp_by_target.get(t, 0)
+                        nb_soc = stats_by_target[t]["nb_soc"]
+                        taux = (nb_soc / rp * 100) if rp > 0 else None
+                        if taux is not None:
+                            rows_taux.append({"Territoire": t, "Taux (%)": taux})
+                    df_taux = pd.DataFrame(rows_taux)
+
+                    if not df_taux.empty:
+                        fig_taux = go.Figure()
+                        for i, t in enumerate(targets_log):
+                            if t not in df_taux["Territoire"].values:
+                                continue
+                            val = df_taux.loc[df_taux["Territoire"] == t, "Taux (%)"].iloc[0]
+                            marker = dict(color=bar_colors[i])
+                            if t == "Grenoble" and mode_log == "Comparaison Métropoles":
+                                marker["pattern"] = dict(
+                                    shape="/", fgcolor="#FF584D", fillmode="overlay",
+                                    solidity=0.3, size=20,
+                                )
+                            fig_taux.add_trace(go.Bar(
+                                x=[t], y=[val], marker=marker, showlegend=False,
+                                text=[f"{val:.1f}%"], textposition="outside",
+                                hovertemplate=f"<b>{t}</b><br>Taux logement social : %{{y:.1f}}%<extra></extra>",
+                            ))
+                        fig_taux.add_hline(y=20, line_dash="dot", line_color="#888",
+                                           annotation_text="Seuil SRU 20%", annotation_position="top left")
+                        if greno_vrect:
+                            fig_taux.add_vrect(**greno_vrect)
+                        fig_taux.update_layout(
+                            height=340, margin=dict(t=20, b=10),
+                            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                            yaxis=dict(title="% des résidences principales", gridcolor="#eee"),
+                            xaxis=dict(showgrid=False),
+                        )
+                        st.plotly_chart(style(fig_taux), use_container_width=True)
+                    else:
+                        st.info("Données insuffisantes pour calculer le taux de logement social.")
+
+                with gc2:
+                    st.subheader(
+                        "Typologie du parc social (T1 à T5+)",
+                        help=(
+                            "Répartition du parc locatif social selon le nombre de pièces. "
+                            "Une forte part de petits logements (T1/T2) indique un parc adapté aux "
+                            "personnes seules ou aux étudiants. Une forte part de T4/T5+ indique un "
+                            "parc orienté vers les familles nombreuses."
+                        ),
+                    )
+                    categories = ["T1", "T2", "T3", "T4", "T5+"]
+                    code_map = {"T1": "part_T1", "T2": "part_T2", "T3": "part_T3",
+                                "T4": "part_T4", "T5+": "part_T5plus"}
+                    fig_typo = go.Figure()
+                    for i, t in enumerate(targets_log):
+                        st_t = stats_by_target[t]
+                        if st_t is None:
+                            continue
+                        y_vals = [st_t[code_map[c]] for c in categories]
+                        marker = dict(color=bar_colors[i])
+                        if t == "Grenoble" and mode_log == "Comparaison Métropoles":
+                            marker["pattern"] = dict(
+                                shape="/", fgcolor="#FF584D", fillmode="overlay",
+                                solidity=0.3, size=20,
+                            )
+                        fig_typo.add_trace(go.Bar(
+                            name=t, x=categories, y=y_vals, marker=marker,
+                            hovertemplate=f"<b>{t}</b><br>%{{x}} : %{{y:.1f}}%<extra></extra>",
+                        ))
+                    fig_typo.update_layout(
+                        barmode="group", height=340, margin=dict(t=20, b=10),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        xaxis=dict(title="Taille du logement", showgrid=False),
+                        yaxis=dict(title="Part du parc social (%)", gridcolor="#eee"),
+                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5),
+                    )
+                    st.plotly_chart(style(fig_typo), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ces deux graphiques ?"):
+                    st.markdown(
+                        "**Taux de logement social** : ce graphique rapporte le volume de logements "
+                        "sociaux (RPLS 2024) au total des résidences principales du territoire "
+                        f"(RP {annee_ref}). La ligne pointillée à 20 % correspond au seuil de référence "
+                        "fixé par la loi SRU pour de nombreuses communes en zone tendue. Un taux supérieur "
+                        "à ce seuil traduit une offre sociale importante, un taux inférieur peut signaler "
+                        "un déficit relatif d'offre abordable.\n\n"
+                        "**Typologie du parc social** : la répartition T1 à T5+ renseigne sur l'adéquation "
+                        "entre l'offre sociale et les besoins de la population. Un parc concentré sur les "
+                        "petites typologies (T1/T2) répond bien aux besoins des personnes seules, jeunes "
+                        "actifs ou étudiants, mais peut être insuffisant pour les familles nombreuses qui "
+                        "se reportent alors sur le parc privé. " +
+                        ("Les hachures rouges identifient Grenoble." if mode_log == "Comparaison Métropoles" else "")
+                    )
+
+                st.markdown("---")
+
+                # ── GRAPH 3 / 4 : Financement + Ancienneté ──────────────────
+                gc3, gc4 = st.columns(2)
+
+                with gc3:
+                    st.subheader(
+                        "Financement du parc social (%)",
+                        help=(
+                            "Répartition du parc social par dispositif de financement (base 100%) :\n"
+                            "- **PLAI** (Prêt Locatif Aidé d'Intégration) : loyers les plus bas, destinés aux "
+                            "ménages très modestes.\n"
+                            "- **HLM avant/après 1977** : financement historique (HBM/HLM ordinaire), "
+                            "loyers intermédiaires.\n"
+                            "- **PLS** (Prêt Locatif Social) : loyers plus élevés, plafonds de ressources "
+                            "plus larges.\n"
+                            "- **PLI** (Prêt Locatif Intermédiaire) : destiné aux classes moyennes, loyers "
+                            "proches du marché.\n\n"
+                            "Une forte part de PLAI signale un parc orienté vers l'accueil des ménages les "
+                            "plus modestes."
+                        ),
+                    )
+                    fin_categories = {
+                        "PLAI": "#0D47A1",
+                        "HLM avant 1977": "#1E88E5",
+                        "HLM après 1977": "#90CAF9",
+                        "PLS": "#FFB74D",
+                        "PLI": "#E65100",
+                    }
+                    fin_code_map = {
+                        "PLAI": "part_PLAI",
+                        "HLM avant 1977": "part_HLM_avant_1977",
+                        "HLM après 1977": "part_HLM_apres_1977",
+                        "PLS": "part_PLS",
+                        "PLI": "part_PLI",
+                    }
+                    fig_fin = go.Figure()
+                    for cat, color in fin_categories.items():
+                        y_vals, x_vals = [], []
+                        for t in targets_log:
+                            st_t = stats_by_target[t]
+                            if st_t is None:
+                                continue
+                            x_vals.append(t)
+                            y_vals.append(st_t[fin_code_map[cat]])
+                        fig_fin.add_trace(go.Bar(
+                            name=cat, x=x_vals, y=y_vals, marker_color=color,
+                            hovertemplate=f"<b>%{{x}}</b><br>{cat} : %{{y:.1f}}%<extra></extra>",
+                        ))
+                    if greno_vrect:
+                        fig_fin.add_vrect(**greno_vrect)
+                    fig_fin.update_layout(
+                        barmode="stack", height=340, margin=dict(t=20, b=10),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        xaxis=dict(showgrid=False),
+                        yaxis=dict(title="Part du parc social (%)", range=[0, 100], gridcolor="#eee"),
+                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font_size=10),
+                    )
+                    st.plotly_chart(style(fig_fin), use_container_width=True)
+
+                with gc4:
+                    st.subheader(
+                        "Ancienneté du parc social (%)",
+                        help=(
+                            "Répartition du parc social par période de construction (base 100%). "
+                            "Un parc ancien (avant 1949 / 1949-1975) peut nécessiter davantage de "
+                            "rénovation énergétique. Une forte part de constructions récentes "
+                            "(après 2013) indique un parc renouvelé et un effort de production "
+                            "continu de logements sociaux."
+                        ),
+                    )
+                    age_categories = {
+                        "Avant 1949": "#3A3D44",
+                        "1949-1975": "#7A7E87",
+                        "1976-1988": "#A2A6AE",
+                        "1989-2000": "#C8CACF",
+                        "2001-2013": "#DDE0E3",
+                        "Après 2013": "#74C69D",
+                    }
+                    age_code_map = {
+                        "Avant 1949": "part_avant_1949",
+                        "1949-1975": "part_1949_1975",
+                        "1976-1988": "part_1976_1988",
+                        "1989-2000": "part_1989_2000",
+                        "2001-2013": "part_2001_2013",
+                        "Après 2013": "part_apres_2013",
+                    }
+                    fig_age = go.Figure()
+                    for cat, color in age_categories.items():
+                        y_vals, x_vals = [], []
+                        for t in targets_log:
+                            st_t = stats_by_target[t]
+                            if st_t is None:
+                                continue
+                            x_vals.append(t)
+                            y_vals.append(st_t[age_code_map[cat]])
+                        fig_age.add_trace(go.Bar(
+                            name=cat, x=x_vals, y=y_vals, marker_color=color,
+                            hovertemplate=f"<b>%{{x}}</b><br>{cat} : %{{y:.1f}}%<extra></extra>",
+                        ))
+                    if greno_vrect:
+                        fig_age.add_vrect(**greno_vrect)
+                    fig_age.update_layout(
+                        barmode="stack", height=340, margin=dict(t=20, b=10),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        xaxis=dict(showgrid=False),
+                        yaxis=dict(title="Part du parc social (%)", range=[0, 100], gridcolor="#eee"),
+                        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font_size=10),
+                    )
+                    st.plotly_chart(style(fig_age), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ces deux graphiques ?"):
+                    st.markdown(
+                        "**Financement du parc social** : chaque dispositif correspond à un public et un "
+                        "niveau de loyer différents. Un territoire avec une forte proportion de PLAI "
+                        "accueille proportionnellement plus de ménages très modestes, tandis qu'un "
+                        "territoire avec davantage de PLS/PLI propose des loyers sociaux plus proches "
+                        "du marché privé, ciblant les classes moyennes.\n\n"
+                        "**Ancienneté du parc** : un parc ancien (avant 1975) représente souvent un enjeu "
+                        "de rénovation thermique et de confort, mais aussi un patrimoine bien situé en "
+                        "centre-ville. Un parc récent (après 2001) traduit une politique de construction "
+                        "neuve active, mais peut être plus excentré. Comparer l'ancienneté avec le taux de "
+                        "vacance (KPI) permet d'identifier si le parc ancien est davantage délaissé par les "
+                        "demandeurs. " +
+                        ("Les zones rouges identifient Grenoble." if mode_log == "Comparaison Métropoles" else "")
+                    )
+
+                st.markdown("---")
+
+                # ── GRAPH 5 : Loyers ────────────────────────────────────────
                 st.subheader(
-                    "⚖️ Équilibre macro-synthétique des communes", 
-                    help=HELP_INDICE + "\n\nMet en lumière les disparités d'occupation au sein même de la métropole grenobloise."
+                    "Loyers du parc social (€/m²)",
+                    help=(
+                        "Loyer médian (point) et intervalle interquartile (barre verticale, du 1er au "
+                        "3e quartile) du parc social, en €/m² de surface habitable. "
+                        "Plus l'intervalle est large, plus les loyers sont hétérogènes au sein du "
+                        "territoire (mélange de logements anciens à loyers historiquement bas et de "
+                        "constructions récentes à loyers plus élevés)."
+                    ),
                 )
-                fig_macro_c = build_macro_stacked_chart(
-                    territories=communes_log,
-                    df_filtered_fn=lambda c: df_log[(df_log["nom_commune"] == c) & (df_log["annee"] == annee_log)],
-                    annee=annee_log,
-                    group_name="Commune"
+                fig_loy = go.Figure()
+                for i, t in enumerate(targets_log):
+                    st_t = stats_by_target[t]
+                    if st_t is None:
+                        continue
+                    q1, med, q3 = st_t["loyer_q1"], st_t["loyer_median"], st_t["loyer_q3"]
+                    marker_color = bar_colors[i]
+                    fig_loy.add_trace(go.Scatter(
+                        x=[t], y=[med],
+                        mode="markers",
+                        marker=dict(symbol="diamond", size=14, color=marker_color,
+                                    line=dict(color="white", width=1.5)),
+                        error_y=dict(
+                            type="data",
+                            symmetric=False,
+                            array=[q3 - med],
+                            arrayminus=[med - q1],
+                            color=marker_color, thickness=2, width=6,
+                        ),
+                        showlegend=False,
+                        hovertemplate=(
+                            f"<b>{t}</b><br>"
+                            f"Loyer médian : {med:.2f} €/m²<br>"
+                            f"1er quartile : {q1:.2f} €/m²<br>"
+                            f"3e quartile : {q3:.2f} €/m²<extra></extra>"
+                        ),
+                    ))
+                if greno_vrect:
+                    fig_loy.add_vrect(**greno_vrect)
+                fig_loy.update_layout(
+                    height=320, margin=dict(t=20, b=10),
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    xaxis=dict(showgrid=False),
+                    yaxis=dict(title="Loyer (€/m²)", gridcolor="#eee"),
                 )
-                if fig_macro_c:
-                    st.plotly_chart(style(fig_macro_c), use_container_width=True)
-                
+                st.plotly_chart(style(fig_loy), use_container_width=True)
+
                 with st.expander("💡 Comment interpréter ce graphique ?"):
-                    st.markdown("""
-                    **Les communes résidentielles ou périurbaines** affichent structurellement des taux de sous-occupation élevés, portés par un parc composé majoritairement de maisons individuelles et de ménages propriétaires stabilisés.
-                    **Les centres urbains denses ou les secteurs universitaires** concentrent à l'inverse les taux de suroccupation les plus marqués, en raison de la prépondérance des petits logements locatifs et d'une rotation importante des ménages.
-                    """)
-
-                st.markdown("---")
-
-                # --- GRAPH_2 : STRUCTURE DÉTAILLÉE COMMUNES ---
-                st.subheader(
-                    "Profils communaux détaillés par niveau d'occupation", 
-                    help="Décomposition en 6 classes pour observer précisément la typologie fine du peuplement de chaque commune."
-                )
-                all_maxes_c = []
-                for comm in communes_log:
-                    df_c = df_log[(df_log["nom_commune"] == comm) & (df_log["annee"] == annee_log)]
-                    vals, _, _, _ = get_log_data_pct(df_c, annee_log)
-                    if vals: all_maxes_c.append(max(vals))
-                shared_x_max_c = max(all_maxes_c) * 1.10 if all_maxes_c else 100
-
-                ncols = min(n_comm, 3)
-                rows_pyr_c = [communes_log[i:i+ncols] for i in range(0, n_comm, ncols)]
-                for row in rows_pyr_c:
-                    cols = st.columns(len(row))
-                    for j, comm in enumerate(row):
-                        df_c = df_log[(df_log["nom_commune"] == comm) & (df_log["annee"] == annee_log)]
-                        fig = build_bar_log_pct(df_c, comm, annee_log, x_max=shared_x_max_c)
-                        with cols[j]: 
-                            st.plotly_chart(style(fig, 30), use_container_width=True)
+                    st.markdown(
+                        "Chaque losange représente le **loyer médian** du parc social du territoire : "
+                        "la moitié des logements sociaux ont un loyer inférieur à cette valeur, l'autre "
+                        "moitié un loyer supérieur. La barre verticale représente l'**écart interquartile** "
+                        "(du 1er au 3e quartile) : elle contient 50% des loyers du parc.\n\n"
+                        "Un loyer médian élevé combiné à un faible taux de vacance (voir KPI) traduit "
+                        "généralement un marché du logement tendu, où même le parc social, censé être "
+                        "abordable, atteint des niveaux de loyer relativement élevés. Une grande "
+                        "dispersion (barre longue) indique une forte hétérogénéité du parc, mêlant "
+                        "logements anciens à bas loyer et constructions récentes plus chères." +
+                        (" Le losange rouge identifie Grenoble." if mode_log == "Comparaison Métropoles" else "")
+                    )
 
 # ==============================================================================
 # ONGLET 6 - Population active 25-54 ans 
@@ -5736,4 +6246,4 @@ if vue == "Environnement":
             )
         st.markdown('</div>', unsafe_allow_html=True)
         
-        st.info("Données en cours de traitement. Intégrez vos graphiques de production de déchets ménagers et de tri sélectif ici.")   
+        st.info("Données en cours de traitement. Intégrez vos graphiques de production de déchets ménagers et de tri sélectif ici.")
