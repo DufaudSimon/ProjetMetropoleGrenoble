@@ -1247,15 +1247,16 @@ if vue == "Description":
 # PAGE DÉMOGRAPHIE
 # ==============================================================================
 
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-    "🏙️   Population globale",
-    "👥   Structure par âge",
-    "🚌   Mobilités",
-    "🚆   Transports",
-    "🏠   Ménages",
-    "🏢   Logements",
-    "📊   Population active 25-54 ans",
-])
+if vue == "Démographie":
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+        "🏙️   Population globale",
+        "👥   Structure par âge",
+        "🚌   Mobilités",
+        "🚆   Transports",
+        "🏠   Ménages",
+        "🏢   Logements",
+        "📊   Population active 25-54 ans",
+    ])
 
 # ==============================================================================
 # ONGLET 1 - POPULATION GLOBALE
@@ -5289,6 +5290,12 @@ if vue == "Solidarité et citoyenneté":
                     if df_fil.empty or not sel_entites_caf:
                         st.warning("⚠️ Aucune donnée pour les filtres sélectionnés.")
                     else:
+                        # Bloc de rendu structuré : en fonction du filtre (métropole vs communes),
+                        # on affiche d'abord la section correspondante, puis l'ensemble des KPIs/graphes.
+                        if is_metro:
+                            st.markdown("##### Partie Métropole")
+                        else:
+                            st.markdown("##### Partie Commune")
                         label_metric = available_metrics[metric_key]
                         suffix_euro  = " €" if "Montant" in metric_key else ""
 
@@ -5729,6 +5736,12 @@ if vue == "Solidarité et citoyenneté":
             if df_e.empty or not sel_entites_eff:
                 st.warning("⚠️ Aucune donnée pour les filtres sélectionnés.")
             else:
+                # Bloc de rendu structuré : titres clairs pour faciliter la personnalisation
+                # (métropoles vs communes) sans changer le contenu des graphes.
+                if is_metro:
+                    st.markdown("##### Partie Métropole")
+                else:
+                    st.markdown("##### Partie Commune")
                 total_etab   = len(df_e)
                 total_eleves = int(df_e["Nombre_d_eleves"].sum())
                 nb_rep       = int(df_e["Appartenance_Education_Prioritaire"].isin(["REP", "REP+"]).sum())
@@ -5975,6 +5988,12 @@ if vue == "Solidarité et citoyenneté":
             kpi_border_color = "#1e5631"
 
         st.markdown("---")
+        if mode_sante == "Comparaison Métropoles":
+            # Métropoles : KPIs + carte + graphes (tout le rendu ci-dessous)
+            st.markdown("##### Partie Métropole")
+        else:
+            # Communes (Grenoble-Alpes Métropole) : même structure, rendu séparé
+            st.markdown("##### Partie Commune")
         st.markdown("#### Synthèse de l'offre de soins")
         sk1, sk2, sk3, sk4, sk5 = st.columns(5)
         with sk1: st.markdown(render_solidarite_kpi("Total", fmt(len(df_sf)), "Établissements", kpi_border_color), unsafe_allow_html=True)
@@ -6264,15 +6283,15 @@ if vue == "Solidarité et citoyenneté":
                 sel_tour_part  = st.selectbox("Tour", tours_elec, format_func=lambda t: f"Tour {t}", key="part_tour")
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # ── Variable booléenne locale pour ce scope ───────────────────────────
-        part_is_metro = (mode_part == "Comparaison Métropoles")
+        # ── Sections distinctes par niveau géographique (métropole / commune) ─
+        mode_part_metro = (mode_part == "Comparaison Métropoles")
 
         df_elec_f = df_elec_type[
             (df_elec_type["Année"] == sel_annee_part) &
             (df_elec_type["Numéro de tour"] == sel_tour_part)
         ]
 
-        if part_is_metro:
+        if mode_part_metro:
             df_elec_f = df_elec_f[df_elec_f["metropole"].isin(sel_metros_part)]
             df_agg    = df_elec_f.groupby("metropole", as_index=False).agg(
                 Inscrits=("Inscrits", "sum"), Votants=("Votants", "sum"),
@@ -6324,79 +6343,128 @@ if vue == "Solidarité et citoyenneté":
         if df_agg.empty:
             st.warning("⚠️ Aucune donnée pour les filtres sélectionnés.")
         else:
-            c1, c2 = st.columns(2)
+            # ════════════════════════════════════════════════════════════════════
+            # VUE METROPOLES
+            # ════════════════════════════════════════════════════════════════════
+            if mode_part_metro:
+                # VUE METROPOLES : KPIs/graphes dédiés (éditer ici n'impacte pas la vue communes)
+                c1, c2 = st.columns(2)
 
-            # ── Taux de participation ─────────────────────────────────────────
-            with c1:
-                st.markdown("##### Taux de participation",
-                            help="Votants / Inscrits × 100. Inclut les votes blancs et nuls.")
-                df_part_sorted = df_agg.sort_values("% Participation", ascending=True)
-                df_part_sorted["text_display"] = df_part_sorted["% Participation"].apply(lambda v: f"{v:.1f} %")
-                _part_color_map = COULEURS if part_is_metro else None
-                _part_seq       = px.colors.sequential.Greens_r if not part_is_metro else None
-                fig_part = px.bar(
-                    df_part_sorted, x="% Participation", y="metropole", orientation="h",
-                    color="metropole",
-                    color_discrete_map=_part_color_map,
-                    color_discrete_sequence=_part_seq,
-                    text="text_display",
-                    labels={"metropole": "", "% Participation": "Participation (%)"},
-                    height=380
-                )
-                fig_part.update_traces(
-                    textposition="outside",
-                    hovertemplate="<b>%{y}</b><br>Participation : <b>%{text}</b><extra></extra>"
-                )
-                fig_part.update_layout(
-                    showlegend=False, xaxis_range=[0, 100],
-                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                    font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"),
-                    margin=dict(l=10, r=40, t=40, b=10)
-                )
-                # Hachures uniquement en mode métropoles (évite la commune "Grenoble")
-                apply_grenoble_hatch(fig_part, active=part_is_metro)
-                st.plotly_chart(style(fig_part, 40), use_container_width=True)
-
-            # ── Qualité du vote ───────────────────────────────────────────────
-            with c2:
-                st.markdown("##### Qualité du vote",
-                            help="Parmi les votants : proportion de votes valides (Exprimés) vs blancs/nuls (Non-Exprimés).")
-                df_qual = df_agg[["metropole", "% Exprimés", "% Non-Exprimés"]].melt(
-                    id_vars="metropole", var_name="Type", value_name="Taux"
-                )
-                df_qual["text_display"] = df_qual["Taux"].apply(lambda v: f"{v:.1f} %")
-                order_qual = df_agg.sort_values("% Exprimés", ascending=False)["metropole"].tolist()
-
-                fig_qual = px.bar(
-                    df_qual, x="metropole", y="Taux", color="Type", barmode="stack",
-                    color_discrete_map=(
-                        {"% Exprimés": "#555555", "% Non-Exprimés": "#aaaaaa"}
-                        if part_is_metro else
-                        {"% Exprimés": "#2D6A4F", "% Non-Exprimés": "#95D5B2"}
-                    ),
-                    text="text_display",
-                    labels={"metropole": "", "Taux": "%", "Type": ""},
-                    height=380
-                )
-                fig_qual.update_traces(
-                    hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>"
-                )
-                if part_is_metro and "Grenoble" in order_qual:
-                    g_pos_qual = order_qual.index("Grenoble")
-                    fig_qual.add_vrect(
-                        x0=g_pos_qual - 0.45, x1=g_pos_qual + 0.45,
-                        fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D",
-                        line_width=1.5, line_dash="dash", layer="below"
+                with c1:
+                    # Participation : taux de participation (votants / inscrits)
+                    st.markdown("##### Taux de participation",
+                                help="Votants / Inscrits × 100. Inclut les votes blancs et nuls.")
+                    df_part_sorted = df_agg.sort_values("% Participation", ascending=True)
+                    df_part_sorted["text_display"] = df_part_sorted["% Participation"].apply(lambda v: f"{v:.1f} %")
+                    fig_part = px.bar(
+                        df_part_sorted, x="% Participation", y="metropole", orientation="h",
+                        color="metropole", color_discrete_map=COULEURS, text="text_display",
+                        labels={"metropole": "", "% Participation": "Participation (%)"}, height=380
                     )
-                fig_qual.update_layout(
-                    yaxis_range=[0, 100],
-                    xaxis=dict(categoryorder="array", categoryarray=order_qual),
-                    legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
-                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                    font_family="Sora", yaxis=dict(gridcolor="#E8F5EE"),
-                    margin=dict(l=10, r=10, t=40, b=10)
-                )
-                st.plotly_chart(style(fig_qual, 40), use_container_width=True)
+                    fig_part.update_traces(
+                        textposition="outside",
+                        hovertemplate="<b>%{y}</b><br>Participation : <b>%{text}</b><extra></extra>"
+                    )
+                    fig_part.update_layout(
+                        showlegend=False, xaxis_range=[0, 100],
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"),
+                        margin=dict(l=10, r=40, t=40, b=10)
+                    )
+                    apply_grenoble_hatch(fig_part, active=True)
+                    st.plotly_chart(style(fig_part, 40), use_container_width=True)
+
+                with c2:
+                    # Qualité du vote : exprimés vs non-exprimés
+                    st.markdown("##### Qualité du vote",
+                                help="Parmi les votants : proportion de votes valides (Exprimés) vs blancs/nuls (Non-Exprimés).")
+                    df_qual = df_agg[["metropole", "% Exprimés", "% Non-Exprimés"]].melt(
+                        id_vars="metropole", var_name="Type", value_name="Taux"
+                    )
+                    df_qual["text_display"] = df_qual["Taux"].apply(lambda v: f"{v:.1f} %")
+                    order_qual = df_agg.sort_values("% Exprimés", ascending=False)["metropole"].tolist()
+                    fig_qual = px.bar(
+                        df_qual, x="metropole", y="Taux", color="Type", barmode="stack",
+                        color_discrete_map={"% Exprimés": "#555555", "% Non-Exprimés": "#aaaaaa"},
+                        text="text_display", labels={"metropole": "", "Taux": "%", "Type": ""}, height=380
+                    )
+                    fig_qual.update_traces(
+                        hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>"
+                    )
+                    if "Grenoble" in order_qual:
+                        g_pos_qual = order_qual.index("Grenoble")
+                        fig_qual.add_vrect(
+                            x0=g_pos_qual - 0.45, x1=g_pos_qual + 0.45,
+                            fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D",
+                            line_width=1.5, line_dash="dash", layer="below"
+                        )
+                    fig_qual.update_layout(
+                        yaxis_range=[0, 100],
+                        xaxis=dict(categoryorder="array", categoryarray=order_qual),
+                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora", yaxis=dict(gridcolor="#E8F5EE"),
+                        margin=dict(l=10, r=10, t=40, b=10)
+                    )
+                    st.plotly_chart(style(fig_qual, 40), use_container_width=True)
+
+            # ════════════════════════════════════════════════════════════════════
+            # VUE COMMUNES
+            # ════════════════════════════════════════════════════════════════════
+            else:
+                # VUE COMMUNES : KPIs/graphes dédiés (sélection des communes Grenoble-Alpes Métropole)
+                c1, c2 = st.columns(2)
+
+                with c1:
+                    # Participation : taux de participation (votants / inscrits)
+                    st.markdown("##### Taux de participation",
+                                help="Votants / Inscrits × 100. Inclut les votes blancs et nuls.")
+                    df_part_sorted = df_agg.sort_values("% Participation", ascending=True)
+                    df_part_sorted["text_display"] = df_part_sorted["% Participation"].apply(lambda v: f"{v:.1f} %")
+                    fig_part = px.bar(
+                        df_part_sorted, x="% Participation", y="metropole", orientation="h",
+                        color="metropole", color_discrete_sequence=px.colors.sequential.Greens_r,
+                        text="text_display", labels={"metropole": "", "% Participation": "Participation (%)"}, height=380
+                    )
+                    fig_part.update_traces(
+                        textposition="outside",
+                        hovertemplate="<b>%{y}</b><br>Participation : <b>%{text}</b><extra></extra>"
+                    )
+                    fig_part.update_layout(
+                        showlegend=False, xaxis_range=[0, 100],
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"),
+                        margin=dict(l=10, r=40, t=40, b=10)
+                    )
+                    apply_grenoble_hatch(fig_part, active=False)
+                    st.plotly_chart(style(fig_part, 40), use_container_width=True)
+
+                with c2:
+                    # Qualité du vote : exprimés vs non-exprimés
+                    st.markdown("##### Qualité du vote",
+                                help="Parmi les votants : proportion de votes valides (Exprimés) vs blancs/nuls (Non-Exprimés).")
+                    df_qual = df_agg[["metropole", "% Exprimés", "% Non-Exprimés"]].melt(
+                        id_vars="metropole", var_name="Type", value_name="Taux"
+                    )
+                    df_qual["text_display"] = df_qual["Taux"].apply(lambda v: f"{v:.1f} %")
+                    order_qual = df_agg.sort_values("% Exprimés", ascending=False)["metropole"].tolist()
+                    fig_qual = px.bar(
+                        df_qual, x="metropole", y="Taux", color="Type", barmode="stack",
+                        color_discrete_map={"% Exprimés": "#2D6A4F", "% Non-Exprimés": "#95D5B2"},
+                        text="text_display", labels={"metropole": "", "Taux": "%", "Type": ""}, height=380
+                    )
+                    fig_qual.update_traces(
+                        hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>"
+                    )
+                    fig_qual.update_layout(
+                        yaxis_range=[0, 100],
+                        xaxis=dict(categoryorder="array", categoryarray=order_qual),
+                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora", yaxis=dict(gridcolor="#E8F5EE"),
+                        margin=dict(l=10, r=10, t=40, b=10)
+                    )
+                    st.plotly_chart(style(fig_qual, 40), use_container_width=True)
 
             st.markdown("---")
 
@@ -6417,14 +6485,14 @@ if vue == "Solidarité et citoyenneté":
             st.markdown(
                 f"<p style='font-size:11px;color:#888;margin-top:-10px;margin-bottom:10px;'>"
                 f"📋 Élections : <b>{type_election}</b> · Périmètre : <b>"
-                f"{'Comparaison Métropoles' if part_is_metro else 'Communes Grenoble-Alpes Métropole'}</b> · "
+                f"{'Comparaison Métropoles' if mode_part_metro else 'Communes Grenoble-Alpes Métropole'}</b> · "
                 f"Tour <b>{sel_tour_part}</b> · Variation entre <b>{annee_debut}</b> et <b>{annee_fin}</b>"
                 f"</p>",
                 unsafe_allow_html=True
             )
 
             df_delta_base = df_elec_type[df_elec_type["Numéro de tour"] == sel_tour_part].copy()
-            if part_is_metro:
+            if mode_part_metro:
                 df_delta_base = df_delta_base[df_delta_base["metropole"].isin(sel_metros_part)]
                 grp_col = "metropole"
             else:
@@ -6464,7 +6532,7 @@ if vue == "Solidarité et citoyenneté":
                 )
                 fig_delta.add_vline(x=0, line_dash="dash", line_color="#888", line_width=1)
 
-                if part_is_metro:
+                if mode_part_metro:
                     entites_delta = df_delta["entite"].tolist()
                     if "Grenoble" in entites_delta:
                         g_pos_delta = entites_delta.index("Grenoble")
@@ -6480,7 +6548,7 @@ if vue == "Solidarité et citoyenneté":
                     margin=dict(l=10, r=60, t=40, b=10)
                 )
                 # Hachures uniquement en mode métropoles
-                apply_grenoble_hatch(fig_delta, active=part_is_metro)
+                apply_grenoble_hatch(fig_delta, active=mode_part_metro)
                 st.plotly_chart(style(fig_delta), use_container_width=True)
             else:
                 st.info("Données insuffisantes pour calculer la variation.")
