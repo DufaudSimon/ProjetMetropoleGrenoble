@@ -1190,7 +1190,7 @@ if vue == "Description":
         <div class="card-body" style="font-size:0.9rem; color:#555;"><b>Toutes les mobilités :</b> On étudie les déplacements des habitants. Cela comprend les nouveaux arrivants, les trajets domicile-travail et les déplacements pour l'école.</div></div>""", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Habitation</div><div class="card-title"><b>Logement</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Ici, on s’intéresse à</div></div>""", unsafe_allow_html=True)
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Ici, on s’intéresse à l'occupation des résidences principales et à divers indicateurs sur les logements sociaux</div></div>""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('<p style="font-size:1.5rem; font-weight:700; color:#C45B2A; border-bottom: 2px solid #C45B2A;"> Thématique 2 : Solidarité & Citoyenneté</p>', unsafe_allow_html=True)
@@ -3926,8 +3926,6 @@ if vue == "Démographie":
                             ))
                         fig_taux.add_hline(y=20, line_dash="dot", line_color="#888",
                                            annotation_text="Seuil SRU 20%", annotation_position="top left")
-                        if greno_vrect:
-                            fig_taux.add_vrect(**greno_vrect)
                         fig_taux.update_layout(
                             height=340, margin=dict(t=20, b=10),
                             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",

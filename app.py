@@ -504,6 +504,19 @@ def charger_mobilites():
     return safe_load(p_res), safe_load(p_prof), safe_load(p_scol)
 
 @st.cache_data
+def charger_transport():
+    p = DATA_DIR / "transport" / "transport_metropoles_clean.csv"
+    if not p.exists():
+        return None
+    df = pd.read_csv(p, sep=",", encoding="utf-8-sig")
+    df.columns = df.columns.str.strip()
+    if "metropole" in df.columns:
+        df["metropole"] = df["metropole"].replace("Saint-Etienne", "Saint-Étienne")
+    return df
+
+df_transport = charger_transport()
+
+@st.cache_data
 def charger_caf():
     paths = [
         Path("solidarite&citoyennete/data_clean/solidarite/CAF_5_Metropoles.csv"),
@@ -938,14 +951,16 @@ if st.session_state.page == "home":
         <div class="info-card">
             <div class="info-card-title"> Démographie</div>
             <div class="info-card-body">
-                Analyse de la population, de la structure par âge, des ménage, des logements, des mobilités résidentielles, professionnelles et scolaires.
+                Analyse de la population, de la structure par âge, des ménage, des logements, des transports, des mobilités résidentielles, professionnelles et scolaires.
             </div>
             <div class="tag-row">
                 <span class="tag-green">Population</span>
                 <span class="tag-green">Âges</span>
-                <span class="tag-green">Actifs</span>
                 <span class="tag-green">Mobilités</span>
+                <span class="tag-green">Transports</span>
+                <span class="tag-green">Ménages</span>
                 <span class="tag-green">Logements</span>
+                <span class="tag-green">Actifs</span>
             </div>
         </div>
         <div class="info-card orange">
@@ -1179,6 +1194,9 @@ if vue == "Description":
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Foyers</div><div class="card-title"><b> Ménages</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;">On regarde ici comment vivent les gens chez eux. Cela montre s'il y a beaucoup de familles ou de personnes seules, et combien il y a d'habitants par logement.</div></div>""", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Transports</div><div class="card-title"><b> Transport domicile-travail</b></div>
+        <div class="card-body" style="font-size:0.9rem; color:#555;">On observe ici les déplacements domicile-travail des actifs (15 ans ou plus). Cela permet de comprendre où les habitants travaillent et quels moyens de transport ils utilisent pour se rendre à leur emploi.</div></div>""", unsafe_allow_html=True)
     with col2:
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Âges</div><div class="card-title"><b> Structure par âge</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;">Est-ce que la ville est plutôt jeune ou vieille ? Cette partie montre le nombre d'enfants, de travailleurs et de retraités pour chaque endroit étudié.</div></div>""", unsafe_allow_html=True)
@@ -1190,7 +1208,7 @@ if vue == "Description":
         <div class="card-body" style="font-size:0.9rem; color:#555;"><b>Toutes les mobilités :</b> On étudie les déplacements des habitants. Cela comprend les nouveaux arrivants, les trajets domicile-travail et les déplacements pour l'école.</div></div>""", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Habitation</div><div class="card-title"><b>Logement</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Ici, on s’intéresse à</div></div>""", unsafe_allow_html=True)
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Cette section fournit une vue d’ensemble de l’occupation des résidences principales et des principaux indicateurs liés aux logements sociaux.</div></div>""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('<p style="font-size:1.5rem; font-weight:700; color:#C45B2A; border-bottom: 2px solid #C45B2A;"> Thématique 2 : Solidarité & Citoyenneté</p>', unsafe_allow_html=True)
@@ -1229,15 +1247,15 @@ if vue == "Description":
 # PAGE DÉMOGRAPHIE
 # ==============================================================================
 
-if vue == "Démographie":
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-        "🏙️   Population globale",
-        "👥   Structure par âge",
-        "🚌   Mobilités",
-        "🏠   Ménages",
-        "🏢   Logements",
-        "📊   Population active 25-54 ans",
-    ])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+    "🏙️   Population globale",
+    "👥   Structure par âge",
+    "🚌   Mobilités",
+    "🚆   Transports",
+    "🏠   Ménages",
+    "🏢   Logements",
+    "📊   Population active 25-54 ans",
+])
 
 # ==============================================================================
 # ONGLET 1 - POPULATION GLOBALE
@@ -1482,7 +1500,7 @@ if vue == "Démographie":
             with r3c1:
                 st.subheader(
                     "Taux de chômage et taux de pauvreté (%)",
-                    help="Le **taux de chômage** (15–64 ans) est la part des actifs sans emploi. Le **taux de pauvreté** est la part de la population dont le revenu est inférieur à 60% du revenu médian national. Ces deux indicateurs mesurent les fragilités sociales d'un territoire : un taux de chômage élevé pèse sur le revenu des ménages et fait mécaniquement augmenter le taux de pauvreté."
+                    help="Le **taux de chômage** (15-64 ans) est la part des actifs sans emploi. Le **taux de pauvreté** est la part de la population dont le revenu est inférieur à 60% du revenu médian national. Ces deux indicateurs mesurent les fragilités sociales d'un territoire : un taux de chômage élevé pèse sur le revenu des ménages et fait mécaniquement augmenter le taux de pauvreté."
                 )
                 rows_social_c = []
                 for comm in sel_communes_pop:
@@ -1776,7 +1794,7 @@ if vue == "Démographie":
             with r3c1:
                 st.subheader(
                     "Taux de chômage et taux de pauvreté (%)",
-                    help="Le **taux de chômage** (15–64 ans) est la part des actifs sans emploi. Le **taux de pauvreté** est la part de la population dont le revenu est inférieur à 60% du revenu médian national. Ces deux indicateurs mesurent les fragilités sociales d'un territoire : un taux de chômage élevé pèse sur le revenu des ménages et fait mécaniquement augmenter le taux de pauvreté."
+                    help="Le **taux de chômage** (15-64 ans) est la part des actifs sans emploi. Le **taux de pauvreté** est la part de la population dont le revenu est inférieur à 60% du revenu médian national. Ces deux indicateurs mesurent les fragilités sociales d'un territoire : un taux de chômage élevé pèse sur le revenu des ménages et fait mécaniquement augmenter le taux de pauvreté."
                 )
                 rows_social = []
                 for m in sel:
@@ -2133,7 +2151,7 @@ if vue == "Démographie":
                     st.markdown(
                         "**Âge médian** : âge qui divise la population en deux moitiés égales. "
                         "Estimé par interpolation à partir des tranches quinquennales.  \n"
-                        "**Indice de dépendance** : (< 25 ans + ≥ 65 ans) / (25–64 ans) × 100. "
+                        "**Indice de dépendance** : (< 25 ans + ≥ 65 ans) / (25-64 ans) × 100. "
                         "Plus il est élevé, plus les actifs portent une part importante de population non active.  \n"
                     )
 
@@ -2178,7 +2196,7 @@ if vue == "Démographie":
                     st.write(
                         "Axe X identique pour toutes les pyramides → comparaison visuelle directe. "
                         "Base large = beaucoup de jeunes. Sommet large = fort vieillissement. "
-                        "Forme en 'toupie' (ventre 25–55 ans) = dominance de la population active.\n\n"
+                        "Forme en 'toupie' (ventre 25-55 ans) = dominance de la population active.\n\n"
                         "Grenoble est mise en valeur par des hachures rouges (/) sur ses barres."
                     )
 
@@ -2205,7 +2223,7 @@ if vue == "Démographie":
                     st.write(
                         "Chaque courbe montre la 'silhouette démographique' d'une métropole. "
                         "Grenoble est en pointillés rouges avec des marqueurs losange. "
-                        "Les pics sur 20–34 ans caractérisent les villes étudiantes ou attractives pour les jeunes actifs. "
+                        "Les pics sur 20-34 ans caractérisent les villes étudiantes ou attractives pour les jeunes actifs. "
                         "Les courbes décalées vers les 65+ signalent un vieillissement plus marqué."
                     )
 
@@ -2299,7 +2317,7 @@ if vue == "Démographie":
                     st.markdown(
                         "**Âge médian** : âge qui divise la population en deux moitiés égales. "
                         "Estimé par interpolation à partir des tranches quinquennales.  \n"
-                        "**Indice de dépendance** : (< 25 ans + ≥ 65 ans) / (25–64 ans) × 100.  \n"
+                        "**Indice de dépendance** : (< 25 ans + ≥ 65 ans) / (25-64 ans) × 100.  \n"
                     )
 
                 st.markdown("---")
@@ -2331,7 +2349,7 @@ if vue == "Démographie":
                         "Axe X identique pour toutes les communes → comparaison visuelle directe, "
                         "indépendamment de la taille de chaque commune. "
                         "Base large = beaucoup de jeunes. Sommet large = fort vieillissement. "
-                        "Forme en 'toupie' (ventre 25–55 ans) = dominance de la population active.\n\n"
+                        "Forme en 'toupie' (ventre 25-55 ans) = dominance de la population active.\n\n"
                     )
 
                 st.markdown("---")
@@ -2355,7 +2373,7 @@ if vue == "Démographie":
                     st.write(
                         "Chaque courbe montre la 'silhouette démographique' d'une commune en % de sa population totale. "
                         "Cela permet de comparer des communes de tailles très différentes sur un pied d'égalité. "
-                        "Les pics sur les 20–34 ans révèlent des communes attractives pour les jeunes. "
+                        "Les pics sur les 20-34 ans révèlent des communes attractives pour les jeunes. "
                         "Les profils étalés vers 65+ indiquent un vieillissement plus marqué."
                     )
 
@@ -2946,10 +2964,341 @@ if vue == "Démographie":
                             st.write(interpret_int)  # Utilisation de votre variable paramétrée
 
 # ==============================================================================
-# ONGLET 4 - MÉNAGES
+# ONGLET 4 - TRANSPORT DOMICILE-TRAVAIL
 # ==============================================================================
+
 if vue == "Démographie":
     with tab4:
+
+        if df_transport is None:
+            st.info("📂 Fichier `transport_metropoles_clean.csv` introuvable.")
+        else:
+            # ── Encart Source ──────────────────────────────────────────────
+            st.markdown("""
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source :</strong> INSEE -
+                <a href='https://www.insee.fr/fr/statistiques/7632973' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
+                <strong>Note sur les données :</strong> Il s'agit de mobilités professionnelles des actifs (<strong>15 ans et plus</strong>), millésimes 2020 et 2021.
+                Ces données représentent le croisement du mode de transport principal pour se rendre au travail, du lieu de travail
+                (commune de résidence, autre commune, autre département…) et du sexe des actifs occupés.      
+            </div>""", unsafe_allow_html=True)
+
+            # ── Palettes ───────────────────────────────────────────────────
+            MODES_ORDER = [
+                "Voiture, camion, fourgonnette", "Transport en commun",
+                "Marche à pied", "Deux-roues", "Pas de transport", "Autre",
+            ]
+            COULEURS_MODE_METRO = {
+                "Voiture, camion, fourgonnette": "#3A3D44",
+                "Transport en commun":           "#7A7E87",
+                "Marche à pied":                 "#A2A6AE",
+                "Deux-roues":                     "#C8CACF",
+                "Pas de transport":               "#DDE0E3",
+                "Autre":                          "#E8E8EB",
+            }
+            # Vue communes : nuances de vert (cohérence avec PALETTE_COMMUNE)
+            COULEURS_MODE_COMMUNE = {
+                "Voiture, camion, fourgonnette": "#1B4332",
+                "Transport en commun":           "#2D6A4F",
+                "Marche à pied":                 "#40916C",
+                "Deux-roues":                     "#74C69D",
+                "Pas de transport":               "#95D5B2",
+                "Autre":                          "#D8F3DC",
+            }
+
+            # ── Fonctions de calcul ───────────────────────────────────────
+            def get_modal_split(df_src, annee):
+                """Répartition modale (%) pour un sous-ensemble de données."""
+                df_y = df_src[df_src["annee"] == annee]
+                sums = df_y.groupby("mode_transport")["valeur"].sum()
+                total = sums.sum()
+                if total == 0:
+                    return {m: 0.0 for m in MODES_ORDER}, 0
+                return {m: sums.get(m, 0.0) / total * 100 for m in MODES_ORDER}, total
+
+            def get_modal_split_by(df_src, annee, group_col):
+                """Répartition modale (%) groupée par sexe ou par lieu de travail."""
+                df_y = df_src[df_src["annee"] == annee]
+                sums = df_y.groupby([group_col, "mode_transport"])["valeur"].sum().reset_index()
+                totals = df_y.groupby(group_col)["valeur"].sum()
+                sums["total"] = sums[group_col].map(totals)
+                sums["part"] = sums["valeur"] / sums["total"] * 100
+                return sums
+
+            def render_kpi_card_transport(label, total_actifs, split, border_color):
+                tot_str = f"{int(total_actifs):,}".replace(",", "\u202f") if total_actifs > 0 else "N/D"
+                pct_voiture = split.get("Voiture, camion, fourgonnette", 0)
+                pct_tc      = split.get("Transport en commun", 0)
+                pct_actif   = split.get("Marche à pied", 0) + split.get("Deux-roues", 0)
+                st.markdown(f"""
+                <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08); border-left:6px solid {border_color}; background:#fff; margin-bottom:12px; padding:12px 16px;'>
+                    <div style='font-size:13px;font-weight:700;color:#1C3A27;margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:5px;'>{label}</div>
+                    <div style='display:grid;grid-template-columns:1fr 1fr;gap:6px;'>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Actifs occupés</div>
+                            <div style='font-size:15px;font-weight:800;color:#555;'>{tot_str}</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Voiture</div>
+                            <div style='font-size:15px;font-weight:800;color:#3A3D44;'>{pct_voiture:.1f}%</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Transport en commun</div>
+                            <div style='font-size:15px;font-weight:800;color:#1565C0;'>{pct_tc:.1f}%</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Mobilités actives</div>
+                            <div style='font-size:15px;font-weight:800;color:#2E7D32;'>{pct_actif:.1f}%</div>
+                        </div>
+                    </div>
+                </div>""", unsafe_allow_html=True)
+
+            # ── Bandeau filtres ────────────────────────────────────────────
+            with st.container():
+                filter_bar("Filtres - Transport domicile-travail")
+                fa1, fa2 = st.columns([1, 3])
+                with fa1:
+                    filter_row_label("Niveau géographique")
+                with fa2:
+                    mode_transp = st.radio(
+                        "",
+                        ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
+                        key="transp_mode", horizontal=True, label_visibility="collapsed",
+                    )
+
+                if mode_transp == "Comparaison Métropoles":
+                    sel_metros_transp = st.multiselect(
+                        "Métropoles à comparer", TOUTES, default=shared_default_demo(TOUTES),
+                        key="transp_metros", on_change=sync_metros_demo, args=("transp_metros",),
+                    )
+                    targets_transp = sel_metros_transp
+                else:
+                    communes_dispo = sorted(COMMUNES["Grenoble"])
+                    sel_communes_transp = st.multiselect(
+                        "Communes de Grenoble-Alpes Métropole", communes_dispo,
+                        default=shared_default_communes_demo(communes_dispo),
+                        key="transp_communes", on_change=sync_communes_demo, args=("transp_communes",),
+                    )
+                    targets_transp = sel_communes_transp
+
+                annees_transp = sorted(df_transport["annee"].dropna().unique().astype(int).tolist())
+                annee_transp = st.selectbox(
+                    "Année d'analyse", annees_transp, index=len(annees_transp) - 1, key="an_transp",
+                )
+
+            st.markdown("---")
+
+            if not targets_transp:
+                st.warning("Sélectionnez au moins un territoire.")
+                st.stop()
+
+            n_targets = len(targets_transp)
+
+            # ── Couleurs / mise en évidence Grenoble ───────────────────────
+            if mode_transp == "Comparaison Métropoles":
+                bar_colors = [COULEURS.get(t, "#888888") for t in targets_transp]
+                couleurs_mode = COULEURS_MODE_METRO
+            else:
+                bar_colors = [PALETTE_COMMUNE[i % len(PALETTE_COMMUNE)] for i in range(n_targets)]
+                couleurs_mode = COULEURS_MODE_COMMUNE
+
+            greno_vrect = None
+            if "Grenoble" in targets_transp and mode_transp == "Comparaison Métropoles":
+                g_pos = targets_transp.index("Grenoble")
+                greno_vrect = dict(
+                    x0=g_pos - 0.45, x1=g_pos + 0.45,
+                    fillcolor="rgba(255,88,77,0.10)",
+                    line_color="#FF584D", line_width=1.5,
+                    line_dash="dash", layer="below",
+                )
+
+            def df_filter_transp(t):
+                if mode_transp == "Comparaison Métropoles":
+                    return df_transport[(df_transport["metropole"] == t)]
+                return df_transport[
+                    (df_transport["nom_commune"] == t) & (df_transport["metropole"] == "Grenoble")
+                ]
+
+            # ── KPI ───────────────────────────────────────────────────────
+            st.subheader(f"Indicateurs de mobilité domicile-travail en {annee_transp}")
+            kpi_cols = st.columns(n_targets)
+            splits_by_target = {}
+            for i, t in enumerate(targets_transp):
+                df_t = df_filter_transp(t)
+                split_t, total_t = get_modal_split(df_t, annee_transp)
+                splits_by_target[t] = split_t
+                with kpi_cols[i]:
+                    render_kpi_card_transport(t, total_t, split_t, border_color=bar_colors[i])
+
+            st.markdown("---")
+
+            # ── GRAPHIQUE 1 : Répartition modale empilée ───────────────────
+            st.subheader(
+                "Répartition modale des trajets domicile-travail",
+                help=(
+                    "Part de chaque mode de transport principal utilisé par les actifs occupés pour se "
+                    "rendre au travail (base 100% par territoire). La voiture reste partout majoritaire, "
+                    "mais sa part varie fortement selon le développement des réseaux de transport en "
+                    "commun et des aménagements cyclables. " +
+                    ("Grenoble est encadrée en rouge." if mode_transp == "Comparaison Métropoles" else "")
+                ),
+            )
+            rows_modal = []
+            for t in targets_transp:
+                for mode in MODES_ORDER:
+                    rows_modal.append({"Territoire": t, "Mode": mode, "Part (%)": splits_by_target[t][mode]})
+            df_modal = pd.DataFrame(rows_modal)
+
+            fig_modal = px.bar(
+                df_modal, x="Territoire", y="Part (%)", color="Mode",
+                barmode="stack", text_auto=".1f",
+                color_discrete_map=couleurs_mode,
+                category_orders={"Mode": MODES_ORDER}, height=420,
+            )
+            fig_modal.update_traces(textposition="inside", textfont_size=9)
+            if greno_vrect:
+                fig_modal.add_vrect(**greno_vrect)
+            fig_modal.update_layout(
+                legend=dict(orientation="h", y=1.15, title=""),
+                yaxis_title="Part des actifs occupés (%)", xaxis_title="", margin=dict(t=20),
+            )
+            st.plotly_chart(style(fig_modal), use_container_width=True)
+
+            with st.expander("💡 Comment interpréter ce graphique ?"):
+                st.write(
+                    "Ce graphique en barres empilées décompose, pour chaque territoire, la part des actifs "
+                    "utilisant chaque mode de transport pour se rendre au travail. La part de voiture "
+                    "(barre la plus foncée en vue métropoles) reflète à la fois la qualité du réseau de "
+                    "transport en commun, le relief, l'étalement urbain et la disponibilité de pistes "
+                    "cyclables. Un territoire avec une part de transport en commun ou de mobilités actives "
+                    "(marche + deux-roues) élevée traduit généralement une politique de mobilité durable "
+                    "plus avancée et/ou un tissu urbain plus dense, favorable aux déplacements courts."
+                )
+
+            st.markdown("---")
+
+            # ── GRAPHIQUE 2 : Comparaison Hommes / Femmes ──────────────────
+            st.subheader(
+                "Mode de transport selon le sexe",
+                help=(
+                    "Compare la part de chaque mode de transport entre hommes et femmes actifs. "
+                    "Des écarts significatifs peuvent révéler des différences dans la répartition des "
+                    "tâches domestiques (trajets accompagnés d'enfants), dans les secteurs d'activité "
+                    "occupés, ou dans la perception de la sécurité de certains modes (vélo, marche de nuit)."
+                ),
+            )
+
+            ncols_sexe = min(n_targets, 3)
+            rows_sexe = [targets_transp[i:i + ncols_sexe] for i in range(0, n_targets, ncols_sexe)]
+            for row in rows_sexe:
+                cols_sexe = st.columns(len(row))
+                for j, t in enumerate(row):
+                    df_t = df_filter_transp(t)
+                    df_sexe = get_modal_split_by(df_t, annee_transp, "sexe")
+
+                    fig_sexe = px.bar(
+                        df_sexe, x="mode_transport", y="part", color="sexe",
+                        barmode="group",
+                        color_discrete_map={"Hommes": "#3A3D44", "Femmes": couleurs_mode["Marche à pied"]},
+                        category_orders={"mode_transport": MODES_ORDER}, height=300,
+                    )
+                    fig_sexe.update_traces(
+                        hovertemplate="<b>%{fullData.name}</b><br>%{x} : %{y:.1f}%<extra></extra>",
+                    )
+
+                    if t == "Grenoble" and mode_transp == "Comparaison Métropoles":
+                        for trace in fig_sexe.data:
+                            trace.marker.pattern.shape = "/"
+                            trace.marker.pattern.fgcolor = "#FF584D"
+                            trace.marker.pattern.size = 12
+                            trace.marker.pattern.solidity = 0.2
+
+                    fig_sexe.update_layout(
+                        title=dict(text=f"<b>{t}</b>", font_size=12, x=0.5, xanchor="center"),
+                        legend=dict(orientation="h", y=1.18, title=""),
+                        xaxis_title="", yaxis_title="Part (%)", xaxis_tickangle=-25,
+                        margin=dict(t=50, b=10),
+                    )
+                    with cols_sexe[j]:
+                        st.plotly_chart(style(fig_sexe, 30), use_container_width=True)
+
+            with st.expander("💡 Comment interpréter ce graphique ?"):
+                st.write(
+                    "À mode de transport identique, des barres de hauteur similaire entre hommes et femmes "
+                    "indiquent une pratique homogène. Un écart notable sur la voiture (souvent légèrement "
+                    "plus utilisée par les femmes pour des trajets multi-motifs incluant la dépose des "
+                    "enfants) ou sur le vélo (souvent plus masculin) reflète des différences sociologiques "
+                    "documentées dans la littérature sur la mobilité quotidienne. Les hachures rouges "
+                    "identifient Grenoble en vue métropoles."
+                )
+
+            st.markdown("---")
+
+            # ── GRAPHIQUE 3 : Mode selon l'éloignement du lieu de travail ──
+            st.subheader(
+                "Mode de transport selon l'éloignement du lieu de travail",
+                help=(
+                    "Compare la part de voiture et de transport en commun selon que le lieu de travail "
+                    "est situé dans la commune de résidence, dans une autre commune du département, ou "
+                    "plus loin. Permet de visualiser l'effet distance sur le choix modal : plus le trajet "
+                    "est long, plus la voiture s'impose."
+                ),
+            )
+
+            LIEU_ORDER = [
+                "Commune de résidence", "Autre commune du département",
+                "Autre département de la région", "Autre région de France métropolitaine",
+                "Hors France métropolitaine",
+            ]
+
+            fig_eloign = go.Figure()
+            for i, t in enumerate(targets_transp):
+                df_t = df_filter_transp(t)
+                df_lieu = get_modal_split_by(df_t, annee_transp, "lieu_travail")
+                df_voit = df_lieu[df_lieu["mode_transport"] == "Voiture, camion, fourgonnette"]
+                df_voit = df_voit.set_index("lieu_travail").reindex(LIEU_ORDER)
+
+                marker = dict(color=bar_colors[i])
+                if t == "Grenoble" and mode_transp == "Comparaison Métropoles":
+                    marker = dict(color=bar_colors[i], symbol="diamond")
+
+                fig_eloign.add_trace(go.Scatter(
+                    x=LIEU_ORDER, y=df_voit["part"],
+                    mode="lines+markers", name=t,
+                    line=dict(color=bar_colors[i], width=3,
+                              dash="dash" if (t == "Grenoble" and mode_transp == "Comparaison Métropoles") else "solid"),
+                    marker=dict(size=9, **({"symbol": "diamond", "line": dict(color="#FF584D", width=2)}
+                                            if (t == "Grenoble" and mode_transp == "Comparaison Métropoles") else {})),
+                    hovertemplate=f"<b>{t}</b><br>%{{x}}<br>Voiture : %{{y:.1f}}%<extra></extra>",
+                ))
+
+            fig_eloign.update_layout(
+                height=380, margin=dict(t=20, b=80),
+                legend=dict(orientation="h", y=1.12, title=""),
+                xaxis=dict(title="", tickangle=-15),
+                yaxis=dict(title="Part de la voiture (%)", range=[0, 100], gridcolor="#eee"),
+                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+            )
+            st.plotly_chart(style(fig_eloign), use_container_width=True)
+
+            with st.expander("💡 Comment interpréter ce graphique ?"):
+                st.write(
+                    "Cette courbe illustre un phénomène universel : la part de la voiture augmente avec "
+                    "l'éloignement du lieu de travail. Pour un emploi dans la commune de résidence, la "
+                    "marche, le vélo ou les transports en commun restent compétitifs ; au-delà du "
+                    "département, la voiture devient quasi incontournable faute d'alternative compétitive "
+                    "en temps de trajet. La pente de la courbe (écart entre le premier et le dernier point) "
+                    "renseigne sur la capacité du territoire à proposer des alternatives sur les courtes "
+                    "distances : une pente faible et partant d'un niveau bas signale un territoire où la "
+                    "voiture n'est pas nécessaire même pour les trajets de proximité — c'est typiquement "
+                    "le profil recherché pour Grenoble, identifiée par la ligne en tirets rouges."
+                )
+                
+# ==============================================================================
+# ONGLET 5 - MÉNAGES
+# ==============================================================================
+if vue == "Démographie":
+    with tab5:
 
         data_men_ok = (df_men_age is not None) and (df_men_csp is not None)
         if not data_men_ok:
@@ -3364,11 +3713,11 @@ if vue == "Démographie":
                         "Comparer ces tailles entre territoires pour une même CSP met en évidence des différences sociales locales."
                     )
 # ==============================================================================
-# ONGLET 5 - LOGEMENT
+# ONGLET 6 - LOGEMENT
 # ==============================================================================
 
 if vue == "Démographie":
-    with tab5:
+    with tab6:
 
         if df_log is None and df_social is None:
             st.info("📂 Fichiers `logements_metropoles_clean.csv` et `rpls_metropoles_clean.csv` introuvables.")
@@ -3385,11 +3734,11 @@ if vue == "Démographie":
             # ── Encart Sources ─────────────────────────────────────────────
             st.markdown("""
             <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
-                <strong>Sources :</strong><br>
-                🏠 <b>Résidences principales (indice de peuplement)</b> — INSEE, recensements 2011 / 2016 / 2022 :
-                <a href='https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_LOGEMENT_COMPL' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br>
-                🏢 <b>Logements sociaux (RPLS)</b> — SDES, millésime unique 2024 :
-                <a href='https://www.insee.fr/fr/statistiques/8736658' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br>
+                <strong>Sources :</strong> INSEE<br><br>
+                🏠 <b>Résidences principales (indice de peuplement):</b> recensements 2011 / 2016 / 2022 :
+                <a href='https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_LOGEMENT_COMPL' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
+                🏢 <b>Logements sociaux (RPLS):</b> millésime unique 2024 :
+                <a href='https://www.insee.fr/fr/statistiques/8736658' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
                 <em>Les deux sources portant sur des années différentes, elles sont présentées dans deux thématiques distinctes.</em>
             </div>""", unsafe_allow_html=True)
 
@@ -3926,8 +4275,6 @@ if vue == "Démographie":
                             ))
                         fig_taux.add_hline(y=20, line_dash="dot", line_color="#888",
                                            annotation_text="Seuil SRU 20%", annotation_position="top left")
-                        if greno_vrect:
-                            fig_taux.add_vrect(**greno_vrect)
                         fig_taux.update_layout(
                             height=340, margin=dict(t=20, b=10),
                             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
@@ -4184,7 +4531,7 @@ if vue == "Démographie":
                     )
 
 # ==============================================================================
-# ONGLET 6 - Population active 25-54 ans 
+# ONGLET 7 - Population active 25-54 ans 
 # ==============================================================================
 
 
@@ -4276,10 +4623,10 @@ def _build_heatmap_matrix(df_raw, row_filter_col, row_filter_vals):
     return df_pct
 
 
-# ── Onglet 6 ──────────────────────────────────────────────────────────────────
+# ── Onglet 7 ──────────────────────────────────────────────────────────────────
 
 if vue == "Démographie":
-    with tab6:
+    with tab7:
 
         if df_csp_new.empty or "ANNEE" not in df_csp_new.columns:
             st.info("📂 Données CSP/Diplôme non trouvées. Vérifiez les fichiers.")
@@ -4287,7 +4634,7 @@ if vue == "Démographie":
             st.markdown("""
             <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px;
                         border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
-                <strong>Source :</strong> INSEE –
+                <strong>Source :</strong> INSEE -
                 <a href='https://www.insee.fr/fr/statistiques/1893185' target='_blank'
                    style='color: #1C3A27;'>Accéder aux données</a><br><br>
                 <strong>Note sur les données :</strong> Ces chiffres sont issus des recensements
@@ -4764,11 +5111,11 @@ if vue == "Démographie":
                         ):
                             table_df = pd.DataFrame({
                                 "Catégorie": sel_cats,
-                                f"{t1_name} (T1 – Eff.)": [
+                                f"{t1_name} (T1 - Eff.)": [
                                     f"{int(v1[c]):,d}".replace(",", "\u202f")
                                     for c in sel_cats
                                 ],
-                                f"{t2_name} (T2 – Eff.)": [
+                                f"{t2_name} (T2 - Eff.)": [
                                     f"{int(v2[c]):,d}".replace(",", "\u202f")
                                     for c in sel_cats
                                 ],
@@ -4851,18 +5198,18 @@ if vue == "Solidarité et citoyenneté":
                     "Nombre foyers NDUR":       "Foyers aidés (toutes aides)",
                     "Nombre personnes NDUR":    "Personnes concernées (toutes aides)",
                     "Montant total NDUR":        "Montant total versé (€)",
-                    "Nombre foyers NDURPAJE":   "Foyers aidés – Jeunes enfants",
-                    "Nombre personnes NDURPAJE":"Personnes concernées – Jeunes enfants",
-                    "Montant total NDURPAJE":    "Montant versé – Jeunes enfants (€)",
-                    "Nombre foyers NDUREJ":     "Foyers aidés – Enfance & jeunesse",
-                    "Nombre personnes NDUREJ":  "Personnes concernées – Enfance & jeunesse",
-                    "Montant total NDUREJ":      "Montant versé – Enfance & jeunesse (€)",
-                    "Nombre foyers NDURAL":     "Foyers aidés – Logement",
-                    "Nombre personnes NDURAL":  "Personnes concernées – Logement",
-                    "Montant total NDURAL":      "Montant versé – Logement (€)",
-                    "Nombre foyers NDURINS":    "Foyers aidés – Insertion",
-                    "Nombre personnes NDURINS": "Personnes concernées – Insertion",
-                    "Montant total NDURINS":     "Montant versé – Insertion (€)",
+                    "Nombre foyers NDURPAJE":   "Foyers aidés - Jeunes enfants",
+                    "Nombre personnes NDURPAJE":"Personnes concernées - Jeunes enfants",
+                    "Montant total NDURPAJE":    "Montant versé - Jeunes enfants (€)",
+                    "Nombre foyers NDUREJ":     "Foyers aidés - Enfance & jeunesse",
+                    "Nombre personnes NDUREJ":  "Personnes concernées - Enfance & jeunesse",
+                    "Montant total NDUREJ":      "Montant versé - Enfance & jeunesse (€)",
+                    "Nombre foyers NDURAL":     "Foyers aidés - Logement",
+                    "Nombre personnes NDURAL":  "Personnes concernées - Logement",
+                    "Montant total NDURAL":      "Montant versé - Logement (€)",
+                    "Nombre foyers NDURINS":    "Foyers aidés - Insertion",
+                    "Nombre personnes NDURINS": "Personnes concernées - Insertion",
+                    "Montant total NDURINS":     "Montant versé - Insertion (€)",
                 }
                 available_metrics = {k: v for k, v in ALL_METRIC_LABELS.items() if k in df_caf.columns}
                 if not available_metrics:
