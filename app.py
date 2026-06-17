@@ -2997,7 +2997,6 @@ if vue == "Démographie":
                 "Pas de transport":               "#DDE0E3",
                 "Autre":                          "#E8E8EB",
             }
-            # Vue communes : nuances de vert (cohérence avec PALETTE_COMMUNE)
             COULEURS_MODE_COMMUNE = {
                 "Voiture, camion, fourgonnette": "#1B4332",
                 "Transport en commun":           "#2D6A4F",
@@ -3008,23 +3007,23 @@ if vue == "Démographie":
             }
 
             # ── Fonctions de calcul ───────────────────────────────────────
-            def get_modal_split(df_src, annee):
-                """Répartition modale (%) pour un sous-ensemble de données."""
+            def get_modal_split(df_src, annee, filter_col=None, filter_val=None):
+                """Répartition modale (%). Filtre optionnel sur une colonne (ex: lieu_travail)."""
                 df_y = df_src[df_src["annee"] == annee]
+                if filter_col is not None:
+                    df_y = df_y[df_y[filter_col] == filter_val]
                 sums = df_y.groupby("mode_transport")["valeur"].sum()
                 total = sums.sum()
                 if total == 0:
                     return {m: 0.0 for m in MODES_ORDER}, 0
                 return {m: sums.get(m, 0.0) / total * 100 for m in MODES_ORDER}, total
 
-            def get_modal_split_by(df_src, annee, group_col):
-                """Répartition modale (%) groupée par sexe ou par lieu de travail."""
+            def get_part_local(df_src, annee):
+                """Part des actifs travaillant dans leur commune de résidence (%)."""
                 df_y = df_src[df_src["annee"] == annee]
-                sums = df_y.groupby([group_col, "mode_transport"])["valeur"].sum().reset_index()
-                totals = df_y.groupby(group_col)["valeur"].sum()
-                sums["total"] = sums[group_col].map(totals)
-                sums["part"] = sums["valeur"] / sums["total"] * 100
-                return sums
+                total = df_y["valeur"].sum()
+                local = df_y[df_y["lieu_travail"] == "Commune de résidence"]["valeur"].sum()
+                return (local / total * 100) if total > 0 else 0.0
 
             def render_kpi_card_transport(label, total_actifs, split, border_color):
                 tot_str = f"{int(total_actifs):,}".replace(",", "\u202f") if total_actifs > 0 else "N/D"
@@ -3035,21 +3034,21 @@ if vue == "Démographie":
                 <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08); border-left:6px solid {border_color}; background:#fff; margin-bottom:12px; padding:12px 16px;'>
                     <div style='font-size:13px;font-weight:700;color:#1C3A27;margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:5px;'>{label}</div>
                     <div style='display:grid;grid-template-columns:1fr 1fr;gap:6px;'>
-                        <div style='text-align:center;'>
+                        <div style='text-align:center;' title='Personnes ayant un emploi, résidant sur le territoire'>
                             <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Actifs occupés</div>
                             <div style='font-size:15px;font-weight:800;color:#555;'>{tot_str}</div>
                         </div>
                         <div style='text-align:center;'>
                             <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Voiture</div>
-                            <div style='font-size:15px;font-weight:800;color:#3A3D44;'>{pct_voiture:.1f}%</div>
+                            <div style='font-size:15px;font-weight:800;color:#3A3D44;'>{pct_voiture:.2f}%</div>
                         </div>
                         <div style='text-align:center;'>
                             <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Transport en commun</div>
-                            <div style='font-size:15px;font-weight:800;color:#1565C0;'>{pct_tc:.1f}%</div>
+                            <div style='font-size:15px;font-weight:800;color:#1565C0;'>{pct_tc:.2f}%</div>
                         </div>
                         <div style='text-align:center;'>
                             <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Mobilités actives</div>
-                            <div style='font-size:15px;font-weight:800;color:#2E7D32;'>{pct_actif:.1f}%</div>
+                            <div style='font-size:15px;font-weight:800;color:#2E7D32;'>{pct_actif:.2f}%</div>
                         </div>
                     </div>
                 </div>""", unsafe_allow_html=True)
@@ -3085,6 +3084,7 @@ if vue == "Démographie":
                 annees_transp = sorted(df_transport["annee"].dropna().unique().astype(int).tolist())
                 annee_transp = st.selectbox(
                     "Année d'analyse", annees_transp, index=len(annees_transp) - 1, key="an_transp",
+                    help="Pilote les KPI et l'ensemble des graphiques de cet onglet.",
                 )
 
             st.markdown("---")
@@ -3121,7 +3121,18 @@ if vue == "Démographie":
                 ]
 
             # ── KPI ───────────────────────────────────────────────────────
-            st.subheader(f"Indicateurs de mobilité domicile-travail en {annee_transp}")
+            st.subheader(
+                f"Indicateurs de mobilité domicile-travail en {annee_transp}",
+                help=(
+                    "**Actifs occupés** : personnes ayant un emploi (en activité professionnelle), "
+                    "par opposition aux chômeurs et aux inactifs. Cet indicateur compte les actifs "
+                    "résidant sur le territoire, quel que soit leur lieu de travail.\n\n"
+                    "**Voiture / Transport en commun** : part du mode de transport principal déclaré "
+                    "pour le trajet domicile-travail.\n\n"
+                    "**Mobilités actives** : somme de la marche à pied et des deux-roues (vélo, "
+                    "scooter, moto)."
+                ),
+            )
             kpi_cols = st.columns(n_targets)
             splits_by_target = {}
             for i, t in enumerate(targets_transp):
@@ -3133,14 +3144,16 @@ if vue == "Démographie":
 
             st.markdown("---")
 
-            # ── GRAPHIQUE 1 : Répartition modale empilée ───────────────────
+            # ══════════════════════════════════════════════════════════════
+            # GRAPHIQUE 1 : Répartition modale empilée
+            # ══════════════════════════════════════════════════════════════
             st.subheader(
                 "Répartition modale des trajets domicile-travail",
                 help=(
                     "Part de chaque mode de transport principal utilisé par les actifs occupés pour se "
                     "rendre au travail (base 100% par territoire). La voiture reste partout majoritaire, "
-                    "mais sa part varie fortement selon le développement des réseaux de transport en "
-                    "commun et des aménagements cyclables. " +
+                    "mais sa part varie selon le développement des réseaux de transport en commun et des "
+                    "aménagements cyclables. " +
                     ("Grenoble est encadrée en rouge." if mode_transp == "Comparaison Métropoles" else "")
                 ),
             )
@@ -3152,11 +3165,14 @@ if vue == "Démographie":
 
             fig_modal = px.bar(
                 df_modal, x="Territoire", y="Part (%)", color="Mode",
-                barmode="stack", text_auto=".1f",
+                barmode="stack", text_auto=".2f",
                 color_discrete_map=couleurs_mode,
                 category_orders={"Mode": MODES_ORDER}, height=420,
             )
-            fig_modal.update_traces(textposition="inside", textfont_size=9)
+            fig_modal.update_traces(
+                textposition="inside", textfont_size=9,
+                hovertemplate="<b>%{x}</b><br>%{fullData.name} : %{y:.2f}%<extra></extra>",
+            )
             if greno_vrect:
                 fig_modal.add_vrect(**greno_vrect)
             fig_modal.update_layout(
@@ -3172,127 +3188,113 @@ if vue == "Démographie":
                     "(barre la plus foncée en vue métropoles) reflète à la fois la qualité du réseau de "
                     "transport en commun, le relief, l'étalement urbain et la disponibilité de pistes "
                     "cyclables. Un territoire avec une part de transport en commun ou de mobilités actives "
-                    "(marche + deux-roues) élevée traduit généralement une politique de mobilité durable "
-                    "plus avancée et/ou un tissu urbain plus dense, favorable aux déplacements courts."
+                    "élevée traduit généralement une politique de mobilité durable plus avancée et/ou un "
+                    "tissu urbain plus dense, favorable aux déplacements courts."
                 )
 
             st.markdown("---")
 
-            # ── GRAPHIQUE 2 : Comparaison Hommes / Femmes ──────────────────
+            # ══════════════════════════════════════════════════════════════
+            # GRAPHIQUE 2 : Autonomie locale de l'emploi + modal des trajets de proximité
+            # ══════════════════════════════════════════════════════════════
             st.subheader(
-                "Mode de transport selon le sexe",
+                "Trajets de proximité : autonomie locale et choix modal",
                 help=(
-                    "Compare la part de chaque mode de transport entre hommes et femmes actifs. "
-                    "Des écarts significatifs peuvent révéler des différences dans la répartition des "
-                    "tâches domestiques (trajets accompagnés d'enfants), dans les secteurs d'activité "
-                    "occupés, ou dans la perception de la sécurité de certains modes (vélo, marche de nuit)."
+                    "Sur les longs trajets, la voiture s'impose presque partout faute d'alternative — "
+                    "les territoires se ressemblent alors beaucoup. C'est sur les trajets de proximité "
+                    "(travailler dans sa propre commune) que les différences d'infrastructures "
+                    "(pistes cyclables, marchabilité, réseau urbain) se révèlent vraiment."
                 ),
             )
 
-            ncols_sexe = min(n_targets, 3)
-            rows_sexe = [targets_transp[i:i + ncols_sexe] for i in range(0, n_targets, ncols_sexe)]
-            for row in rows_sexe:
-                cols_sexe = st.columns(len(row))
-                for j, t in enumerate(row):
+            gp1, gp2 = st.columns(2)
+
+            with gp1:
+                st.markdown(
+                    "##### Part des actifs travaillant dans leur commune",
+                    help=(
+                        "Part des actifs occupés dont le lieu de travail est situé dans leur commune de "
+                        "résidence. Un taux élevé signifie que le territoire offre suffisamment d'emplois "
+                        "locaux pour limiter les déplacements pendulaires longue distance."
+                    ),
+                )
+                rows_local = []
+                for i, t in enumerate(targets_transp):
                     df_t = df_filter_transp(t)
-                    df_sexe = get_modal_split_by(df_t, annee_transp, "sexe")
+                    pct_local = get_part_local(df_t, annee_transp)
+                    rows_local.append({"Territoire": t, "Part (%)": pct_local})
+                df_local = pd.DataFrame(rows_local)
 
-                    fig_sexe = px.bar(
-                        df_sexe, x="mode_transport", y="part", color="sexe",
-                        barmode="group",
-                        color_discrete_map={"Hommes": "#3A3D44", "Femmes": couleurs_mode["Marche à pied"]},
-                        category_orders={"mode_transport": MODES_ORDER}, height=300,
-                    )
-                    fig_sexe.update_traces(
-                        hovertemplate="<b>%{fullData.name}</b><br>%{x} : %{y:.1f}%<extra></extra>",
-                    )
-
-                    if t == "Grenoble" and mode_transp == "Comparaison Métropoles":
-                        for trace in fig_sexe.data:
-                            trace.marker.pattern.shape = "/"
-                            trace.marker.pattern.fgcolor = "#FF584D"
-                            trace.marker.pattern.size = 12
-                            trace.marker.pattern.solidity = 0.2
-
-                    fig_sexe.update_layout(
-                        title=dict(text=f"<b>{t}</b>", font_size=12, x=0.5, xanchor="center"),
-                        legend=dict(orientation="h", y=1.18, title=""),
-                        xaxis_title="", yaxis_title="Part (%)", xaxis_tickangle=-25,
-                        margin=dict(t=50, b=10),
-                    )
-                    with cols_sexe[j]:
-                        st.plotly_chart(style(fig_sexe, 30), use_container_width=True)
-
-            with st.expander("💡 Comment interpréter ce graphique ?"):
-                st.write(
-                    "À mode de transport identique, des barres de hauteur similaire entre hommes et femmes "
-                    "indiquent une pratique homogène. Un écart notable sur la voiture (souvent légèrement "
-                    "plus utilisée par les femmes pour des trajets multi-motifs incluant la dépose des "
-                    "enfants) ou sur le vélo (souvent plus masculin) reflète des différences sociologiques "
-                    "documentées dans la littérature sur la mobilité quotidienne. Les hachures rouges "
-                    "identifient Grenoble en vue métropoles."
+                fig_local = go.Figure()
+                for i, row in df_local.iterrows():
+                    is_greno = (row["Territoire"] == "Grenoble" and mode_transp == "Comparaison Métropoles")
+                    marker = dict(color=bar_colors[i])
+                    if is_greno:
+                        marker["pattern"] = dict(shape="/", fgcolor="#FF584D", fillmode="overlay", solidity=0.3, size=20)
+                    fig_local.add_trace(go.Bar(
+                        x=[row["Territoire"]], y=[row["Part (%)"]],
+                        marker=marker, showlegend=False,
+                        text=[f"{row['Part (%)']:.2f}%"], textposition="outside",
+                        hovertemplate=f"<b>{row['Territoire']}</b><br>Travaille localement : %{{y:.2f}}%<extra></extra>",
+                    ))
+                fig_local.update_layout(
+                    height=340, margin=dict(t=20, b=10),
+                    yaxis=dict(title="Part des actifs (%)", gridcolor="#eee"),
+                    xaxis=dict(showgrid=False),
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                 )
+                st.plotly_chart(style(fig_local), use_container_width=True)
 
-            st.markdown("---")
+            with gp2:
+                st.markdown(
+                    "##### Choix modal pour ces trajets de proximité",
+                    help=(
+                        "Répartition modale calculée uniquement parmi les actifs qui travaillent dans "
+                        "leur commune de résidence. Sur ces courtes distances, la voiture n'a plus de "
+                        "réel avantage en temps de trajet : sa part résiduelle ici reflète directement "
+                        "la qualité des aménagements piétons et cyclables du territoire."
+                    ),
+                )
+                rows_local_modal = []
+                for t in targets_transp:
+                    df_t = df_filter_transp(t)
+                    split_local, _ = get_modal_split(df_t, annee_transp, filter_col="lieu_travail", filter_val="Commune de résidence")
+                    for mode in MODES_ORDER:
+                        rows_local_modal.append({"Territoire": t, "Mode": mode, "Part (%)": split_local[mode]})
+                df_local_modal = pd.DataFrame(rows_local_modal)
 
-            # ── GRAPHIQUE 3 : Mode selon l'éloignement du lieu de travail ──
-            st.subheader(
-                "Mode de transport selon l'éloignement du lieu de travail",
-                help=(
-                    "Compare la part de voiture et de transport en commun selon que le lieu de travail "
-                    "est situé dans la commune de résidence, dans une autre commune du département, ou "
-                    "plus loin. Permet de visualiser l'effet distance sur le choix modal : plus le trajet "
-                    "est long, plus la voiture s'impose."
-                ),
-            )
+                fig_local_modal = px.bar(
+                    df_local_modal, x="Territoire", y="Part (%)", color="Mode",
+                    barmode="stack", text_auto=".2f",
+                    color_discrete_map=couleurs_mode,
+                    category_orders={"Mode": MODES_ORDER}, height=340,
+                )
+                fig_local_modal.update_traces(
+                    textposition="inside", textfont_size=8,
+                    hovertemplate="<b>%{x}</b><br>%{fullData.name} : %{y:.2f}%<extra></extra>",
+                )
+                if greno_vrect:
+                    fig_local_modal.add_vrect(**greno_vrect)
+                fig_local_modal.update_layout(
+                    legend=dict(orientation="h", y=1.22, title="", font_size=9),
+                    yaxis_title="Part (%)", xaxis_title="", margin=dict(t=20, b=10),
+                )
+                st.plotly_chart(style(fig_local_modal), use_container_width=True)
 
-            LIEU_ORDER = [
-                "Commune de résidence", "Autre commune du département",
-                "Autre département de la région", "Autre région de France métropolitaine",
-                "Hors France métropolitaine",
-            ]
-
-            fig_eloign = go.Figure()
-            for i, t in enumerate(targets_transp):
-                df_t = df_filter_transp(t)
-                df_lieu = get_modal_split_by(df_t, annee_transp, "lieu_travail")
-                df_voit = df_lieu[df_lieu["mode_transport"] == "Voiture, camion, fourgonnette"]
-                df_voit = df_voit.set_index("lieu_travail").reindex(LIEU_ORDER)
-
-                marker = dict(color=bar_colors[i])
-                if t == "Grenoble" and mode_transp == "Comparaison Métropoles":
-                    marker = dict(color=bar_colors[i], symbol="diamond")
-
-                fig_eloign.add_trace(go.Scatter(
-                    x=LIEU_ORDER, y=df_voit["part"],
-                    mode="lines+markers", name=t,
-                    line=dict(color=bar_colors[i], width=3,
-                              dash="dash" if (t == "Grenoble" and mode_transp == "Comparaison Métropoles") else "solid"),
-                    marker=dict(size=9, **({"symbol": "diamond", "line": dict(color="#FF584D", width=2)}
-                                            if (t == "Grenoble" and mode_transp == "Comparaison Métropoles") else {})),
-                    hovertemplate=f"<b>{t}</b><br>%{{x}}<br>Voiture : %{{y:.1f}}%<extra></extra>",
-                ))
-
-            fig_eloign.update_layout(
-                height=380, margin=dict(t=20, b=80),
-                legend=dict(orientation="h", y=1.12, title=""),
-                xaxis=dict(title="", tickangle=-15),
-                yaxis=dict(title="Part de la voiture (%)", range=[0, 100], gridcolor="#eee"),
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-            )
-            st.plotly_chart(style(fig_eloign), use_container_width=True)
-
-            with st.expander("💡 Comment interpréter ce graphique ?"):
+            with st.expander("💡 Comment interpréter ces deux graphiques ?"):
                 st.write(
-                    "Cette courbe illustre un phénomène universel : la part de la voiture augmente avec "
-                    "l'éloignement du lieu de travail. Pour un emploi dans la commune de résidence, la "
-                    "marche, le vélo ou les transports en commun restent compétitifs ; au-delà du "
-                    "département, la voiture devient quasi incontournable faute d'alternative compétitive "
-                    "en temps de trajet. La pente de la courbe (écart entre le premier et le dernier point) "
-                    "renseigne sur la capacité du territoire à proposer des alternatives sur les courtes "
-                    "distances : une pente faible et partant d'un niveau bas signale un territoire où la "
-                    "voiture n'est pas nécessaire même pour les trajets de proximité — c'est typiquement "
-                    "le profil recherché pour Grenoble, identifiée par la ligne en tirets rouges."
+                    "**Part des actifs travaillant dans leur commune (gauche)** : un taux élevé traduit "
+                    "un bassin d'emploi local dynamique, qui réduit mécaniquement la dépendance aux "
+                    "déplacements longue distance. Un taux faible signale une commune plutôt résidentielle, "
+                    "dont les habitants doivent se déplacer ailleurs pour travailler.\n\n"
+                    "**Choix modal pour ces trajets (droite)** : contrairement à la répartition modale "
+                    "globale (graphique 1, où la distance moyenne masque les écarts d'infrastructures), "
+                    "ce graphique isole les trajets de proximité — ceux où la voiture n'apporte plus de "
+                    "gain de temps significatif. Les écarts de part de marche et de vélo entre territoires "
+                    "deviennent ici beaucoup plus parlants : ils révèlent la qualité réelle de "
+                    "l'aménagement cyclable et piéton, indépendamment de la géographie ou de l'étalement "
+                    "urbain qui dominent le graphique global." +
+                    (" Les hachures et la zone rouge identifient Grenoble." if mode_transp == "Comparaison Métropoles" else "")
                 )
                 
 # ==============================================================================
@@ -3743,6 +3745,10 @@ if vue == "Démographie":
                 <em>Les deux sources portant sur des années différentes, elles sont présentées dans deux thématiques distinctes.</em>
             </div>""", unsafe_allow_html=True)
 
+            # ─────────────────────────────────────────────────────────────
+            # PALETTES DE COULEURS
+            # ─────────────────────────────────────────────────────────────
+            # Palette des 6 niveaux d'occupation (graphique "Profils détaillés")
             COULEURS_OCCUPATION = {
                 "Sous-occupation très accentuée": "#0D47A1",
                 "Sous-occupation accentuée": "#1E88E5",
@@ -3751,11 +3757,13 @@ if vue == "Démographie":
                 "Suroccupation modérée": "#FFB74D",
                 "Suroccupation accentuée": "#E65100",
             }
+            # Palette des 3 grandes masses agrégées (graphique "Équilibre macro-synthétique")
             COULEURS_MACRO = {
                 "Sous-occupation globale": "#1E88E5",
                 "Dans la norme": "#E0E0E0",
                 "Suroccupation globale": "#E65100",
             }
+            # Texte d'aide réutilisé sur plusieurs graphiques du thème 1
             HELP_INDICE = (
                 "L'indice de peuplement de l'INSEE mesure l'adéquation entre la taille du logement "
                 "et la composition du ménage qui y réside.\n\n"
@@ -3764,14 +3772,27 @@ if vue == "Démographie":
                 "- Le nombre de pièces théoriquement nécessaires.\n\n"
             )
 
-            # ─────────────────────────────────────────────────────────────
-            # FONCTIONS — THÈME 1 : RÉSIDENCES PRINCIPALES (PEUPLEMENT)
-            # ─────────────────────────────────────────────────────────────
+            # ═════════════════════════════════════════════════════════════
+            # DÉFINITIONS — THÈME 1 : RÉSIDENCES PRINCIPALES (PEUPLEMENT)
+            # ═════════════════════════════════════════════════════════════
+
             def get_log_data_pct(df_src, annee):
+                """
+                Calcule, pour un sous-ensemble de données (déjà filtré sur un
+                territoire), la répartition en % des 6 niveaux d'occupation
+                officiels INSEE pour une année donnée.
+
+                Retourne :
+                - vals   : liste des % (dans l'ordre des 6 niveaux)
+                - labels : liste des libellés correspondants
+                - total_rp : nombre total de résidences principales (volume brut)
+                - kpis   : dict agrégé {norme, surocc, sousocc} en %
+                """
                 df_year = df_src[df_src["annee"] == annee]
                 sums = df_year.groupby("indicateur_occupation")["valeur"].sum()
                 total_rp = sums.sum()
 
+                # Correspondance code technique INSEE -> libellé lisible
                 labels_codes = [
                     ("VSEV_UNDER_OCC", "Sous-occupation très accentuée"),
                     ("SEV_UNDER_OCC", "Sous-occupation accentuée"),
@@ -3789,6 +3810,7 @@ if vue == "Démographie":
                     pct = (val_abs / total_rp * 100) if total_rp > 0 else 0.0
                     vals.append(pct)
                     labels.append(label)
+                    # Agrégation en 3 grandes masses pour les KPI / graphique macro
                     if code == "STD_OCC":
                         kpis["norme"] += pct
                     elif "OVER" in code:
@@ -3798,7 +3820,19 @@ if vue == "Démographie":
 
                 return vals, labels, total_rp, kpis
 
-            def build_macro_stacked_chart(territories, df_filtered_fn, annee, group_name="Territoire"):
+            def build_macro_stacked_chart(territories, df_filtered_fn, annee,
+                                           group_name="Territoire", highlight_grenoble=False):
+                """
+                Construit le graphique "Équilibre macro-synthétique des parcs" :
+                une barre horizontale empilée par territoire, regroupant les
+                6 niveaux d'occupation en 3 grandes masses (sous-occupation,
+                norme, suroccupation).
+
+                Paramètre highlight_grenoble : si True (vue Métropoles), encadre
+                la ligne de Grenoble avec un rectangle rouge pointillé. Comme ce
+                graphique est en orientation horizontale (territoires sur l'axe Y),
+                on utilise un add_hrect (et non vrect) pour cibler la bonne ligne.
+                """
                 data_list = []
                 for t in territories:
                     df_t = df_filtered_fn(t)
@@ -3814,6 +3848,7 @@ if vue == "Démographie":
                 if df_macro.empty:
                     return None
 
+                # Une trace par grande masse (empilées horizontalement)
                 fig = go.Figure()
                 for cat in ["Sous-occupation globale", "Dans la norme", "Suroccupation globale"]:
                     fig.add_trace(go.Bar(
@@ -3821,6 +3856,19 @@ if vue == "Démographie":
                         marker_color=COULEURS_MACRO[cat],
                         hovertemplate=f"<b>%{{y}}</b><br>{cat} : <b>%{{x:.1f}}%</b><extra></extra>",
                     ))
+
+                # Mise en évidence de Grenoble : on retrouve sa position dans
+                # l'ordre RÉEL des barres affichées (après filtrage des tot=0),
+                # puis on dessine un rectangle horizontal (hrect) centré sur sa ligne.
+                if highlight_grenoble and "Grenoble" in df_macro[group_name].tolist():
+                    g_pos = df_macro[group_name].tolist().index("Grenoble")
+                    fig.add_hrect(
+                        y0=g_pos - 0.4, y1=g_pos + 0.4,
+                        fillcolor="rgba(255,88,77,0.10)",
+                        line_color="#FF584D", line_width=1.5,
+                        line_dash="dash", layer="below",
+                    )
+
                 fig.update_layout(
                     barmode="stack",
                     xaxis=dict(title="Pourcentage du parc (%)", range=[0, 100], showgrid=True, gridcolor="#eee"),
@@ -3832,7 +3880,18 @@ if vue == "Démographie":
                 )
                 return fig
 
-            def build_bar_log_pct(df_src, label_entity, annee, x_max=None):
+            def build_bar_log_pct(df_src, label_entity, annee, x_max=None, highlight=False):
+                """
+                Construit le graphique "Profils détaillés par niveau d'occupation"
+                pour UN territoire : une barre horizontale listant les 6 niveaux
+                d'occupation (un petit multiple est généré par territoire dans
+                la boucle d'affichage).
+
+                Paramètre highlight : si True (territoire = Grenoble en vue
+                Métropoles), encadre l'intégralité du panneau avec un vrect
+                rouge pointillé couvrant toute la largeur du graphique — ce
+                qui remplace l'ancienne mise en valeur par hachures grises.
+                """
                 vals, labels, _, _ = get_log_data_pct(df_src, annee)
                 if x_max is None:
                     x_max = max(vals) * 1.15 if vals else 100
@@ -3843,6 +3902,18 @@ if vue == "Démographie":
                     y=labels, x=vals, orientation="h", marker=dict(color=colors_list),
                     hovertemplate=f"<b>{label_entity}</b><br>%{{y}}<br>Part : %{{x:.2f}}%<extra></extra>",
                 ))
+
+                # Encadrement de tout le panneau (et non d'une seule barre) :
+                # comme chaque figure ne contient qu'un seul territoire, le vrect
+                # couvre x0=0 à x1=x_max pour entourer visuellement tout le graphique.
+                if highlight:
+                    fig.add_vrect(
+                        x0=0, x1=x_max,
+                        fillcolor="rgba(255,88,77,0.06)",
+                        line_color="#FF584D", line_width=2,
+                        line_dash="dash", layer="below",
+                    )
+
                 fig.update_layout(
                     xaxis=dict(title="% des résidences principales", range=[0, x_max], showgrid=True, gridcolor="#eee"),
                     yaxis=dict(title="", tickfont_size=10, categoryorder="array", categoryarray=labels),
@@ -3853,6 +3924,7 @@ if vue == "Démographie":
                 return fig
 
             def render_kpi_card_peuplement(label, tot_rp, kpis, border_color):
+                """Affiche la carte KPI (HTML) du thème 1 : volume RP + les 3 grandes masses."""
                 tot_str = f"{int(tot_rp):,}".replace(",", "\u202f") if tot_rp > 0 else "N/D"
                 st.markdown(f"""
                 <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08); border-left:6px solid {border_color}; background:#fff; margin-bottom:12px; padding:12px 16px;'>
@@ -3877,12 +3949,19 @@ if vue == "Démographie":
                     </div>
                 </div>""", unsafe_allow_html=True)
 
-            # ─────────────────────────────────────────────────────────────
-            # FONCTIONS — THÈME 2 : LOGEMENTS SOCIAUX (RPLS)
-            # ─────────────────────────────────────────────────────────────
+            # ═════════════════════════════════════════════════════════════
+            # DÉFINITIONS — THÈME 2 : LOGEMENTS SOCIAUX (RPLS)
+            # ═════════════════════════════════════════════════════════════
+
             def get_social_metrics(df_s, filter_col, filter_val):
-                """Agrège les indicateurs RPLS pour un territoire.
-                Retourne None si aucune donnée (commune sans parc social)."""
+                """
+                Agrège les indicateurs RPLS pour un territoire (métropole ou
+                commune), en pondérant chaque commune par son nombre de
+                logements sociaux (moyenne pondérée plutôt que moyenne simple,
+                pour ne pas sur-représenter les petites communes).
+
+                Retourne None si le territoire n'a aucun parc social recensé.
+                """
                 df_sub = df_s[df_s[filter_col] == filter_val]
                 if df_sub.empty:
                     return None
@@ -3891,6 +3970,7 @@ if vue == "Démographie":
                 w_sum = weights.sum()
 
                 def wavg(col):
+                    """Moyenne pondérée par nb_logements_sociaux (repli sur moyenne simple si poids nul)."""
                     if w_sum == 0:
                         return df_sub[col].mean()
                     return (df_sub[col] * weights).sum() / w_sum
@@ -3922,13 +4002,16 @@ if vue == "Démographie":
                 }
 
             def get_total_rp(df_log_src, filter_col, filter_val, annee_ref):
+                """Renvoie le total des résidences principales (df_log) pour servir de dénominateur au taux de logement social."""
                 df_sub = df_log_src[
                     (df_log_src[filter_col] == filter_val) & (df_log_src["annee"] == annee_ref)
                 ]
                 return df_sub["valeur"].sum()
 
             def render_kpi_card_social(label, stats, total_rp, border_color):
+                """Affiche la carte KPI (HTML) du thème 2 : volume social, taux, loyer médian, vacance."""
                 if stats is None:
+                    # Cas commune/métropole sans aucun parc social recensé dans le RPLS
                     st.markdown(f"""
                     <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);
                         border-left:6px solid {border_color}; background:#fff;
@@ -3971,6 +4054,10 @@ if vue == "Démographie":
             # ─────────────────────────────────────────────────────────────
             # BANDEAU FILTRES
             # ─────────────────────────────────────────────────────────────
+            # Filtre 1 : niveau géographique (Métropoles vs communes Grenoble)
+            # Filtre 2 : sélection des territoires à comparer
+            # Filtre 3 : thématique d'analyse (Résidences principales / Logements sociaux)
+            # Filtre 4 : année (uniquement pertinent pour le thème "Résidences principales")
             with st.container():
                 filter_bar("Filtres - Logement")
                 fa1, fa2 = st.columns([1, 3])
@@ -4017,6 +4104,8 @@ if vue == "Démographie":
                 annees_dispo = sorted(df_log["annee"].dropna().unique().astype(int).tolist()) if df_log is not None else []
                 annee_ref    = max(annees_dispo) if annees_dispo else None
 
+                # Le sélecteur d'année n'a de sens que pour le thème 1
+                # (le RPLS n'a qu'un seul millésime, 2024)
                 if "Résidences principales" in theme_log:
                     with fb2:
                         annee_log = st.selectbox(
@@ -4040,6 +4129,11 @@ if vue == "Démographie":
             # ─────────────────────────────────────────────────────────────
             # Couleurs / mise en évidence Grenoble
             # ─────────────────────────────────────────────────────────────
+            # bar_colors : une couleur par territoire (gris/COULEURS en vue
+            # Métropoles, dégradé vert PALETTE_COMMUNE en vue Communes).
+            # greno_vrect : rectangle rouge pointillé utilisé pour les
+            # graphiques à AXE X catégoriel (territoires alignés sur x),
+            # comme fig_fin / fig_age dans le thème 2 plus bas.
             n_targets = len(targets_log)
             if mode_log == "Comparaison Métropoles":
                 bar_colors = [COULEURS.get(t, "#888888") for t in targets_log]
@@ -4056,6 +4150,10 @@ if vue == "Démographie":
                     line_dash="dash", layer="below",
                 )
 
+            # Booléen pratique : passé à build_macro_stacked_chart (hrect interne)
+            # et à build_bar_log_pct (vrect interne, calculé territoire par territoire)
+            highlight_grenoble_actif = (mode_log == "Comparaison Métropoles")
+
             # ═════════════════════════════════════════════════════════════
             # THÈME 1 — RÉSIDENCES PRINCIPALES (INDICE DE PEUPLEMENT)
             # ═════════════════════════════════════════════════════════════
@@ -4065,6 +4163,7 @@ if vue == "Démographie":
                     st.info("📂 Fichier `logements_metropoles_clean.csv` introuvable.")
                     st.stop()
 
+                # Fonction de filtrage du dataframe selon le mode (métropole/commune)
                 if mode_log == "Comparaison Métropoles":
                     def df_filter_peuplement(t):
                         return df_log[(df_log["metropole"] == t) & (df_log["annee"] == annee_log)]
@@ -4090,6 +4189,8 @@ if vue == "Démographie":
                 st.markdown("---")
 
                 # ── GRAPH 1 : MACRO STACKED ────────────────────────────────
+                # Mise en évidence Grenoble : hrect interne à la fonction
+                # (highlight_grenoble=True déclenche add_hrect sur sa ligne)
                 st.subheader(
                     "Équilibre macro-synthétique des parcs",
                     help=HELP_INDICE + "\n\nCe graphique regroupe les indices en 3 grandes masses (Sous-occupation, Norme, Suroccupation).",
@@ -4099,6 +4200,7 @@ if vue == "Démographie":
                     df_filtered_fn=df_filter_peuplement,
                     annee=annee_log,
                     group_name=group_label,
+                    highlight_grenoble=highlight_grenoble_actif,
                 )
                 if fig_macro:
                     st.plotly_chart(style(fig_macro), use_container_width=True)
@@ -4118,12 +4220,15 @@ if vue == "Démographie":
                         "immobilières ou des spécificités de peuplement (parcs denses, forte présence "
                         "d'étudiants en petits studios ou de familles nombreuses contraintes de vivre dans "
                         "des espaces trop exigus). " +
-                        ("Les bordures rouges identifient Grenoble." if mode_log == "Comparaison Métropoles" else "")
+                        ("La ligne rouge encadre Grenoble." if mode_log == "Comparaison Métropoles" else "")
                     )
 
                 st.markdown("---")
 
                 # ── GRAPH 2 : PROFILS DÉTAILLÉS ────────────────────────────
+                # Petit multiple : une figure par territoire. Mise en évidence
+                # Grenoble : vrect interne à build_bar_log_pct (highlight=True)
+                # qui encadre tout le panneau, remplaçant l'ancien hachurage.
                 st.subheader(
                     "Profils détaillés par niveau d'occupation",
                     help="Décomposition fine selon la nomenclature officielle de l'INSEE en 6 niveaux.",
@@ -4134,6 +4239,8 @@ if vue == "Démographie":
                     vals, _, _, _ = get_log_data_pct(df_t, annee_log)
                     if vals:
                         all_maxes.append(max(vals))
+                # Échelle X partagée entre tous les petits multiples pour
+                # permettre une comparaison visuelle directe des hauteurs de barres
                 shared_x_max = max(all_maxes) * 1.10 if all_maxes else 100
 
                 ncols = min(n_targets, 3)
@@ -4142,16 +4249,10 @@ if vue == "Démographie":
                     cols = st.columns(len(row))
                     for j, t in enumerate(row):
                         df_t = df_filter_peuplement(t)
-                        fig = build_bar_log_pct(df_t, t, annee_log, x_max=shared_x_max)
-
-                        if t == "Grenoble" and mode_log == "Comparaison Métropoles":
-                            for trace in fig.data:
-                                if trace.type == "bar":
-                                    trace.marker.pattern.shape = "/"
-                                    trace.marker.pattern.fgcolor = "#FF584D"
-                                    trace.marker.pattern.size = 15
-                                    trace.marker.pattern.solidity = 0.25
-
+                        is_greno = (t == "Grenoble" and highlight_grenoble_actif)
+                        fig = build_bar_log_pct(
+                            df_t, t, annee_log, x_max=shared_x_max, highlight=is_greno,
+                        )
                         with cols[j]:
                             st.plotly_chart(style(fig, 30), use_container_width=True)
 
@@ -4193,7 +4294,7 @@ if vue == "Démographie":
                 else:
                     df_social_view = df_social[df_social["metropole"] == "Grenoble"]
 
-                # Collecte des stats par territoire
+                # Collecte des stats agrégées RPLS + dénominateur RP par territoire
                 stats_by_target = {}
                 rp_by_target = {}
                 for t in targets_log:
@@ -4204,7 +4305,7 @@ if vue == "Démographie":
                         stats_by_target[t] = get_social_metrics(df_social_view, "nom_commune", t)
                         rp_by_target[t] = get_total_rp(df_log, "nom_commune", t, annee_ref) if df_log is not None else 0
 
-                # Territoires avec données RPLS exploitables
+                # Territoires avec / sans données RPLS exploitables
                 entities_with_data = [t for t in targets_log if stats_by_target[t] is not None]
                 entities_no_data   = [t for t in targets_log if stats_by_target[t] is None]
 
@@ -4264,6 +4365,7 @@ if vue == "Démographie":
                                 continue
                             val = df_taux.loc[df_taux["Territoire"] == t, "Taux (%)"].iloc[0]
                             marker = dict(color=bar_colors[i])
+                            # Hachures conservées ici (non concerné par la demande de modification)
                             if t == "Grenoble" and mode_log == "Comparaison Métropoles":
                                 marker["pattern"] = dict(
                                     shape="/", fgcolor="#FF584D", fillmode="overlay",
@@ -4306,6 +4408,7 @@ if vue == "Démographie":
                             continue
                         y_vals = [st_t[code_map[c]] for c in categories]
                         marker = dict(color=bar_colors[i])
+                        # Hachures conservées ici (non concerné par la demande de modification)
                         if t == "Grenoble" and mode_log == "Comparaison Métropoles":
                             marker["pattern"] = dict(
                                 shape="/", fgcolor="#FF584D", fillmode="overlay",
@@ -4389,6 +4492,8 @@ if vue == "Démographie":
                             name=cat, x=x_vals, y=y_vals, marker_color=color,
                             hovertemplate=f"<b>%{{x}}</b><br>{cat} : %{{y:.1f}}%<extra></extra>",
                         ))
+                    # Encadrement vertical Grenoble (graphique vertical x=territoire,
+                    # le greno_vrect calculé plus haut s'applique directement)
                     if greno_vrect:
                         fig_fin.add_vrect(**greno_vrect)
                     fig_fin.update_layout(
