@@ -3719,6 +3719,7 @@ if vue == "Démographie":
 # ONGLET 6 - LOGEMENT
 # ==============================================================================
 
+
 if vue == "Démographie":
     with tab6:
 
@@ -3746,23 +3747,32 @@ if vue == "Démographie":
             </div>""", unsafe_allow_html=True)
 
             # ─────────────────────────────────────────────────────────────
-            # PALETTES DE COULEURS
+            # PALETTES DE COULEURS — fonction générique gris/vert
             # ─────────────────────────────────────────────────────────────
-            # Palette des 6 niveaux d'occupation (graphique "Profils détaillés")
-            COULEURS_OCCUPATION = {
-                "Sous-occupation très accentuée": "#0D47A1",
-                "Sous-occupation accentuée": "#1E88E5",
-                "Sous-occupation modérée": "#90CAF9",
-                "Occupation dans la norme": "#E0E0E0",
-                "Suroccupation modérée": "#FFB74D",
-                "Suroccupation accentuée": "#E65100",
-            }
-            # Palette des 3 grandes masses agrégées (graphique "Équilibre macro-synthétique")
-            COULEURS_MACRO = {
-                "Sous-occupation globale": "#1E88E5",
-                "Dans la norme": "#E0E0E0",
-                "Suroccupation globale": "#E65100",
-            }
+            def build_grey_or_green_palette(categories, mode):
+                """
+                Génère une palette de N nuances pour styliser une variable
+                catégorielle (niveaux d'occupation, dispositifs de financement,
+                tranches d'ancienneté...) :
+                - nuances de GRIS en vue "Comparaison Métropoles"
+                - nuances de VERT en vue "Comparaison communes..."
+
+                Les couleurs sont échantillonnées de façon égale le long de
+                l'échelle, de la plus foncée à la plus claire, dans l'ordre
+                de la liste `categories` fournie. Retourne un dict
+                {catégorie: couleur_hex}.
+                """
+                GREY_SCALE  = ["#2B2E33", "#3A3D44", "#555A62", "#7A7E87",
+                               "#9EA2A8", "#C8CACF", "#DDE0E3", "#E8E8EB"]
+                GREEN_SCALE = ["#081C15", "#1B4332", "#2D6A4F", "#40916C",
+                               "#52B788", "#74C69D", "#95D5B2", "#B7E4C7", "#D8F3DC"]
+                scale = GREY_SCALE if mode == "Comparaison Métropoles" else GREEN_SCALE
+                n = len(categories)
+                return {
+                    cat: scale[int(i * (len(scale) - 1) / max(n - 1, 1))]
+                    for i, cat in enumerate(categories)
+                }
+
             # Texte d'aide réutilisé sur plusieurs graphiques du thème 1
             HELP_INDICE = (
                 "L'indice de peuplement de l'INSEE mesure l'adéquation entre la taille du logement "
@@ -3821,12 +3831,16 @@ if vue == "Démographie":
                 return vals, labels, total_rp, kpis
 
             def build_macro_stacked_chart(territories, df_filtered_fn, annee,
-                                           group_name="Territoire", highlight_grenoble=False):
+                                           group_name="Territoire", highlight_grenoble=False,
+                                           couleurs_macro=None):
                 """
                 Construit le graphique "Équilibre macro-synthétique des parcs" :
                 une barre horizontale empilée par territoire, regroupant les
                 6 niveaux d'occupation en 3 grandes masses (sous-occupation,
                 norme, suroccupation).
+
+                Paramètre couleurs_macro : dict {catégorie: couleur} fourni par
+                l'appelant (gris en vue Métropoles, vert en vue Communes).
 
                 Paramètre highlight_grenoble : si True (vue Métropoles), encadre
                 la ligne de Grenoble avec un rectangle rouge pointillé. Comme ce
@@ -3853,7 +3867,7 @@ if vue == "Démographie":
                 for cat in ["Sous-occupation globale", "Dans la norme", "Suroccupation globale"]:
                     fig.add_trace(go.Bar(
                         name=cat, y=df_macro[group_name], x=df_macro[cat], orientation="h",
-                        marker_color=COULEURS_MACRO[cat],
+                        marker_color=couleurs_macro[cat],
                         hovertemplate=f"<b>%{{y}}</b><br>{cat} : <b>%{{x:.1f}}%</b><extra></extra>",
                     ))
 
@@ -3880,22 +3894,24 @@ if vue == "Démographie":
                 )
                 return fig
 
-            def build_bar_log_pct(df_src, label_entity, annee, x_max=None, highlight=False):
+            def build_bar_log_pct(df_src, label_entity, annee, x_max=None, highlight=False, couleurs_occupation=None):
                 """
                 Construit le graphique "Profils détaillés par niveau d'occupation"
                 pour UN territoire : une barre horizontale listant les 6 niveaux
                 d'occupation (un petit multiple est généré par territoire dans
                 la boucle d'affichage).
 
+                Paramètre couleurs_occupation : dict {catégorie: couleur} fourni
+                par l'appelant (gris en vue Métropoles, vert en vue Communes).
+
                 Paramètre highlight : si True (territoire = Grenoble en vue
                 Métropoles), encadre l'intégralité du panneau avec un vrect
-                rouge pointillé couvrant toute la largeur du graphique — ce
-                qui remplace l'ancienne mise en valeur par hachures grises.
+                rouge pointillé couvrant toute la largeur du graphique.
                 """
                 vals, labels, _, _ = get_log_data_pct(df_src, annee)
                 if x_max is None:
                     x_max = max(vals) * 1.15 if vals else 100
-                colors_list = [COULEURS_OCCUPATION.get(lbl, "#888") for lbl in labels]
+                colors_list = [couleurs_occupation.get(lbl, "#888") for lbl in labels]
 
                 fig = go.Figure()
                 fig.add_trace(go.Bar(
@@ -4154,6 +4170,19 @@ if vue == "Démographie":
             # et à build_bar_log_pct (vrect interne, calculé territoire par territoire)
             highlight_grenoble_actif = (mode_log == "Comparaison Métropoles")
 
+            # ── Palettes catégorielles dynamiques (gris Métropoles / vert Communes) ──
+            # Calculées ICI, après lecture de mode_log, et utilisées par les
+            # fonctions de graphiques définies plus haut (closures résolues à
+            # l'appel, pas à la définition).
+            OCCUPATION_ORDER = [
+                "Suroccupation accentuée", "Suroccupation modérée",
+                "Occupation dans la norme", "Sous-occupation modérée",
+                "Sous-occupation accentuée", "Sous-occupation très accentuée"]
+            MACRO_ORDER = ["Suroccupation globale", "Dans la norme", "Sous-occupation globale"]
+
+            COULEURS_OCCUPATION = build_grey_or_green_palette(OCCUPATION_ORDER, mode_log)
+            COULEURS_MACRO      = build_grey_or_green_palette(MACRO_ORDER, mode_log)
+
             # ═════════════════════════════════════════════════════════════
             # THÈME 1 — RÉSIDENCES PRINCIPALES (INDICE DE PEUPLEMENT)
             # ═════════════════════════════════════════════════════════════
@@ -4201,6 +4230,7 @@ if vue == "Démographie":
                     annee=annee_log,
                     group_name=group_label,
                     highlight_grenoble=highlight_grenoble_actif,
+                    couleurs_macro=COULEURS_MACRO,
                 )
                 if fig_macro:
                     st.plotly_chart(style(fig_macro), use_container_width=True)
@@ -4210,16 +4240,16 @@ if vue == "Démographie":
                 with st.expander("💡 Comment interpréter ce graphique ?"):
                     st.markdown(
                         "**Comprendre les grandes masses de peuplement :**\n\n"
-                        "- **Sous-occupation globale (bleu)** : reflète souvent des territoires à forte "
-                        "proportion de maisons individuelles ou marqués par le vieillissement démographique "
-                        "(ex : couples de retraités restés seuls dans la grande maison familiale après le "
-                        "départ des enfants).\n\n"
-                        "- **Dans la norme (gris)** : le nombre de pièces correspond aux besoins théoriques "
-                        "du ménage — situation d'équilibre.\n\n"
-                        "- **Suroccupation globale (orange)** : révèle des zones de fortes tensions "
-                        "immobilières ou des spécificités de peuplement (parcs denses, forte présence "
-                        "d'étudiants en petits studios ou de familles nombreuses contraintes de vivre dans "
-                        "des espaces trop exigus). " +
+                        "- **Sous-occupation globale** (nuance la plus foncée) : reflète souvent des "
+                        "territoires à forte proportion de maisons individuelles ou marqués par le "
+                        "vieillissement démographique (ex : couples de retraités restés seuls dans la "
+                        "grande maison familiale après le départ des enfants).\n\n"
+                        "- **Dans la norme** (nuance intermédiaire) : le nombre de pièces correspond aux "
+                        "besoins théoriques du ménage — situation d'équilibre.\n\n"
+                        "- **Suroccupation globale** (nuance la plus claire) : révèle des zones de fortes "
+                        "tensions immobilières ou des spécificités de peuplement (parcs denses, forte "
+                        "présence d'étudiants en petits studios ou de familles nombreuses contraintes de "
+                        "vivre dans des espaces trop exigus). " +
                         ("La ligne rouge encadre Grenoble." if mode_log == "Comparaison Métropoles" else "")
                     )
 
@@ -4228,7 +4258,7 @@ if vue == "Démographie":
                 # ── GRAPH 2 : PROFILS DÉTAILLÉS ────────────────────────────
                 # Petit multiple : une figure par territoire. Mise en évidence
                 # Grenoble : vrect interne à build_bar_log_pct (highlight=True)
-                # qui encadre tout le panneau, remplaçant l'ancien hachurage.
+                # qui encadre tout le panneau.
                 st.subheader(
                     "Profils détaillés par niveau d'occupation",
                     help="Décomposition fine selon la nomenclature officielle de l'INSEE en 6 niveaux.",
@@ -4252,6 +4282,7 @@ if vue == "Démographie":
                         is_greno = (t == "Grenoble" and highlight_grenoble_actif)
                         fig = build_bar_log_pct(
                             df_t, t, annee_log, x_max=shared_x_max, highlight=is_greno,
+                            couleurs_occupation=COULEURS_OCCUPATION,
                         )
                         with cols[j]:
                             st.plotly_chart(style(fig, 30), use_container_width=True)
@@ -4365,7 +4396,7 @@ if vue == "Démographie":
                                 continue
                             val = df_taux.loc[df_taux["Territoire"] == t, "Taux (%)"].iloc[0]
                             marker = dict(color=bar_colors[i])
-                            # Hachures conservées ici (non concerné par la demande de modification)
+                            # Hachures conservées ici (couleurs de territoire, non concerné par la modification)
                             if t == "Grenoble" and mode_log == "Comparaison Métropoles":
                                 marker["pattern"] = dict(
                                     shape="/", fgcolor="#FF584D", fillmode="overlay",
@@ -4408,7 +4439,7 @@ if vue == "Démographie":
                             continue
                         y_vals = [st_t[code_map[c]] for c in categories]
                         marker = dict(color=bar_colors[i])
-                        # Hachures conservées ici (non concerné par la demande de modification)
+                        # Hachures conservées ici (couleurs de territoire, non concerné par la modification)
                         if t == "Grenoble" and mode_log == "Comparaison Métropoles":
                             marker["pattern"] = dict(
                                 shape="/", fgcolor="#FF584D", fillmode="overlay",
@@ -4446,6 +4477,29 @@ if vue == "Démographie":
                 st.markdown("---")
 
                 # ── GRAPH 3 / 4 : Financement + Ancienneté ──────────────────
+                # Couleurs catégorielles dynamiques (gris en vue Métropoles,
+                # vert en vue Communes), générées par build_grey_or_green_palette.
+                FIN_ORDER = ["PLAI", "HLM avant 1977", "HLM après 1977", "PLS", "PLI"]
+                FIN_CODE_MAP = {
+                    "PLAI": "part_PLAI",
+                    "HLM avant 1977": "part_HLM_avant_1977",
+                    "HLM après 1977": "part_HLM_apres_1977",
+                    "PLS": "part_PLS",
+                    "PLI": "part_PLI",
+                }
+                fin_colors = build_grey_or_green_palette(FIN_ORDER, mode_log)
+
+                AGE_ORDER = ["Avant 1949", "1949-1975", "1976-1988", "1989-2000", "2001-2013", "Après 2013"]
+                AGE_CODE_MAP = {
+                    "Avant 1949": "part_avant_1949",
+                    "1949-1975": "part_1949_1975",
+                    "1976-1988": "part_1976_1988",
+                    "1989-2000": "part_1989_2000",
+                    "2001-2013": "part_2001_2013",
+                    "Après 2013": "part_apres_2013",
+                }
+                age_colors = build_grey_or_green_palette(AGE_ORDER, mode_log)
+
                 gc3, gc4 = st.columns(2)
 
                 with gc3:
@@ -4465,31 +4519,17 @@ if vue == "Démographie":
                             "plus modestes."
                         ),
                     )
-                    fin_categories = {
-                        "PLAI": "#0D47A1",
-                        "HLM avant 1977": "#1E88E5",
-                        "HLM après 1977": "#90CAF9",
-                        "PLS": "#FFB74D",
-                        "PLI": "#E65100",
-                    }
-                    fin_code_map = {
-                        "PLAI": "part_PLAI",
-                        "HLM avant 1977": "part_HLM_avant_1977",
-                        "HLM après 1977": "part_HLM_apres_1977",
-                        "PLS": "part_PLS",
-                        "PLI": "part_PLI",
-                    }
                     fig_fin = go.Figure()
-                    for cat, color in fin_categories.items():
+                    for cat in FIN_ORDER:
                         y_vals, x_vals = [], []
                         for t in targets_log:
                             st_t = stats_by_target[t]
                             if st_t is None:
                                 continue
                             x_vals.append(t)
-                            y_vals.append(st_t[fin_code_map[cat]])
+                            y_vals.append(st_t[FIN_CODE_MAP[cat]])
                         fig_fin.add_trace(go.Bar(
-                            name=cat, x=x_vals, y=y_vals, marker_color=color,
+                            name=cat, x=x_vals, y=y_vals, marker_color=fin_colors[cat],
                             hovertemplate=f"<b>%{{x}}</b><br>{cat} : %{{y:.1f}}%<extra></extra>",
                         ))
                     # Encadrement vertical Grenoble (graphique vertical x=territoire,
@@ -4516,33 +4556,17 @@ if vue == "Démographie":
                             "continu de logements sociaux."
                         ),
                     )
-                    age_categories = {
-                        "Avant 1949": "#3A3D44",
-                        "1949-1975": "#7A7E87",
-                        "1976-1988": "#A2A6AE",
-                        "1989-2000": "#C8CACF",
-                        "2001-2013": "#DDE0E3",
-                        "Après 2013": "#74C69D",
-                    }
-                    age_code_map = {
-                        "Avant 1949": "part_avant_1949",
-                        "1949-1975": "part_1949_1975",
-                        "1976-1988": "part_1976_1988",
-                        "1989-2000": "part_1989_2000",
-                        "2001-2013": "part_2001_2013",
-                        "Après 2013": "part_apres_2013",
-                    }
                     fig_age = go.Figure()
-                    for cat, color in age_categories.items():
+                    for cat in AGE_ORDER:
                         y_vals, x_vals = [], []
                         for t in targets_log:
                             st_t = stats_by_target[t]
                             if st_t is None:
                                 continue
                             x_vals.append(t)
-                            y_vals.append(st_t[age_code_map[cat]])
+                            y_vals.append(st_t[AGE_CODE_MAP[cat]])
                         fig_age.add_trace(go.Bar(
-                            name=cat, x=x_vals, y=y_vals, marker_color=color,
+                            name=cat, x=x_vals, y=y_vals, marker_color=age_colors[cat],
                             hovertemplate=f"<b>%{{x}}</b><br>{cat} : %{{y:.1f}}%<extra></extra>",
                         ))
                     if greno_vrect:
@@ -4575,6 +4599,8 @@ if vue == "Démographie":
                 st.markdown("---")
 
                 # ── GRAPH 5 : Loyers ────────────────────────────────────────
+                # (couleurs = bar_colors, couleurs de territoire — non concerné
+                # par la modification, déjà gris/vert selon mode_log)
                 st.subheader(
                     "Loyers du parc social (€/m²)",
                     help=(
