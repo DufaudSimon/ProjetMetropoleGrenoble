@@ -1,8 +1,6 @@
 # =============================================================================
 # APPLICATION STREAMLIT - DÉMOGRAPHIE DES MÉTROPOLES FRANÇAISES
 # Grenoble · Rennes · Saint-Étienne · Rouen · Montpellier
-# Sources : INSEE - Recensements de la Population 2011, 2016, 2022
-# Filtres déplacés en haut de chaque onglet (plus de sidebar surchargée)
 # =============================================================================
 
 import streamlit as st
@@ -234,18 +232,22 @@ COULEURS = {
 
 TOUTES = list(COMMUNES.keys())
 
-# ── Sélection partagée des métropoles entre tous les onglets ──────────────────
+# Sélection partagée des métropoles entre tous les onglets
 if "shared_metros" not in st.session_state:
     st.session_state.shared_metros = list(TOUTES)
 
-# Clés widget par thématique (ajout de la thématique Environnement)
+# Clés widget par thématique (permet de conserver les métropoles sélectionnées par exemple)
 METRO_KEYS_DEMO = [
     ("sel_t1",   TOUTES),
     ("age_metros", TOUTES),
     ("mob_metros", TOUTES),
+    ("transp_metros", TOUTES),
     ("men_metros", TOUTES),
+    ("log_metros", TOUTES),
     ("csp_metros", TOUTES),
 ]
+
+# None plutôt que TOUTES car sources diverses et parfois l'écriture est différente donc on garde leur liste propre 
 METRO_KEYS_SOLID = [
     ("caf_agglos",         None),
     ("eff_metros",         None),
@@ -3200,7 +3202,7 @@ if vue == "Démographie":
             st.subheader(
                 "Trajets de proximité : autonomie locale et choix modal",
                 help=(
-                    "Sur les longs trajets, la voiture s'impose presque partout faute d'alternative — "
+                    "Sur les longs trajets, la voiture s'impose presque partout faute d'alternative - "
                     "les territoires se ressemblent alors beaucoup. C'est sur les trajets de proximité "
                     "(travailler dans sa propre commune) que les différences d'infrastructures "
                     "(pistes cyclables, marchabilité, réseau urbain) se révèlent vraiment."
@@ -3289,7 +3291,7 @@ if vue == "Démographie":
                     "dont les habitants doivent se déplacer ailleurs pour travailler.\n\n"
                     "**Choix modal pour ces trajets (droite)** : contrairement à la répartition modale "
                     "globale (graphique 1, où la distance moyenne masque les écarts d'infrastructures), "
-                    "ce graphique isole les trajets de proximité — ceux où la voiture n'apporte plus de "
+                    "ce graphique isole les trajets de proximité - ceux où la voiture n'apporte plus de "
                     "gain de temps significatif. Les écarts de part de marche et de vélo entre territoires "
                     "deviennent ici beaucoup plus parlants : ils révèlent la qualité réelle de "
                     "l'aménagement cyclable et piéton, indépendamment de la géographie ou de l'étalement "
@@ -3747,7 +3749,7 @@ if vue == "Démographie":
             </div>""", unsafe_allow_html=True)
 
             # ─────────────────────────────────────────────────────────────
-            # PALETTES DE COULEURS — fonction générique gris/vert
+            # PALETTES DE COULEURS - fonction générique gris/vert
             # ─────────────────────────────────────────────────────────────
             def build_grey_or_green_palette(categories, mode):
                 """
@@ -3783,7 +3785,7 @@ if vue == "Démographie":
             )
 
             # ═════════════════════════════════════════════════════════════
-            # DÉFINITIONS — THÈME 1 : RÉSIDENCES PRINCIPALES (PEUPLEMENT)
+            # DÉFINITIONS - THÈME 1 : RÉSIDENCES PRINCIPALES (PEUPLEMENT)
             # ═════════════════════════════════════════════════════════════
 
             def get_log_data_pct(df_src, annee):
@@ -3966,7 +3968,7 @@ if vue == "Démographie":
                 </div>""", unsafe_allow_html=True)
 
             # ═════════════════════════════════════════════════════════════
-            # DÉFINITIONS — THÈME 2 : LOGEMENTS SOCIAUX (RPLS)
+            # DÉFINITIONS - THÈME 2 : LOGEMENTS SOCIAUX (RPLS)
             # ═════════════════════════════════════════════════════════════
 
             def get_social_metrics(df_s, filter_col, filter_val):
@@ -4132,7 +4134,7 @@ if vue == "Démographie":
                     with fb2:
                         st.markdown(
                             "<div style='padding-top:28px;font-size:13px;color:#666;'>"
-                            "📅 Données RPLS — millésime unique <b>2024</b></div>",
+                            "📅 Données RPLS - millésime unique <b>2024</b></div>",
                             unsafe_allow_html=True,
                         )
 
@@ -4184,7 +4186,7 @@ if vue == "Démographie":
             COULEURS_MACRO      = build_grey_or_green_palette(MACRO_ORDER, mode_log)
 
             # ═════════════════════════════════════════════════════════════
-            # THÈME 1 — RÉSIDENCES PRINCIPALES (INDICE DE PEUPLEMENT)
+            # THÈME 1 - RÉSIDENCES PRINCIPALES (INDICE DE PEUPLEMENT)
             # ═════════════════════════════════════════════════════════════
             if "Résidences principales" in theme_log:
 
@@ -4245,7 +4247,7 @@ if vue == "Démographie":
                         "vieillissement démographique (ex : couples de retraités restés seuls dans la "
                         "grande maison familiale après le départ des enfants).\n\n"
                         "- **Dans la norme** (nuance intermédiaire) : le nombre de pièces correspond aux "
-                        "besoins théoriques du ménage — situation d'équilibre.\n\n"
+                        "besoins théoriques du ménage - situation d'équilibre.\n\n"
                         "- **Suroccupation globale** (nuance la plus claire) : révèle des zones de fortes "
                         "tensions immobilières ou des spécificités de peuplement (parcs denses, forte "
                         "présence d'étudiants en petits studios ou de familles nombreuses contraintes de "
@@ -4300,7 +4302,7 @@ if vue == "Démographie":
                     """)
 
             # ═════════════════════════════════════════════════════════════
-            # THÈME 2 — LOGEMENTS SOCIAUX (RPLS 2024)
+            # THÈME 2 - LOGEMENTS SOCIAUX (RPLS 2024)
             # ═════════════════════════════════════════════════════════════
             else:
 
@@ -4599,7 +4601,7 @@ if vue == "Démographie":
                 st.markdown("---")
 
                 # ── GRAPH 5 : Loyers ────────────────────────────────────────
-                # (couleurs = bar_colors, couleurs de territoire — non concerné
+                # (couleurs = bar_colors, couleurs de territoire - non concerné
                 # par la modification, déjà gris/vert selon mode_log)
                 st.subheader(
                     "Loyers du parc social (€/m²)",
