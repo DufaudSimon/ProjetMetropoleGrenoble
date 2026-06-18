@@ -260,6 +260,7 @@ METRO_KEYS_ENV = [
     ("env_dechets_metros", TOUTES),
 ]
 
+# Cette partie initialise la "sauveegarde" des filtre pour permettre à l'utilisateur que le filtre sélectionné resté sélectionné au clic suivant
 if "shared_metros_demo" not in st.session_state:
     st.session_state.shared_metros_demo = list(TOUTES)
 if "shared_metros_solid" not in st.session_state:
@@ -267,6 +268,8 @@ if "shared_metros_solid" not in st.session_state:
 if "shared_metros_env" not in st.session_state:
     st.session_state.shared_metros_env = list(TOUTES)
 
+# C'est le cerveau de la synchronisation. Lorsqu'un utilisateur modifie les métropoles dans un graphique, cette fonction récupère ce nouveau choix, 
+# le sauvegarde dans la mémoire globale centrale (shared_key), puis parcourt tous les autres graphiques de la thématique pour forcer leurs filtres à s'aligner instantanément.
 def _propagate(key, widget_keys, shared_key):
     new_val = list(st.session_state[key])
     st.session_state[shared_key] = new_val
@@ -279,6 +282,8 @@ def _propagate(key, widget_keys, shared_key):
         else:
             st.session_state[wkey] = new_val
 
+# Ce sont les interrupteurs branchés sur le paramètre on_change= de vos menus déroulants (st.multiselect).
+# Dès qu'un utilisateur clique sur un filtre, la fonction de la thématique correspondante se réveille et ordonne à _propagate de lancer la synchronisation avec la bonne liste de widgets.
 def sync_metros_demo(key):
     _propagate(key, METRO_KEYS_DEMO, "shared_metros_demo")
 
@@ -288,6 +293,8 @@ def sync_metros_solid(key):
 def sync_metros_env(key):
     _propagate(key, METRO_KEYS_ENV, "shared_metros_env")
 
+# Elles servent à définir ce que le menu déroulant doit afficher par défaut à l'écran (default=...).
+# Au lieu de recocher bêtement toutes les métropoles à chaque fois, elles vont lire la mémoire globale pour pré-remplir le filtre avec la toute dernière sélection de l'utilisateur, garantissant ainsi que l'affichage reste identique d'un onglet à l'autre.
 def shared_default_demo(options):
     current = st.session_state.get("shared_metros_demo", list(TOUTES))
     filtered = [m for m in current if m in options]
@@ -303,14 +310,17 @@ def shared_default_env(options):
     filtered = [m for m in current if m in options]
     return filtered if filtered else list(options)
 
-# ── Sélection partagée des COMMUNES entre onglets ────────────────────────────
+# Sélection partagée des COMMUNES entre onglets
 COMMUNES_GRENOBLE = sorted(COMMUNES["Grenoble"])
 
+# Même principe que pour les métropoles
 COMMUNE_KEYS_DEMO = [
     ("pop_communes", COMMUNES_GRENOBLE),
     ("age_communes", COMMUNES_GRENOBLE),
     ("mob_communes", COMMUNES_GRENOBLE),
+    ("transp_communes", COMMUNES_GRENOBLE),
     ("men_communes", COMMUNES_GRENOBLE),
+    ("log_communes", COMMUNES_GRENOBLE),
     ("csp_communes", COMMUNES_GRENOBLE),
 ]
 COMMUNE_KEYS_SOLID = [
@@ -390,6 +400,7 @@ def shared_default_communes_env(options):
     filtered = [c for c in current if c in options]
     return filtered if filtered else list(options[:2])
 
+# Définition des départements de nos métropoles nécessaire pour de bons chargements, code commune à 3 chiffres à concaténer avec le département parfois
 DEP_MAP = {
     "Grenoble": "38", "Rennes": "35", "Rouen": "76",
     "Saint-Étienne": "42", "Montpellier": "34",
@@ -584,6 +595,10 @@ def charger_filo():
     df = df[df["metropole"].notna()].copy()
     return df
 
+
+# Supprime les accents, convertit le texte en minuscules et enlève les espaces en trop au début et à la fin.
+# Cela évite que l'application ne plante ou ignore une catégorie à cause d'une majuscule ou d'un accent oublié.
+# (ex: Ouvriers et ouvriers deviennent identiques).
 def normalize_name(text):
     if pd.isna(text):
         return ""
@@ -592,6 +607,8 @@ def normalize_name(text):
 
 normalize_csp_name = normalize_name
 
+# Fait la même chose que la précédente, mais spécifiquement pour les noms de villes en remplaçant en plus les tirets (-) et les apostrophes (') par des espaces.
+# Ainsi, Saint-Martin-d'Hères et saint martin d heres deviennent exactement la même chaîne de caractères, ce qui rend les comparaisons infaillibles.
 def norm_commune(text):
     if pd.isna(text):
         return ""
@@ -599,11 +616,15 @@ def norm_commune(text):
     s = s.lower().replace("-", " ").replace("'", " ").replace("'", " ")
     return " ".join(s.split())
 
+# C'est un dictionnaire de traduction. Il associe la version ultra-simplifiée (sans accent, sans tiret) d'une commune de Grenoble à son orthographe officielle exacte.
+# (ex: {echirolles: Échirolles}).
 _NORM_TO_REF = {norm_commune(c): c for c in COMMUNES["Grenoble"]}
 
+# Reçoit un nom de commune brute d'un fichier, le simplifie, et l'utilise pour récupérer son orthographe officielle propre grâce au dictionnaire
 def source_to_ref(name):
     return _NORM_TO_REF.get(norm_commune(name), name)
 
+# Fait le chemin inverse. Il prend un nom officiel propre (ex: Échirolles) et cherche comment il est écrit dans une liste d'options provenant d'un autre fichier (qui écrit peut-être ECHIROLLES en majuscules).
 def ref_to_source(ref_name, source_options):
     norm_ref = norm_commune(ref_name)
     for opt in source_options:
@@ -611,6 +632,8 @@ def ref_to_source(ref_name, source_options):
             return opt
     return None
 
+# Fait exactement la même chose que ref_to_source, mais pour toute une liste de communes en même temps. 
+# C'est indispensable pour synchroniser nos filtres multi-sélection entre des onglets qui n'utilisent pas la même source de données.
 def refs_to_source_list(ref_names, source_options):
     result = []
     for r in ref_names:
@@ -618,6 +641,12 @@ def refs_to_source_list(ref_names, source_options):
         if match is not None:
             result.append(match)
     return result
+
+# C'est une fonction ultra-puissante pour charger et fusionner nos fichiers (CSV ou Excel) sur plusieurs années.
+# Elle lit automatiquement le bon format (Excel ou CSV).
+# Elle supprime les lignes de commentaires inutiles de l'INSEE (comme les lignes contenant RR).
+# Elle cherche et détecte toute seule les colonnes de Département et de Libellé, peu importe comment elles sont nommées dans le fichier original (DEP, DEPARTEMENT, etc.).
+# Elle applique notre dictionnaire de correspondance (mapping_dict) pour convertir les données en nombres, remplacer les cases vides par 0, et additionner automatiquement les colonnes si nécessaire, avant de tout fusionner en un seul tableau propre.
 
 @st.cache_data
 def load_generic_data(file_paths_dict, mapping_dict):
@@ -673,6 +702,8 @@ df_dip_new = load_generic_data(FILES_DIP, DIP_MAP)
 # ──────────────────────────────────────────────────────────────────────────────
 # 4. UTILITAIRES
 # ──────────────────────────────────────────────────────────────────────────────
+
+# Formate le format des valeurs numériques, N/D si vide ou pas de données ou un problème, si 1million : 1.0 M et ajoute un espace entre les milliers
 def fmt(v, suffix="", dec=0):
     if v is None or (isinstance(v, float) and np.isnan(v)):
         return "N/D"
@@ -682,12 +713,14 @@ def fmt(v, suffix="", dec=0):
         return f"{int(round(v)):,}{suffix}".replace(",", "\u202f")
     return f"{v:.{dec}f}{suffix}"
 
+# Récupère la ligne complète du DataFrame df_gen correspondant à l'EPCI d'une métropole donnée (via le mapping NOM_EPCI). Retourne None si la métropole ou les données sont absentes.
 def get_epci_row(metro):
     if df_gen is None or metro not in NOM_EPCI:
         return None
     rows = df_gen[df_gen["territoire"] == NOM_EPCI[metro]]
     return rows.iloc[0] if not rows.empty else None
 
+# Variante ciblée de la précédente : retourne directement la valeur d'une seule colonne pour une métropole (ex: epci_val("Grenoble", "population_2022")).
 def epci_val(metro, col):
     if df_gen is None:
         return np.nan
@@ -700,6 +733,7 @@ def epci_val(metro, col):
     v = rows.iloc[0].get(col, np.nan)
     return float(v) if pd.notna(v) else np.nan
 
+# Calcule la population totale d'une métropole pour une année donnée, en sommant toutes les colonnes de tranches d'âge
 def pop_from_age(metro, annee):
     if df_pop is None:
         return np.nan
@@ -710,17 +744,20 @@ def pop_from_age(metro, annee):
         return np.nan
     return float(sub[age_cols].sum().sum())
 
+# Renvoient la liste triée des colonnes "Hommes" (suffixe s1) ou "Femmes" (suffixe s2) parmi les colonnes de tranches d'âge.
 def cols_h(df):
     return sorted([c for c in df.columns if "ageq_rec" in c and "s1" in c])
 
 def cols_f(df):
     return sorted([c for c in df.columns if "ageq_rec" in c and "s2" in c])
 
+# Extrait le code de tranche d'âge à 2 chiffres d'un nom de colonne (regex sur ageq_recXX) et le traduit en libellé lisible via LABEL_TRANCHE (ex: "20-24 ans").
 def label_col(col):
     import re
     m = re.search(r"ageq_rec(\d{2})", col)
     return LABEL_TRANCHE.get(m.group(1), col) if m else col
 
+# Additionne la population de plusieurs tranches d'âge (hommes + femmes) sur un sous-ensemble de données, avec filtre optionnel par année. Sert à calculer des agrégats comme "moins de 25 ans" ou "65 ans et plus".
 def somme_tranches(df_src, tranches, annee=None):
     if annee is not None:
         df_src = df_src[df_src["annee"] == annee]
@@ -732,12 +769,14 @@ def somme_tranches(df_src, tranches, annee=None):
                 total += df_src[col].sum()
     return total
 
+#  Applique l'habillage graphique standard à toute figure Plotly : thème clair, fonds transparents, police "Sora", marges harmonisées.
 def style(fig, marge_t=20):
     fig.update_layout(template="plotly_white", plot_bgcolor="rgba(0,0,0,0)",
                       paper_bgcolor="rgba(0,0,0,0)", font_family="Sora",
                       margin=dict(t=marge_t, b=20, l=10, r=10))
     return fig
 
+# Fonction pour avoir des hachures sur la métropole de Grenoble (hachures parfois faites sans cette fonction).
 def apply_grenoble_hatch(fig, grenoble_key="Grenoble", active=True):
     """Ajoute des hachures rouges (/) sur les barres Grenoble - uniquement si active=True."""
     if not active:
@@ -757,6 +796,7 @@ def apply_grenoble_hatch(fig, grenoble_key="Grenoble", active=True):
                 trace.marker.pattern = dict(shape=shapes, fgcolor="#FF584D", size=20, solidity=0.3)
     return fig
 
+# Deux helpers d'affichage pour le bandeau de filtres : le premier affiche le titre de section ("Filtres - Population globale"...), le second affiche un label de ligne stylé (ex: "Niveau géographique").
 def filter_bar(label="Filtres"):
     st.markdown(f'<div class="filter-bar-title">{label}</div>', unsafe_allow_html=True)
 
@@ -766,6 +806,7 @@ def filter_row_label(text):
         unsafe_allow_html=True,
     )
 
+# Carte KPI générique avec bordure gauche colorée, utilisée comme alternative compacte aux cartes HTML que nous reconstruisons à la main dans chaque onglet (render_kpi_card_log, render_kpi_card_social...). Celle-ci n'a qu'une seule métrique (pas de grille 2×2), donc plus adaptée à des KPI simples.
 def kpi_card_left(title, value, subtitle="", accent="#1a7a4a"):
     st.markdown(f"""
     <div style='
