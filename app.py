@@ -17,7 +17,7 @@ import unicodedata
 # ──────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Démographie & Environnement · Métropoles",
-    page_icon="Logo_principal_Grenoble-Alpes_Métropole.png",
+    page_icon="Logo-métro.jpg",
     layout="wide",
 )
 
