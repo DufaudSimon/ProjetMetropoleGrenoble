@@ -629,6 +629,19 @@ def charger_artificialisation():
  
     return df
 
+@st.cache_data
+def charger_qualite_air():
+    p = Path("environnement/data_clean/ind_atmo_clean.csv")
+    if not p.exists():
+        return None
+    df = pd.read_csv(p, sep=",", encoding="utf-8-sig")
+    df.columns = df.columns.str.strip()
+    if "metropole" in df.columns:
+        df["metropole"] = df["metropole"].replace("Saint-Etienne", "Saint-Étienne")
+    # Conversion de la date de prévision en objet date (tri chronologique, affichage)
+    if "date_ech" in df.columns:
+        df["date_ech"] = pd.to_datetime(df["date_ech"]).dt.date
+    return df
 
 # Supprime les accents, convertit le texte en minuscules et enlève les espaces en trop au début et à la fin.
 # Cela évite que l'application ne plante ou ignore une catégorie à cause d'une majuscule ou d'un accent oublié.
@@ -721,6 +734,7 @@ df_eff     = charger_effectifs()
 df_filo    = charger_filo()
 df_res, df_prof, df_scol = charger_mobilites()
 df_artif = charger_artificialisation()
+df_air = charger_qualite_air()
 
 FILES_CSP = {
     2011: "demographie/data_clean/population_2554/Commune_2011_2554_sect_activite.xlsx",
@@ -6800,8 +6814,9 @@ le comportement électoral structurel des territoires et doivent être interpré
 # PAGE ENVIRONNEMENT
 # ==============================================================================
 if vue == "Environnement":
-    tab_env1, tab_env2, tab_env3 = st.tabs([
+    tab_env1, tab_env2, tab_env3, tab_env4 = st.tabs([
         "🏗️  Artificialisation des sols",
+        "🍃  Qualité de l'air",
         "🌳  Espaces verts & Biodiversité",
         "♻️  Déchets & Transition",
     ])
@@ -7128,8 +7143,507 @@ if vue == "Environnement":
                 )
                 st.plotly_chart(style(fig_rank), use_container_width=True)
 
-    # ── Onglet 2 : Espaces verts ─────────────────────────────────────────────
+    # ==============================================================================
+    # ONGLET 2 - QUALITÉ DE L'AIR
+    # ==============================================================================
+    # Données journalières (prévision J / J+1 / J+2), pas de série historique
     with tab_env2:
+        if df_air is None:
+            st.info("📂 Fichier `ind_atmo_clean.csv` introuvable.")
+        else:
+            # ── Encart Source ──────────────────────────────────────────────
+            st.markdown("""
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source :</strong> Fédération Atmo France (réseau des AASQA, agréées par le Ministère de la Transition écologique) —
+                <a href='https://www.atmo-france.org' target='_blank' style='color: #1C3A27;'>atmo-france.org</a><br>
+                Indice ATMO réglementaire calculé à partir de 5 polluants (NO₂, O₃, PM10, PM2.5, SO₂) : la valeur retenue
+                pour chaque polluant est la plus défavorable des prévisions du jour.<br>
+                <em>⚠️ Couverture actuelle limitée à 3 métropoles : Grenoble, Rouen et Saint-Étienne (Rennes et Montpellier non disponibles dans ce flux).</em>
+            </div>""", unsafe_allow_html=True)
+
+            # ─────────────────────────────────────────────────────────────
+            # CONSTANTES & PALETTES
+            # ─────────────────────────────────────────────────────────────
+            # Ordre officiel de sévérité de l'indice ATMO (du meilleur au pire)
+            QUALITE_ORDER = ["Bon", "Moyen", "Dégradé", "Mauvais", "Très mauvais", "Extrêmement mauvais"]
+
+            # Couleurs officielles ATMO récupérées directement depuis les données
+            # (colonne coul_qual) plutôt que recodées à la main : garantit la
+            # cohérence avec le code couleur réglementaire national.
+            QUALITE_COULEURS = (
+                df_air.drop_duplicates("lib_qual")
+                .set_index("lib_qual")["coul_qual"].to_dict()
+            )
+
+            # Sous-indices polluants : code technique -> libellé lisible
+            POLLUANTS = {
+                "code_no2":  "NO₂ (dioxyde d'azote)",
+                "code_o3":   "O₃ (ozone)",
+                "code_pm10": "PM10 (particules < 10µm)",
+                "code_pm25": "PM2.5 (particules < 2.5µm)",
+                "code_so2":  "SO₂ (dioxyde de soufre)",
+            }
+
+            # ─────────────────────────────────────────────────────────────
+            # FONCTIONS DE CALCUL (pures, partagées entre les deux vues)
+            # ─────────────────────────────────────────────────────────────
+            def get_quality_distribution(df_sub):
+                """Répartition (%) des communes par catégorie de qualité, sur les catégories réellement présentes."""
+                n = len(df_sub)
+                if n == 0:
+                    return pd.DataFrame(columns=["Catégorie", "Part (%)", "Nombre"])
+                counts = df_sub["lib_qual"].value_counts()
+                cats_presentes = [c for c in QUALITE_ORDER if c in counts.index]
+                return pd.DataFrame({
+                    "Catégorie": cats_presentes,
+                    "Part (%)": [counts[c] / n * 100 for c in cats_presentes],
+                    "Nombre": [counts[c] for c in cats_presentes],
+                })
+
+            def get_kpi_air(df_sub):
+                """Indicateurs synthétiques pour la carte KPI d'un territoire. Retourne None si aucune donnée."""
+                n = len(df_sub)
+                if n == 0:
+                    return None
+                dominante = df_sub["lib_qual"].mode().iloc[0]
+                pct_degrade = (df_sub["lib_qual"].isin(["Dégradé", "Mauvais", "Très mauvais", "Extrêmement mauvais"]).sum() / n * 100)
+                return {
+                    "n_communes": n,
+                    "dominante": dominante,
+                    "couleur_dominante": QUALITE_COULEURS.get(dominante, "#888"),
+                    "pct_degrade": pct_degrade,
+                }
+
+            def get_pollutant_scores(df_sub):
+                """Score moyen (1=Bon ... 6=Extrêmement mauvais) par polluant pour un territoire. None si vide."""
+                if df_sub.empty:
+                    return None
+                return {label: df_sub[code].mean() for code, label in POLLUANTS.items()}
+
+            def render_kpi_card_air(label, kpis, border_color):
+                """Carte KPI HTML, identique au style des autres onglets."""
+                if kpis is None:
+                    st.markdown(f"""
+                    <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);
+                        border-left:6px solid {border_color}; background:#fff;
+                        margin-bottom:12px; padding:12px 16px;min-height:100px;
+                        display:flex;flex-direction:column;justify-content:center;'>
+                        <div style='font-size:13px;font-weight:700;color:#1C3A27;margin-bottom:8px;'>{label}</div>
+                        <div style='font-size:12px;color:#888;'>Aucune donnée disponible</div>
+                    </div>""", unsafe_allow_html=True)
+                    return
+                st.markdown(f"""
+                <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08); border-left:6px solid {border_color}; background:#fff; margin-bottom:12px; padding:12px 16px;'>
+                    <div style='font-size:13px;font-weight:700;color:#1C3A27;margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:5px;'>{label}</div>
+                    <div style='display:grid;grid-template-columns:1fr 1fr;gap:6px;'>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Communes</div>
+                            <div style='font-size:15px;font-weight:800;color:#555;'>{kpis['n_communes']}</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Qualité dominante</div>
+                            <div style='font-size:13px;font-weight:800;color:{kpis["couleur_dominante"]};'>{kpis['dominante']}</div>
+                        </div>
+                        <div style='text-align:center;grid-column:span 2;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Communes en air dégradé ou pire</div>
+                            <div style='font-size:15px;font-weight:800;color:#C62828;'>{kpis['pct_degrade']:.2f}%</div>
+                        </div>
+                    </div>
+                </div>""", unsafe_allow_html=True)
+
+            # ─────────────────────────────────────────────────────────────
+            # BANDEAU FILTRES
+            # ─────────────────────────────────────────────────────────────
+            with st.container():
+                filter_bar("Filtres - Qualité de l'air")
+                fa1, fa2 = st.columns([1, 3])
+                with fa1:
+                    filter_row_label("Niveau géographique")
+                with fa2:
+                    mode_air = st.radio(
+                        "",
+                        ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
+                        key="air_mode", horizontal=True, label_visibility="collapsed",
+                    )
+
+                # Filtre aligné sur les autres onglets : les 5 métropoles sont
+                # proposées et la sélection est partagée entre onglets
+                # (shared_default_demo / sync_metros_demo), même si seules
+                # Grenoble, Rouen et Saint-Étienne ont des données dans ce flux.
+                if mode_air == "Comparaison Métropoles":
+                    sel_metros_air = st.multiselect(
+                        "Métropoles à comparer", TOUTES, default=shared_default_demo(TOUTES),
+                        key="air_metros", on_change=sync_metros_demo, args=("air_metros",),
+                        help="Seules Grenoble, Rouen et Saint-Étienne disposent de données de qualité de l'air dans ce flux.",
+                    )
+                    targets_air = sel_metros_air
+                else:
+                    communes_dispo = sorted(df_air[df_air["metropole"] == "Grenoble"]["nom_commune"].unique().tolist())
+                    sel_communes_air = st.multiselect(
+                        "Communes de Grenoble-Alpes Métropole", communes_dispo,
+                        default=shared_default_communes_demo(communes_dispo), key="air_communes",
+                        on_change=sync_communes_demo, args=("air_communes",),
+                    )
+                    targets_air = sel_communes_air
+
+                dates_dispo = sorted(df_air["date_ech"].unique())
+                labels_jours = {0: "Aujourd'hui (J)", 1: "Demain (J+1)", 2: "Après-demain (J+2)"}
+                date_labels = {d: f"{labels_jours.get(i, f'J+{i}')} — {d.strftime('%d/%m/%Y')}" for i, d in enumerate(dates_dispo)}
+                date_air = st.selectbox(
+                    "Jour de prévision", dates_dispo, format_func=lambda d: date_labels[d],
+                    index=0, key="an_air",
+                    help="L'indice ATMO est une prévision journalière (J, J+1, J+2) : pas de série historique sur ce flux.",
+                )
+
+            st.markdown("---")
+
+            if not targets_air:
+                st.warning("Sélectionnez au moins un territoire.")
+                st.stop()
+
+            df_jour = df_air[df_air["date_ech"] == date_air]
+
+            # ═════════════════════════════════════════════════════════════
+            # VUE MÉTROPOLES
+            # ═════════════════════════════════════════════════════════════
+            if mode_air == "Comparaison Métropoles":
+
+                bar_colors = [COULEURS.get(t, "#888888") for t in targets_air]
+                color_by_target = dict(zip(targets_air, bar_colors))
+                greno_vrect = None
+                if "Grenoble" in targets_air:
+                    g_pos = targets_air.index("Grenoble")
+                    greno_vrect = dict(
+                        x0=g_pos - 0.45, x1=g_pos + 0.45,
+                        fillcolor="rgba(255,88,77,0.10)",
+                        line_color="#FF584D", line_width=1.5,
+                        line_dash="dash", layer="below",
+                    )
+
+                # Territoires avec / sans données dans ce flux Atmo
+                entities_with_data = [t for t in targets_air if not df_jour[df_jour["metropole"] == t].empty]
+                entities_no_data   = [t for t in targets_air if t not in entities_with_data]
+
+                # ── KPI ──────────────────────────────────────────────────
+                st.subheader(
+                    f"Indicateurs de qualité de l'air — {date_labels[date_air]}",
+                    help=(
+                        "**Qualité dominante** : catégorie ATMO la plus fréquente parmi les communes du territoire.\n\n"
+                        "**Communes en air dégradé ou pire** : part des communes classées Dégradé, Mauvais, "
+                        "Très mauvais ou Extrêmement mauvais (donc hors Bon/Moyen)."
+                    ),
+                )
+                kpi_cols = st.columns(len(targets_air))
+                for i, t in enumerate(targets_air):
+                    kpis_t = get_kpi_air(df_jour[df_jour["metropole"] == t])
+                    with kpi_cols[i]:
+                        render_kpi_card_air(t, kpis_t, border_color=bar_colors[i])
+
+                if entities_no_data:
+                    st.caption(
+                        "ℹ️ Aucune donnée de qualité de l'air disponible (flux Atmo non couvert) pour : "
+                        + ", ".join(entities_no_data)
+                    )
+
+                if not entities_with_data:
+                    st.warning("Aucune donnée de qualité de l'air disponible pour cette sélection.")
+                    st.stop()
+
+                st.markdown("---")
+
+                # ── RÉPARTITION + ÉVOLUTION ─────────────────────────────
+                gc1, gc2 = st.columns(2)
+
+                with gc1:
+                    st.subheader(
+                        "Répartition des communes par catégorie",
+                        help=(
+                            "Part des communes de chaque territoire classées dans chaque catégorie ATMO "
+                            f"(base 100%), pour le jour sélectionné ({date_labels[date_air]}). "
+                            "Couleurs officielles ATMO."
+                        ),
+                    )
+                    rows_dist = []
+                    for t in entities_with_data:
+                        dist_t = get_quality_distribution(df_jour[df_jour["metropole"] == t])
+                        dist_t["Territoire"] = t
+                        rows_dist.append(dist_t)
+                    df_dist = pd.concat(rows_dist, ignore_index=True) if rows_dist else pd.DataFrame()
+
+                    if not df_dist.empty:
+                        cats_order = [c for c in QUALITE_ORDER if c in df_dist["Catégorie"].unique()]
+                        fig_dist = px.bar(
+                            df_dist, x="Territoire", y="Part (%)", color="Catégorie",
+                            barmode="stack", text_auto=".2f",
+                            color_discrete_map=QUALITE_COULEURS,
+                            category_orders={"Catégorie": cats_order}, height=380,
+                        )
+                        fig_dist.update_traces(
+                            textposition="inside", textfont_size=9,
+                            hovertemplate="<b>%{x}</b><br>%{fullData.name} : %{y:.2f}%<extra></extra>",
+                        )
+                        if greno_vrect:
+                            fig_dist.add_vrect(**greno_vrect)
+                        fig_dist.update_layout(
+                            legend=dict(orientation="h", y=1.18, title=""),
+                            yaxis_title="Part des communes (%)", xaxis_title="", margin=dict(t=20),
+                        )
+                        st.plotly_chart(style(fig_dist), use_container_width=True)
+
+                with gc2:
+                    st.subheader(
+                        "Évolution sur les 3 jours de prévision",
+                        help=(
+                            "Part des communes en air dégradé ou pire (Dégradé, Mauvais, Très mauvais, "
+                            "Extrêmement mauvais) pour chacun des 3 jours de prévision disponibles "
+                            "(J, J+1, J+2). Ce graphique reste indépendant du sélecteur de jour ci-dessus."
+                        ),
+                    )
+                    fig_evo = go.Figure()
+                    for t in entities_with_data:
+                        y_vals = []
+                        for d in dates_dispo:
+                            df_td = df_air[(df_air["metropole"] == t) & (df_air["date_ech"] == d)]
+                            kpis_td = get_kpi_air(df_td)
+                            y_vals.append(kpis_td["pct_degrade"] if kpis_td else None)
+                        is_greno = (t == "Grenoble")
+                        fig_evo.add_trace(go.Scatter(
+                            x=[date_labels[d].split(" — ")[0] for d in dates_dispo], y=y_vals,
+                            mode="lines+markers", name=t,
+                            line=dict(color=color_by_target[t], width=3.5 if is_greno else 2,
+                                    dash="dash" if is_greno else "solid"),
+                            marker=dict(size=11 if is_greno else 8,
+                                        symbol="diamond" if is_greno else "circle",
+                                        line=dict(color="#FF584D", width=2) if is_greno else dict(width=0)),
+                            hovertemplate=f"<b>{t}</b><br>%{{x}} : %{{y:.2f}}%<extra></extra>",
+                        ))
+                    fig_evo.update_layout(
+                        height=380, margin=dict(t=20, b=10),
+                        legend=dict(orientation="h", y=1.18, title="", font_size=10),
+                        xaxis=dict(title=""),
+                        yaxis=dict(title="Communes en air dégradé ou pire (%)", gridcolor="#eee"),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    )
+                    st.plotly_chart(style(fig_evo), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ces deux graphiques ?"):
+                    st.write(
+                        "**Répartition par catégorie** : permet de comparer d'un coup d'œil la proportion de "
+                        "communes touchées par une pollution significative dans chaque territoire, le même jour. "
+                        "Une barre majoritairement jaune/rouge indique un épisode de pollution généralisé sur "
+                        "le territoire plutôt que localisé.\n\n"
+                        "**Évolution sur 3 jours** : suit la tendance à court terme. Une courbe montante "
+                        "annonce une dégradation prévue (souvent liée à un épisode anticyclonique stable qui "
+                        "favorise l'accumulation des polluants), une courbe descendante annonce une amélioration "
+                        "(typiquement après le passage d'un système pluvieux/venteux qui disperse la pollution). "
+                        "La ligne en tirets rouges identifie Grenoble."
+                    )
+
+                st.markdown("---")
+
+                # ── POLLUANT PRÉPONDÉRANT ───────────────────────────────
+                st.subheader(
+                    "Polluant prépondérant par territoire",
+                    help=(
+                        "Score moyen (1 = Bon à 6 = Extrêmement mauvais) de chaque polluant pour le jour "
+                        f"sélectionné ({date_labels[date_air]}). Le polluant avec le score le plus élevé est "
+                        "celui qui dégrade le plus l'indice global, puisque l'indice ATMO retient toujours le "
+                        "maximum des 5 sous-indices."
+                    ),
+                )
+                rows_poll = []
+                for t in entities_with_data:
+                    scores_t = get_pollutant_scores(df_jour[df_jour["metropole"] == t])
+                    if scores_t is None:
+                        continue
+                    for poll, score in scores_t.items():
+                        rows_poll.append({"Territoire": t, "Polluant": poll, "Score moyen": score})
+                df_poll = pd.DataFrame(rows_poll)
+
+                if not df_poll.empty:
+                    fig_poll = px.bar(
+                        df_poll, x="Polluant", y="Score moyen", color="Territoire",
+                        barmode="group", color_discrete_map=COULEURS, height=380,
+                    )
+                    fig_poll.update_traces(
+                        hovertemplate="<b>%{fullData.name}</b><br>%{x} : %{y:.2f}<extra></extra>",
+                    )
+                    for trace in fig_poll.data:
+                        if trace.name == "Grenoble":
+                            trace.marker.pattern = dict(shape="/", fgcolor="#FF584D", fillmode="overlay", solidity=0.3, size=18)
+                    fig_poll.update_layout(
+                        legend=dict(orientation="h", y=1.18, title=""),
+                        yaxis=dict(title="Score moyen (1=Bon, 6=Extrêmement mauvais)", range=[0, 6]),
+                        xaxis_title="", margin=dict(t=20),
+                    )
+                    st.plotly_chart(style(fig_poll), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ce graphique ?"):
+                    st.write(
+                        "Ce graphique décompose l'indice global par polluant, ce qui permet d'identifier la "
+                        "source de pollution dominante sur chaque territoire. **L'ozone (O₃)** est un polluant "
+                        "secondaire qui se forme par réaction photochimique sous l'effet du soleil et de la "
+                        "chaleur : il domine généralement en période estivale, y compris loin de toute source "
+                        "directe. **Le NO₂** est principalement émis par le trafic routier et concentré en zone "
+                        "urbaine dense. **Les particules PM10/PM2.5** proviennent du chauffage, du trafic et de "
+                        "l'agriculture, avec des pics fréquents en hiver. **Le SO₂**, d'origine essentiellement "
+                        "industrielle, reste généralement faible sur ces territoires. Les hachures rouges "
+                        "identifient Grenoble."
+                    )
+
+            # ═════════════════════════════════════════════════════════════
+            # VUE COMMUNES (Grenoble-Alpes Métropole)
+            # ═════════════════════════════════════════════════════════════
+            else:
+
+                n_comm = len(targets_air)
+                comm_palette = [PALETTE_COMMUNE[i % len(PALETTE_COMMUNE)] for i in range(n_comm)]
+
+                # ── KPI ──────────────────────────────────────────────────
+                st.subheader(
+                    f"Indicateurs de qualité de l'air — {date_labels[date_air]}",
+                    help=(
+                        "**Qualité dominante** : catégorie ATMO de la commune (une seule valeur par commune).\n\n"
+                        "**Communes en air dégradé ou pire** : ici, 0% ou 100% puisqu'il s'agit d'une commune "
+                        "unique — l'indicateur prend tout son sens dans la vue Métropoles."
+                    ),
+                )
+                kpi_cols = st.columns(n_comm)
+                for i, comm in enumerate(targets_air):
+                    kpis_c = get_kpi_air(df_jour[df_jour["nom_commune"] == comm])
+                    with kpi_cols[i]:
+                        render_kpi_card_air(comm, kpis_c, border_color=comm_palette[i])
+
+                st.markdown("---")
+
+                # ── RÉPARTITION + ÉVOLUTION ─────────────────────────────
+                gc1, gc2 = st.columns(2)
+
+                with gc1:
+                    st.subheader(
+                        "Catégorie de qualité par commune",
+                        help=(
+                            f"Catégorie ATMO de chaque commune sélectionnée pour le jour choisi "
+                            f"({date_labels[date_air]}). Couleurs officielles ATMO."
+                        ),
+                    )
+                    rows_cat_c = []
+                    for comm in targets_air:
+                        df_c = df_jour[df_jour["nom_commune"] == comm]
+                        if not df_c.empty:
+                            rows_cat_c.append({
+                                "Commune": comm,
+                                "Catégorie": df_c["lib_qual"].iloc[0],
+                                "Score": df_c["code_qual"].iloc[0],
+                            })
+                    df_cat_c = pd.DataFrame(rows_cat_c)
+
+                    if not df_cat_c.empty:
+                        fig_cat_c = px.bar(
+                            df_cat_c, x="Commune", y="Score", color="Catégorie",
+                            color_discrete_map=QUALITE_COULEURS, height=380,
+                            category_orders={"Catégorie": [c for c in QUALITE_ORDER if c in df_cat_c["Catégorie"].unique()]},
+                        )
+                        fig_cat_c.update_traces(
+                            hovertemplate="<b>%{x}</b><br>%{fullData.name} (score %{y})<extra></extra>",
+                        )
+                        fig_cat_c.update_layout(
+                            legend=dict(orientation="h", y=1.18, title=""),
+                            yaxis=dict(title="Score ATMO (1=Bon, 6=Extrêmement mauvais)", range=[0, 6]),
+                            xaxis_title="", xaxis_tickangle=-25, margin=dict(t=20),
+                        )
+                        st.plotly_chart(style(fig_cat_c), use_container_width=True)
+
+                with gc2:
+                    st.subheader(
+                        "Évolution sur les 3 jours de prévision",
+                        help=(
+                            "Score ATMO (1 = Bon à 6 = Extrêmement mauvais) de chaque commune pour chacun des "
+                            "3 jours de prévision disponibles (J, J+1, J+2). Indépendant du sélecteur de jour "
+                            "ci-dessus."
+                        ),
+                    )
+                    fig_evo_c = go.Figure()
+                    for i, comm in enumerate(targets_air):
+                        y_vals = []
+                        for d in dates_dispo:
+                            df_cd = df_air[(df_air["nom_commune"] == comm) & (df_air["date_ech"] == d)]
+                            y_vals.append(df_cd["code_qual"].iloc[0] if not df_cd.empty else None)
+                        fig_evo_c.add_trace(go.Scatter(
+                            x=[date_labels[d].split(" — ")[0] for d in dates_dispo], y=y_vals,
+                            mode="lines+markers", name=comm,
+                            line=dict(color=comm_palette[i], width=2),
+                            marker=dict(size=8),
+                            hovertemplate=f"<b>{comm}</b><br>%{{x}} : score %{{y}}<extra></extra>",
+                        ))
+                    fig_evo_c.update_layout(
+                        height=380, margin=dict(t=20, b=10),
+                        legend=dict(orientation="h", y=1.18, title="", font_size=10),
+                        xaxis=dict(title=""),
+                        yaxis=dict(title="Score ATMO (1=Bon, 6=Extrêmement mauvais)", range=[0, 6], gridcolor="#eee"),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    )
+                    st.plotly_chart(style(fig_evo_c), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ces deux graphiques ?"):
+                    st.write(
+                        "**Catégorie par commune** : permet de repérer les communes les plus exposées un jour "
+                        "donné, par exemple celles situées en fond de cuvette versus celles en altitude.\n\n"
+                        "**Évolution sur 3 jours** : une trajectoire commune à toutes les courbes (même direction, "
+                        "pentes similaires) indique un phénomène météorologique affectant l'ensemble du bassin "
+                        "grenoblois. Des trajectoires divergentes entre communes voisines signalent un effet "
+                        "très localisé (proximité d'un axe routier, micro-relief)."
+                    )
+
+                st.markdown("---")
+
+                # ── POLLUANT PRÉPONDÉRANT ───────────────────────────────
+                st.subheader(
+                    "Polluant prépondérant par commune",
+                    help=(
+                        "Score (1 = Bon à 6 = Extrêmement mauvais) de chaque polluant pour le jour sélectionné "
+                        f"({date_labels[date_air]}). Le polluant au score le plus élevé est celui qui détermine "
+                        "l'indice global de la commune (l'indice ATMO retient toujours le maximum des 5 sous-indices)."
+                    ),
+                )
+                rows_poll_c = []
+                for comm in targets_air:
+                    df_c = df_jour[df_jour["nom_commune"] == comm]
+                    if df_c.empty:
+                        continue
+                    for code, label in POLLUANTS.items():
+                        rows_poll_c.append({"Commune": comm, "Polluant": label, "Score": df_c[code].iloc[0]})
+                df_poll_c = pd.DataFrame(rows_poll_c)
+
+                if not df_poll_c.empty:
+                    fig_poll_c = px.bar(
+                        df_poll_c, x="Polluant", y="Score", color="Commune",
+                        barmode="group", color_discrete_sequence=comm_palette, height=380,
+                    )
+                    fig_poll_c.update_traces(
+                        hovertemplate="<b>%{fullData.name}</b><br>%{x} : %{y:.2f}<extra></extra>",
+                    )
+                    fig_poll_c.update_layout(
+                        legend=dict(orientation="h", y=1.18, title=""),
+                        yaxis=dict(title="Score (1=Bon, 6=Extrêmement mauvais)", range=[0, 6]),
+                        xaxis_title="", margin=dict(t=20),
+                    )
+                    st.plotly_chart(style(fig_poll_c), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ce graphique ?"):
+                    st.write(
+                        "Ce graphique décompose l'indice global par polluant pour chaque commune. **L'ozone "
+                        "(O₃)** domine généralement en été (réaction photochimique sous l'effet du soleil et de "
+                        "la chaleur), parfois plus marqué en altitude qu'en fond de vallée. **Le NO₂** reflète "
+                        "directement la densité du trafic routier local. **Les particules PM10/PM2.5** "
+                        "augmentent en hiver avec le chauffage, et stagnent davantage dans les communes "
+                        "encaissées de la cuvette grenobloise. Comparer les profils entre communes voisines "
+                        "aide à identifier si la pollution est plutôt liée au trafic, au chauffage ou à un "
+                        "phénomène régional (ozone)."
+                    )
+    
+    # ── Onglet 2 : Espaces verts ─────────────────────────────────────────────
+    with tab_env3:
         filter_bar("Filtres - Espaces verts")
         f_col3, f_col4 = st.columns(2)
         with f_col3:
@@ -7147,7 +7661,7 @@ if vue == "Environnement":
         st.info("Données en cours de traitement. Intégrez vos analyses géographiques de végétation urbaine ici.")
 
     # ── Onglet 3 : Déchets & Transition ──────────────────────────────────────
-    with tab_env3:
+    with tab_env4:
         filter_bar("Filtres - Déchets & Transition")
         f_col5, f_col6 = st.columns(2)
         with f_col5:
