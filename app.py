@@ -596,6 +596,40 @@ def charger_filo():
     return df
 
 
+@st.cache_data
+def charger_artificialisation():
+    paths = [
+        Path("environnement/data_clean/artificialisation_des_sols_clean.csv"),
+        Path("artificialisation_des_sols_clean.csv"),
+    ]
+    df = None
+    for p in paths:
+        if p.exists():
+            df = pd.read_csv(p, sep=",", encoding="utf-8-sig")
+            break
+    if df is None:
+        return None
+ 
+    df.columns = df.columns.str.strip()
+    df["nom"] = df["nom"].astype(str).str.strip()
+ 
+    df["metropole"] = df["metropole"].replace("Saint-Etienne", "Saint-Étienne")
+ 
+    # Conversions m² → hectares (plus lisibles à l'échelle communale)
+    df["surface_artif_1_ha"] = df["surface_artif_1"] / 10_000
+    df["surface_artif_2_ha"] = df["surface_artif_2"] / 10_000
+    df["commune_surface_ha"] = df["commune_surface"] / 10_000
+    df["flux_surface_ha"]    = df["flux_surface_1_2"] / 10_000
+ 
+    # Durée de la période d'observation (différente selon la métropole :
+    # 2018→2021 pour Grenoble et Montpellier, 2017→2020 pour Rennes, 2019→2022 pour
+    # Saint-Étienne et Rouen, toujours 3 ans, mais pas calée sur les mêmes années).
+    df["duree_periode"]    = (df["millesimes_2"] - df["millesimes_1"]).replace(0, np.nan)
+    df["rythme_annuel_ha"] = df["flux_surface_ha"] / df["duree_periode"]
+ 
+    return df
+
+
 # Supprime les accents, convertit le texte en minuscules et enlève les espaces en trop au début et à la fin.
 # Cela évite que l'application ne plante ou ignore une catégorie à cause d'une majuscule ou d'un accent oublié.
 # (ex: Ouvriers et ouvriers deviennent identiques).
@@ -686,6 +720,7 @@ df_caf     = charger_caf()
 df_eff     = charger_effectifs()
 df_filo    = charger_filo()
 df_res, df_prof, df_scol = charger_mobilites()
+df_artif = charger_artificialisation()
 
 FILES_CSP = {
     2011: "demographie/data_clean/population_2554/Commune_2011_2554_sect_activite.xlsx",
@@ -6766,39 +6801,335 @@ le comportement électoral structurel des territoires et doivent être interpré
 # ==============================================================================
 if vue == "Environnement":
     tab_env1, tab_env2, tab_env3 = st.tabs([
-        "🌱  Qualité de l'air",
+        "🏗️  Artificialisation des sols",
         "🌳  Espaces verts & Biodiversité",
         "♻️  Déchets & Transition",
     ])
 
-    # ── Onglet 1 : Qualité de l'air ──────────────────────────────────────────
+    
+    # ── Onglet 4 : Artificialisation des sols ────────────────────────────────
     with tab_env1:
-        st.markdown('<div class="section-header">Qualité de l\'air et Indices Atmo</div>', unsafe_allow_html=True)
-        
-        # Bandeau de filtres haut de page synchronisés
-        st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-        filter_bar("Filtres - Qualité de l'air")
-        f_col1, f_col2 = st.columns(2)
-        with f_col1:
-            metros_air = st.multiselect(
-                "Sélectionner les métropoles :", TOUTES,
-                default=shared_default_env(TOUTES), key="env_air_metros", on_change=sync_metros_env, args=("env_air_metros",)
+        st.markdown('<div class="section-header">Artificialisation des sols et consommation d\'espace</div>', unsafe_allow_html=True)
+ 
+        if df_artif is None:
+            st.info("📂 Fichier `artificialisation_des_sols_clean.csv` introuvable.")
+        else:
+            # ── Encart Sources ─────────────────────────────────────────────
+            st.markdown("""
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source :</strong> data.gouv.fr, Observatoire de l'artificialisation des sols :
+                <a href='https://www.data.gouv.fr/datasets/artificialisation-des-sols-donnees-par-region-departement-scot-commune-et-epci' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br>
+                <em>Les millésimes de référence diffèrent selon les métropoles (intervalle de 3 ans entre les deux dates d'observation, propre à chaque territoire).</em><br><br>
+                <strong>Note sur les données :</strong> L'artificialisation correspond au solde entre surfaces artificialisées et surfaces désartificialisées, calculé entre deux dates de référence.
+                Ce calcul s'appuie sur la donnée OCSGE (Occupation du Sol à Grand Echelle), disponible pour l'ensemble du territoire national pour deux millésimes. Les premiers millésimes s'échelonnent de 2016 à 2019, et les seconds de 2019 à 2022, selon les territoires.
+            </div>""", unsafe_allow_html=True)
+ 
+            # ─────────────────────────────────────────────────────────────
+            # BANDEAU FILTRES
+            # ─────────────────────────────────────────────────────────────
+            with st.container():
+                filter_bar("Filtres - Artificialisation des sols")
+                fz1, fz2 = st.columns([1, 3])
+                with fz1:
+                    filter_row_label("Niveau géographique")
+                with fz2:
+                    mode_artif = st.radio(
+                        "", ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
+                        key="env_artif_mode", horizontal=True, label_visibility="collapsed",
+                    )
+ 
+                if mode_artif == "Comparaison Métropoles":
+                    sel_metros_artif = st.multiselect(
+                        "Métropoles à comparer", TOUTES, default=shared_default_env(TOUTES),
+                        key="env_artif_metros", on_change=sync_metros_env, args=("env_artif_metros",),
+                    )
+                    targets_artif = sel_metros_artif
+                else:
+                    communes_artif_dispo = sorted(COMMUNES["Grenoble"])
+                    sel_communes_artif = st.multiselect(
+                        "Communes de Grenoble-Alpes Métropole", communes_artif_dispo,
+                        default=shared_default_communes_env(communes_artif_dispo),
+                        key="env_artif_communes", on_change=sync_communes_env, args=("env_artif_communes",),
+                    )
+                    targets_artif = sel_communes_artif
+ 
+            st.markdown("---")
+ 
+            if not targets_artif:
+                st.warning("Sélectionnez au moins un territoire.")
+                st.stop()
+ 
+            mode_artif_metro = (mode_artif == "Comparaison Métropoles")
+ 
+            # ─────────────────────────────────────────────────────────────
+            # AGRÉGATION PAR TERRITOIRE
+            # ─────────────────────────────────────────────────────────────
+            if mode_artif_metro:
+                df_artif_f = df_artif[df_artif["metropole"].isin(targets_artif)]
+                df_agg_artif = df_artif_f.groupby("metropole", as_index=False).agg(
+                    surface_artif_1_ha=("surface_artif_1_ha", "sum"),
+                    surface_artif_2_ha=("surface_artif_2_ha", "sum"),
+                    commune_surface_ha=("commune_surface_ha", "sum"),
+                    flux_surface_ha=("flux_surface_ha", "sum"),
+                    duree_periode=("duree_periode", "mean"),
+                    millesime_1=("millesimes_1", "min"),
+                    millesime_2=("millesimes_2", "max"),
+                ).rename(columns={"metropole": "territoire"})
+            else:
+                df_artif_f = df_artif[
+                    (df_artif["metropole"] == "Grenoble") & (df_artif["nom"].isin(targets_artif))
+                ]
+                df_agg_artif = df_artif_f.rename(columns={
+                    "nom": "territoire", "millesimes_1": "millesime_1", "millesimes_2": "millesime_2",
+                })[[
+                    "territoire", "surface_artif_1_ha", "surface_artif_2_ha",
+                    "commune_surface_ha", "flux_surface_ha", "duree_periode",
+                    "millesime_1", "millesime_2",
+                ]].copy()
+ 
+            if df_agg_artif.empty:
+                st.warning("Aucune donnée disponible pour cette sélection.")
+                st.stop()
+ 
+            # Indicateurs dérivés (recalculés après agrégation, pour rester
+            # exacts même en vue Métropoles où plusieurs communes sont sommées)
+            df_agg_artif["pourcent_artif_1"] = df_agg_artif["surface_artif_1_ha"] / df_agg_artif["commune_surface_ha"] * 100
+            df_agg_artif["pourcent_artif_2"] = df_agg_artif["surface_artif_2_ha"] / df_agg_artif["commune_surface_ha"] * 100
+            df_agg_artif["flux_percent"]     = df_agg_artif["pourcent_artif_2"] - df_agg_artif["pourcent_artif_1"]
+            df_agg_artif["rythme_annuel_ha"] = df_agg_artif["flux_surface_ha"] / df_agg_artif["duree_periode"]
+ 
+            # Respecter l'ordre de sélection de l'utilisateur (cohérent avec
+            # le reste de l'app) — IMPORTANT : fait avant le calcul de
+            # bar_colors pour que les couleurs restent alignées avec les lignes.
+            df_agg_artif["territoire"] = pd.Categorical(
+                df_agg_artif["territoire"], categories=targets_artif, ordered=True
             )
-        with f_col2:
-            communes_air = st.multiselect(
-                "Sélectionner les communes (Grenoble) :", COMMUNES_GRENOBLE,
-                default=shared_default_communes_env(COMMUNES_GRENOBLE), key="env_air_communes", on_change=sync_communes_env, args=("env_air_communes",)
+            df_agg_artif = df_agg_artif.sort_values("territoire").reset_index(drop=True)
+            df_agg_artif["territoire"] = df_agg_artif["territoire"].astype(str)
+ 
+            n_targets = len(df_agg_artif)
+            bar_colors = (
+                [COULEURS.get(t, "#888888") for t in df_agg_artif["territoire"]]
+                if mode_artif_metro
+                else [PALETTE_COMMUNE[i % len(PALETTE_COMMUNE)] for i in range(n_targets)]
             )
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.info("Données en cours de traitement. Intégrez vos futurs indicateurs de qualité de l'air ici.")
+ 
+            # ─────────────────────────────────────────────────────────────
+            # KPI
+            # ─────────────────────────────────────────────────────────────
+            def render_kpi_card_artif(row, border_color):
+                periode_str = f"{int(row['millesime_1'])} → {int(row['millesime_2'])}"
+                evol_color  = "#C62828" if row["flux_percent"] >= 0 else "#1565C0"
+                evol_sign   = "+" if row["flux_percent"] >= 0 else ""
+                st.markdown(f"""
+                <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08); border-left:6px solid {border_color}; background:#fff; margin-bottom:12px; padding:12px 16px;'>
+                    <div style='font-size:13px;font-weight:700;color:#1C3A27;margin-bottom:2px; border-bottom:1px solid #eee; padding-bottom:5px;'>{row['territoire']}</div>
+                    <div style='font-size:9px;color:#999;margin-bottom:6px;'>Période {periode_str}</div>
+                    <div style='display:grid;grid-template-columns:1fr 1fr;gap:6px;'>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Taux artif.</div>
+                            <div style='font-size:15px;font-weight:800;color:#555;'>{row['pourcent_artif_2']:.1f}%</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Évolution</div>
+                            <div style='font-size:15px;font-weight:800;color:{evol_color};'>{evol_sign}{row['flux_percent']:.2f} pt</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Surf. consommée</div>
+                            <div style='font-size:15px;font-weight:800;color:#E65100;'>{row['flux_surface_ha']:.1f} ha</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Rythme annuel</div>
+                            <div style='font-size:15px;font-weight:800;color:#2E7D32;'>{row['rythme_annuel_ha']:.1f} ha/an</div>
+                        </div>
+                    </div>
+                </div>""", unsafe_allow_html=True)
+ 
+            st.subheader("Indicateurs synthétiques d'artificialisation")
+            kpi_cols = st.columns(n_targets)
+            for i, row in df_agg_artif.iterrows():
+                with kpi_cols[i]:
+                    render_kpi_card_artif(row, border_color=bar_colors[i])
+ 
+            st.markdown("---")
+ 
+            # ─────────────────────────────────────────────────────────────
+            # HELPER GRAPHIQUE — bar chart horizontal coloré par territoire
+            # (gris/COULEURS en vue Métropoles, vert/PALETTE_COMMUNE en vue
+            # Communes), avec hachures Grenoble automatiques.
+            # ─────────────────────────────────────────────────────────────
+            def _bar_territoire(df_in, value_col, title_x, text_fmt, add_vline=False):
+                df_s = df_in.sort_values(value_col, ascending=True)
+                kwargs = dict(
+                    x=value_col, y="territoire", orientation="h", color="territoire",
+                    text=df_s[value_col].apply(text_fmt),
+                    labels={"territoire": "", value_col: title_x},
+                    height=130 + n_targets * 38,
+                )
+                if mode_artif_metro:
+                    fig = px.bar(df_s, color_discrete_map=COULEURS, **kwargs)
+                else:
+                    fig = px.bar(df_s, color_discrete_sequence=PALETTE_COMMUNE, **kwargs)
+                fig.update_traces(
+                    textposition="outside",
+                    hovertemplate=f"<b>%{{y}}</b><br>{title_x} : <b>%{{text}}</b><extra></extra>",
+                )
+                if add_vline:
+                    fig.add_vline(x=0, line_color="#999", line_width=1)
+                fig.update_layout(showlegend=False, xaxis=dict(gridcolor="#eee"), margin=dict(l=10, r=40, t=10, b=10))
+                apply_grenoble_hatch(fig, active=mode_artif_metro)
+                return fig
+ 
+            # ─────────────────────────────────────────────────────────────
+            # GRAPH 1 / 2 : Taux d'artificialisation + Évolution
+            # ─────────────────────────────────────────────────────────────
+            gc1, gc2 = st.columns(2)
+ 
+            with gc1:
+                st.subheader(
+                    "Taux d'artificialisation des sols",
+                    help="Part du territoire occupée par des sols artificialisés (bâti, voirie, parkings...) au millésime le plus récent disponible pour chaque territoire.",
+                )
+                fig_taux = _bar_territoire(
+                    df_agg_artif, "pourcent_artif_2", "Taux d'artificialisation (%)",
+                    lambda v: f"{v:.1f}%",
+                )
+                st.plotly_chart(style(fig_taux), use_container_width=True)
+ 
+            with gc2:
+                st.subheader(
+                    "Évolution du taux d'artificialisation",
+                    help="Variation, en points de pourcentage, du taux d'artificialisation entre les deux millésimes d'observation (intervalle de 3 ans, propre à chaque territoire).",
+                )
+                fig_evol = _bar_territoire(
+                    df_agg_artif, "flux_percent", "Évolution (points de %)",
+                    lambda v: f"{'+' if v >= 0 else ''}{v:.2f} pt", add_vline=True,
+                )
+                st.plotly_chart(style(fig_evol), use_container_width=True)
+ 
+            with st.expander("💡 Comment interpréter ces deux graphiques ?"):
+                st.markdown(
+                    "**Taux d'artificialisation** : part du territoire couverte par des sols artificialisés "
+                    "(constructions, voirie, parkings, chantiers...), au millésime le plus récent disponible "
+                    "pour chaque territoire. Un taux élevé traduit une forte densité bâtie ou une urbanisation ancienne.\n\n"
+                    "**Évolution** : variation du taux d'artificialisation sur la période d'observation (3 ans). "
+                    "Une valeur positive signale une poursuite de l'artificialisation, une valeur proche de "
+                    "zéro ou négative traduit une stabilisation ou une renaturation du territoire." +
+                    (" Les hachures rouges identifient Grenoble." if mode_artif_metro else "")
+                )
+ 
+            st.markdown("---")
+ 
+            # ─────────────────────────────────────────────────────────────
+            # GRAPH 3 : Rythme annuel de consommation d'espace
+            # ─────────────────────────────────────────────────────────────
+            st.subheader(
+                "Rythme annuel de consommation d'espace",
+                help=(
+                    "Surface artificialisée consommée chaque année en moyenne sur la période d'observation "
+                    "(surface consommée ÷ nombre d'années entre les deux millésimes). C'est l'indicateur de "
+                    "référence utilisé dans le cadre de l'objectif national « Zéro Artificialisation Nette » (ZAN), "
+                    "qui vise une réduction de moitié du rythme de consommation d'espace d'ici 2031."
+                ),
+            )
+            df_sorted3 = df_agg_artif.sort_values("rythme_annuel_ha", ascending=False)
+            fig_rythme = px.bar(
+                df_sorted3, x="territoire", y="rythme_annuel_ha", color="territoire",
+                color_discrete_map=COULEURS if mode_artif_metro else None,
+                color_discrete_sequence=None if mode_artif_metro else PALETTE_COMMUNE,
+                text=df_sorted3["rythme_annuel_ha"].apply(lambda v: f"{v:.1f} ha"),
+                labels={"territoire": "", "rythme_annuel_ha": "Rythme annuel (ha/an)"},
+                height=380,
+            )
+            fig_rythme.update_traces(
+                textposition="outside",
+                hovertemplate="<b>%{x}</b><br>Rythme annuel : <b>%{text}</b><extra></extra>",
+            )
+            fig_rythme.update_layout(showlegend=False, yaxis=dict(gridcolor="#eee"), margin=dict(l=10, r=10, t=20, b=10))
+            apply_grenoble_hatch(fig_rythme, active=mode_artif_metro)
+            st.plotly_chart(style(fig_rythme), use_container_width=True)
+ 
+            with st.expander("💡 Comment interpréter ce graphique ?"):
+                st.markdown(
+                    "Le rythme annuel de consommation d'espace est l'indicateur central du suivi de l'objectif "
+                    "ZAN (Zéro Artificialisation Nette), fixé par la loi Climat et Résilience du 22 août 2021. "
+                    "Il mesure la surface moyenne artificialisée chaque année sur la période d'observation. "
+                    "Plus ce rythme est élevé, plus le territoire consomme rapidement des espaces naturels, "
+                    "agricoles ou forestiers (ENAF)." +
+                    (" Les hachures rouges identifient Grenoble." if mode_artif_metro else "")
+                )
+ 
+            st.markdown("---")
+ 
+            # ─────────────────────────────────────────────────────────────
+            # GRAPH 4 : Trajectoire avant / après (slope chart)
+            # ─────────────────────────────────────────────────────────────
+            st.subheader(
+                "Trajectoire du taux d'artificialisation",
+                help="Évolution du taux d'artificialisation entre le premier et le second millésime d'observation, territoire par territoire.",
+            )
+            fig_traj = go.Figure()
+            for i, row in df_agg_artif.iterrows():
+                is_greno = mode_artif_metro and row["territoire"] == "Grenoble"
+                fig_traj.add_trace(go.Scatter(
+                    x=[f"{int(row['millesime_1'])}", f"{int(row['millesime_2'])}"],
+                    y=[row["pourcent_artif_1"], row["pourcent_artif_2"]],
+                    mode="lines+markers",
+                    name=row["territoire"],
+                    line=dict(color=bar_colors[i], width=4 if is_greno else 2),
+                    marker=dict(
+                        size=10, color=bar_colors[i],
+                        line=dict(color="#FF584D" if is_greno else "white", width=2 if is_greno else 1),
+                    ),
+                    hovertemplate=f"<b>{row['territoire']}</b><br>%{{x}} : %{{y:.1f}}%<extra></extra>",
+                ))
+            fig_traj.update_layout(
+                height=380, margin=dict(t=20, b=10),
+                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                xaxis=dict(title="Millésime d'observation", showgrid=False, type="category"),
+                yaxis=dict(title="Taux d'artificialisation (%)", gridcolor="#eee"),
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5, font_size=10),
+            )
+            st.plotly_chart(style(fig_traj), use_container_width=True)
+ 
+            with st.expander("💡 Comment interpréter ce graphique ?"):
+                st.markdown(
+                    "Chaque ligne relie le taux d'artificialisation d'un territoire entre le premier et le "
+                    "second millésime disponible. Une pente ascendante marque une poursuite de l'artificialisation, "
+                    "une ligne plate traduit une stabilisation du territoire. Les millésimes diffèrent d'une "
+                    "métropole à l'autre (l'intervalle reste cependant de 3 ans dans tous les cas) : ils sont "
+                    "donc affichés ici à titre indicatif, et non comme un axe temporel strictement comparable." +
+                    (" La ligne de Grenoble est mise en évidence en plus épais, bordée de rouge." if mode_artif_metro else "")
+                )
+ 
+            # ─────────────────────────────────────────────────────────────
+            # GRAPH 5 (vue Communes uniquement) : classement des communes
+            # ─────────────────────────────────────────────────────────────
+            if not mode_artif_metro and n_targets > 3:
+                st.markdown("---")
+                st.subheader(
+                    "Classement des communes sélectionnées",
+                    help="Communes triées par surface consommée sur la période, pour repérer rapidement les plus concernées par l'artificialisation récente.",
+                )
+                df_rank = df_agg_artif.sort_values("flux_surface_ha", ascending=True)
+                fig_rank = go.Figure()
+                fig_rank.add_trace(go.Bar(
+                    y=df_rank["territoire"], x=df_rank["flux_surface_ha"], orientation="h",
+                    marker_color=PALETTE_COMMUNE[2],
+                    text=df_rank["flux_surface_ha"].apply(lambda v: f"{v:.1f} ha"),
+                    textposition="outside",
+                    hovertemplate="<b>%{y}</b><br>Surface consommée : %{text}<extra></extra>",
+                ))
+                fig_rank.update_layout(
+                    height=130 + n_targets * 28, margin=dict(l=10, r=40, t=10, b=10),
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    xaxis=dict(title="Surface consommée sur la période (ha)", gridcolor="#eee"),
+                    yaxis=dict(title=""),
+                )
+                st.plotly_chart(style(fig_rank), use_container_width=True)
 
     # ── Onglet 2 : Espaces verts ─────────────────────────────────────────────
     with tab_env2:
-        st.markdown('<div class="section-header">Indice de canopée et accès à la nature</div>', unsafe_allow_html=True)
-        
-        # Bandeau de filtres haut de page synchronisés
-        st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
         filter_bar("Filtres - Espaces verts")
         f_col3, f_col4 = st.columns(2)
         with f_col3:
@@ -6817,10 +7148,6 @@ if vue == "Environnement":
 
     # ── Onglet 3 : Déchets & Transition ──────────────────────────────────────
     with tab_env3:
-        st.markdown('<div class="section-header">Gestion des déchets et énergies renouvelables</div>', unsafe_allow_html=True)
-        
-        # Bandeau de filtres haut de page synchronisés
-        st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
         filter_bar("Filtres - Déchets & Transition")
         f_col5, f_col6 = st.columns(2)
         with f_col5:
