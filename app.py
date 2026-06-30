@@ -7155,7 +7155,7 @@ if vue == "Environnement":
             st.markdown("""
             <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
                 <strong>Source :</strong> Fédération Atmo France (réseau des AASQA, agréées par le Ministère de la Transition écologique) —
-                <a href='https://www.atmo-france.org' target='_blank' style='color: #1C3A27;'>atmo-france.org</a><br>
+                <a href='https://www.data.gouv.fr/datasets/indice-de-la-qualite-de-lair-quotidien-par-commune-indice-atmo' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br>
                 Indice ATMO réglementaire calculé à partir de 5 polluants (NO₂, O₃, PM10, PM2.5, SO₂) : la valeur retenue
                 pour chaque polluant est la plus défavorable des prévisions du jour.<br>
                 <em>⚠️ Couverture actuelle limitée à 3 métropoles : Grenoble, Rouen et Saint-Étienne (Rennes et Montpellier non disponibles dans ce flux).</em>
