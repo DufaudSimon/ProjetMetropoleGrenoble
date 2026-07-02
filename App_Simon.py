@@ -1,8 +1,6 @@
 # =============================================================================
 # APPLICATION STREAMLIT - DÉMOGRAPHIE DES MÉTROPOLES FRANÇAISES
 # Grenoble · Rennes · Saint-Étienne · Rouen · Montpellier
-# Sources : INSEE - Recensements de la Population 2011, 2016, 2022
-# Filtres déplacés en haut de chaque onglet (plus de sidebar surchargée)
 # =============================================================================
 
 import streamlit as st
@@ -19,7 +17,7 @@ import unicodedata
 # ──────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Démographie & Environnement · Métropoles",
-    page_icon="Logo_principal_Grenoble-Alpes_Métropole.png",
+    page_icon="Logo-métro.jpg",
     layout="wide",
 )
 
@@ -234,18 +232,22 @@ COULEURS = {
 
 TOUTES = list(COMMUNES.keys())
 
-# ── Sélection partagée des métropoles entre tous les onglets ──────────────────
+# Sélection partagée des métropoles entre tous les onglets
 if "shared_metros" not in st.session_state:
     st.session_state.shared_metros = list(TOUTES)
 
-# Clés widget par thématique (ajout de la thématique Environnement)
+# Clés widget par thématique (permet de conserver les métropoles sélectionnées par exemple)
 METRO_KEYS_DEMO = [
     ("sel_t1",   TOUTES),
     ("age_metros", TOUTES),
     ("mob_metros", TOUTES),
+    ("transp_metros", TOUTES),
     ("men_metros", TOUTES),
+    ("log_metros", TOUTES),
     ("csp_metros", TOUTES),
 ]
+
+# None plutôt que TOUTES car sources diverses et parfois l'écriture est différente donc on garde leur liste propre 
 METRO_KEYS_SOLID = [
     ("caf_agglos",         None),
     ("eff_metros",         None),
@@ -258,6 +260,7 @@ METRO_KEYS_ENV = [
     ("env_dechets_metros", TOUTES),
 ]
 
+# Cette partie initialise la "sauveegarde" des filtre pour permettre à l'utilisateur que le filtre sélectionné resté sélectionné au clic suivant
 if "shared_metros_demo" not in st.session_state:
     st.session_state.shared_metros_demo = list(TOUTES)
 if "shared_metros_solid" not in st.session_state:
@@ -265,6 +268,8 @@ if "shared_metros_solid" not in st.session_state:
 if "shared_metros_env" not in st.session_state:
     st.session_state.shared_metros_env = list(TOUTES)
 
+# C'est le cerveau de la synchronisation. Lorsqu'un utilisateur modifie les métropoles dans un graphique, cette fonction récupère ce nouveau choix, 
+# le sauvegarde dans la mémoire globale centrale (shared_key), puis parcourt tous les autres graphiques de la thématique pour forcer leurs filtres à s'aligner instantanément.
 def _propagate(key, widget_keys, shared_key):
     new_val = list(st.session_state[key])
     st.session_state[shared_key] = new_val
@@ -277,6 +282,8 @@ def _propagate(key, widget_keys, shared_key):
         else:
             st.session_state[wkey] = new_val
 
+# Ce sont les interrupteurs branchés sur le paramètre on_change= de vos menus déroulants (st.multiselect).
+# Dès qu'un utilisateur clique sur un filtre, la fonction de la thématique correspondante se réveille et ordonne à _propagate de lancer la synchronisation avec la bonne liste de widgets.
 def sync_metros_demo(key):
     _propagate(key, METRO_KEYS_DEMO, "shared_metros_demo")
 
@@ -286,6 +293,8 @@ def sync_metros_solid(key):
 def sync_metros_env(key):
     _propagate(key, METRO_KEYS_ENV, "shared_metros_env")
 
+# Elles servent à définir ce que le menu déroulant doit afficher par défaut à l'écran (default=...).
+# Au lieu de recocher bêtement toutes les métropoles à chaque fois, elles vont lire la mémoire globale pour pré-remplir le filtre avec la toute dernière sélection de l'utilisateur, garantissant ainsi que l'affichage reste identique d'un onglet à l'autre.
 def shared_default_demo(options):
     current = st.session_state.get("shared_metros_demo", list(TOUTES))
     filtered = [m for m in current if m in options]
@@ -301,14 +310,17 @@ def shared_default_env(options):
     filtered = [m for m in current if m in options]
     return filtered if filtered else list(options)
 
-# ── Sélection partagée des COMMUNES entre onglets ────────────────────────────
+# Sélection partagée des COMMUNES entre onglets
 COMMUNES_GRENOBLE = sorted(COMMUNES["Grenoble"])
 
+# Même principe que pour les métropoles
 COMMUNE_KEYS_DEMO = [
     ("pop_communes", COMMUNES_GRENOBLE),
     ("age_communes", COMMUNES_GRENOBLE),
     ("mob_communes", COMMUNES_GRENOBLE),
+    ("transp_communes", COMMUNES_GRENOBLE),
     ("men_communes", COMMUNES_GRENOBLE),
+    ("log_communes", COMMUNES_GRENOBLE),
     ("csp_communes", COMMUNES_GRENOBLE),
 ]
 COMMUNE_KEYS_SOLID = [
@@ -388,6 +400,7 @@ def shared_default_communes_env(options):
     filtered = [c for c in current if c in options]
     return filtered if filtered else list(options[:2])
 
+# Définition des départements de nos métropoles nécessaire pour de bons chargements, code commune à 3 chiffres à concaténer avec le département parfois
 DEP_MAP = {
     "Grenoble": "38", "Rennes": "35", "Rouen": "76",
     "Saint-Étienne": "42", "Montpellier": "34",
@@ -504,6 +517,19 @@ def charger_mobilites():
     return safe_load(p_res), safe_load(p_prof), safe_load(p_scol)
 
 @st.cache_data
+def charger_transport():
+    p = DATA_DIR / "transport" / "transport_metropoles_clean.csv"
+    if not p.exists():
+        return None
+    df = pd.read_csv(p, sep=",", encoding="utf-8-sig")
+    df.columns = df.columns.str.strip()
+    if "metropole" in df.columns:
+        df["metropole"] = df["metropole"].replace("Saint-Etienne", "Saint-Étienne")
+    return df
+
+df_transport = charger_transport()
+
+@st.cache_data
 def charger_caf():
     paths = [
         Path("solidarite&citoyennete/data_clean/solidarite/CAF_5_Metropoles.csv"),
@@ -569,6 +595,57 @@ def charger_filo():
     df = df[df["metropole"].notna()].copy()
     return df
 
+
+@st.cache_data
+def charger_artificialisation():
+    paths = [
+        Path("environnement/data_clean/artificialisation_des_sols_clean.csv"),
+        Path("artificialisation_des_sols_clean.csv"),
+    ]
+    df = None
+    for p in paths:
+        if p.exists():
+            df = pd.read_csv(p, sep=",", encoding="utf-8-sig")
+            break
+    if df is None:
+        return None
+ 
+    df.columns = df.columns.str.strip()
+    df["nom"] = df["nom"].astype(str).str.strip()
+ 
+    df["metropole"] = df["metropole"].replace("Saint-Etienne", "Saint-Étienne")
+ 
+    # Conversions m² → hectares (plus lisibles à l'échelle communale)
+    df["surface_artif_1_ha"] = df["surface_artif_1"] / 10_000
+    df["surface_artif_2_ha"] = df["surface_artif_2"] / 10_000
+    df["commune_surface_ha"] = df["commune_surface"] / 10_000
+    df["flux_surface_ha"]    = df["flux_surface_1_2"] / 10_000
+ 
+    # Durée de la période d'observation (différente selon la métropole :
+    # 2018→2021 pour Grenoble et Montpellier, 2017→2020 pour Rennes, 2019→2022 pour
+    # Saint-Étienne et Rouen, toujours 3 ans, mais pas calée sur les mêmes années).
+    df["duree_periode"]    = (df["millesimes_2"] - df["millesimes_1"]).replace(0, np.nan)
+    df["rythme_annuel_ha"] = df["flux_surface_ha"] / df["duree_periode"]
+ 
+    return df
+
+@st.cache_data
+def charger_qualite_air():
+    p = Path("environnement/data_clean/ind_atmo_clean.csv")
+    if not p.exists():
+        return None
+    df = pd.read_csv(p, sep=",", encoding="utf-8-sig")
+    df.columns = df.columns.str.strip()
+    if "metropole" in df.columns:
+        df["metropole"] = df["metropole"].replace("Saint-Etienne", "Saint-Étienne")
+    # Conversion de la date de prévision en objet date (tri chronologique, affichage)
+    if "date_ech" in df.columns:
+        df["date_ech"] = pd.to_datetime(df["date_ech"]).dt.date
+    return df
+
+# Supprime les accents, convertit le texte en minuscules et enlève les espaces en trop au début et à la fin.
+# Cela évite que l'application ne plante ou ignore une catégorie à cause d'une majuscule ou d'un accent oublié.
+# (ex: Ouvriers et ouvriers deviennent identiques).
 def normalize_name(text):
     if pd.isna(text):
         return ""
@@ -577,6 +654,8 @@ def normalize_name(text):
 
 normalize_csp_name = normalize_name
 
+# Fait la même chose que la précédente, mais spécifiquement pour les noms de villes en remplaçant en plus les tirets (-) et les apostrophes (') par des espaces.
+# Ainsi, Saint-Martin-d'Hères et saint martin d heres deviennent exactement la même chaîne de caractères, ce qui rend les comparaisons infaillibles.
 def norm_commune(text):
     if pd.isna(text):
         return ""
@@ -584,11 +663,15 @@ def norm_commune(text):
     s = s.lower().replace("-", " ").replace("'", " ").replace("'", " ")
     return " ".join(s.split())
 
+# C'est un dictionnaire de traduction. Il associe la version ultra-simplifiée (sans accent, sans tiret) d'une commune de Grenoble à son orthographe officielle exacte.
+# (ex: {echirolles: Échirolles}).
 _NORM_TO_REF = {norm_commune(c): c for c in COMMUNES["Grenoble"]}
 
+# Reçoit un nom de commune brute d'un fichier, le simplifie, et l'utilise pour récupérer son orthographe officielle propre grâce au dictionnaire
 def source_to_ref(name):
     return _NORM_TO_REF.get(norm_commune(name), name)
 
+# Fait le chemin inverse. Il prend un nom officiel propre (ex: Échirolles) et cherche comment il est écrit dans une liste d'options provenant d'un autre fichier (qui écrit peut-être ECHIROLLES en majuscules).
 def ref_to_source(ref_name, source_options):
     norm_ref = norm_commune(ref_name)
     for opt in source_options:
@@ -596,6 +679,8 @@ def ref_to_source(ref_name, source_options):
             return opt
     return None
 
+# Fait exactement la même chose que ref_to_source, mais pour toute une liste de communes en même temps. 
+# C'est indispensable pour synchroniser nos filtres multi-sélection entre des onglets qui n'utilisent pas la même source de données.
 def refs_to_source_list(ref_names, source_options):
     result = []
     for r in ref_names:
@@ -603,6 +688,12 @@ def refs_to_source_list(ref_names, source_options):
         if match is not None:
             result.append(match)
     return result
+
+# C'est une fonction ultra-puissante pour charger et fusionner nos fichiers (CSV ou Excel) sur plusieurs années.
+# Elle lit automatiquement le bon format (Excel ou CSV).
+# Elle supprime les lignes de commentaires inutiles de l'INSEE (comme les lignes contenant RR).
+# Elle cherche et détecte toute seule les colonnes de Département et de Libellé, peu importe comment elles sont nommées dans le fichier original (DEP, DEPARTEMENT, etc.).
+# Elle applique notre dictionnaire de correspondance (mapping_dict) pour convertir les données en nombres, remplacer les cases vides par 0, et additionner automatiquement les colonnes si nécessaire, avant de tout fusionner en un seul tableau propre.
 
 @st.cache_data
 def load_generic_data(file_paths_dict, mapping_dict):
@@ -642,6 +733,8 @@ df_caf     = charger_caf()
 df_eff     = charger_effectifs()
 df_filo    = charger_filo()
 df_res, df_prof, df_scol = charger_mobilites()
+df_artif = charger_artificialisation()
+df_air = charger_qualite_air()
 
 FILES_CSP = {
     2011: "demographie/data_clean/population_2554/Commune_2011_2554_sect_activite.xlsx",
@@ -658,6 +751,8 @@ df_dip_new = load_generic_data(FILES_DIP, DIP_MAP)
 # ──────────────────────────────────────────────────────────────────────────────
 # 4. UTILITAIRES
 # ──────────────────────────────────────────────────────────────────────────────
+
+# Formate le format des valeurs numériques, N/D si vide ou pas de données ou un problème, si 1million : 1.0 M et ajoute un espace entre les milliers
 def fmt(v, suffix="", dec=0):
     if v is None or (isinstance(v, float) and np.isnan(v)):
         return "N/D"
@@ -667,12 +762,14 @@ def fmt(v, suffix="", dec=0):
         return f"{int(round(v)):,}{suffix}".replace(",", "\u202f")
     return f"{v:.{dec}f}{suffix}"
 
+# Récupère la ligne complète du DataFrame df_gen correspondant à l'EPCI d'une métropole donnée (via le mapping NOM_EPCI). Retourne None si la métropole ou les données sont absentes.
 def get_epci_row(metro):
     if df_gen is None or metro not in NOM_EPCI:
         return None
     rows = df_gen[df_gen["territoire"] == NOM_EPCI[metro]]
     return rows.iloc[0] if not rows.empty else None
 
+# Variante ciblée de la précédente : retourne directement la valeur d'une seule colonne pour une métropole (ex: epci_val("Grenoble", "population_2022")).
 def epci_val(metro, col):
     if df_gen is None:
         return np.nan
@@ -685,6 +782,7 @@ def epci_val(metro, col):
     v = rows.iloc[0].get(col, np.nan)
     return float(v) if pd.notna(v) else np.nan
 
+# Calcule la population totale d'une métropole pour une année donnée, en sommant toutes les colonnes de tranches d'âge
 def pop_from_age(metro, annee):
     if df_pop is None:
         return np.nan
@@ -695,17 +793,20 @@ def pop_from_age(metro, annee):
         return np.nan
     return float(sub[age_cols].sum().sum())
 
+# Renvoient la liste triée des colonnes "Hommes" (suffixe s1) ou "Femmes" (suffixe s2) parmi les colonnes de tranches d'âge.
 def cols_h(df):
     return sorted([c for c in df.columns if "ageq_rec" in c and "s1" in c])
 
 def cols_f(df):
     return sorted([c for c in df.columns if "ageq_rec" in c and "s2" in c])
 
+# Extrait le code de tranche d'âge à 2 chiffres d'un nom de colonne (regex sur ageq_recXX) et le traduit en libellé lisible via LABEL_TRANCHE (ex: "20-24 ans").
 def label_col(col):
     import re
     m = re.search(r"ageq_rec(\d{2})", col)
     return LABEL_TRANCHE.get(m.group(1), col) if m else col
 
+# Additionne la population de plusieurs tranches d'âge (hommes + femmes) sur un sous-ensemble de données, avec filtre optionnel par année. Sert à calculer des agrégats comme "moins de 25 ans" ou "65 ans et plus".
 def somme_tranches(df_src, tranches, annee=None):
     if annee is not None:
         df_src = df_src[df_src["annee"] == annee]
@@ -717,12 +818,14 @@ def somme_tranches(df_src, tranches, annee=None):
                 total += df_src[col].sum()
     return total
 
+#  Applique l'habillage graphique standard à toute figure Plotly : thème clair, fonds transparents, police "Sora", marges harmonisées.
 def style(fig, marge_t=20):
     fig.update_layout(template="plotly_white", plot_bgcolor="rgba(0,0,0,0)",
                       paper_bgcolor="rgba(0,0,0,0)", font_family="Sora",
                       margin=dict(t=marge_t, b=20, l=10, r=10))
     return fig
 
+# Fonction pour avoir des hachures sur la métropole de Grenoble (hachures parfois faites sans cette fonction).
 def apply_grenoble_hatch(fig, grenoble_key="Grenoble", active=True):
     """Ajoute des hachures rouges (/) sur les barres Grenoble - uniquement si active=True."""
     if not active:
@@ -742,6 +845,7 @@ def apply_grenoble_hatch(fig, grenoble_key="Grenoble", active=True):
                 trace.marker.pattern = dict(shape=shapes, fgcolor="#FF584D", size=20, solidity=0.3)
     return fig
 
+# Deux helpers d'affichage pour le bandeau de filtres : le premier affiche le titre de section ("Filtres - Population globale"...), le second affiche un label de ligne stylé (ex: "Niveau géographique").
 def filter_bar(label="Filtres"):
     st.markdown(f'<div class="filter-bar-title">{label}</div>', unsafe_allow_html=True)
 
@@ -751,6 +855,7 @@ def filter_row_label(text):
         unsafe_allow_html=True,
     )
 
+# Carte KPI générique avec bordure gauche colorée, utilisée comme alternative compacte aux cartes HTML que nous reconstruisons à la main dans chaque onglet (render_kpi_card_log, render_kpi_card_social...). Celle-ci n'a qu'une seule métrique (pas de grille 2×2), donc plus adaptée à des KPI simples.
 def kpi_card_left(title, value, subtitle="", accent="#1a7a4a"):
     st.markdown(f"""
     <div style='
@@ -938,14 +1043,16 @@ if st.session_state.page == "home":
         <div class="info-card">
             <div class="info-card-title"> Démographie</div>
             <div class="info-card-body">
-                Analyse de la population, de la structure par âge, des ménage, des logements, des mobilités résidentielles, professionnelles et scolaires.
+                Analyse de la population, de la structure par âge, des ménage, des logements, des transports, des mobilités résidentielles, professionnelles et scolaires.
             </div>
             <div class="tag-row">
                 <span class="tag-green">Population</span>
                 <span class="tag-green">Âges</span>
-                <span class="tag-green">Actifs</span>
                 <span class="tag-green">Mobilités</span>
+                <span class="tag-green">Transports</span>
+                <span class="tag-green">Ménages</span>
                 <span class="tag-green">Logements</span>
+                <span class="tag-green">Actifs</span>
             </div>
         </div>
         <div class="info-card orange">
@@ -1179,6 +1286,9 @@ if vue == "Description":
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Foyers</div><div class="card-title"><b> Ménages</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;">On regarde ici comment vivent les gens chez eux. Cela montre s'il y a beaucoup de familles ou de personnes seules, et combien il y a d'habitants par logement.</div></div>""", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Transports</div><div class="card-title"><b> Transport domicile-travail</b></div>
+        <div class="card-body" style="font-size:0.9rem; color:#555;">On observe ici les déplacements domicile-travail des actifs (15 ans ou plus). Cela permet de comprendre où les habitants travaillent et quels moyens de transport ils utilisent pour se rendre à leur emploi.</div></div>""", unsafe_allow_html=True)
     with col2:
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Âges</div><div class="card-title"><b> Structure par âge</b></div>
         <div class="card-body" style="font-size:0.9rem; color:#555;">Est-ce que la ville est plutôt jeune ou vieille ? Cette partie montre le nombre d'enfants, de travailleurs et de retraités pour chaque endroit étudié.</div></div>""", unsafe_allow_html=True)
@@ -1190,7 +1300,7 @@ if vue == "Description":
         <div class="card-body" style="font-size:0.9rem; color:#555;"><b>Toutes les mobilités :</b> On étudie les déplacements des habitants. Cela comprend les nouveaux arrivants, les trajets domicile-travail et les déplacements pour l'école.</div></div>""", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("""<div class="feature-card"><div class="theme-badge badge-demo">Habitation</div><div class="card-title"><b>Logement</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Ici, on s’intéresse à l'occupation des résidences principales et à divers indicateurs sur les logements sociaux</div></div>""", unsafe_allow_html=True)
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Cette section fournit une vue d’ensemble de l’occupation des résidences principales et des principaux indicateurs liés aux logements sociaux.</div></div>""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown('<p style="font-size:1.5rem; font-weight:700; color:#C45B2A; border-bottom: 2px solid #C45B2A;"> Thématique 2 : Solidarité & Citoyenneté</p>', unsafe_allow_html=True)
@@ -1230,10 +1340,11 @@ if vue == "Description":
 # ==============================================================================
 
 if vue == "Démographie":
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
         "🏙️   Population globale",
         "👥   Structure par âge",
         "🚌   Mobilités",
+        "🚆   Transports",
         "🏠   Ménages",
         "🏢   Logements",
         "📊   Population active 25-54 ans",
@@ -1482,7 +1593,7 @@ if vue == "Démographie":
             with r3c1:
                 st.subheader(
                     "Taux de chômage et taux de pauvreté (%)",
-                    help="Le **taux de chômage** (15–64 ans) est la part des actifs sans emploi. Le **taux de pauvreté** est la part de la population dont le revenu est inférieur à 60% du revenu médian national. Ces deux indicateurs mesurent les fragilités sociales d'un territoire : un taux de chômage élevé pèse sur le revenu des ménages et fait mécaniquement augmenter le taux de pauvreté."
+                    help="Le **taux de chômage** (15-64 ans) est la part des actifs sans emploi. Le **taux de pauvreté** est la part de la population dont le revenu est inférieur à 60% du revenu médian national. Ces deux indicateurs mesurent les fragilités sociales d'un territoire : un taux de chômage élevé pèse sur le revenu des ménages et fait mécaniquement augmenter le taux de pauvreté."
                 )
                 rows_social_c = []
                 for comm in sel_communes_pop:
@@ -1776,7 +1887,7 @@ if vue == "Démographie":
             with r3c1:
                 st.subheader(
                     "Taux de chômage et taux de pauvreté (%)",
-                    help="Le **taux de chômage** (15–64 ans) est la part des actifs sans emploi. Le **taux de pauvreté** est la part de la population dont le revenu est inférieur à 60% du revenu médian national. Ces deux indicateurs mesurent les fragilités sociales d'un territoire : un taux de chômage élevé pèse sur le revenu des ménages et fait mécaniquement augmenter le taux de pauvreté."
+                    help="Le **taux de chômage** (15-64 ans) est la part des actifs sans emploi. Le **taux de pauvreté** est la part de la population dont le revenu est inférieur à 60% du revenu médian national. Ces deux indicateurs mesurent les fragilités sociales d'un territoire : un taux de chômage élevé pèse sur le revenu des ménages et fait mécaniquement augmenter le taux de pauvreté."
                 )
                 rows_social = []
                 for m in sel:
@@ -2133,7 +2244,7 @@ if vue == "Démographie":
                     st.markdown(
                         "**Âge médian** : âge qui divise la population en deux moitiés égales. "
                         "Estimé par interpolation à partir des tranches quinquennales.  \n"
-                        "**Indice de dépendance** : (< 25 ans + ≥ 65 ans) / (25–64 ans) × 100. "
+                        "**Indice de dépendance** : (< 25 ans + ≥ 65 ans) / (25-64 ans) × 100. "
                         "Plus il est élevé, plus les actifs portent une part importante de population non active.  \n"
                     )
 
@@ -2178,7 +2289,7 @@ if vue == "Démographie":
                     st.write(
                         "Axe X identique pour toutes les pyramides → comparaison visuelle directe. "
                         "Base large = beaucoup de jeunes. Sommet large = fort vieillissement. "
-                        "Forme en 'toupie' (ventre 25–55 ans) = dominance de la population active.\n\n"
+                        "Forme en 'toupie' (ventre 25-55 ans) = dominance de la population active.\n\n"
                         "Grenoble est mise en valeur par des hachures rouges (/) sur ses barres."
                     )
 
@@ -2205,7 +2316,7 @@ if vue == "Démographie":
                     st.write(
                         "Chaque courbe montre la 'silhouette démographique' d'une métropole. "
                         "Grenoble est en pointillés rouges avec des marqueurs losange. "
-                        "Les pics sur 20–34 ans caractérisent les villes étudiantes ou attractives pour les jeunes actifs. "
+                        "Les pics sur 20-34 ans caractérisent les villes étudiantes ou attractives pour les jeunes actifs. "
                         "Les courbes décalées vers les 65+ signalent un vieillissement plus marqué."
                     )
 
@@ -2299,7 +2410,7 @@ if vue == "Démographie":
                     st.markdown(
                         "**Âge médian** : âge qui divise la population en deux moitiés égales. "
                         "Estimé par interpolation à partir des tranches quinquennales.  \n"
-                        "**Indice de dépendance** : (< 25 ans + ≥ 65 ans) / (25–64 ans) × 100.  \n"
+                        "**Indice de dépendance** : (< 25 ans + ≥ 65 ans) / (25-64 ans) × 100.  \n"
                     )
 
                 st.markdown("---")
@@ -2331,7 +2442,7 @@ if vue == "Démographie":
                         "Axe X identique pour toutes les communes → comparaison visuelle directe, "
                         "indépendamment de la taille de chaque commune. "
                         "Base large = beaucoup de jeunes. Sommet large = fort vieillissement. "
-                        "Forme en 'toupie' (ventre 25–55 ans) = dominance de la population active.\n\n"
+                        "Forme en 'toupie' (ventre 25-55 ans) = dominance de la population active.\n\n"
                     )
 
                 st.markdown("---")
@@ -2355,7 +2466,7 @@ if vue == "Démographie":
                     st.write(
                         "Chaque courbe montre la 'silhouette démographique' d'une commune en % de sa population totale. "
                         "Cela permet de comparer des communes de tailles très différentes sur un pied d'égalité. "
-                        "Les pics sur les 20–34 ans révèlent des communes attractives pour les jeunes. "
+                        "Les pics sur les 20-34 ans révèlent des communes attractives pour les jeunes. "
                         "Les profils étalés vers 65+ indiquent un vieillissement plus marqué."
                     )
 
@@ -2946,10 +3057,343 @@ if vue == "Démographie":
                             st.write(interpret_int)  # Utilisation de votre variable paramétrée
 
 # ==============================================================================
-# ONGLET 4 - MÉNAGES
+# ONGLET 4 - TRANSPORT DOMICILE-TRAVAIL
 # ==============================================================================
+
 if vue == "Démographie":
     with tab4:
+
+        if df_transport is None:
+            st.info("📂 Fichier `transport_metropoles_clean.csv` introuvable.")
+        else:
+            # ── Encart Source ──────────────────────────────────────────────
+            st.markdown("""
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source :</strong> INSEE -
+                <a href='https://www.insee.fr/fr/statistiques/7632973' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
+                <strong>Note sur les données :</strong> Il s'agit de mobilités professionnelles des actifs (<strong>15 ans et plus</strong>), millésimes 2020 et 2021.
+                Ces données représentent le croisement du mode de transport principal pour se rendre au travail, du lieu de travail
+                (commune de résidence, autre commune, autre département…) et du sexe des actifs occupés.      
+            </div>""", unsafe_allow_html=True)
+
+            # ── Palettes ───────────────────────────────────────────────────
+            MODES_ORDER = [
+                "Voiture, camion, fourgonnette", "Transport en commun",
+                "Marche à pied", "Deux-roues", "Pas de transport", "Autre",
+            ]
+            COULEURS_MODE_METRO = {
+                "Voiture, camion, fourgonnette": "#3A3D44",
+                "Transport en commun":           "#7A7E87",
+                "Marche à pied":                 "#A2A6AE",
+                "Deux-roues":                     "#C8CACF",
+                "Pas de transport":               "#DDE0E3",
+                "Autre":                          "#E8E8EB",
+            }
+            COULEURS_MODE_COMMUNE = {
+                "Voiture, camion, fourgonnette": "#1B4332",
+                "Transport en commun":           "#2D6A4F",
+                "Marche à pied":                 "#40916C",
+                "Deux-roues":                     "#74C69D",
+                "Pas de transport":               "#95D5B2",
+                "Autre":                          "#D8F3DC",
+            }
+
+            # ── Fonctions de calcul ───────────────────────────────────────
+            def get_modal_split(df_src, annee, filter_col=None, filter_val=None):
+                """Répartition modale (%). Filtre optionnel sur une colonne (ex: lieu_travail)."""
+                df_y = df_src[df_src["annee"] == annee]
+                if filter_col is not None:
+                    df_y = df_y[df_y[filter_col] == filter_val]
+                sums = df_y.groupby("mode_transport")["valeur"].sum()
+                total = sums.sum()
+                if total == 0:
+                    return {m: 0.0 for m in MODES_ORDER}, 0
+                return {m: sums.get(m, 0.0) / total * 100 for m in MODES_ORDER}, total
+
+            def get_part_local(df_src, annee):
+                """Part des actifs travaillant dans leur commune de résidence (%)."""
+                df_y = df_src[df_src["annee"] == annee]
+                total = df_y["valeur"].sum()
+                local = df_y[df_y["lieu_travail"] == "Commune de résidence"]["valeur"].sum()
+                return (local / total * 100) if total > 0 else 0.0
+
+            def render_kpi_card_transport(label, total_actifs, split, border_color):
+                tot_str = f"{int(total_actifs):,}".replace(",", "\u202f") if total_actifs > 0 else "N/D"
+                pct_voiture = split.get("Voiture, camion, fourgonnette", 0)
+                pct_tc      = split.get("Transport en commun", 0)
+                pct_actif   = split.get("Marche à pied", 0) + split.get("Deux-roues", 0)
+                st.markdown(f"""
+                <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08); border-left:6px solid {border_color}; background:#fff; margin-bottom:12px; padding:12px 16px;'>
+                    <div style='font-size:13px;font-weight:700;color:#1C3A27;margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:5px;'>{label}</div>
+                    <div style='display:grid;grid-template-columns:1fr 1fr;gap:6px;'>
+                        <div style='text-align:center;' title='Personnes ayant un emploi, résidant sur le territoire'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Actifs occupés</div>
+                            <div style='font-size:15px;font-weight:800;color:#555;'>{tot_str}</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Voiture</div>
+                            <div style='font-size:15px;font-weight:800;color:#3A3D44;'>{pct_voiture:.2f}%</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Transport en commun</div>
+                            <div style='font-size:15px;font-weight:800;color:#1565C0;'>{pct_tc:.2f}%</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Mobilités actives</div>
+                            <div style='font-size:15px;font-weight:800;color:#2E7D32;'>{pct_actif:.2f}%</div>
+                        </div>
+                    </div>
+                </div>""", unsafe_allow_html=True)
+
+            # ── Bandeau filtres ────────────────────────────────────────────
+            with st.container():
+                filter_bar("Filtres - Transport domicile-travail")
+                fa1, fa2 = st.columns([1, 3])
+                with fa1:
+                    filter_row_label("Niveau géographique")
+                with fa2:
+                    mode_transp = st.radio(
+                        "",
+                        ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
+                        key="transp_mode", horizontal=True, label_visibility="collapsed",
+                    )
+
+                if mode_transp == "Comparaison Métropoles":
+                    sel_metros_transp = st.multiselect(
+                        "Métropoles à comparer", TOUTES, default=shared_default_demo(TOUTES),
+                        key="transp_metros", on_change=sync_metros_demo, args=("transp_metros",),
+                    )
+                    targets_transp = sel_metros_transp
+                else:
+                    communes_dispo = sorted(COMMUNES["Grenoble"])
+                    sel_communes_transp = st.multiselect(
+                        "Communes de Grenoble-Alpes Métropole", communes_dispo,
+                        default=shared_default_communes_demo(communes_dispo),
+                        key="transp_communes", on_change=sync_communes_demo, args=("transp_communes",),
+                    )
+                    targets_transp = sel_communes_transp
+
+                annees_transp = sorted(df_transport["annee"].dropna().unique().astype(int).tolist())
+                annee_transp = st.selectbox(
+                    "Année d'analyse", annees_transp, index=len(annees_transp) - 1, key="an_transp",
+                    help="Pilote les KPI et l'ensemble des graphiques de cet onglet.",
+                )
+
+            st.markdown("---")
+
+            if not targets_transp:
+                st.warning("Sélectionnez au moins un territoire.")
+                st.stop()
+
+            n_targets = len(targets_transp)
+
+            # ── Couleurs / mise en évidence Grenoble ───────────────────────
+            if mode_transp == "Comparaison Métropoles":
+                bar_colors = [COULEURS.get(t, "#888888") for t in targets_transp]
+                couleurs_mode = COULEURS_MODE_METRO
+            else:
+                bar_colors = [PALETTE_COMMUNE[i % len(PALETTE_COMMUNE)] for i in range(n_targets)]
+                couleurs_mode = COULEURS_MODE_COMMUNE
+
+            greno_vrect = None
+            if "Grenoble" in targets_transp and mode_transp == "Comparaison Métropoles":
+                g_pos = targets_transp.index("Grenoble")
+                greno_vrect = dict(
+                    x0=g_pos - 0.45, x1=g_pos + 0.45,
+                    fillcolor="rgba(255,88,77,0.10)",
+                    line_color="#FF584D", line_width=1.5,
+                    line_dash="dash", layer="below",
+                )
+
+            def df_filter_transp(t):
+                if mode_transp == "Comparaison Métropoles":
+                    return df_transport[(df_transport["metropole"] == t)]
+                return df_transport[
+                    (df_transport["nom_commune"] == t) & (df_transport["metropole"] == "Grenoble")
+                ]
+
+            # ── KPI ───────────────────────────────────────────────────────
+            st.subheader(
+                f"Indicateurs de mobilité domicile-travail en {annee_transp}",
+                help=(
+                    "**Actifs occupés** : personnes ayant un emploi (en activité professionnelle), "
+                    "par opposition aux chômeurs et aux inactifs. Cet indicateur compte les actifs "
+                    "résidant sur le territoire, quel que soit leur lieu de travail.\n\n"
+                    "**Voiture / Transport en commun** : part du mode de transport principal déclaré "
+                    "pour le trajet domicile-travail.\n\n"
+                    "**Mobilités actives** : somme de la marche à pied et des deux-roues (vélo, "
+                    "scooter, moto)."
+                ),
+            )
+            kpi_cols = st.columns(n_targets)
+            splits_by_target = {}
+            for i, t in enumerate(targets_transp):
+                df_t = df_filter_transp(t)
+                split_t, total_t = get_modal_split(df_t, annee_transp)
+                splits_by_target[t] = split_t
+                with kpi_cols[i]:
+                    render_kpi_card_transport(t, total_t, split_t, border_color=bar_colors[i])
+
+            st.markdown("---")
+
+            # ══════════════════════════════════════════════════════════════
+            # GRAPHIQUE 1 : Répartition modale empilée
+            # ══════════════════════════════════════════════════════════════
+            st.subheader(
+                "Répartition modale des trajets domicile-travail",
+                help=(
+                    "Part de chaque mode de transport principal utilisé par les actifs occupés pour se "
+                    "rendre au travail (base 100% par territoire). La voiture reste partout majoritaire, "
+                    "mais sa part varie selon le développement des réseaux de transport en commun et des "
+                    "aménagements cyclables. " +
+                    ("Grenoble est encadrée en rouge." if mode_transp == "Comparaison Métropoles" else "")
+                ),
+            )
+            rows_modal = []
+            for t in targets_transp:
+                for mode in MODES_ORDER:
+                    rows_modal.append({"Territoire": t, "Mode": mode, "Part (%)": splits_by_target[t][mode]})
+            df_modal = pd.DataFrame(rows_modal)
+
+            fig_modal = px.bar(
+                df_modal, x="Territoire", y="Part (%)", color="Mode",
+                barmode="stack", text_auto=".2f",
+                color_discrete_map=couleurs_mode,
+                category_orders={"Mode": MODES_ORDER}, height=420,
+            )
+            fig_modal.update_traces(
+                textposition="inside", textfont_size=9,
+                hovertemplate="<b>%{x}</b><br>%{fullData.name} : %{y:.2f}%<extra></extra>",
+            )
+            if greno_vrect:
+                fig_modal.add_vrect(**greno_vrect)
+            fig_modal.update_layout(
+                legend=dict(orientation="h", y=1.15, title=""),
+                yaxis_title="Part des actifs occupés (%)", xaxis_title="", margin=dict(t=20),
+            )
+            st.plotly_chart(style(fig_modal), use_container_width=True)
+
+            with st.expander("💡 Comment interpréter ce graphique ?"):
+                st.write(
+                    "Ce graphique en barres empilées décompose, pour chaque territoire, la part des actifs "
+                    "utilisant chaque mode de transport pour se rendre au travail. La part de voiture "
+                    "(barre la plus foncée en vue métropoles) reflète à la fois la qualité du réseau de "
+                    "transport en commun, le relief, l'étalement urbain et la disponibilité de pistes "
+                    "cyclables. Un territoire avec une part de transport en commun ou de mobilités actives "
+                    "élevée traduit généralement une politique de mobilité durable plus avancée et/ou un "
+                    "tissu urbain plus dense, favorable aux déplacements courts."
+                )
+
+            st.markdown("---")
+
+            # ══════════════════════════════════════════════════════════════
+            # GRAPHIQUE 2 : Autonomie locale de l'emploi + modal des trajets de proximité
+            # ══════════════════════════════════════════════════════════════
+            st.subheader(
+                "Trajets de proximité : autonomie locale et choix modal",
+                help=(
+                    "Sur les longs trajets, la voiture s'impose presque partout faute d'alternative - "
+                    "les territoires se ressemblent alors beaucoup. C'est sur les trajets de proximité "
+                    "(travailler dans sa propre commune) que les différences d'infrastructures "
+                    "(pistes cyclables, marchabilité, réseau urbain) se révèlent vraiment."
+                ),
+            )
+
+            gp1, gp2 = st.columns(2)
+
+            with gp1:
+                st.markdown(
+                    "##### Part des actifs travaillant dans leur commune",
+                    help=(
+                        "Part des actifs occupés dont le lieu de travail est situé dans leur commune de "
+                        "résidence. Un taux élevé signifie que le territoire offre suffisamment d'emplois "
+                        "locaux pour limiter les déplacements pendulaires longue distance."
+                    ),
+                )
+                rows_local = []
+                for i, t in enumerate(targets_transp):
+                    df_t = df_filter_transp(t)
+                    pct_local = get_part_local(df_t, annee_transp)
+                    rows_local.append({"Territoire": t, "Part (%)": pct_local})
+                df_local = pd.DataFrame(rows_local)
+
+                fig_local = go.Figure()
+                for i, row in df_local.iterrows():
+                    is_greno = (row["Territoire"] == "Grenoble" and mode_transp == "Comparaison Métropoles")
+                    marker = dict(color=bar_colors[i])
+                    if is_greno:
+                        marker["pattern"] = dict(shape="/", fgcolor="#FF584D", fillmode="overlay", solidity=0.3, size=20)
+                    fig_local.add_trace(go.Bar(
+                        x=[row["Territoire"]], y=[row["Part (%)"]],
+                        marker=marker, showlegend=False,
+                        text=[f"{row['Part (%)']:.2f}%"], textposition="outside",
+                        hovertemplate=f"<b>{row['Territoire']}</b><br>Travaille localement : %{{y:.2f}}%<extra></extra>",
+                    ))
+                fig_local.update_layout(
+                    height=340, margin=dict(t=20, b=10),
+                    yaxis=dict(title="Part des actifs (%)", gridcolor="#eee"),
+                    xaxis=dict(showgrid=False),
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                )
+                st.plotly_chart(style(fig_local), use_container_width=True)
+
+            with gp2:
+                st.markdown(
+                    "##### Choix modal pour ces trajets de proximité",
+                    help=(
+                        "Répartition modale calculée uniquement parmi les actifs qui travaillent dans "
+                        "leur commune de résidence. Sur ces courtes distances, la voiture n'a plus de "
+                        "réel avantage en temps de trajet : sa part résiduelle ici reflète directement "
+                        "la qualité des aménagements piétons et cyclables du territoire."
+                    ),
+                )
+                rows_local_modal = []
+                for t in targets_transp:
+                    df_t = df_filter_transp(t)
+                    split_local, _ = get_modal_split(df_t, annee_transp, filter_col="lieu_travail", filter_val="Commune de résidence")
+                    for mode in MODES_ORDER:
+                        rows_local_modal.append({"Territoire": t, "Mode": mode, "Part (%)": split_local[mode]})
+                df_local_modal = pd.DataFrame(rows_local_modal)
+
+                fig_local_modal = px.bar(
+                    df_local_modal, x="Territoire", y="Part (%)", color="Mode",
+                    barmode="stack", text_auto=".2f",
+                    color_discrete_map=couleurs_mode,
+                    category_orders={"Mode": MODES_ORDER}, height=340,
+                )
+                fig_local_modal.update_traces(
+                    textposition="inside", textfont_size=8,
+                    hovertemplate="<b>%{x}</b><br>%{fullData.name} : %{y:.2f}%<extra></extra>",
+                )
+                if greno_vrect:
+                    fig_local_modal.add_vrect(**greno_vrect)
+                fig_local_modal.update_layout(
+                    legend=dict(orientation="h", y=1.22, title="", font_size=9),
+                    yaxis_title="Part (%)", xaxis_title="", margin=dict(t=20, b=10),
+                )
+                st.plotly_chart(style(fig_local_modal), use_container_width=True)
+
+            with st.expander("💡 Comment interpréter ces deux graphiques ?"):
+                st.write(
+                    "**Part des actifs travaillant dans leur commune (gauche)** : un taux élevé traduit "
+                    "un bassin d'emploi local dynamique, qui réduit mécaniquement la dépendance aux "
+                    "déplacements longue distance. Un taux faible signale une commune plutôt résidentielle, "
+                    "dont les habitants doivent se déplacer ailleurs pour travailler.\n\n"
+                    "**Choix modal pour ces trajets (droite)** : contrairement à la répartition modale "
+                    "globale (graphique 1, où la distance moyenne masque les écarts d'infrastructures), "
+                    "ce graphique isole les trajets de proximité - ceux où la voiture n'apporte plus de "
+                    "gain de temps significatif. Les écarts de part de marche et de vélo entre territoires "
+                    "deviennent ici beaucoup plus parlants : ils révèlent la qualité réelle de "
+                    "l'aménagement cyclable et piéton, indépendamment de la géographie ou de l'étalement "
+                    "urbain qui dominent le graphique global." +
+                    (" Les hachures et la zone rouge identifient Grenoble." if mode_transp == "Comparaison Métropoles" else "")
+                )
+                
+# ==============================================================================
+# ONGLET 5 - MÉNAGES
+# ==============================================================================
+if vue == "Démographie":
+    with tab5:
 
         data_men_ok = (df_men_age is not None) and (df_men_csp is not None)
         if not data_men_ok:
@@ -3364,11 +3808,12 @@ if vue == "Démographie":
                         "Comparer ces tailles entre territoires pour une même CSP met en évidence des différences sociales locales."
                     )
 # ==============================================================================
-# ONGLET 5 - LOGEMENT
+# ONGLET 6 - LOGEMENT
 # ==============================================================================
 
+
 if vue == "Démographie":
-    with tab5:
+    with tab6:
 
         if df_log is None and df_social is None:
             st.info("📂 Fichiers `logements_metropoles_clean.csv` et `rpls_metropoles_clean.csv` introuvables.")
@@ -3385,27 +3830,42 @@ if vue == "Démographie":
             # ── Encart Sources ─────────────────────────────────────────────
             st.markdown("""
             <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
-                <strong>Sources :</strong><br>
-                🏠 <b>Résidences principales (indice de peuplement)</b> — INSEE, recensements 2011 / 2016 / 2022 :
-                <a href='https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_LOGEMENT_COMPL' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br>
-                🏢 <b>Logements sociaux (RPLS)</b> — SDES, millésime unique 2024 :
-                <a href='https://www.insee.fr/fr/statistiques/8736658' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br>
+                <strong>Sources :</strong> INSEE<br><br>
+                🏠 <b>Résidences principales (indice de peuplement):</b> recensements 2011 / 2016 / 2022 :
+                <a href='https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_LOGEMENT_COMPL' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
+                🏢 <b>Logements sociaux (RPLS):</b> millésime unique 2024 :
+                <a href='https://www.insee.fr/fr/statistiques/8736658' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br><br>
                 <em>Les deux sources portant sur des années différentes, elles sont présentées dans deux thématiques distinctes.</em>
             </div>""", unsafe_allow_html=True)
 
-            COULEURS_OCCUPATION = {
-                "Sous-occupation très accentuée": "#0D47A1",
-                "Sous-occupation accentuée": "#1E88E5",
-                "Sous-occupation modérée": "#90CAF9",
-                "Occupation dans la norme": "#E0E0E0",
-                "Suroccupation modérée": "#FFB74D",
-                "Suroccupation accentuée": "#E65100",
-            }
-            COULEURS_MACRO = {
-                "Sous-occupation globale": "#1E88E5",
-                "Dans la norme": "#E0E0E0",
-                "Suroccupation globale": "#E65100",
-            }
+            # ─────────────────────────────────────────────────────────────
+            # PALETTES DE COULEURS - fonction générique gris/vert
+            # ─────────────────────────────────────────────────────────────
+            def build_grey_or_green_palette(categories, mode):
+                """
+                Génère une palette de N nuances pour styliser une variable
+                catégorielle (niveaux d'occupation, dispositifs de financement,
+                tranches d'ancienneté...) :
+                - nuances de GRIS en vue "Comparaison Métropoles"
+                - nuances de VERT en vue "Comparaison communes..."
+
+                Les couleurs sont échantillonnées de façon égale le long de
+                l'échelle, de la plus foncée à la plus claire, dans l'ordre
+                de la liste `categories` fournie. Retourne un dict
+                {catégorie: couleur_hex}.
+                """
+                GREY_SCALE  = ["#2B2E33", "#3A3D44", "#555A62", "#7A7E87",
+                               "#9EA2A8", "#C8CACF", "#DDE0E3", "#E8E8EB"]
+                GREEN_SCALE = ["#081C15", "#1B4332", "#2D6A4F", "#40916C",
+                               "#52B788", "#74C69D", "#95D5B2", "#B7E4C7", "#D8F3DC"]
+                scale = GREY_SCALE if mode == "Comparaison Métropoles" else GREEN_SCALE
+                n = len(categories)
+                return {
+                    cat: scale[int(i * (len(scale) - 1) / max(n - 1, 1))]
+                    for i, cat in enumerate(categories)
+                }
+
+            # Texte d'aide réutilisé sur plusieurs graphiques du thème 1
             HELP_INDICE = (
                 "L'indice de peuplement de l'INSEE mesure l'adéquation entre la taille du logement "
                 "et la composition du ménage qui y réside.\n\n"
@@ -3414,14 +3874,27 @@ if vue == "Démographie":
                 "- Le nombre de pièces théoriquement nécessaires.\n\n"
             )
 
-            # ─────────────────────────────────────────────────────────────
-            # FONCTIONS — THÈME 1 : RÉSIDENCES PRINCIPALES (PEUPLEMENT)
-            # ─────────────────────────────────────────────────────────────
+            # ═════════════════════════════════════════════════════════════
+            # DÉFINITIONS - THÈME 1 : RÉSIDENCES PRINCIPALES (PEUPLEMENT)
+            # ═════════════════════════════════════════════════════════════
+
             def get_log_data_pct(df_src, annee):
+                """
+                Calcule, pour un sous-ensemble de données (déjà filtré sur un
+                territoire), la répartition en % des 6 niveaux d'occupation
+                officiels INSEE pour une année donnée.
+
+                Retourne :
+                - vals   : liste des % (dans l'ordre des 6 niveaux)
+                - labels : liste des libellés correspondants
+                - total_rp : nombre total de résidences principales (volume brut)
+                - kpis   : dict agrégé {norme, surocc, sousocc} en %
+                """
                 df_year = df_src[df_src["annee"] == annee]
                 sums = df_year.groupby("indicateur_occupation")["valeur"].sum()
                 total_rp = sums.sum()
 
+                # Correspondance code technique INSEE -> libellé lisible
                 labels_codes = [
                     ("VSEV_UNDER_OCC", "Sous-occupation très accentuée"),
                     ("SEV_UNDER_OCC", "Sous-occupation accentuée"),
@@ -3439,6 +3912,7 @@ if vue == "Démographie":
                     pct = (val_abs / total_rp * 100) if total_rp > 0 else 0.0
                     vals.append(pct)
                     labels.append(label)
+                    # Agrégation en 3 grandes masses pour les KPI / graphique macro
                     if code == "STD_OCC":
                         kpis["norme"] += pct
                     elif "OVER" in code:
@@ -3448,7 +3922,23 @@ if vue == "Démographie":
 
                 return vals, labels, total_rp, kpis
 
-            def build_macro_stacked_chart(territories, df_filtered_fn, annee, group_name="Territoire"):
+            def build_macro_stacked_chart(territories, df_filtered_fn, annee,
+                                           group_name="Territoire", highlight_grenoble=False,
+                                           couleurs_macro=None):
+                """
+                Construit le graphique "Équilibre macro-synthétique des parcs" :
+                une barre horizontale empilée par territoire, regroupant les
+                6 niveaux d'occupation en 3 grandes masses (sous-occupation,
+                norme, suroccupation).
+
+                Paramètre couleurs_macro : dict {catégorie: couleur} fourni par
+                l'appelant (gris en vue Métropoles, vert en vue Communes).
+
+                Paramètre highlight_grenoble : si True (vue Métropoles), encadre
+                la ligne de Grenoble avec un rectangle rouge pointillé. Comme ce
+                graphique est en orientation horizontale (territoires sur l'axe Y),
+                on utilise un add_hrect (et non vrect) pour cibler la bonne ligne.
+                """
                 data_list = []
                 for t in territories:
                     df_t = df_filtered_fn(t)
@@ -3464,13 +3954,27 @@ if vue == "Démographie":
                 if df_macro.empty:
                     return None
 
+                # Une trace par grande masse (empilées horizontalement)
                 fig = go.Figure()
                 for cat in ["Sous-occupation globale", "Dans la norme", "Suroccupation globale"]:
                     fig.add_trace(go.Bar(
                         name=cat, y=df_macro[group_name], x=df_macro[cat], orientation="h",
-                        marker_color=COULEURS_MACRO[cat],
+                        marker_color=couleurs_macro[cat],
                         hovertemplate=f"<b>%{{y}}</b><br>{cat} : <b>%{{x:.1f}}%</b><extra></extra>",
                     ))
+
+                # Mise en évidence de Grenoble : on retrouve sa position dans
+                # l'ordre RÉEL des barres affichées (après filtrage des tot=0),
+                # puis on dessine un rectangle horizontal (hrect) centré sur sa ligne.
+                if highlight_grenoble and "Grenoble" in df_macro[group_name].tolist():
+                    g_pos = df_macro[group_name].tolist().index("Grenoble")
+                    fig.add_hrect(
+                        y0=g_pos - 0.4, y1=g_pos + 0.4,
+                        fillcolor="rgba(255,88,77,0.10)",
+                        line_color="#FF584D", line_width=1.5,
+                        line_dash="dash", layer="below",
+                    )
+
                 fig.update_layout(
                     barmode="stack",
                     xaxis=dict(title="Pourcentage du parc (%)", range=[0, 100], showgrid=True, gridcolor="#eee"),
@@ -3482,17 +3986,42 @@ if vue == "Démographie":
                 )
                 return fig
 
-            def build_bar_log_pct(df_src, label_entity, annee, x_max=None):
+            def build_bar_log_pct(df_src, label_entity, annee, x_max=None, highlight=False, couleurs_occupation=None):
+                """
+                Construit le graphique "Profils détaillés par niveau d'occupation"
+                pour UN territoire : une barre horizontale listant les 6 niveaux
+                d'occupation (un petit multiple est généré par territoire dans
+                la boucle d'affichage).
+
+                Paramètre couleurs_occupation : dict {catégorie: couleur} fourni
+                par l'appelant (gris en vue Métropoles, vert en vue Communes).
+
+                Paramètre highlight : si True (territoire = Grenoble en vue
+                Métropoles), encadre l'intégralité du panneau avec un vrect
+                rouge pointillé couvrant toute la largeur du graphique.
+                """
                 vals, labels, _, _ = get_log_data_pct(df_src, annee)
                 if x_max is None:
                     x_max = max(vals) * 1.15 if vals else 100
-                colors_list = [COULEURS_OCCUPATION.get(lbl, "#888") for lbl in labels]
+                colors_list = [couleurs_occupation.get(lbl, "#888") for lbl in labels]
 
                 fig = go.Figure()
                 fig.add_trace(go.Bar(
                     y=labels, x=vals, orientation="h", marker=dict(color=colors_list),
                     hovertemplate=f"<b>{label_entity}</b><br>%{{y}}<br>Part : %{{x:.2f}}%<extra></extra>",
                 ))
+
+                # Encadrement de tout le panneau (et non d'une seule barre) :
+                # comme chaque figure ne contient qu'un seul territoire, le vrect
+                # couvre x0=0 à x1=x_max pour entourer visuellement tout le graphique.
+                if highlight:
+                    fig.add_vrect(
+                        x0=0, x1=x_max,
+                        fillcolor="rgba(255,88,77,0.06)",
+                        line_color="#FF584D", line_width=2,
+                        line_dash="dash", layer="below",
+                    )
+
                 fig.update_layout(
                     xaxis=dict(title="% des résidences principales", range=[0, x_max], showgrid=True, gridcolor="#eee"),
                     yaxis=dict(title="", tickfont_size=10, categoryorder="array", categoryarray=labels),
@@ -3503,6 +4032,7 @@ if vue == "Démographie":
                 return fig
 
             def render_kpi_card_peuplement(label, tot_rp, kpis, border_color):
+                """Affiche la carte KPI (HTML) du thème 1 : volume RP + les 3 grandes masses."""
                 tot_str = f"{int(tot_rp):,}".replace(",", "\u202f") if tot_rp > 0 else "N/D"
                 st.markdown(f"""
                 <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08); border-left:6px solid {border_color}; background:#fff; margin-bottom:12px; padding:12px 16px;'>
@@ -3527,12 +4057,19 @@ if vue == "Démographie":
                     </div>
                 </div>""", unsafe_allow_html=True)
 
-            # ─────────────────────────────────────────────────────────────
-            # FONCTIONS — THÈME 2 : LOGEMENTS SOCIAUX (RPLS)
-            # ─────────────────────────────────────────────────────────────
+            # ═════════════════════════════════════════════════════════════
+            # DÉFINITIONS - THÈME 2 : LOGEMENTS SOCIAUX (RPLS)
+            # ═════════════════════════════════════════════════════════════
+
             def get_social_metrics(df_s, filter_col, filter_val):
-                """Agrège les indicateurs RPLS pour un territoire.
-                Retourne None si aucune donnée (commune sans parc social)."""
+                """
+                Agrège les indicateurs RPLS pour un territoire (métropole ou
+                commune), en pondérant chaque commune par son nombre de
+                logements sociaux (moyenne pondérée plutôt que moyenne simple,
+                pour ne pas sur-représenter les petites communes).
+
+                Retourne None si le territoire n'a aucun parc social recensé.
+                """
                 df_sub = df_s[df_s[filter_col] == filter_val]
                 if df_sub.empty:
                     return None
@@ -3541,6 +4078,7 @@ if vue == "Démographie":
                 w_sum = weights.sum()
 
                 def wavg(col):
+                    """Moyenne pondérée par nb_logements_sociaux (repli sur moyenne simple si poids nul)."""
                     if w_sum == 0:
                         return df_sub[col].mean()
                     return (df_sub[col] * weights).sum() / w_sum
@@ -3572,13 +4110,16 @@ if vue == "Démographie":
                 }
 
             def get_total_rp(df_log_src, filter_col, filter_val, annee_ref):
+                """Renvoie le total des résidences principales (df_log) pour servir de dénominateur au taux de logement social."""
                 df_sub = df_log_src[
                     (df_log_src[filter_col] == filter_val) & (df_log_src["annee"] == annee_ref)
                 ]
                 return df_sub["valeur"].sum()
 
             def render_kpi_card_social(label, stats, total_rp, border_color):
+                """Affiche la carte KPI (HTML) du thème 2 : volume social, taux, loyer médian, vacance."""
                 if stats is None:
+                    # Cas commune/métropole sans aucun parc social recensé dans le RPLS
                     st.markdown(f"""
                     <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);
                         border-left:6px solid {border_color}; background:#fff;
@@ -3621,6 +4162,10 @@ if vue == "Démographie":
             # ─────────────────────────────────────────────────────────────
             # BANDEAU FILTRES
             # ─────────────────────────────────────────────────────────────
+            # Filtre 1 : niveau géographique (Métropoles vs communes Grenoble)
+            # Filtre 2 : sélection des territoires à comparer
+            # Filtre 3 : thématique d'analyse (Résidences principales / Logements sociaux)
+            # Filtre 4 : année (uniquement pertinent pour le thème "Résidences principales")
             with st.container():
                 filter_bar("Filtres - Logement")
                 fa1, fa2 = st.columns([1, 3])
@@ -3667,6 +4212,8 @@ if vue == "Démographie":
                 annees_dispo = sorted(df_log["annee"].dropna().unique().astype(int).tolist()) if df_log is not None else []
                 annee_ref    = max(annees_dispo) if annees_dispo else None
 
+                # Le sélecteur d'année n'a de sens que pour le thème 1
+                # (le RPLS n'a qu'un seul millésime, 2024)
                 if "Résidences principales" in theme_log:
                     with fb2:
                         annee_log = st.selectbox(
@@ -3677,7 +4224,7 @@ if vue == "Démographie":
                     with fb2:
                         st.markdown(
                             "<div style='padding-top:28px;font-size:13px;color:#666;'>"
-                            "📅 Données RPLS — millésime unique <b>2024</b></div>",
+                            "📅 Données RPLS - millésime unique <b>2024</b></div>",
                             unsafe_allow_html=True,
                         )
 
@@ -3690,6 +4237,11 @@ if vue == "Démographie":
             # ─────────────────────────────────────────────────────────────
             # Couleurs / mise en évidence Grenoble
             # ─────────────────────────────────────────────────────────────
+            # bar_colors : une couleur par territoire (gris/COULEURS en vue
+            # Métropoles, dégradé vert PALETTE_COMMUNE en vue Communes).
+            # greno_vrect : rectangle rouge pointillé utilisé pour les
+            # graphiques à AXE X catégoriel (territoires alignés sur x),
+            # comme fig_fin / fig_age dans le thème 2 plus bas.
             n_targets = len(targets_log)
             if mode_log == "Comparaison Métropoles":
                 bar_colors = [COULEURS.get(t, "#888888") for t in targets_log]
@@ -3706,8 +4258,25 @@ if vue == "Démographie":
                     line_dash="dash", layer="below",
                 )
 
+            # Booléen pratique : passé à build_macro_stacked_chart (hrect interne)
+            # et à build_bar_log_pct (vrect interne, calculé territoire par territoire)
+            highlight_grenoble_actif = (mode_log == "Comparaison Métropoles")
+
+            # ── Palettes catégorielles dynamiques (gris Métropoles / vert Communes) ──
+            # Calculées ICI, après lecture de mode_log, et utilisées par les
+            # fonctions de graphiques définies plus haut (closures résolues à
+            # l'appel, pas à la définition).
+            OCCUPATION_ORDER = [
+                "Suroccupation accentuée", "Suroccupation modérée",
+                "Occupation dans la norme", "Sous-occupation modérée",
+                "Sous-occupation accentuée", "Sous-occupation très accentuée"]
+            MACRO_ORDER = ["Suroccupation globale", "Dans la norme", "Sous-occupation globale"]
+
+            COULEURS_OCCUPATION = build_grey_or_green_palette(OCCUPATION_ORDER, mode_log)
+            COULEURS_MACRO      = build_grey_or_green_palette(MACRO_ORDER, mode_log)
+
             # ═════════════════════════════════════════════════════════════
-            # THÈME 1 — RÉSIDENCES PRINCIPALES (INDICE DE PEUPLEMENT)
+            # THÈME 1 - RÉSIDENCES PRINCIPALES (INDICE DE PEUPLEMENT)
             # ═════════════════════════════════════════════════════════════
             if "Résidences principales" in theme_log:
 
@@ -3715,6 +4284,7 @@ if vue == "Démographie":
                     st.info("📂 Fichier `logements_metropoles_clean.csv` introuvable.")
                     st.stop()
 
+                # Fonction de filtrage du dataframe selon le mode (métropole/commune)
                 if mode_log == "Comparaison Métropoles":
                     def df_filter_peuplement(t):
                         return df_log[(df_log["metropole"] == t) & (df_log["annee"] == annee_log)]
@@ -3740,6 +4310,8 @@ if vue == "Démographie":
                 st.markdown("---")
 
                 # ── GRAPH 1 : MACRO STACKED ────────────────────────────────
+                # Mise en évidence Grenoble : hrect interne à la fonction
+                # (highlight_grenoble=True déclenche add_hrect sur sa ligne)
                 st.subheader(
                     "Équilibre macro-synthétique des parcs",
                     help=HELP_INDICE + "\n\nCe graphique regroupe les indices en 3 grandes masses (Sous-occupation, Norme, Suroccupation).",
@@ -3749,6 +4321,8 @@ if vue == "Démographie":
                     df_filtered_fn=df_filter_peuplement,
                     annee=annee_log,
                     group_name=group_label,
+                    highlight_grenoble=highlight_grenoble_actif,
+                    couleurs_macro=COULEURS_MACRO,
                 )
                 if fig_macro:
                     st.plotly_chart(style(fig_macro), use_container_width=True)
@@ -3758,22 +4332,25 @@ if vue == "Démographie":
                 with st.expander("💡 Comment interpréter ce graphique ?"):
                     st.markdown(
                         "**Comprendre les grandes masses de peuplement :**\n\n"
-                        "- **Sous-occupation globale (bleu)** : reflète souvent des territoires à forte "
-                        "proportion de maisons individuelles ou marqués par le vieillissement démographique "
-                        "(ex : couples de retraités restés seuls dans la grande maison familiale après le "
-                        "départ des enfants).\n\n"
-                        "- **Dans la norme (gris)** : le nombre de pièces correspond aux besoins théoriques "
-                        "du ménage — situation d'équilibre.\n\n"
-                        "- **Suroccupation globale (orange)** : révèle des zones de fortes tensions "
-                        "immobilières ou des spécificités de peuplement (parcs denses, forte présence "
-                        "d'étudiants en petits studios ou de familles nombreuses contraintes de vivre dans "
-                        "des espaces trop exigus). " +
-                        ("Les bordures rouges identifient Grenoble." if mode_log == "Comparaison Métropoles" else "")
+                        "- **Sous-occupation globale** (nuance la plus foncée) : reflète souvent des "
+                        "territoires à forte proportion de maisons individuelles ou marqués par le "
+                        "vieillissement démographique (ex : couples de retraités restés seuls dans la "
+                        "grande maison familiale après le départ des enfants).\n\n"
+                        "- **Dans la norme** (nuance intermédiaire) : le nombre de pièces correspond aux "
+                        "besoins théoriques du ménage - situation d'équilibre.\n\n"
+                        "- **Suroccupation globale** (nuance la plus claire) : révèle des zones de fortes "
+                        "tensions immobilières ou des spécificités de peuplement (parcs denses, forte "
+                        "présence d'étudiants en petits studios ou de familles nombreuses contraintes de "
+                        "vivre dans des espaces trop exigus). " +
+                        ("La ligne rouge encadre Grenoble." if mode_log == "Comparaison Métropoles" else "")
                     )
 
                 st.markdown("---")
 
                 # ── GRAPH 2 : PROFILS DÉTAILLÉS ────────────────────────────
+                # Petit multiple : une figure par territoire. Mise en évidence
+                # Grenoble : vrect interne à build_bar_log_pct (highlight=True)
+                # qui encadre tout le panneau.
                 st.subheader(
                     "Profils détaillés par niveau d'occupation",
                     help="Décomposition fine selon la nomenclature officielle de l'INSEE en 6 niveaux.",
@@ -3784,6 +4361,8 @@ if vue == "Démographie":
                     vals, _, _, _ = get_log_data_pct(df_t, annee_log)
                     if vals:
                         all_maxes.append(max(vals))
+                # Échelle X partagée entre tous les petits multiples pour
+                # permettre une comparaison visuelle directe des hauteurs de barres
                 shared_x_max = max(all_maxes) * 1.10 if all_maxes else 100
 
                 ncols = min(n_targets, 3)
@@ -3792,16 +4371,11 @@ if vue == "Démographie":
                     cols = st.columns(len(row))
                     for j, t in enumerate(row):
                         df_t = df_filter_peuplement(t)
-                        fig = build_bar_log_pct(df_t, t, annee_log, x_max=shared_x_max)
-
-                        if t == "Grenoble" and mode_log == "Comparaison Métropoles":
-                            for trace in fig.data:
-                                if trace.type == "bar":
-                                    trace.marker.pattern.shape = "/"
-                                    trace.marker.pattern.fgcolor = "#FF584D"
-                                    trace.marker.pattern.size = 15
-                                    trace.marker.pattern.solidity = 0.25
-
+                        is_greno = (t == "Grenoble" and highlight_grenoble_actif)
+                        fig = build_bar_log_pct(
+                            df_t, t, annee_log, x_max=shared_x_max, highlight=is_greno,
+                            couleurs_occupation=COULEURS_OCCUPATION,
+                        )
                         with cols[j]:
                             st.plotly_chart(style(fig, 30), use_container_width=True)
 
@@ -3818,7 +4392,7 @@ if vue == "Démographie":
                     """)
 
             # ═════════════════════════════════════════════════════════════
-            # THÈME 2 — LOGEMENTS SOCIAUX (RPLS 2024)
+            # THÈME 2 - LOGEMENTS SOCIAUX (RPLS 2024)
             # ═════════════════════════════════════════════════════════════
             else:
 
@@ -3843,7 +4417,7 @@ if vue == "Démographie":
                 else:
                     df_social_view = df_social[df_social["metropole"] == "Grenoble"]
 
-                # Collecte des stats par territoire
+                # Collecte des stats agrégées RPLS + dénominateur RP par territoire
                 stats_by_target = {}
                 rp_by_target = {}
                 for t in targets_log:
@@ -3854,7 +4428,7 @@ if vue == "Démographie":
                         stats_by_target[t] = get_social_metrics(df_social_view, "nom_commune", t)
                         rp_by_target[t] = get_total_rp(df_log, "nom_commune", t, annee_ref) if df_log is not None else 0
 
-                # Territoires avec données RPLS exploitables
+                # Territoires avec / sans données RPLS exploitables
                 entities_with_data = [t for t in targets_log if stats_by_target[t] is not None]
                 entities_no_data   = [t for t in targets_log if stats_by_target[t] is None]
 
@@ -3914,6 +4488,7 @@ if vue == "Démographie":
                                 continue
                             val = df_taux.loc[df_taux["Territoire"] == t, "Taux (%)"].iloc[0]
                             marker = dict(color=bar_colors[i])
+                            # Hachures conservées ici (couleurs de territoire, non concerné par la modification)
                             if t == "Grenoble" and mode_log == "Comparaison Métropoles":
                                 marker["pattern"] = dict(
                                     shape="/", fgcolor="#FF584D", fillmode="overlay",
@@ -3956,6 +4531,7 @@ if vue == "Démographie":
                             continue
                         y_vals = [st_t[code_map[c]] for c in categories]
                         marker = dict(color=bar_colors[i])
+                        # Hachures conservées ici (couleurs de territoire, non concerné par la modification)
                         if t == "Grenoble" and mode_log == "Comparaison Métropoles":
                             marker["pattern"] = dict(
                                 shape="/", fgcolor="#FF584D", fillmode="overlay",
@@ -3993,6 +4569,29 @@ if vue == "Démographie":
                 st.markdown("---")
 
                 # ── GRAPH 3 / 4 : Financement + Ancienneté ──────────────────
+                # Couleurs catégorielles dynamiques (gris en vue Métropoles,
+                # vert en vue Communes), générées par build_grey_or_green_palette.
+                FIN_ORDER = ["PLAI", "HLM avant 1977", "HLM après 1977", "PLS", "PLI"]
+                FIN_CODE_MAP = {
+                    "PLAI": "part_PLAI",
+                    "HLM avant 1977": "part_HLM_avant_1977",
+                    "HLM après 1977": "part_HLM_apres_1977",
+                    "PLS": "part_PLS",
+                    "PLI": "part_PLI",
+                }
+                fin_colors = build_grey_or_green_palette(FIN_ORDER, mode_log)
+
+                AGE_ORDER = ["Avant 1949", "1949-1975", "1976-1988", "1989-2000", "2001-2013", "Après 2013"]
+                AGE_CODE_MAP = {
+                    "Avant 1949": "part_avant_1949",
+                    "1949-1975": "part_1949_1975",
+                    "1976-1988": "part_1976_1988",
+                    "1989-2000": "part_1989_2000",
+                    "2001-2013": "part_2001_2013",
+                    "Après 2013": "part_apres_2013",
+                }
+                age_colors = build_grey_or_green_palette(AGE_ORDER, mode_log)
+
                 gc3, gc4 = st.columns(2)
 
                 with gc3:
@@ -4012,33 +4611,21 @@ if vue == "Démographie":
                             "plus modestes."
                         ),
                     )
-                    fin_categories = {
-                        "PLAI": "#0D47A1",
-                        "HLM avant 1977": "#1E88E5",
-                        "HLM après 1977": "#90CAF9",
-                        "PLS": "#FFB74D",
-                        "PLI": "#E65100",
-                    }
-                    fin_code_map = {
-                        "PLAI": "part_PLAI",
-                        "HLM avant 1977": "part_HLM_avant_1977",
-                        "HLM après 1977": "part_HLM_apres_1977",
-                        "PLS": "part_PLS",
-                        "PLI": "part_PLI",
-                    }
                     fig_fin = go.Figure()
-                    for cat, color in fin_categories.items():
+                    for cat in FIN_ORDER:
                         y_vals, x_vals = [], []
                         for t in targets_log:
                             st_t = stats_by_target[t]
                             if st_t is None:
                                 continue
                             x_vals.append(t)
-                            y_vals.append(st_t[fin_code_map[cat]])
+                            y_vals.append(st_t[FIN_CODE_MAP[cat]])
                         fig_fin.add_trace(go.Bar(
-                            name=cat, x=x_vals, y=y_vals, marker_color=color,
+                            name=cat, x=x_vals, y=y_vals, marker_color=fin_colors[cat],
                             hovertemplate=f"<b>%{{x}}</b><br>{cat} : %{{y:.1f}}%<extra></extra>",
                         ))
+                    # Encadrement vertical Grenoble (graphique vertical x=territoire,
+                    # le greno_vrect calculé plus haut s'applique directement)
                     if greno_vrect:
                         fig_fin.add_vrect(**greno_vrect)
                     fig_fin.update_layout(
@@ -4061,33 +4648,17 @@ if vue == "Démographie":
                             "continu de logements sociaux."
                         ),
                     )
-                    age_categories = {
-                        "Avant 1949": "#3A3D44",
-                        "1949-1975": "#7A7E87",
-                        "1976-1988": "#A2A6AE",
-                        "1989-2000": "#C8CACF",
-                        "2001-2013": "#DDE0E3",
-                        "Après 2013": "#74C69D",
-                    }
-                    age_code_map = {
-                        "Avant 1949": "part_avant_1949",
-                        "1949-1975": "part_1949_1975",
-                        "1976-1988": "part_1976_1988",
-                        "1989-2000": "part_1989_2000",
-                        "2001-2013": "part_2001_2013",
-                        "Après 2013": "part_apres_2013",
-                    }
                     fig_age = go.Figure()
-                    for cat, color in age_categories.items():
+                    for cat in AGE_ORDER:
                         y_vals, x_vals = [], []
                         for t in targets_log:
                             st_t = stats_by_target[t]
                             if st_t is None:
                                 continue
                             x_vals.append(t)
-                            y_vals.append(st_t[age_code_map[cat]])
+                            y_vals.append(st_t[AGE_CODE_MAP[cat]])
                         fig_age.add_trace(go.Bar(
-                            name=cat, x=x_vals, y=y_vals, marker_color=color,
+                            name=cat, x=x_vals, y=y_vals, marker_color=age_colors[cat],
                             hovertemplate=f"<b>%{{x}}</b><br>{cat} : %{{y:.1f}}%<extra></extra>",
                         ))
                     if greno_vrect:
@@ -4120,6 +4691,8 @@ if vue == "Démographie":
                 st.markdown("---")
 
                 # ── GRAPH 5 : Loyers ────────────────────────────────────────
+                # (couleurs = bar_colors, couleurs de territoire - non concerné
+                # par la modification, déjà gris/vert selon mode_log)
                 st.subheader(
                     "Loyers du parc social (€/m²)",
                     help=(
@@ -4182,7 +4755,7 @@ if vue == "Démographie":
                     )
 
 # ==============================================================================
-# ONGLET 6 - Population active 25-54 ans 
+# ONGLET 7 - Population active 25-54 ans 
 # ==============================================================================
 
 
@@ -4274,10 +4847,10 @@ def _build_heatmap_matrix(df_raw, row_filter_col, row_filter_vals):
     return df_pct
 
 
-# ── Onglet 6 ──────────────────────────────────────────────────────────────────
+# ── Onglet 7 ──────────────────────────────────────────────────────────────────
 
 if vue == "Démographie":
-    with tab6:
+    with tab7:
 
         if df_csp_new.empty or "ANNEE" not in df_csp_new.columns:
             st.info("📂 Données CSP/Diplôme non trouvées. Vérifiez les fichiers.")
@@ -4285,7 +4858,7 @@ if vue == "Démographie":
             st.markdown("""
             <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px;
                         border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
-                <strong>Source :</strong> INSEE –
+                <strong>Source :</strong> INSEE -
                 <a href='https://www.insee.fr/fr/statistiques/1893185' target='_blank'
                    style='color: #1C3A27;'>Accéder aux données</a><br><br>
                 <strong>Note sur les données :</strong> Ces chiffres sont issus des recensements
@@ -4762,11 +5335,11 @@ if vue == "Démographie":
                         ):
                             table_df = pd.DataFrame({
                                 "Catégorie": sel_cats,
-                                f"{t1_name} (T1 – Eff.)": [
+                                f"{t1_name} (T1 - Eff.)": [
                                     f"{int(v1[c]):,d}".replace(",", "\u202f")
                                     for c in sel_cats
                                 ],
-                                f"{t2_name} (T2 – Eff.)": [
+                                f"{t2_name} (T2 - Eff.)": [
                                     f"{int(v2[c]):,d}".replace(",", "\u202f")
                                     for c in sel_cats
                                 ],
@@ -4849,18 +5422,18 @@ if vue == "Solidarité et citoyenneté":
                     "Nombre foyers NDUR":       "Foyers aidés (toutes aides)",
                     "Nombre personnes NDUR":    "Personnes concernées (toutes aides)",
                     "Montant total NDUR":        "Montant total versé (€)",
-                    "Nombre foyers NDURPAJE":   "Foyers aidés – Jeunes enfants",
-                    "Nombre personnes NDURPAJE":"Personnes concernées – Jeunes enfants",
-                    "Montant total NDURPAJE":    "Montant versé – Jeunes enfants (€)",
-                    "Nombre foyers NDUREJ":     "Foyers aidés – Enfance & jeunesse",
-                    "Nombre personnes NDUREJ":  "Personnes concernées – Enfance & jeunesse",
-                    "Montant total NDUREJ":      "Montant versé – Enfance & jeunesse (€)",
-                    "Nombre foyers NDURAL":     "Foyers aidés – Logement",
-                    "Nombre personnes NDURAL":  "Personnes concernées – Logement",
-                    "Montant total NDURAL":      "Montant versé – Logement (€)",
-                    "Nombre foyers NDURINS":    "Foyers aidés – Insertion",
-                    "Nombre personnes NDURINS": "Personnes concernées – Insertion",
-                    "Montant total NDURINS":     "Montant versé – Insertion (€)",
+                    "Nombre foyers NDURPAJE":   "Foyers aidés - Jeunes enfants",
+                    "Nombre personnes NDURPAJE":"Personnes concernées - Jeunes enfants",
+                    "Montant total NDURPAJE":    "Montant versé - Jeunes enfants (€)",
+                    "Nombre foyers NDUREJ":     "Foyers aidés - Enfance & jeunesse",
+                    "Nombre personnes NDUREJ":  "Personnes concernées - Enfance & jeunesse",
+                    "Montant total NDUREJ":      "Montant versé - Enfance & jeunesse (€)",
+                    "Nombre foyers NDURAL":     "Foyers aidés - Logement",
+                    "Nombre personnes NDURAL":  "Personnes concernées - Logement",
+                    "Montant total NDURAL":      "Montant versé - Logement (€)",
+                    "Nombre foyers NDURINS":    "Foyers aidés - Insertion",
+                    "Nombre personnes NDURINS": "Personnes concernées - Insertion",
+                    "Montant total NDURINS":     "Montant versé - Insertion (€)",
                 }
                 available_metrics = {k: v for k, v in ALL_METRIC_LABELS.items() if k in df_caf.columns}
                 if not available_metrics:
@@ -4940,6 +5513,12 @@ if vue == "Solidarité et citoyenneté":
                     if df_fil.empty or not sel_entites_caf:
                         st.warning("⚠️ Aucune donnée pour les filtres sélectionnés.")
                     else:
+                        # Bloc de rendu structuré : en fonction du filtre (métropole vs communes),
+                        # on affiche d'abord la section correspondante, puis l'ensemble des KPIs/graphes.
+                        if is_metro:
+                            st.markdown("##### Partie Métropole")
+                        else:
+                            st.markdown("##### Partie Commune")
                         label_metric = available_metrics[metric_key]
                         suffix_euro  = " €" if "Montant" in metric_key else ""
 
@@ -5380,6 +5959,12 @@ if vue == "Solidarité et citoyenneté":
             if df_e.empty or not sel_entites_eff:
                 st.warning("⚠️ Aucune donnée pour les filtres sélectionnés.")
             else:
+                # Bloc de rendu structuré : titres clairs pour faciliter la personnalisation
+                # (métropoles vs communes) sans changer le contenu des graphes.
+                if is_metro:
+                    st.markdown("##### Partie Métropole")
+                else:
+                    st.markdown("##### Partie Commune")
                 total_etab   = len(df_e)
                 total_eleves = int(df_e["Nombre_d_eleves"].sum())
                 nb_rep       = int(df_e["Appartenance_Education_Prioritaire"].isin(["REP", "REP+"]).sum())
@@ -5626,6 +6211,12 @@ if vue == "Solidarité et citoyenneté":
             kpi_border_color = "#1e5631"
 
         st.markdown("---")
+        if mode_sante == "Comparaison Métropoles":
+            # Métropoles : KPIs + carte + graphes (tout le rendu ci-dessous)
+            st.markdown("##### Partie Métropole")
+        else:
+            # Communes (Grenoble-Alpes Métropole) : même structure, rendu séparé
+            st.markdown("##### Partie Commune")
         st.markdown("#### Synthèse de l'offre de soins")
         sk1, sk2, sk3, sk4, sk5 = st.columns(5)
         with sk1: st.markdown(render_solidarite_kpi("Total", fmt(len(df_sf)), "Établissements", kpi_border_color), unsafe_allow_html=True)
@@ -5915,15 +6506,15 @@ if vue == "Solidarité et citoyenneté":
                 sel_tour_part  = st.selectbox("Tour", tours_elec, format_func=lambda t: f"Tour {t}", key="part_tour")
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # ── Variable booléenne locale pour ce scope ───────────────────────────
-        part_is_metro = (mode_part == "Comparaison Métropoles")
+        # ── Sections distinctes par niveau géographique (métropole / commune) ─
+        mode_part_metro = (mode_part == "Comparaison Métropoles")
 
         df_elec_f = df_elec_type[
             (df_elec_type["Année"] == sel_annee_part) &
             (df_elec_type["Numéro de tour"] == sel_tour_part)
         ]
 
-        if part_is_metro:
+        if mode_part_metro:
             df_elec_f = df_elec_f[df_elec_f["metropole"].isin(sel_metros_part)]
             df_agg    = df_elec_f.groupby("metropole", as_index=False).agg(
                 Inscrits=("Inscrits", "sum"), Votants=("Votants", "sum"),
@@ -5975,79 +6566,128 @@ if vue == "Solidarité et citoyenneté":
         if df_agg.empty:
             st.warning("⚠️ Aucune donnée pour les filtres sélectionnés.")
         else:
-            c1, c2 = st.columns(2)
+            # ════════════════════════════════════════════════════════════════════
+            # VUE METROPOLES
+            # ════════════════════════════════════════════════════════════════════
+            if mode_part_metro:
+                # VUE METROPOLES : KPIs/graphes dédiés (éditer ici n'impacte pas la vue communes)
+                c1, c2 = st.columns(2)
 
-            # ── Taux de participation ─────────────────────────────────────────
-            with c1:
-                st.markdown("##### Taux de participation",
-                            help="Votants / Inscrits × 100. Inclut les votes blancs et nuls.")
-                df_part_sorted = df_agg.sort_values("% Participation", ascending=True)
-                df_part_sorted["text_display"] = df_part_sorted["% Participation"].apply(lambda v: f"{v:.1f} %")
-                _part_color_map = COULEURS if part_is_metro else None
-                _part_seq       = px.colors.sequential.Greens_r if not part_is_metro else None
-                fig_part = px.bar(
-                    df_part_sorted, x="% Participation", y="metropole", orientation="h",
-                    color="metropole",
-                    color_discrete_map=_part_color_map,
-                    color_discrete_sequence=_part_seq,
-                    text="text_display",
-                    labels={"metropole": "", "% Participation": "Participation (%)"},
-                    height=380
-                )
-                fig_part.update_traces(
-                    textposition="outside",
-                    hovertemplate="<b>%{y}</b><br>Participation : <b>%{text}</b><extra></extra>"
-                )
-                fig_part.update_layout(
-                    showlegend=False, xaxis_range=[0, 100],
-                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                    font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"),
-                    margin=dict(l=10, r=40, t=40, b=10)
-                )
-                # Hachures uniquement en mode métropoles (évite la commune "Grenoble")
-                apply_grenoble_hatch(fig_part, active=part_is_metro)
-                st.plotly_chart(style(fig_part, 40), use_container_width=True)
-
-            # ── Qualité du vote ───────────────────────────────────────────────
-            with c2:
-                st.markdown("##### Qualité du vote",
-                            help="Parmi les votants : proportion de votes valides (Exprimés) vs blancs/nuls (Non-Exprimés).")
-                df_qual = df_agg[["metropole", "% Exprimés", "% Non-Exprimés"]].melt(
-                    id_vars="metropole", var_name="Type", value_name="Taux"
-                )
-                df_qual["text_display"] = df_qual["Taux"].apply(lambda v: f"{v:.1f} %")
-                order_qual = df_agg.sort_values("% Exprimés", ascending=False)["metropole"].tolist()
-
-                fig_qual = px.bar(
-                    df_qual, x="metropole", y="Taux", color="Type", barmode="stack",
-                    color_discrete_map=(
-                        {"% Exprimés": "#555555", "% Non-Exprimés": "#aaaaaa"}
-                        if part_is_metro else
-                        {"% Exprimés": "#2D6A4F", "% Non-Exprimés": "#95D5B2"}
-                    ),
-                    text="text_display",
-                    labels={"metropole": "", "Taux": "%", "Type": ""},
-                    height=380
-                )
-                fig_qual.update_traces(
-                    hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>"
-                )
-                if part_is_metro and "Grenoble" in order_qual:
-                    g_pos_qual = order_qual.index("Grenoble")
-                    fig_qual.add_vrect(
-                        x0=g_pos_qual - 0.45, x1=g_pos_qual + 0.45,
-                        fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D",
-                        line_width=1.5, line_dash="dash", layer="below"
+                with c1:
+                    # Participation : taux de participation (votants / inscrits)
+                    st.markdown("##### Taux de participation",
+                                help="Votants / Inscrits × 100. Inclut les votes blancs et nuls.")
+                    df_part_sorted = df_agg.sort_values("% Participation", ascending=True)
+                    df_part_sorted["text_display"] = df_part_sorted["% Participation"].apply(lambda v: f"{v:.1f} %")
+                    fig_part = px.bar(
+                        df_part_sorted, x="% Participation", y="metropole", orientation="h",
+                        color="metropole", color_discrete_map=COULEURS, text="text_display",
+                        labels={"metropole": "", "% Participation": "Participation (%)"}, height=380
                     )
-                fig_qual.update_layout(
-                    yaxis_range=[0, 100],
-                    xaxis=dict(categoryorder="array", categoryarray=order_qual),
-                    legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
-                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                    font_family="Sora", yaxis=dict(gridcolor="#E8F5EE"),
-                    margin=dict(l=10, r=10, t=40, b=10)
-                )
-                st.plotly_chart(style(fig_qual, 40), use_container_width=True)
+                    fig_part.update_traces(
+                        textposition="outside",
+                        hovertemplate="<b>%{y}</b><br>Participation : <b>%{text}</b><extra></extra>"
+                    )
+                    fig_part.update_layout(
+                        showlegend=False, xaxis_range=[0, 100],
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"),
+                        margin=dict(l=10, r=40, t=40, b=10)
+                    )
+                    apply_grenoble_hatch(fig_part, active=True)
+                    st.plotly_chart(style(fig_part, 40), use_container_width=True)
+
+                with c2:
+                    # Qualité du vote : exprimés vs non-exprimés
+                    st.markdown("##### Qualité du vote",
+                                help="Parmi les votants : proportion de votes valides (Exprimés) vs blancs/nuls (Non-Exprimés).")
+                    df_qual = df_agg[["metropole", "% Exprimés", "% Non-Exprimés"]].melt(
+                        id_vars="metropole", var_name="Type", value_name="Taux"
+                    )
+                    df_qual["text_display"] = df_qual["Taux"].apply(lambda v: f"{v:.1f} %")
+                    order_qual = df_agg.sort_values("% Exprimés", ascending=False)["metropole"].tolist()
+                    fig_qual = px.bar(
+                        df_qual, x="metropole", y="Taux", color="Type", barmode="stack",
+                        color_discrete_map={"% Exprimés": "#555555", "% Non-Exprimés": "#aaaaaa"},
+                        text="text_display", labels={"metropole": "", "Taux": "%", "Type": ""}, height=380
+                    )
+                    fig_qual.update_traces(
+                        hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>"
+                    )
+                    if "Grenoble" in order_qual:
+                        g_pos_qual = order_qual.index("Grenoble")
+                        fig_qual.add_vrect(
+                            x0=g_pos_qual - 0.45, x1=g_pos_qual + 0.45,
+                            fillcolor="rgba(255,88,77,0.10)", line_color="#FF584D",
+                            line_width=1.5, line_dash="dash", layer="below"
+                        )
+                    fig_qual.update_layout(
+                        yaxis_range=[0, 100],
+                        xaxis=dict(categoryorder="array", categoryarray=order_qual),
+                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora", yaxis=dict(gridcolor="#E8F5EE"),
+                        margin=dict(l=10, r=10, t=40, b=10)
+                    )
+                    st.plotly_chart(style(fig_qual, 40), use_container_width=True)
+
+            # ════════════════════════════════════════════════════════════════════
+            # VUE COMMUNES
+            # ════════════════════════════════════════════════════════════════════
+            else:
+                # VUE COMMUNES : KPIs/graphes dédiés (sélection des communes Grenoble-Alpes Métropole)
+                c1, c2 = st.columns(2)
+
+                with c1:
+                    # Participation : taux de participation (votants / inscrits)
+                    st.markdown("##### Taux de participation",
+                                help="Votants / Inscrits × 100. Inclut les votes blancs et nuls.")
+                    df_part_sorted = df_agg.sort_values("% Participation", ascending=True)
+                    df_part_sorted["text_display"] = df_part_sorted["% Participation"].apply(lambda v: f"{v:.1f} %")
+                    fig_part = px.bar(
+                        df_part_sorted, x="% Participation", y="metropole", orientation="h",
+                        color="metropole", color_discrete_sequence=px.colors.sequential.Greens_r,
+                        text="text_display", labels={"metropole": "", "% Participation": "Participation (%)"}, height=380
+                    )
+                    fig_part.update_traces(
+                        textposition="outside",
+                        hovertemplate="<b>%{y}</b><br>Participation : <b>%{text}</b><extra></extra>"
+                    )
+                    fig_part.update_layout(
+                        showlegend=False, xaxis_range=[0, 100],
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora", xaxis=dict(gridcolor="#E8F5EE"),
+                        margin=dict(l=10, r=40, t=40, b=10)
+                    )
+                    apply_grenoble_hatch(fig_part, active=False)
+                    st.plotly_chart(style(fig_part, 40), use_container_width=True)
+
+                with c2:
+                    # Qualité du vote : exprimés vs non-exprimés
+                    st.markdown("##### Qualité du vote",
+                                help="Parmi les votants : proportion de votes valides (Exprimés) vs blancs/nuls (Non-Exprimés).")
+                    df_qual = df_agg[["metropole", "% Exprimés", "% Non-Exprimés"]].melt(
+                        id_vars="metropole", var_name="Type", value_name="Taux"
+                    )
+                    df_qual["text_display"] = df_qual["Taux"].apply(lambda v: f"{v:.1f} %")
+                    order_qual = df_agg.sort_values("% Exprimés", ascending=False)["metropole"].tolist()
+                    fig_qual = px.bar(
+                        df_qual, x="metropole", y="Taux", color="Type", barmode="stack",
+                        color_discrete_map={"% Exprimés": "#2D6A4F", "% Non-Exprimés": "#95D5B2"},
+                        text="text_display", labels={"metropole": "", "Taux": "%", "Type": ""}, height=380
+                    )
+                    fig_qual.update_traces(
+                        hovertemplate="<b>%{x}</b><br>%{fullData.name} : <b>%{text}</b><extra></extra>"
+                    )
+                    fig_qual.update_layout(
+                        yaxis_range=[0, 100],
+                        xaxis=dict(categoryorder="array", categoryarray=order_qual),
+                        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=1.02),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora", yaxis=dict(gridcolor="#E8F5EE"),
+                        margin=dict(l=10, r=10, t=40, b=10)
+                    )
+                    st.plotly_chart(style(fig_qual, 40), use_container_width=True)
 
             st.markdown("---")
 
@@ -6068,14 +6708,14 @@ if vue == "Solidarité et citoyenneté":
             st.markdown(
                 f"<p style='font-size:11px;color:#888;margin-top:-10px;margin-bottom:10px;'>"
                 f"📋 Élections : <b>{type_election}</b> · Périmètre : <b>"
-                f"{'Comparaison Métropoles' if part_is_metro else 'Communes Grenoble-Alpes Métropole'}</b> · "
+                f"{'Comparaison Métropoles' if mode_part_metro else 'Communes Grenoble-Alpes Métropole'}</b> · "
                 f"Tour <b>{sel_tour_part}</b> · Variation entre <b>{annee_debut}</b> et <b>{annee_fin}</b>"
                 f"</p>",
                 unsafe_allow_html=True
             )
 
             df_delta_base = df_elec_type[df_elec_type["Numéro de tour"] == sel_tour_part].copy()
-            if part_is_metro:
+            if mode_part_metro:
                 df_delta_base = df_delta_base[df_delta_base["metropole"].isin(sel_metros_part)]
                 grp_col = "metropole"
             else:
@@ -6115,7 +6755,7 @@ if vue == "Solidarité et citoyenneté":
                 )
                 fig_delta.add_vline(x=0, line_dash="dash", line_color="#888", line_width=1)
 
-                if part_is_metro:
+                if mode_part_metro:
                     entites_delta = df_delta["entite"].tolist()
                     if "Grenoble" in entites_delta:
                         g_pos_delta = entites_delta.index("Grenoble")
@@ -6131,7 +6771,7 @@ if vue == "Solidarité et citoyenneté":
                     margin=dict(l=10, r=60, t=40, b=10)
                 )
                 # Hachures uniquement en mode métropoles
-                apply_grenoble_hatch(fig_delta, active=part_is_metro)
+                apply_grenoble_hatch(fig_delta, active=mode_part_metro)
                 st.plotly_chart(style(fig_delta), use_container_width=True)
             else:
                 st.info("Données insuffisantes pour calculer la variation.")
@@ -6174,41 +6814,1214 @@ le comportement électoral structurel des territoires et doivent être interpré
 # PAGE ENVIRONNEMENT
 # ==============================================================================
 if vue == "Environnement":
-    tab_env1, tab_env2, tab_env3 = st.tabs([
-        "🌱  Qualité de l'air",
+    tab_env1, tab_env2, tab_env3, tab_env4 = st.tabs([
+        "🏗️  Artificialisation des sols",
+        "🍃  Qualité de l'air",
         "🌳  Espaces verts & Biodiversité",
         "♻️  Déchets & Transition",
     ])
 
-    # ── Onglet 1 : Qualité de l'air ──────────────────────────────────────────
-    with tab_env1:
-        st.markdown('<div class="section-header">Qualité de l\'air et Indices Atmo</div>', unsafe_allow_html=True)
-        
-        # Bandeau de filtres haut de page synchronisés
-        st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-        filter_bar("Filtres - Qualité de l'air")
-        f_col1, f_col2 = st.columns(2)
-        with f_col1:
-            metros_air = st.multiselect(
-                "Sélectionner les métropoles :", TOUTES,
-                default=shared_default_env(TOUTES), key="env_air_metros", on_change=sync_metros_env, args=("env_air_metros",)
-            )
-        with f_col2:
-            communes_air = st.multiselect(
-                "Sélectionner les communes (Grenoble) :", COMMUNES_GRENOBLE,
-                default=shared_default_communes_env(COMMUNES_GRENOBLE), key="env_air_communes", on_change=sync_communes_env, args=("env_air_communes",)
-            )
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.info("Données en cours de traitement. Intégrez vos futurs indicateurs de qualité de l'air ici.")
+    
+    # ==============================================================================
+    # ONGLET 1 - ARTIFICIALISATION DES SOLS 
+    # ==============================================================================
 
-    # ── Onglet 2 : Espaces verts ─────────────────────────────────────────────
+    with tab_env1:
+        if df_artif is None:
+            st.info("📂 Fichier `artificialisation_des_sols_clean.csv` introuvable.")
+        else:
+            st.markdown("""
+            <div style='background-color:#f1f8f5;padding:10px 15px;border-radius:10px;
+                        border-left:5px solid #1C3A27;margin-bottom:20px;font-size:0.85em;'>
+                <strong>Source :</strong> data.gouv.fr - 
+                <a href='https://www.data.gouv.fr/datasets/artificialisation-des-sols-donnees-par-region-departement-scot-commune-et-epci'
+                   target='_blank' style='color:#1C3A27;'>Accéder aux données</a><br><br>
+                <strong>Note :</strong> L'artificialisation correspond au solde entre surfaces
+                artificialisées et désartificialisées sur une période de <b>3 ans</b>, calculé à
+                partir de l'OCSGE (Occupation du Sol à Grande Échelle). Les millésimes varient
+                selon les territoires (premiers : 2016–2019 ; seconds : 2019–2022).
+            </div>""", unsafe_allow_html=True)
+
+            # ── Conversion m² → ha ────────────────────────────────────────────
+            df_artif = df_artif.copy()
+            for col_m2, col_ha in [
+                ("surface_artif_1", "surface_artif_1_ha"),
+                ("surface_artif_2", "surface_artif_2_ha"),
+                ("flux_surface_1_2", "flux_surface_ha"),
+                ("commune_surface",  "commune_surface_ha"),
+            ]:
+                df_artif[col_ha] = df_artif[col_m2] / 10_000
+            df_artif["duree_periode"] = df_artif["millesimes_2"] - df_artif["millesimes_1"]
+
+            # ── Filtres ───────────────────────────────────────────────────────
+            with st.container():
+                filter_bar("Filtres - Artificialisation des sols")
+                fz1, fz2 = st.columns([1, 3])
+                with fz1:
+                    filter_row_label("Niveau géographique")
+                with fz2:
+                    mode_artif = st.radio(
+                        "",
+                        ["Comparaison Métropoles",
+                         "Comparaison communes Grenoble-Alpes Métropole"],
+                        key="env_artif_mode", horizontal=True,
+                        label_visibility="collapsed", # Permet d'être sur la même ligne que Niveau géographique
+                    )
+
+                if mode_artif == "Comparaison Métropoles":
+                    sel_metros_artif = st.multiselect(
+                        "Métropoles à comparer", TOUTES,
+                        default=shared_default_env(TOUTES),
+                        key="env_artif_metros",
+                        on_change=sync_metros_env, args=("env_artif_metros",),
+                    )
+                    targets_artif = sel_metros_artif
+                else:
+                    communes_artif_dispo = sorted(COMMUNES["Grenoble"])
+                    sel_communes_artif = st.multiselect(
+                        "Communes de Grenoble-Alpes Métropole",
+                        communes_artif_dispo,
+                        default=shared_default_communes_env(communes_artif_dispo),
+                        key="env_artif_communes",
+                        on_change=sync_communes_env, args=("env_artif_communes",),
+                    )
+                    targets_artif = sel_communes_artif
+
+            st.markdown("---")
+
+            if not targets_artif:
+                st.warning("Sélectionnez au moins un territoire.")
+                st.stop()
+
+            mode_artif_metro = (mode_artif == "Comparaison Métropoles")
+
+            # ── Agrégation ────────────────────────────────────────────────────
+            if mode_artif_metro:
+                df_f = df_artif[df_artif["metropole"].isin(targets_artif)]
+                df_agg = df_f.groupby("metropole", as_index=False).agg(
+                    surface_artif_1_ha=("surface_artif_1_ha", "sum"),
+                    surface_artif_2_ha=("surface_artif_2_ha", "sum"),
+                    commune_surface_ha=("commune_surface_ha", "sum"),
+                    flux_surface_ha=("flux_surface_ha", "sum"),
+                    duree_periode=("duree_periode", "mean"),
+                    millesime_1=("millesimes_1", "min"),
+                    millesime_2=("millesimes_2", "max"),
+                ).rename(columns={"metropole": "territoire"})
+            else:
+                df_f = df_artif[
+                    (df_artif["metropole"] == "Grenoble")
+                    & (df_artif["nom"].isin(targets_artif))
+                ]
+                df_agg = df_f.rename(columns={
+                    "nom": "territoire",
+                    "millesimes_1": "millesime_1",
+                    "millesimes_2": "millesime_2",
+                })[[
+                    "territoire", "surface_artif_1_ha", "surface_artif_2_ha",
+                    "commune_surface_ha", "flux_surface_ha", "duree_periode",
+                    "millesime_1", "millesime_2",
+                ]].copy()
+
+            if df_agg.empty:
+                st.warning("Aucune donnée disponible pour cette sélection.")
+                st.stop()
+
+            # Indicateurs dérivés
+            df_agg["pct_artif_1"] = df_agg["surface_artif_1_ha"] / df_agg["commune_surface_ha"] * 100
+            df_agg["pct_artif_2"] = df_agg["surface_artif_2_ha"] / df_agg["commune_surface_ha"] * 100
+            df_agg["pct_naturel"] = 100 - df_agg["pct_artif_2"]
+            df_agg["surf_naturel_ha"] = df_agg["commune_surface_ha"] - df_agg["surface_artif_2_ha"]
+            df_agg["evol_ha"] = df_agg["flux_surface_ha"]
+            df_agg["rythme_ha_an"] = df_agg["flux_surface_ha"] / df_agg["duree_periode"]
+
+            # Ordre utilisateur
+            df_agg["territoire"] = pd.Categorical(
+                df_agg["territoire"], categories=targets_artif, ordered=True
+            )
+            df_agg = df_agg.sort_values("territoire").reset_index(drop=True)
+            df_agg["territoire"] = df_agg["territoire"].astype(str)
+
+            n_targets  = len(df_agg)
+            bar_colors = (
+                [COULEURS.get(t, "#888888") for t in df_agg["territoire"]]
+                if mode_artif_metro
+                else [PALETTE_COMMUNE[i % len(PALETTE_COMMUNE)] for i in range(n_targets)]
+            )
+
+            # ══════════════════════════════════════════════════════════════════
+            # VUE MÉTROPOLES
+            # ══════════════════════════════════════════════════════════════════
+            if mode_artif_metro:
+
+                # ── KPI ───────────────────────────────────────────────────────
+                st.subheader("Indicateurs synthétiques")
+                kpi_cols = st.columns(n_targets)
+                for i, row in df_agg.iterrows():
+                    c          = bar_colors[i]
+                    evol_color = "#C62828" if row["evol_ha"] >= 0 else "#1565C0"
+                    evol_sign  = "+" if row["evol_ha"] >= 0 else ""
+                    periode    = f"{int(row['millesime_1'])} → {int(row['millesime_2'])}"
+                    with kpi_cols[i]:
+                        st.markdown(f"""
+                        <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);
+                            border-left:6px solid {c};background:#fff;
+                            margin-bottom:12px;padding:12px 16px;'>
+                            <div style='font-size:13px;font-weight:700;color:#1C3A27;
+                                margin-bottom:2px;border-bottom:1px solid #eee;
+                                padding-bottom:5px;'>{row['territoire']}</div>
+                            <div style='font-size:9px;color:#999;margin-bottom:8px;'>
+                                Période {periode}</div>
+                            <div style='display:grid;grid-template-columns:1fr 1fr;gap:8px;'>
+                                <div style='text-align:center;'>
+                                    <div style='font-size:9px;font-weight:700;color:#666;
+                                        text-transform:uppercase;'>Sol artificialisé</div>
+                                    <div style='font-size:18px;font-weight:800;color:#E65100;'>
+                                        {row['pct_artif_2']:.1f}%</div>
+                                    <div style='font-size:10px;color:#999;'>
+                                        {row['surface_artif_2_ha']:,.0f} ha</div>
+                                </div>
+                                <div style='text-align:center;'>
+                                    <div style='font-size:9px;font-weight:700;color:#666;
+                                        text-transform:uppercase;'>Espace naturel/agri.</div>
+                                    <div style='font-size:18px;font-weight:800;color:#2E7D32;'>
+                                        {row['pct_naturel']:.1f}%</div>
+                                    <div style='font-size:10px;color:#999;'>
+                                        {row['surf_naturel_ha']:,.0f} ha</div>
+                                </div>
+                                <div style='text-align:center;'>
+                                    <div style='font-size:9px;font-weight:700;color:#666;
+                                        text-transform:uppercase;'>Surface consommée</div>
+                                    <div style='font-size:15px;font-weight:800;
+                                        color:{evol_color};'>
+                                        {evol_sign}{row['evol_ha']:.1f} ha</div>
+                                    <div style='font-size:10px;color:#999;'>sur 3 ans</div>
+                                </div>
+                                <div style='text-align:center;'>
+                                    <div style='font-size:9px;font-weight:700;color:#666;
+                                        text-transform:uppercase;'>Rythme annuel</div>
+                                    <div style='font-size:15px;font-weight:800;color:#7B1FA2;'>
+                                        {row['rythme_ha_an']:.1f} ha/an</div>
+                                    <div style='font-size:10px;color:#999;'>objectif : −50 % d'ici 2031</div>
+                                </div>
+                            </div>
+                            <div style='margin-top:8px;font-size:9px;color:#aaa;text-align:center;'>
+                                Surface totale métropole : {row['commune_surface_ha']:,.0f} ha
+                            </div>
+                        </div>""", unsafe_allow_html=True)
+
+                st.markdown("---")
+
+                # ── Graphique 1 : Surfaces absolues empilées (horizontal) ─────
+                st.subheader(
+                    "Surfaces absolues par métropole (ha)",
+                    help=(
+                        "Décomposition de la surface totale de chaque métropole en sol artificialisé (couleur du territoire) et espace naturel/agricole/forestier (vert clair). "
+                        "Permet de comparer les tailles absolues, pas seulement les pourcentages : une métropole avec un faible taux mais un grand territoire peut avoir plus d'hectares artificialisés en valeur absolue qu'une plus petite métropole plus dense."
+                    ),
+                )
+                df_surf = df_agg.sort_values("commune_surface_ha", ascending=True)
+                fig_surf = go.Figure()
+                fig_surf.add_trace(go.Bar(
+                    y=df_surf["territoire"],
+                    x=df_surf["surface_artif_2_ha"],
+                    name="Sol artificialisé",
+                    orientation="h",
+                    marker=dict(
+                        color=[COULEURS.get(t, "#888888") for t in df_surf["territoire"]],
+                    ),
+                    text=df_surf["surface_artif_2_ha"].apply(
+                        lambda v: f"{v:,.0f} ha"
+                    ),
+                    textposition="inside",
+                    textfont=dict(color="white", size=9, family="Sora"),
+                    hovertemplate=(
+                        "<b>%{y}</b><br>Artificialisé : %{x:,.0f} ha<extra></extra>"
+                    ),
+                ))
+                fig_surf.add_trace(go.Bar(
+                    y=df_surf["territoire"],
+                    x=df_surf["surf_naturel_ha"],
+                    name="Naturel / Agricole / Forestier",
+                    orientation="h",
+                    marker_color="#B7E4C7",
+                    text=df_surf["surf_naturel_ha"].apply(
+                        lambda v: f"{v:,.0f} ha"
+                    ),
+                    textposition="inside",
+                    textfont=dict(color="#1B4332", size=9, family="Sora"),
+                    hovertemplate=(
+                        "<b>%{y}</b><br>Naturel : %{x:,.0f} ha<extra></extra>"
+                    ),
+                ))
+                fig_surf.update_layout(
+                    barmode="stack",
+                    height=130 + n_targets * 45,
+                    margin=dict(t=10, b=10, l=10, r=10),
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Sora",
+                    legend=dict(
+                        orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0,
+                    ),
+                    xaxis=dict(title="Surface (ha)", gridcolor="#E8F5EE"),
+                    yaxis=dict(title=""),
+                )
+                apply_grenoble_hatch(fig_surf, active=True)
+                st.plotly_chart(style(fig_surf), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ce graphique ?"):
+                    st.write(
+                        "Les barres empilées montrent la surface totale de chaque métropole décomposée en sol artificialisé et espace naturel/agricole/forestier (vert clair). "
+                    )
+
+                st.markdown("---")
+
+                # ── Graphique 2 : Ha consommés + Rythme annuel ────────────────
+                st.subheader(
+                    "Consommation d'espace sur la période",
+                    help=(
+                        "Surface nette artificialisée sur les 3 ans d'observation (ha), et rythme annuel moyen (ha/an). "
+                        "L'objectif ZAN (loi Climat et Résilience 2021) impose à chaque territoire de réduire son rythme de consommation de 50 % d'ici 2031."
+                    ),
+                )
+                gc1, gc2 = st.columns(2)
+
+                with gc1:
+                    st.markdown(
+                        "##### Hectares consommés sur 3 ans",
+                        help=(
+                            "Surface nette artificialisée sur la période d'observation. "
+                        ),
+                    )
+                    df_evol = df_agg.sort_values("evol_ha", ascending=True)
+                    # Couleurs du territoire (pas rouge/bleu selon signe)
+                    fig_evol_ha = go.Figure()
+                    for _, row in df_evol.iterrows():
+                        fig_evol_ha.add_trace(go.Bar(
+                            y=[row["territoire"]],
+                            x=[row["evol_ha"]],
+                            orientation="h",
+                            name=row["territoire"],
+                            marker=dict(color=COULEURS.get(row["territoire"], "#888888")),
+                            showlegend=False,
+                            text=[f"{'+'if row['evol_ha']>=0 else ''}{row['evol_ha']:.1f} ha"],
+                            textposition="outside",
+                            cliponaxis=False,
+                            hovertemplate=(
+                                f"<b>{row['territoire']}</b><br>"
+                                f"Consommé : {row['evol_ha']:.1f} ha<extra></extra>"
+                            ),
+                        ))
+                    fig_evol_ha.add_vline(x=0, line_color="#999", line_width=1)
+                    apply_grenoble_hatch(fig_evol_ha, active=True)
+                    fig_evol_ha.update_layout(
+                        height=130 + n_targets * 45,
+                        margin=dict(t=10, b=10, l=10, r=80),
+                        paper_bgcolor="rgba(0,0,0,0)",
+                        plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora",
+                        xaxis=dict(title="Ha consommés (3 ans)", gridcolor="#E8F5EE"),
+                        yaxis=dict(title=""),
+                    )
+                    st.plotly_chart(style(fig_evol_ha), use_container_width=True)
+
+                with gc2:
+                    st.markdown(
+                        "##### Rythme annuel de consommation (ha/an)",
+                        help=(
+                            "Surface consommée en moyenne chaque année = ha sur 3 ans ÷ 3. "
+                        ),
+                    )
+                    df_rythme = df_agg.sort_values("rythme_ha_an", ascending=True)
+                    fig_rythme = go.Figure()
+                    for _, row in df_rythme.iterrows():
+                        fig_rythme.add_trace(go.Bar(
+                            y=[row["territoire"]],
+                            x=[row["rythme_ha_an"]],
+                            orientation="h",
+                            name=row["territoire"],
+                            marker=dict(color=COULEURS.get(row["territoire"], "#888888")),
+                            showlegend=False,
+                            text=[f"{row['rythme_ha_an']:.1f} ha/an"],
+                            textposition="outside",
+                            cliponaxis=False,
+                            hovertemplate=(
+                                f"<b>{row['territoire']}</b><br>"
+                                f"Rythme : {row['rythme_ha_an']:.1f} ha/an<extra></extra>"
+                            ),
+                        ))
+                    apply_grenoble_hatch(fig_rythme, active=True)
+                    fig_rythme.update_layout(
+                        height=130 + n_targets * 45,
+                        margin=dict(t=10, b=10, l=10, r=80),
+                        paper_bgcolor="rgba(0,0,0,0)",
+                        plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora",
+                        xaxis=dict(title="Ha/an", gridcolor="#E8F5EE"),
+                        yaxis=dict(title=""),
+                    )
+                    st.plotly_chart(style(fig_rythme), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ces graphiques ?"):
+                    st.write(
+                        "**Ha consommés** : surface nette gagnée par l'artificialisation sur les 3 ans. "
+                        "**Rythme annuel** : ha consommés ÷ 3 ans. "
+                    )
+
+                st.markdown("---")
+
+                # ── Graphique 3 : Trajectoire slope chart ─────────────────────
+                st.subheader(
+                    "Trajectoire du taux d'artificialisation",
+                    help=(
+                        "Évolution du taux d'artificialisation entre le premier et le second millésime d'observation (intervalle : 3 ans). "
+                        "Une pente ascendante marque une poursuite de l'artificialisation. Les millésimes varient selon les territoires - l'axe X est indicatif, non comparatif."
+                    ),
+                )
+                fig_traj = go.Figure()
+                for i, row in df_agg.iterrows():
+                    is_g = row["territoire"] == "Grenoble"
+                    fig_traj.add_trace(go.Scatter(
+                        x=[str(int(row["millesime_1"])), str(int(row["millesime_2"]))],
+                        y=[row["pct_artif_1"], row["pct_artif_2"]],
+                        mode="lines+markers+text",
+                        name=row["territoire"],
+                        line=dict(
+                            color="#FF584D" if is_g else bar_colors[i], # Si métro de Grenoble en rouge sinon on garde les couleurs de base
+                            width=2,
+                            dash="dash" if is_g else "solid", # Si métro de Grenoble en pointillé sinon en trait plein
+                        ),
+                        marker=dict(
+                            size=10,
+                            color="#FF584D" if is_g else bar_colors[i],
+                        ),
+                        text=[
+                            f"  {row['pct_artif_1']:.1f}%",
+                            f"  {row['pct_artif_2']:.1f}%",
+                        ],
+                        textposition="middle right",
+                        textfont=dict(
+                            size=9,
+                            color="#FF584D" if is_g else bar_colors[i],
+                            family="Sora",
+                        ),
+                        hovertemplate=(
+                            f"<b>{row['territoire']}</b><br>"
+                            f"%{{x}} : %{{y:.2f}}%<extra></extra>"
+                        ),
+                    ))
+                fig_traj.update_layout(
+                    height=400, margin=dict(t=20, b=10, r=60),
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Sora",
+                    xaxis=dict(
+                        title="Millésime d'observation",
+                        showgrid=False, type="category",
+                    ),
+                    yaxis=dict(
+                        title="Taux d'artificialisation (%)",
+                        gridcolor="#E8F5EE",
+                    ),
+                    legend=dict(
+                        orientation="h", yanchor="bottom", y=1.02,
+                        xanchor="center", x=0.5, font_size=10,
+                    ),
+                )
+                st.plotly_chart(style(fig_traj), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ce graphique ?"):
+                    st.write(
+                        "Chaque ligne relie le taux d'artificialisation d'une métropole entre le premier et le second millésime (intervalle : 3 ans). "
+                        "La pente traduit l'intensité de la dynamique d'artificialisation. Grenoble apparaît en pointillé rouge pour la distinguer. "
+                        "Les évolutions sont généralement faibles (quelques dixièmes de %) sur 3 ans. Les millésimes diffèrent selon les territoires, l'axe X est indicatif, pas strictement comparable."
+                    )
+
+            # ══════════════════════════════════════════════════════════════════
+            # VUE COMMUNES (Grenoble-Alpes Métropole)
+            # ══════════════════════════════════════════════════════════════════
+            else:
+
+                # ── KPI par commune ───────────────────────────────────────────────
+
+                st.subheader("Indicateurs par commune")
+                kpi_cols_c = st.columns(min(n_targets, 4))    
+                for i, row in df_agg.iterrows():
+                    c          = bar_colors[i]
+                    evol_color = "#C62828" if row["evol_ha"] >= 0 else "#1565C0"
+                    evol_sign  = "+" if row["evol_ha"] >= 0 else ""
+                    periode    = f"{int(row['millesime_1'])} → {int(row['millesime_2'])}"
+                    with kpi_cols_c[i % min(n_targets, 4)]:
+                        st.markdown(f"""
+                        <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);
+                            border-left:6px solid {c};background:#fff;
+                            margin-bottom:12px;padding:12px 16px;'>
+                            <div style='font-size:13px;font-weight:700;color:#1C3A27;
+                                margin-bottom:2px;border-bottom:1px solid #eee;
+                                padding-bottom:5px;'>{row['territoire']}</div>
+                            <div style='font-size:9px;color:#999;margin-bottom:8px;'>
+                                Période {periode}</div>
+                            <div style='display:grid;grid-template-columns:1fr 1fr;gap:8px;'>
+                                <div style='text-align:center;'>
+                                    <div style='font-size:9px;font-weight:700;color:#666;
+                                        text-transform:uppercase;'>Sol artificialisé</div>
+                                    <div style='font-size:18px;font-weight:800;color:#E65100;'>
+                                        {row['pct_artif_2']:.1f}%</div>
+                                    <div style='font-size:10px;color:#999;'>
+                                        {row['surface_artif_2_ha']:,.0f} ha</div>
+                                </div>
+                                <div style='text-align:center;'>
+                                    <div style='font-size:9px;font-weight:700;color:#666;
+                                        text-transform:uppercase;'>Espace naturel/agri.</div>
+                                    <div style='font-size:18px;font-weight:800;color:#2E7D32;'>
+                                        {row['pct_naturel']:.1f}%</div>
+                                    <div style='font-size:10px;color:#999;'>
+                                        {row['surf_naturel_ha']:,.0f} ha</div>
+                                </div>
+                                <div style='text-align:center;'>
+                                    <div style='font-size:9px;font-weight:700;color:#666;
+                                        text-transform:uppercase;'>Surface consommée</div>
+                                    <div style='font-size:15px;font-weight:800;
+                                        color:{evol_color};'>
+                                        {evol_sign}{row['evol_ha']:.1f} ha</div>
+                                    <div style='font-size:10px;color:#999;'>sur 3 ans</div>
+                                </div>
+                                <div style='text-align:center;'>
+                                    <div style='font-size:9px;font-weight:700;color:#666;
+                                        text-transform:uppercase;'>Rythme annuel</div>
+                                    <div style='font-size:15px;font-weight:800;color:#7B1FA2;'>
+                                        {row['rythme_ha_an']:.1f} ha/an</div>
+                                    <div style='font-size:10px;color:#999;'>objectif : −50 % d'ici 2031</div>
+                                </div>
+                            </div>
+                            <div style='margin-top:8px;font-size:9px;color:#aaa;text-align:center;'>
+                                Surface totale commune : {row['commune_surface_ha']:,.0f} ha
+                            </div>
+                        </div>""", unsafe_allow_html=True)
+                st.markdown("---")
+
+                # ── Graphique C1 : Taux artif + Part naturelle ────────────────
+                gc1, gc2 = st.columns(2)
+
+                with gc1:
+                    st.subheader(
+                        "Taux d'artificialisation par commune (%)",
+                        help=(
+                            "Part du territoire communal couverte par des sols artificialisés au millésime le plus récent. "
+                            "Les communes très urbanisées (centres-villes, zones industrielles) dépassent souvent 50–70 %. "
+                            "Les communes périphériques restent en dessous de 20 %."
+                        ),
+                    )
+                    df_s1 = df_agg.sort_values("pct_artif_2", ascending=True)
+                    fig_c1 = px.bar(
+                        df_s1, x="pct_artif_2", y="territoire",
+                        orientation="h",
+                        color="territoire",
+                        color_discrete_sequence=PALETTE_COMMUNE,
+                        text=df_s1["pct_artif_2"].apply(lambda v: f"{v:.1f}%"),
+                        labels={"territoire": "", "pct_artif_2": "Taux (%)"},
+                        height=130 + n_targets * 35,
+                    )
+                    fig_c1.update_traces(
+                        textposition="outside",
+                        cliponaxis=False,
+                        hovertemplate=(
+                            "<b>%{y}</b><br>Artificialisé : %{text}<extra></extra>"
+                        ),
+                    )
+                    fig_c1.update_layout(
+                        showlegend=False,
+                        margin=dict(t=10, b=10, l=10, r=60),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora",
+                        xaxis=dict(title="Taux (%)", gridcolor="#E8F5EE", range=[0, 115]),
+                        yaxis=dict(title=""),
+                    )
+                    st.plotly_chart(style(fig_c1), use_container_width=True)
+
+                with gc2:
+                    st.subheader(
+                        "Part naturelle / agricole par commune (%)",
+                        help=(
+                            "Inverse du taux d'artificialisation : part du territoire couverte par des espaces naturels, agricoles ou forestiers (ENAF). "
+                            "Une commune périurbaine ou de grande superficie conserve généralement une part naturelle plus élevée."
+                        ),
+                    )
+                    df_s2 = df_agg.sort_values("pct_naturel", ascending=True)
+                    fig_c2 = px.bar(
+                        df_s2, x="pct_naturel", y="territoire",
+                        orientation="h",
+                        color="territoire",
+                        color_discrete_sequence=PALETTE_COMMUNE,
+                        text=df_s2["pct_naturel"].apply(lambda v: f"{v:.1f}%"),
+                        labels={"territoire": "", "pct_naturel": "Part naturelle (%)"},
+                        height=130 + n_targets * 35,
+                    )
+                    fig_c2.update_traces(
+                        textposition="outside",
+                        cliponaxis=False,
+                        marker_color="#52B788",
+                        hovertemplate=(
+                            "<b>%{y}</b><br>Naturel/Agri. : %{text}<extra></extra>"
+                        ),
+                    )
+                    fig_c2.update_layout(
+                        showlegend=False,
+                        margin=dict(t=10, b=10, l=10, r=60),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora",
+                        xaxis=dict(title="Part naturelle (%)", gridcolor="#E8F5EE",
+                                   range=[0, 115]),
+                        yaxis=dict(title=""),
+                    )
+                    st.plotly_chart(style(fig_c2), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ces graphiques ?"):
+                    st.write(
+                        "**Taux d'artificialisation** : part du territoire communal couverte par des sols artificialisés. Les communes-centres (Grenoble, Échirolles) sont très artificialisées.\n\n"
+                        "**Part naturelle** : espaces non artificialisés. Ces deux graphiques sont symétriques (naturel = 100 % − artificialisé) mais permettent de lire directement l'indicateur selon la question posée."
+                    )
+
+                st.markdown("---")
+
+                # ── Graphique C2 : Surfaces absolues + Ha consommés ───────────
+                gc3, gc4 = st.columns(2)
+
+                with gc3:
+                    st.subheader(
+                        "Surfaces absolues par commune (ha)",
+                        help=(
+                            "Décomposition de la surface totale de chaque commune en sol artificialisé et espace naturel/agricole/forestier. "
+                            "Permet de contextualiser les % : deux communes avec le même taux peuvent avoir des surfaces très différentes selon leur superficie."
+                        ),
+                    )
+                    df_s3 = df_agg.sort_values("commune_surface_ha", ascending=True)
+                    fig_c3 = go.Figure()
+                    fig_c3.add_trace(go.Bar(
+                        y=df_s3["territoire"],
+                        x=df_s3["surface_artif_2_ha"],
+                        name="Artificialisé",
+                        orientation="h",
+                        marker_color=PALETTE_COMMUNE[2],
+                        text=df_s3["surface_artif_2_ha"].apply(lambda v: f"{v:.0f}"),
+                        textposition="inside",
+                        textfont=dict(color="white", size=8, family="Sora"),
+                        hovertemplate=(
+                            "<b>%{y}</b><br>Artificialisé : %{x:.0f} ha<extra></extra>"
+                        ),
+                    ))
+                    fig_c3.add_trace(go.Bar(
+                        y=df_s3["territoire"],
+                        x=df_s3["surf_naturel_ha"],
+                        name="Naturel / Agricole / Forestier",
+                        orientation="h",
+                        marker_color="#B7E4C7",
+                        text=df_s3["surf_naturel_ha"].apply(lambda v: f"{v:.0f}"),
+                        textposition="inside",
+                        textfont=dict(color="#1B4332", size=8, family="Sora"),
+                        hovertemplate=(
+                            "<b>%{y}</b><br>Naturel : %{x:.0f} ha<extra></extra>"
+                        ),
+                    ))
+                    fig_c3.update_layout(
+                        barmode="stack",
+                        height=130 + n_targets * 35,
+                        margin=dict(t=10, b=10, l=10, r=10),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora",
+                        legend=dict(
+                            orientation="h", y=1.05, x=0, font_size=9,
+                        ),
+                        xaxis=dict(title="Surface (ha)", gridcolor="#E8F5EE"),
+                        yaxis=dict(title=""),
+                    )
+                    st.plotly_chart(style(fig_c3), use_container_width=True)
+
+                with gc4:
+                    st.subheader(
+                        "Surface consommée sur la période (ha)",
+                        help=(
+                            "Hectares nets artificialisés sur les 3 ans d'observation. "
+                            "Une valeur négative indique une renaturation nette (démolition, "
+                            "végétalisation), cas très rare mais possible (Gières ou Vizille par exemple)."
+                        ),
+                    )
+                    df_s4 = df_agg.sort_values("evol_ha", ascending=True)
+                    fig_c4 = px.bar(
+                        df_s4, x="evol_ha", y="territoire",
+                        orientation="h",
+                        color="territoire",
+                        color_discrete_sequence=PALETTE_COMMUNE,
+                        text=df_s4["evol_ha"].apply(
+                            lambda v: f"{'+'if v>=0 else ''}{v:.2f} ha"
+                        ),
+                        labels={"territoire": "", "evol_ha": "Ha (3 ans)"},
+                        height=130 + n_targets * 35,
+                    )
+                    fig_c4.update_traces(
+                        textposition="outside",
+                        cliponaxis=False,
+                        hovertemplate=(
+                            "<b>%{y}</b><br>Consommé : %{text}<extra></extra>"
+                        ),
+                    )
+                    fig_c4.add_vline(x=0, line_color="#999", line_width=1)
+                    fig_c4.update_layout(
+                        showlegend=False,
+                        margin=dict(t=10, b=10, l=10, r=80),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora",
+                        xaxis=dict(title="Ha (3 ans)", gridcolor="#E8F5EE"),
+                        yaxis=dict(title=""),
+                    )
+                    st.plotly_chart(style(fig_c4), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ces graphiques ?"):
+                    st.write(
+                        "**Surfaces absolues** : les barres empilées montrant les hectares artificialisés et naturels de chaque commune. "
+                        "Contextualise les taux : une commune avec 60 % d'artificialisation mais une petite superficie impacte moins le territoire qu'une grande commune à 30 %.\n\n"
+                        "**Surface consommée** : variation nette en hectares sur 3 ans. "
+                        "Pour les communes, les valeurs sont souvent faibles (quelques ha) mais révèlent les dynamiques locales. Une valeur négative (bleu) indique une renaturation rare mais possible (Gières ou Vizille par exemple)."
+                    )
+
+                # ── Graphique C3 : Classement si > 3 communes ─────────────────
+                if n_targets > 3:
+                    st.markdown("---")
+                    st.subheader(
+                        "Classement des communes par rythme de consommation (ha/an)",
+                        help=(
+                            "Communes triées par rythme annuel de consommation d'espace (ha/an = ha sur 3 ans ÷ 3). "
+                            "Permet de repérer rapidement les communes les plus actives en matière d'artificialisation au sein de la métropole grenobloise."
+                        ),
+                    )
+                    df_rank = df_agg.sort_values("rythme_ha_an", ascending=True)
+                    fig_rank = px.bar(
+                        df_rank, x="rythme_ha_an", y="territoire",
+                        orientation="h",
+                        color="territoire",
+                        color_discrete_sequence=PALETTE_COMMUNE,
+                        text=df_rank["rythme_ha_an"].apply(lambda v: f"{v:.2f} ha/an"),
+                        labels={"territoire": "", "rythme_ha_an": "Ha/an"},
+                        height=130 + n_targets * 30,
+                    )
+                    fig_rank.update_traces(
+                        textposition="outside",
+                        cliponaxis=False,
+                        hovertemplate=(
+                            "<b>%{y}</b><br>Rythme : %{text}<extra></extra>"
+                        ),
+                    )
+                    fig_rank.update_layout(
+                        showlegend=False,
+                        margin=dict(t=10, b=10, l=10, r=80),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                        font_family="Sora",
+                        xaxis=dict(title="Rythme annuel (ha/an)", gridcolor="#E8F5EE"),
+                        yaxis=dict(title=""),
+                    )
+                    st.plotly_chart(style(fig_rank), use_container_width=True)
+
+    # ==============================================================================
+    # ONGLET 2 - QUALITÉ DE L'AIR
+    # ==============================================================================
+    # Données journalières (prévision J / J+1 / J+2), pas de série historique
     with tab_env2:
-        st.markdown('<div class="section-header">Indice de canopée et accès à la nature</div>', unsafe_allow_html=True)
-        
-        # Bandeau de filtres haut de page synchronisés
-        st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
-        filter_bar("Filtres - Espaces verts")
+        if df_air is None:
+            st.info("📂 Fichier `ind_atmo_clean.csv` introuvable.")
+        else:
+            # ── Encart Source ──────────────────────────────────────────────
+            st.markdown("""
+            <div style='background-color: #f1f8f5; padding: 10px 15px; border-radius: 10px; border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 0.85em;'>
+                <strong>Source :</strong> Fédération Atmo France (réseau des AASQA, agréées par le Ministère de la Transition écologique) -
+                <a href='https://www.data.gouv.fr/datasets/indice-de-la-qualite-de-lair-quotidien-par-commune-indice-atmo' target='_blank' style='color: #1C3A27;'>Accéder aux données</a><br>
+                Indice ATMO réglementaire calculé à partir de 5 polluants (NO₂, O₃, PM10, PM2.5, SO₂) : la valeur retenue
+                pour chaque polluant est la plus défavorable des prévisions du jour.<br>
+                <em>⚠️ Couverture actuelle limitée à 3 métropoles : Grenoble, Rouen et Saint-Étienne (Rennes et Montpellier non disponibles dans ce flux).</em>
+            </div>""", unsafe_allow_html=True)
+
+            # ─────────────────────────────────────────────────────────────
+            # CONSTANTES & PALETTES
+            # ─────────────────────────────────────────────────────────────
+            # Ordre officiel de sévérité de l'indice ATMO (du meilleur au pire)
+            QUALITE_ORDER = ["Bon", "Moyen", "Dégradé", "Mauvais", "Très mauvais", "Extrêmement mauvais"]
+
+            # Couleurs officielles ATMO récupérées directement depuis les données
+            # (colonne coul_qual) plutôt que recodées à la main : garantit la
+            # cohérence avec le code couleur réglementaire national.
+            QUALITE_COULEURS = (
+                df_air.drop_duplicates("lib_qual")
+                .set_index("lib_qual")["coul_qual"].to_dict()
+            )
+
+            # Sous-indices polluants : code technique -> libellé lisible
+            POLLUANTS = {
+                "code_no2":  "NO₂ (dioxyde d'azote)",
+                "code_o3":   "O₃ (ozone)",
+                "code_pm10": "PM10 (particules < 10µm)",
+                "code_pm25": "PM2.5 (particules < 2.5µm)",
+                "code_so2":  "SO₂ (dioxyde de soufre)",
+            }
+
+            # ─────────────────────────────────────────────────────────────
+            # FONCTIONS DE CALCUL (pures, partagées entre les deux vues)
+            # ─────────────────────────────────────────────────────────────
+            def get_quality_distribution(df_sub):
+                """Répartition (%) des communes par catégorie de qualité, sur les catégories réellement présentes."""
+                n = len(df_sub)
+                if n == 0:
+                    return pd.DataFrame(columns=["Catégorie", "Part (%)", "Nombre"])
+                counts = df_sub["lib_qual"].value_counts()
+                cats_presentes = [c for c in QUALITE_ORDER if c in counts.index]
+                return pd.DataFrame({
+                    "Catégorie": cats_presentes,
+                    "Part (%)": [counts[c] / n * 100 for c in cats_presentes],
+                    "Nombre": [counts[c] for c in cats_presentes],
+                })
+
+            def get_kpi_air(df_sub):
+                """Indicateurs synthétiques pour la carte KPI d'un territoire. Retourne None si aucune donnée."""
+                n = len(df_sub)
+                if n == 0:
+                    return None
+                dominante = df_sub["lib_qual"].mode().iloc[0]
+                pct_degrade = (df_sub["lib_qual"].isin(["Dégradé", "Mauvais", "Très mauvais", "Extrêmement mauvais"]).sum() / n * 100)
+                return {
+                    "n_communes": n,
+                    "dominante": dominante,
+                    "couleur_dominante": QUALITE_COULEURS.get(dominante, "#888"),
+                    "pct_degrade": pct_degrade,
+                }
+
+            def get_pollutant_scores(df_sub):
+                """Score moyen (1=Bon ... 6=Extrêmement mauvais) par polluant pour un territoire. None si vide."""
+                if df_sub.empty:
+                    return None
+                return {label: df_sub[code].mean() for code, label in POLLUANTS.items()}
+
+            def render_kpi_card_air(label, kpis, border_color):
+                """Carte KPI HTML, identique au style des autres onglets."""
+                if kpis is None:
+                    st.markdown(f"""
+                    <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);
+                        border-left:6px solid {border_color}; background:#fff;
+                        margin-bottom:12px; padding:12px 16px;min-height:100px;
+                        display:flex;flex-direction:column;justify-content:center;'>
+                        <div style='font-size:13px;font-weight:700;color:#1C3A27;margin-bottom:8px;'>{label}</div>
+                        <div style='font-size:12px;color:#888;'>Aucune donnée disponible</div>
+                    </div>""", unsafe_allow_html=True)
+                    return
+                st.markdown(f"""
+                <div style='border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08); border-left:6px solid {border_color}; background:#fff; margin-bottom:12px; padding:12px 16px;'>
+                    <div style='font-size:13px;font-weight:700;color:#1C3A27;margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:5px;'>{label}</div>
+                    <div style='display:grid;grid-template-columns:1fr 1fr;gap:6px;'>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Communes</div>
+                            <div style='font-size:15px;font-weight:800;color:#555;'>{kpis['n_communes']}</div>
+                        </div>
+                        <div style='text-align:center;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Qualité dominante</div>
+                            <div style='font-size:13px;font-weight:800;color:{kpis["couleur_dominante"]};'>{kpis['dominante']}</div>
+                        </div>
+                        <div style='text-align:center;grid-column:span 2;'>
+                            <div style='font-size:9px;font-weight:700;color:#666;text-transform:uppercase;'>Communes en air dégradé ou pire</div>
+                            <div style='font-size:15px;font-weight:800;color:#C62828;'>{kpis['pct_degrade']:.2f}%</div>
+                        </div>
+                    </div>
+                </div>""", unsafe_allow_html=True)
+
+            # ─────────────────────────────────────────────────────────────
+            # BANDEAU FILTRES
+            # ─────────────────────────────────────────────────────────────
+            with st.container():
+                filter_bar("Filtres - Qualité de l'air")
+                fa1, fa2 = st.columns([1, 3])
+                with fa1:
+                    filter_row_label("Niveau géographique")
+                with fa2:
+                    mode_air = st.radio(
+                        "",
+                        ["Comparaison Métropoles", "Comparaison communes Grenoble-Alpes Métropole"],
+                        key="air_mode", horizontal=True, label_visibility="collapsed",
+                    )
+
+                # Filtre aligné sur les autres onglets : les 5 métropoles sont
+                # proposées et la sélection est partagée entre onglets
+                # (shared_default_demo / sync_metros_demo), même si seules
+                # Grenoble, Rouen et Saint-Étienne ont des données dans ce flux.
+                if mode_air == "Comparaison Métropoles":
+                    sel_metros_air = st.multiselect(
+                        "Métropoles à comparer", TOUTES, default=shared_default_demo(TOUTES),
+                        key="air_metros", on_change=sync_metros_demo, args=("air_metros",),
+                        help="Seules Grenoble, Rouen et Saint-Étienne disposent de données de qualité de l'air dans ce flux.",
+                    )
+                    targets_air = sel_metros_air
+                else:
+                    communes_dispo = sorted(df_air[df_air["metropole"] == "Grenoble"]["nom_commune"].unique().tolist())
+                    sel_communes_air = st.multiselect(
+                        "Communes de Grenoble-Alpes Métropole", communes_dispo,
+                        default=shared_default_communes_demo(communes_dispo), key="air_communes",
+                        on_change=sync_communes_demo, args=("air_communes",),
+                    )
+                    targets_air = sel_communes_air
+
+                dates_dispo = sorted(df_air["date_ech"].unique())
+                labels_jours = {0: "Aujourd'hui (J)", 1: "Demain (J+1)", 2: "Après-demain (J+2)"}
+                date_labels = {d: f"{labels_jours.get(i, f'J+{i}')} - {d.strftime('%d/%m/%Y')}" for i, d in enumerate(dates_dispo)}
+                date_air = st.selectbox(
+                    "Jour de prévision", dates_dispo, format_func=lambda d: date_labels[d],
+                    index=0, key="an_air",
+                    help="L'indice ATMO est une prévision journalière (J, J+1, J+2) : pas de série historique sur ce flux.",
+                )
+
+            st.markdown("---")
+
+            if not targets_air:
+                st.warning("Sélectionnez au moins un territoire.")
+                st.stop()
+
+            df_jour = df_air[df_air["date_ech"] == date_air]
+
+            # ═════════════════════════════════════════════════════════════
+            # VUE MÉTROPOLES
+            # ═════════════════════════════════════════════════════════════
+            if mode_air == "Comparaison Métropoles":
+
+                bar_colors = [COULEURS.get(t, "#888888") for t in targets_air]
+                color_by_target = dict(zip(targets_air, bar_colors))
+                greno_vrect = None
+                if "Grenoble" in targets_air:
+                    g_pos = targets_air.index("Grenoble")
+                    greno_vrect = dict(
+                        x0=g_pos - 0.45, x1=g_pos + 0.45,
+                        fillcolor="rgba(255,88,77,0.10)",
+                        line_color="#FF584D", line_width=1.5,
+                        line_dash="dash", layer="below",
+                    )
+
+                # Territoires avec / sans données dans ce flux Atmo
+                entities_with_data = [t for t in targets_air if not df_jour[df_jour["metropole"] == t].empty]
+                entities_no_data   = [t for t in targets_air if t not in entities_with_data]
+
+                # ── KPI ──────────────────────────────────────────────────
+                st.subheader(
+                    f"Indicateurs de qualité de l'air - {date_labels[date_air]}",
+                    help=(
+                        "**Qualité dominante** : catégorie ATMO la plus fréquente parmi les communes du territoire.\n\n"
+                        "**Communes en air dégradé ou pire** : part des communes classées Dégradé, Mauvais, "
+                        "Très mauvais ou Extrêmement mauvais (donc hors Bon/Moyen)."
+                    ),
+                )
+                kpi_cols = st.columns(len(targets_air))
+                for i, t in enumerate(targets_air):
+                    kpis_t = get_kpi_air(df_jour[df_jour["metropole"] == t])
+                    with kpi_cols[i]:
+                        render_kpi_card_air(t, kpis_t, border_color=bar_colors[i])
+
+                if entities_no_data:
+                    st.caption(
+                        "ℹ️ Aucune donnée de qualité de l'air disponible (flux Atmo non couvert) pour : "
+                        + ", ".join(entities_no_data)
+                    )
+
+                if not entities_with_data:
+                    st.warning("Aucune donnée de qualité de l'air disponible pour cette sélection.")
+                    st.stop()
+
+                st.markdown("---")
+
+                # ── RÉPARTITION + ÉVOLUTION ─────────────────────────────
+                gc1, gc2 = st.columns(2)
+
+                with gc1:
+                    st.subheader(
+                        "Répartition des communes par catégorie",
+                        help=(
+                            "Part des communes de chaque territoire classées dans chaque catégorie ATMO "
+                            f"(base 100%), pour le jour sélectionné ({date_labels[date_air]}). "
+                            "Couleurs officielles ATMO."
+                        ),
+                    )
+                    rows_dist = []
+                    for t in entities_with_data:
+                        dist_t = get_quality_distribution(df_jour[df_jour["metropole"] == t])
+                        dist_t["Territoire"] = t
+                        rows_dist.append(dist_t)
+                    df_dist = pd.concat(rows_dist, ignore_index=True) if rows_dist else pd.DataFrame()
+
+                    if not df_dist.empty:
+                        cats_order = [c for c in QUALITE_ORDER if c in df_dist["Catégorie"].unique()]
+                        fig_dist = px.bar(
+                            df_dist, x="Territoire", y="Part (%)", color="Catégorie",
+                            barmode="stack", text_auto=".2f",
+                            color_discrete_map=QUALITE_COULEURS,
+                            category_orders={"Catégorie": cats_order}, height=380,
+                        )
+                        fig_dist.update_traces(
+                            textposition="inside", textfont_size=9,
+                            hovertemplate="<b>%{x}</b><br>%{fullData.name} : %{y:.2f}%<extra></extra>",
+                        )
+                        if greno_vrect:
+                            fig_dist.add_vrect(**greno_vrect)
+                        fig_dist.update_layout(
+                            legend=dict(orientation="h", y=1.18, title=""),
+                            yaxis_title="Part des communes (%)", xaxis_title="", margin=dict(t=20),
+                        )
+                        st.plotly_chart(style(fig_dist), use_container_width=True)
+
+                with gc2:
+                    st.subheader(
+                        "Évolution sur les 3 jours de prévision",
+                        help=(
+                            "Part des communes en air dégradé ou pire (Dégradé, Mauvais, Très mauvais, "
+                            "Extrêmement mauvais) pour chacun des 3 jours de prévision disponibles "
+                            "(J, J+1, J+2). Ce graphique reste indépendant du sélecteur de jour ci-dessus."
+                        ),
+                    )
+                    fig_evo = go.Figure()
+                    for t in entities_with_data:
+                        y_vals = []
+                        for d in dates_dispo:
+                            df_td = df_air[(df_air["metropole"] == t) & (df_air["date_ech"] == d)]
+                            kpis_td = get_kpi_air(df_td)
+                            y_vals.append(kpis_td["pct_degrade"] if kpis_td else None)
+                        is_greno = (t == "Grenoble")
+                        fig_evo.add_trace(go.Scatter(
+                            x=[date_labels[d].split(" - ")[0] for d in dates_dispo], y=y_vals,
+                            mode="lines+markers", name=t,
+                            line=dict(color=color_by_target[t], width=3.5 if is_greno else 2,
+                                    dash="dash" if is_greno else "solid"),
+                            marker=dict(size=11 if is_greno else 8,
+                                        symbol="diamond" if is_greno else "circle",
+                                        line=dict(color="#FF584D", width=2) if is_greno else dict(width=0)),
+                            hovertemplate=f"<b>{t}</b><br>%{{x}} : %{{y:.2f}}%<extra></extra>",
+                        ))
+                    fig_evo.update_layout(
+                        height=380, margin=dict(t=20, b=10),
+                        legend=dict(orientation="h", y=1.18, title="", font_size=10),
+                        xaxis=dict(title=""),
+                        yaxis=dict(title="Communes en air dégradé ou pire (%)", gridcolor="#eee"),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    )
+                    st.plotly_chart(style(fig_evo), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ces deux graphiques ?"):
+                    st.write(
+                        "**Répartition par catégorie** : permet de comparer d'un coup d'œil la proportion de "
+                        "communes touchées par une pollution significative dans chaque territoire, le même jour. "
+                        "Une barre majoritairement jaune/rouge indique un épisode de pollution généralisé sur "
+                        "le territoire plutôt que localisé.\n\n"
+                        "**Évolution sur 3 jours** : suit la tendance à court terme. Une courbe montante "
+                        "annonce une dégradation prévue (souvent liée à un épisode anticyclonique stable qui "
+                        "favorise l'accumulation des polluants), une courbe descendante annonce une amélioration "
+                        "(typiquement après le passage d'un système pluvieux/venteux qui disperse la pollution). "
+                        "La ligne en tirets rouges identifie Grenoble."
+                    )
+
+                st.markdown("---")
+
+                # ── POLLUANT PRÉPONDÉRANT ───────────────────────────────
+                st.subheader(
+                    "Polluant prépondérant par territoire",
+                    help=(
+                        "Score moyen (1 = Bon à 6 = Extrêmement mauvais) de chaque polluant pour le jour "
+                        f"sélectionné ({date_labels[date_air]}). Le polluant avec le score le plus élevé est "
+                        "celui qui dégrade le plus l'indice global, puisque l'indice ATMO retient toujours le "
+                        "maximum des 5 sous-indices."
+                    ),
+                )
+                rows_poll = []
+                for t in entities_with_data:
+                    scores_t = get_pollutant_scores(df_jour[df_jour["metropole"] == t])
+                    if scores_t is None:
+                        continue
+                    for poll, score in scores_t.items():
+                        rows_poll.append({"Territoire": t, "Polluant": poll, "Score moyen": score})
+                df_poll = pd.DataFrame(rows_poll)
+
+                if not df_poll.empty:
+                    fig_poll = px.bar(
+                        df_poll, x="Polluant", y="Score moyen", color="Territoire",
+                        barmode="group", color_discrete_map=COULEURS, height=380,
+                    )
+                    fig_poll.update_traces(
+                        hovertemplate="<b>%{fullData.name}</b><br>%{x} : %{y:.2f}<extra></extra>",
+                    )
+                    for trace in fig_poll.data:
+                        if trace.name == "Grenoble":
+                            trace.marker.pattern = dict(shape="/", fgcolor="#FF584D", fillmode="overlay", solidity=0.3, size=18)
+                    fig_poll.update_layout(
+                        legend=dict(orientation="h", y=1.18, title=""),
+                        yaxis=dict(title="Score moyen (1=Bon, 6=Extrêmement mauvais)", range=[0, 6]),
+                        xaxis_title="", margin=dict(t=20),
+                    )
+                    st.plotly_chart(style(fig_poll), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ce graphique ?"):
+                    st.write(
+                        "Ce graphique décompose l'indice global par polluant, ce qui permet d'identifier la "
+                        "source de pollution dominante sur chaque territoire. **L'ozone (O₃)** est un polluant "
+                        "secondaire qui se forme par réaction photochimique sous l'effet du soleil et de la "
+                        "chaleur : il domine généralement en période estivale, y compris loin de toute source "
+                        "directe. **Le NO₂** est principalement émis par le trafic routier et concentré en zone "
+                        "urbaine dense. **Les particules PM10/PM2.5** proviennent du chauffage, du trafic et de "
+                        "l'agriculture, avec des pics fréquents en hiver. **Le SO₂**, d'origine essentiellement "
+                        "industrielle, reste généralement faible sur ces territoires. Les hachures rouges "
+                        "identifient Grenoble."
+                    )
+
+            # ═════════════════════════════════════════════════════════════
+            # VUE COMMUNES (Grenoble-Alpes Métropole)
+            # ═════════════════════════════════════════════════════════════
+            else:
+
+                n_comm = len(targets_air)
+                comm_palette = [PALETTE_COMMUNE[i % len(PALETTE_COMMUNE)] for i in range(n_comm)]
+
+                # ── KPI ──────────────────────────────────────────────────
+                st.subheader(
+                    f"Indicateurs de qualité de l'air - {date_labels[date_air]}",
+                    help=(
+                        "**Qualité dominante** : catégorie ATMO de la commune (une seule valeur par commune).\n\n"
+                        "**Communes en air dégradé ou pire** : ici, 0% ou 100% puisqu'il s'agit d'une commune "
+                        "unique - l'indicateur prend tout son sens dans la vue Métropoles."
+                    ),
+                )
+                kpi_cols = st.columns(n_comm)
+                for i, comm in enumerate(targets_air):
+                    kpis_c = get_kpi_air(df_jour[df_jour["nom_commune"] == comm])
+                    with kpi_cols[i]:
+                        render_kpi_card_air(comm, kpis_c, border_color=comm_palette[i])
+
+                st.markdown("---")
+
+                # ── RÉPARTITION + ÉVOLUTION ─────────────────────────────
+                gc1, gc2 = st.columns(2)
+
+                with gc1:
+                    st.subheader(
+                        "Catégorie de qualité par commune",
+                        help=(
+                            f"Catégorie ATMO de chaque commune sélectionnée pour le jour choisi "
+                            f"({date_labels[date_air]}). Couleurs officielles ATMO."
+                        ),
+                    )
+                    rows_cat_c = []
+                    for comm in targets_air:
+                        df_c = df_jour[df_jour["nom_commune"] == comm]
+                        if not df_c.empty:
+                            rows_cat_c.append({
+                                "Commune": comm,
+                                "Catégorie": df_c["lib_qual"].iloc[0],
+                                "Score": df_c["code_qual"].iloc[0],
+                            })
+                    df_cat_c = pd.DataFrame(rows_cat_c)
+
+                    if not df_cat_c.empty:
+                        fig_cat_c = px.bar(
+                            df_cat_c, x="Commune", y="Score", color="Catégorie",
+                            color_discrete_map=QUALITE_COULEURS, height=380,
+                            category_orders={"Catégorie": [c for c in QUALITE_ORDER if c in df_cat_c["Catégorie"].unique()]},
+                        )
+                        fig_cat_c.update_traces(
+                            hovertemplate="<b>%{x}</b><br>%{fullData.name} (score %{y})<extra></extra>",
+                        )
+                        fig_cat_c.update_layout(
+                            legend=dict(orientation="h", y=1.18, title=""),
+                            yaxis=dict(title="Score ATMO (1=Bon, 6=Extrêmement mauvais)", range=[0, 6]),
+                            xaxis_title="", xaxis_tickangle=-25, margin=dict(t=20),
+                        )
+                        st.plotly_chart(style(fig_cat_c), use_container_width=True)
+
+                with gc2:
+                    st.subheader(
+                        "Évolution sur les 3 jours de prévision",
+                        help=(
+                            "Score ATMO (1 = Bon à 6 = Extrêmement mauvais) de chaque commune pour chacun des "
+                            "3 jours de prévision disponibles (J, J+1, J+2). Indépendant du sélecteur de jour "
+                            "ci-dessus."
+                        ),
+                    )
+                    fig_evo_c = go.Figure()
+                    for i, comm in enumerate(targets_air):
+                        y_vals = []
+                        for d in dates_dispo:
+                            df_cd = df_air[(df_air["nom_commune"] == comm) & (df_air["date_ech"] == d)]
+                            y_vals.append(df_cd["code_qual"].iloc[0] if not df_cd.empty else None)
+                        fig_evo_c.add_trace(go.Scatter(
+                            x=[date_labels[d].split(" - ")[0] for d in dates_dispo], y=y_vals,
+                            mode="lines+markers", name=comm,
+                            line=dict(color=comm_palette[i], width=2),
+                            marker=dict(size=8),
+                            hovertemplate=f"<b>{comm}</b><br>%{{x}} : score %{{y}}<extra></extra>",
+                        ))
+                    fig_evo_c.update_layout(
+                        height=380, margin=dict(t=20, b=10),
+                        legend=dict(orientation="h", y=1.18, title="", font_size=10),
+                        xaxis=dict(title=""),
+                        yaxis=dict(title="Score ATMO (1=Bon, 6=Extrêmement mauvais)", range=[0, 6], gridcolor="#eee"),
+                        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    )
+                    st.plotly_chart(style(fig_evo_c), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ces deux graphiques ?"):
+                    st.write(
+                        "**Catégorie par commune** : permet de repérer les communes les plus exposées un jour "
+                        "donné, par exemple celles situées en fond de cuvette versus celles en altitude.\n\n"
+                        "**Évolution sur 3 jours** : une trajectoire commune à toutes les courbes (même direction, "
+                        "pentes similaires) indique un phénomène météorologique affectant l'ensemble du bassin "
+                        "grenoblois. Des trajectoires divergentes entre communes voisines signalent un effet "
+                        "très localisé (proximité d'un axe routier, micro-relief)."
+                    )
+
+                st.markdown("---")
+
+                # ── POLLUANT PRÉPONDÉRANT ───────────────────────────────
+                st.subheader(
+                    "Polluant prépondérant par commune",
+                    help=(
+                        "Score (1 = Bon à 6 = Extrêmement mauvais) de chaque polluant pour le jour sélectionné "
+                        f"({date_labels[date_air]}). Le polluant au score le plus élevé est celui qui détermine "
+                        "l'indice global de la commune (l'indice ATMO retient toujours le maximum des 5 sous-indices)."
+                    ),
+                )
+                rows_poll_c = []
+                for comm in targets_air:
+                    df_c = df_jour[df_jour["nom_commune"] == comm]
+                    if df_c.empty:
+                        continue
+                    for code, label in POLLUANTS.items():
+                        rows_poll_c.append({"Commune": comm, "Polluant": label, "Score": df_c[code].iloc[0]})
+                df_poll_c = pd.DataFrame(rows_poll_c)
+
+                if not df_poll_c.empty:
+                    fig_poll_c = px.bar(
+                        df_poll_c, x="Polluant", y="Score", color="Commune",
+                        barmode="group", color_discrete_sequence=comm_palette, height=380,
+                    )
+                    fig_poll_c.update_traces(
+                        hovertemplate="<b>%{fullData.name}</b><br>%{x} : %{y:.2f}<extra></extra>",
+                    )
+                    fig_poll_c.update_layout(
+                        legend=dict(orientation="h", y=1.18, title=""),
+                        yaxis=dict(title="Score (1=Bon, 6=Extrêmement mauvais)", range=[0, 6]),
+                        xaxis_title="", margin=dict(t=20),
+                    )
+                    st.plotly_chart(style(fig_poll_c), use_container_width=True)
+
+                with st.expander("💡 Comment interpréter ce graphique ?"):
+                    st.write(
+                        "Ce graphique décompose l'indice global par polluant pour chaque commune. **L'ozone "
+                        "(O₃)** domine généralement en été (réaction photochimique sous l'effet du soleil et de "
+                        "la chaleur), parfois plus marqué en altitude qu'en fond de vallée. **Le NO₂** reflète "
+                        "directement la densité du trafic routier local. **Les particules PM10/PM2.5** "
+                        "augmentent en hiver avec le chauffage, et stagnent davantage dans les communes "
+                        "encaissées de la cuvette grenobloise. Comparer les profils entre communes voisines "
+                        "aide à identifier si la pollution est plutôt liée au trafic, au chauffage ou à un "
+                        "phénomène régional (ozone)."
+                    )
+    
+    # ── Onglet 3 : Assainissement  ─────────────────────────────────────────────
+    with tab_env3:
+        filter_bar("Filtres - Assainissement")
         f_col3, f_col4 = st.columns(2)
         with f_col3:
             metros_verts = st.multiselect(
@@ -6225,11 +8038,7 @@ if vue == "Environnement":
         st.info("Données en cours de traitement. Intégrez vos analyses géographiques de végétation urbaine ici.")
 
     # ── Onglet 3 : Déchets & Transition ──────────────────────────────────────
-    with tab_env3:
-        st.markdown('<div class="section-header">Gestion des déchets et énergies renouvelables</div>', unsafe_allow_html=True)
-        
-        # Bandeau de filtres haut de page synchronisés
-        st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
+    with tab_env4:
         filter_bar("Filtres - Déchets & Transition")
         f_col5, f_col6 = st.columns(2)
         with f_col5:
