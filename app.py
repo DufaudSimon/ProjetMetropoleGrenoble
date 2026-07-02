@@ -596,6 +596,10 @@ def charger_filo():
     return df
 
 
+EAU_DIR = Path("environnement/data_clean")
+_METROS_EAU = {34: "Montpellier", 38: "Grenoble", 42: "Saint-Étienne", 76: "Rouen"}
+_POP_COL    = "Pop de l'entité de gestion sans double compte"
+
 @st.cache_data
 def charger_artificialisation():
     paths = [
@@ -643,6 +647,103 @@ def charger_qualite_air():
         df["date_ech"] = pd.to_datetime(df["date_ech"]).dt.date
     return df
 
+def _agg_eau(df: pd.DataFrame, ind_cols: list[str]) -> pd.DataFrame:
+    """
+    Filtre sur les 4 métropoles, convertit les colonnes numériques,
+    et agrège par métropole (moyenne pondérée par population desservie).
+    Saint-Étienne ayant plusieurs entités de gestion, l'agrégation est nécessaire.
+    """
+    df = df[df["DPT du siège de la coll."].isin(_METROS_EAU.keys())].copy()
+    df["metropole"] = df["DPT du siège de la coll."].map(_METROS_EAU)
+    df[_POP_COL] = pd.to_numeric(df.get(_POP_COL, pd.Series(0, index=df.index)),
+                                  errors="coerce").fillna(0)
+    avail = [c for c in ind_cols if c in df.columns]
+    for c in avail:
+        df[c] = pd.to_numeric(df[c].astype(str).str.replace(",", "."),
+                               errors="coerce")
+    rows = []
+    for metro, grp in df.groupby("metropole"):
+        row = {"metropole": metro, "population": int(grp[_POP_COL].sum())}
+        for c in avail:
+            valid = grp[[c, _POP_COL]].dropna(subset=[c])
+            if len(valid) > 0 and valid[_POP_COL].sum() > 0:
+                row[c] = (valid[c] * valid[_POP_COL]).sum() / valid[_POP_COL].sum()
+            else:
+                row[c] = np.nan
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+@st.cache_data
+def charger_eau():
+    """
+    Charge et agrège les 4 fichiers SISPEA 2020 pour les 4 métropoles disponibles.
+    Retourne (df_aep, df_ac, df_anc, df_tar) ou None si fichier absent.
+    """
+    def safe(path, ind_cols):
+        p = EAU_DIR / path
+        if not p.exists():
+            return None
+        return _agg_eau(pd.read_csv(p), ind_cols)
+
+    def safe_tar(path):
+        p = EAU_DIR / path
+        if not p.exists():
+            return None
+        df = pd.read_csv(p)
+        df = df[df["DPT du siège de la coll."].isin(_METROS_EAU.keys())].copy()
+        df["metropole"] = df["DPT du siège de la coll."].map(_METROS_EAU)
+        # Convertir toutes les colonnes numériques (prix avec virgule décimale)
+        for c in df.columns:
+            if c not in ["metropole", "Nom collectivité",
+                          "Nom de l'entité de gestion", "Type collectivité",
+                          "Statut", "Mode de gestion"]:
+                df[c] = pd.to_numeric(
+                    df[c].astype(str).str.replace(",", "."), errors="coerce"
+                )
+        return df
+
+    # ── Eau potable ──────────────────────────────────────────────────────────
+    IND_AEP = [
+        "D101.0",   # Abonnés desservis
+        "D102.0",   # Prix TTC eau potable à 120 m³ (€/m³)
+        "P103.2B",  # Conformité eau distribuée (% analyses conformes)
+        "P105.3",   # Pertes en réseau (m³/km/j)
+        "P108.3",   # Protection ressource : captages avec arrêté (%)
+        "P152.1",   # Taux de conformité microbiologique (%)
+        "VP.056",   # Volume mis en distribution (m³/an)
+        "VP.020",   # Rendement réseau (%)
+    ]
+    df_aep = safe("Eau_potable_2020-Entites_de_gestion.csv", IND_AEP)
+
+    # ── Assainissement collectif ──────────────────────────────────────────────
+    IND_AC = [
+        "D201.0",   # Abonnés assainissement collectif
+        "D202.0",   # Charge en DBO5 traitée (kg/j)
+        "P203.3",   # Taux de collecte des effluents (%)
+        "P204.3",   # Conformité des équipements d'épuration (%)
+        "P205.3",   # Conformité de la performance d'épuration (%)
+        "P206.3",   # Conformité des boues (%)
+        "P255.3",   # Taux de dépollution (% DBO5 éliminée)
+        "VP.268",   # Volume traité en station (m³/an)
+    ]
+    df_ac = safe("Assainissement_collectif_2020-Entites_de_gestion.csv", IND_AC)
+
+    # ── Assainissement non collectif ─────────────────────────────────────────
+    IND_ANC = [
+        "D301.0",   # Nb installations ANC recensées
+        "D302.0",   # Taux de conformité des installations ANC (%)
+        "P301.3",   # Taux de réhabilitation des installations ANC (%)
+        "VP.181",   # Population desservie par l'ANC
+        "VP.167",   # Nb installations contrôlées dans l'année
+        "VP.166",   # Nb installations ANC recensées non conformes
+    ]
+    df_anc = safe("Assainissement_noncollectif_2020-Entites_de_gestion.csv", IND_ANC)
+
+    # ── Tarif ────────────────────────────────────────────────────────────────
+    df_tar = safe_tar("Tarif_eau_2020-Detail_tarifaire.csv")
+
+    return df_aep, df_ac, df_anc, df_tar
+    
 # Supprime les accents, convertit le texte en minuscules et enlève les espaces en trop au début et à la fin.
 # Cela évite que l'application ne plante ou ignore une catégorie à cause d'une majuscule ou d'un accent oublié.
 # (ex: Ouvriers et ouvriers deviennent identiques).
@@ -735,6 +836,7 @@ df_filo    = charger_filo()
 df_res, df_prof, df_scol = charger_mobilites()
 df_artif = charger_artificialisation()
 df_air = charger_qualite_air()
+df_aep_eau, df_ac_eau, df_anc_eau, df_tar_eau = charger_eau()
 
 FILES_CSP = {
     2011: "demographie/data_clean/population_2554/Commune_2011_2554_sect_activite.xlsx",
@@ -6817,7 +6919,7 @@ if vue == "Environnement":
     tab_env1, tab_env2, tab_env3, tab_env4 = st.tabs([
         "🏗️  Artificialisation des sols",
         "🍃  Qualité de l'air",
-        "🌳  Espaces verts & Biodiversité",
+        "💧  Assainissement",
         "♻️  Déchets & Transition",
     ])
 
@@ -8037,7 +8139,7 @@ if vue == "Environnement":
         
         st.info("Données en cours de traitement. Intégrez vos analyses géographiques de végétation urbaine ici.")
 
-    # ── Onglet 3 : Déchets & Transition ──────────────────────────────────────
+    # ── Onglet 4 : Déchets & Transition ──────────────────────────────────────
     with tab_env4:
         filter_bar("Filtres - Déchets & Transition")
         f_col5, f_col6 = st.columns(2)
