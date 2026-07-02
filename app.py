@@ -8019,9 +8019,9 @@ if vue == "Environnement":
                         "phénomène régional (ozone)."
                     )
     
-    # ── Onglet 2 : Espaces verts ─────────────────────────────────────────────
+    # ── Onglet 3 : Assainissement  ─────────────────────────────────────────────
     with tab_env3:
-        filter_bar("Filtres - Espaces verts")
+        filter_bar("Filtres - Assainissement")
         f_col3, f_col4 = st.columns(2)
         with f_col3:
             metros_verts = st.multiselect(
