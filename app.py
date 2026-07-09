@@ -2709,8 +2709,6 @@ if vue == "Démographie":
                 interpret_int = (
                     f"**Volume interne** : nombre de {label_int.lower()}. "
                     f"Ces flux ne participent pas au solde net mais révèlent la cohésion fonctionnelle de la métropole.\n\n"
-                    f"**Autonomie territoriale** : part des flux internes par rapport aux flux vers l'extérieur. "
-                    f"Une métropole à 80 %+ d'autonomie est très auto-suffisante."
                 )
 
             elif "domicile" in theme_mob:
@@ -8127,373 +8125,681 @@ if vue == "Environnement":
     # ONGLET 3 — EAU ET ASSAINISSEMENT (AEP, AC, ANC, TARIFS)
     # ==============================================================================
 
-    with tab_env3:
+        with tab_env3:
 
-        st.markdown("""
-        <div style='background-color:#f1f8f5;padding:10px 15px;border-radius:10px;
-                    border-left:5px solid #1C3A27;margin-bottom:20px;font-size:0.85em;'>
-            <strong>Source :</strong> SISPEA — Système d'Information sur les Services Publics
-            d'Eau et d'Assainissement :
-            <a href='https://www.services.eaufrance.fr/pro/telechargement#donnees-services'
-            target='_blank' style='color:#1C3A27;'>Accéder aux données</a>
-            &nbsp;·&nbsp; Données 2020.<br><br>
-            <strong>Périmètre :</strong> comparaison des métropoles disposant de données SISPEA agrégées.<br><br>
-            <span style='color:#C62828;font-weight:700;'>Rennes Métropole non disponible :</span>
-            la compétence eau y est organisée via des syndicats intercommunaux dont les périmètres ne correspondent pas à la métropole.<br><br>
-            La ligne pointillée grise sur les graphiques représente la moyenne nationale française de référence ( datant de début janvier 2025) lorsqu'elle est disponible.
-        </div>""", unsafe_allow_html=True)
+            st.markdown("""
+            <div style='background-color:#f1f8f5;padding:10px 15px;border-radius:10px;
+                        border-left:5px solid #1C3A27;margin-bottom:20px;font-size:0.85em;'>
+                <strong>Source :</strong> SISPEA — Système d'Information sur les Services Publics
+                d'Eau et d'Assainissement :
+                <a href='https://www.services.eaufrance.fr/pro/telechargement#donnees-services'
+                target='_blank' style='color:#1C3A27;'>Accéder aux données</a>
+                &nbsp;·&nbsp; Données 2020.<br><br>
+                <strong>Périmètre :</strong> 4 métropoles disposant de données SISPEA agrégées au
+                niveau métropolitain. La ligne pointillée grise indique la moyenne nationale française
+                (source : SISPEA, janvier 2025) lorsqu'elle est disponible.<br><br>
+                <span style='color:#C62828;font-weight:700;'>⚠️ Rennes Métropole non disponible :</span>
+                la compétence eau y est organisée via des syndicats intercommunaux dont les périmètres
+                ne correspondent pas directement à la métropole.
+            </div>""", unsafe_allow_html=True)
 
-        # ── Filtres ────────────────────────────────────────────────────────────
-        with st.container():
-            filter_bar("Filtres - Eau & Assainissement")
-            fw1, fw2 = st.columns([1, 3])
-            with fw1:
-                filter_row_label("Thématique")
-            with fw2:
-                theme_eau = st.selectbox(
-                    "",
-                    ["💧 Eau potable (AEP)",
-                    "🚿 Assainissement collectif (AC)",
-                    "🏡 Assainissement non collectif (ANC)",
-                    "💶 Détail tarifaire"],
-                    key="env_eau_theme",
-                    label_visibility="collapsed",
-                )
-
-            METROS_EAU_4 = ["Grenoble", "Montpellier", "Saint-Étienne", "Rouen"]
-            sel_metros_eau = st.multiselect(
-                "Métropoles à comparer", METROS_EAU_4, default=METROS_EAU_4,
-                key="env_eau_metros",
-                help="Rennes Métropole n'est pas disponible dans SISPEA pour ces compétences.",
-            )
-            st.markdown('</div>', unsafe_allow_html=True)
-
-        st.markdown("---")
-
-        if not sel_metros_eau:
-            st.warning("Sélectionnez au moins une métropole.")
-            st.stop()
-            
-        # ── Avertissement spécifique pour Saint-Étienne ────────────────────────
-        if "Saint-Étienne" in sel_metros_eau:
-            st.warning("""
-            ⚠️ **Note sur les données de Saint-Étienne :** 
-            Contrairement aux autres métropoles de ce panel, la compétence eau n'y est pas totalement unifiée 
-            et compte de multiples entités de gestion dans la base SISPEA. Les valeurs présentées sont des moyennes. 
-            Pour certains indicateurs de performance (comme les délais d'intervention ou les taux de réclamation), 
-            les données peuvent être partielles, non renseignées par les petites communes, ou peu représentatives 
-            à l'échelle globale de la métropole.
-            """)
-
-        eau_colors = [COULEURS.get(m, "#888888") for m in sel_metros_eau]
-        n_eau = len(sel_metros_eau)
-
-        # ── Helpers Généraux ───────────────────────────────────────────────────
-        def get_val(df, metro, col):
-            """Récupère et moyenne proprement la valeur, même s'il y a plusieurs entités (ex: St-Etienne)."""
-            if df is None or col not in df.columns:
-                return np.nan
-            sub = df[df["metropole"] == metro].copy()
-            if sub.empty:
-                return np.nan
-            # Force la conversion numérique pour éviter les erreurs de type et ignore les NaN dans la moyenne
-            sub[col] = pd.to_numeric(sub[col].astype(str).str.replace(",", "."), errors="coerce")
-            val = sub[col].mean(skipna=True)
-            return float(val) if pd.notna(val) else np.nan
-
-        def get_val_tar(df, metro, col):
-            """Spécifique aux tarifs pour pondérer par la population si la colonne existe (Saint-Étienne)"""
-            sub = df[df["metropole"] == metro].copy()
-            if sub.empty or col not in sub.columns:
-                return np.nan
-            sub[col] = pd.to_numeric(sub[col].astype(str).str.replace(",", "."), errors="coerce")
-            pop_col_tar = "Pop de l'entité de gestion sans double compte"
-            if pop_col_tar in sub.columns:
-                sub[pop_col_tar] = pd.to_numeric(sub[pop_col_tar], errors="coerce").fillna(0)
-                valid = sub[[col, pop_col_tar]].dropna(subset=[col])
-                if len(valid) > 0:
-                    tot = valid[pop_col_tar].sum()
-                    return float((valid[col] * valid[pop_col_tar]).sum() / tot) if tot > 0 else float(valid[col].mean())
-            return float(sub[col].mean(skipna=True))
-
-        def fv(v, dec=1, suf=""):
-            if pd.isna(v):
-                return "N/D"
-            if dec == 0:
-                return f"{int(round(v)):,}".replace(",", "\u202f") + suf
-            return f"{v:.{dec}f}{suf}"
-
-        def chart_indicateur(code, metros, colors, df_data, meta_dict, val_func=get_val):
-            """Barres horizontales avec référence moyenne nationale et hachures KPIs."""
-            meta = meta_dict[code]
-            rows = []
-            for m, c in zip(metros, colors):
-                v = val_func(df_data, m, code)
-                if pd.notna(v):
-                    rows.append({"t": m, "v": v, "c": c})
-            df_b = pd.DataFrame(rows).sort_values("v", ascending=True)
-            if df_b.empty:
-                st.info("Données non disponibles pour cet indicateur.")
-                return
-
-            fig = go.Figure()
-            for _, r in df_b.iterrows():
-                is_g = r["t"] == "Grenoble"
-                txt = fv(r["v"], meta["dec"], meta["suf"])
-                mkr = dict(color=r["c"])
-                if is_g: # Maintien de l'identité visuelle (hachures) pour Grenoble
-                    mkr["pattern"] = dict(
-                        shape="/", fgcolor="#FF584D",
-                        fillmode="overlay", solidity=0.3, size=20,
+            # ── Filtres ────────────────────────────────────────────────────────────
+            with st.container():
+                filter_bar("Filtres - Eau & Assainissement")
+                fw1, fw2 = st.columns([1, 3])
+                with fw1:
+                    filter_row_label("Thématique")
+                with fw2:
+                    theme_eau = st.selectbox(
+                        "",
+                        ["💧 Eau potable (AEP)",
+                        "🚿 Assainissement collectif (AC)",
+                        "🏡 Assainissement non collectif (ANC)",
+                        "💶 Détail tarifaire"],
+                        key="env_eau_theme",
+                        label_visibility="collapsed",
                     )
-                fig.add_trace(go.Bar(
-                    y=[r["t"]], x=[r["v"]], orientation="h",
-                    marker=mkr, showlegend=False,
-                    text=[txt], textposition="outside", cliponaxis=False,
-                    hovertemplate=(
-                        "<b>" + r["t"] + "</b><br>"
-                        + meta["titre"] + " : " + txt + "<extra></extra>"
-                    ),
-                ))
 
-            if meta.get("moy_fr") is not None:
-                fig.add_vline(
-                    x=meta["moy_fr"], line_dash="dot",
-                    line_color="#888888", line_width=2,
-                )
-                fig.add_annotation(
-                    x=meta["moy_fr"], y=len(df_b) - 0.35,
-                    text=meta["moy_label"], showarrow=False,
-                    font=dict(size=9, color="#888", family="Sora"),
-                    xanchor="left", xshift=4,
+                METROS_EAU_4 = ["Grenoble", "Montpellier", "Saint-Étienne", "Rouen"]
+                sel_metros_eau = st.multiselect(
+                    "Métropoles à comparer", METROS_EAU_4, default=METROS_EAU_4,
+                    key="env_eau_metros",
+                    help="Rennes Métropole n'est pas disponible dans SISPEA pour ces compétences.",
                 )
 
-            fig.update_layout(
-                height=110 + len(df_b) * 48,
-                margin=dict(t=10, b=10, l=10, r=100),
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                font_family="Sora",
-                xaxis=dict(title=meta["axe"], gridcolor="#E8F5EE"),
-                yaxis=dict(title=""),
-            )
-            st.plotly_chart(style(fig), use_container_width=True)
+            st.markdown("---")
 
-        def display_recap_table(metros, df_data, meta_dict, val_func=get_val):
-            """Génère le tableau récapitulatif pour n'importe quelle thématique."""
-            lignes_recap = []
-            for m in metros:
-                row = {"Métropole": m}
-                for code, meta in meta_dict.items():
+            if not sel_metros_eau:
+                st.warning("Sélectionnez au moins une métropole.")
+                st.stop()
+
+            if "Saint-Étienne" in sel_metros_eau:
+                st.warning(
+                    "⚠️ **Note sur Saint-Étienne :** la compétence eau n'y est pas unifiée — "
+                    "plusieurs entités de gestion coexistent dans SISPEA. Les valeurs présentées "
+                    "sont des moyennes. Certains indicateurs peuvent être partiels ou peu "
+                    "représentatifs à l'échelle de la métropole."
+                )
+
+            eau_colors = [COULEURS.get(m, "#888888") for m in sel_metros_eau]
+            n_eau = len(sel_metros_eau)
+
+            # ── Helpers ────────────────────────────────────────────────────────────
+            def get_val(df, metro, col):
+                if df is None or col not in df.columns:
+                    return np.nan
+                sub = df[df["metropole"] == metro].copy()
+                if sub.empty:
+                    return np.nan
+                sub[col] = pd.to_numeric(
+                    sub[col].astype(str).str.replace(",", "."), errors="coerce"
+                )
+                val = sub[col].mean(skipna=True)
+                return float(val) if pd.notna(val) else np.nan
+
+            def get_val_tar(df, metro, col):
+                sub = df[df["metropole"] == metro].copy()
+                if sub.empty or col not in sub.columns:
+                    return np.nan
+                sub[col] = pd.to_numeric(
+                    sub[col].astype(str).str.replace(",", "."), errors="coerce"
+                )
+                pop_col_tar = "Pop de l'entité de gestion sans double compte"
+                if pop_col_tar in sub.columns:
+                    sub[pop_col_tar] = pd.to_numeric(
+                        sub[pop_col_tar], errors="coerce"
+                    ).fillna(0)
+                    valid = sub[[col, pop_col_tar]].dropna(subset=[col])
+                    if len(valid) > 0:
+                        tot = valid[pop_col_tar].sum()
+                        return float(
+                            (valid[col] * valid[pop_col_tar]).sum() / tot
+                            if tot > 0 else valid[col].mean()
+                        )
+                return float(sub[col].mean(skipna=True))
+
+            def fv(v, dec=1, suf=""):
+                if pd.isna(v):
+                    return "N/D"
+                if dec == 0:
+                    return f"{int(round(v)):,}".replace(",", "\u202f") + suf
+                return f"{v:.{dec}f}{suf}"
+
+            def chart_indicateur(code, metros, colors, df_data, meta_dict, val_func=get_val):
+                """Barres horizontales triées, hachures Grenoble, ligne moyenne nationale."""
+                meta = meta_dict[code]
+                rows = []
+                
+                for m, c in zip(metros, colors):
                     v = val_func(df_data, m, code)
-                    row[meta["titre"]] = fv(v, meta["dec"], meta["suf"])
-                    if meta.get("moy_fr") is not None and pd.notna(v):
-                        delta = v - meta["moy_fr"]
-                        if meta["higher_better"]:
-                            ecart = "↑ Au-dessus" if delta > 0 else ("↓ En dessous" if delta < 0 else "= Égal")
-                        else:
-                            ecart = "↓ Mieux" if delta < 0 else ("↑ Moins bon" if delta > 0 else "= Égal")
-                        row[f"Écart vs France ({code})"] = f"{delta:+.2f}{meta['suf']} ({ecart})"
-                lignes_recap.append(row)
-            st.dataframe(pd.DataFrame(lignes_recap).set_index("Métropole"), use_container_width=True)
+                    if pd.notna(v):
+                        rows.append({"t": m, "v": v, "c": c})
+                        
+                # Vérification avant la création du DataFrame ---
+                if not rows:
+                    st.info("Données non disponibles pour cet indicateur.")
+                    return
+                    
+                df_b = pd.DataFrame(rows).sort_values("v", ascending=True)
+                
+                fig = go.Figure()
+                for _, r in df_b.iterrows():
+                    is_g = r["t"] == "Grenoble"
+                    txt  = fv(r["v"], meta["dec"], meta["suf"])
+                    mkr  = dict(color=r["c"])
+                    
+                    # Conservation stricte de vos styles visuels (hachures)
+                    if is_g:
+                        mkr["pattern"] = dict(
+                            shape="/", fgcolor="#FF584D",
+                            fillmode="overlay", solidity=0.3, size=20,
+                        )
+                        
+                    fig.add_trace(go.Bar(
+                        y=[r["t"]], x=[r["v"]], orientation="h",
+                        marker=mkr, showlegend=False,
+                        text=[txt], textposition="outside", cliponaxis=False,
+                        hovertemplate=(
+                            "<b>" + r["t"] + "</b><br>"
+                            + meta["titre"] + " : " + txt + "<extra></extra>"
+                        ),
+                    ))
+                    
+                if meta.get("moy_fr") is not None:
+                    fig.add_vline(
+                        x=meta["moy_fr"], line_dash="dot",
+                        line_color="#888888", line_width=2,
+                    )
+                    fig.add_annotation(
+                        x=meta["moy_fr"], y=len(df_b) - 0.35,
+                        text=meta["moy_label"], showarrow=False,
+                        font=dict(size=9, color="#888", family="Sora"),
+                        xanchor="left", xshift=4,
+                    )
+                    
+                fig.update_layout(
+                    height=110 + len(df_b) * 48,
+                    margin=dict(t=10, b=10, l=10, r=100),
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Sora",
+                    xaxis=dict(title=meta["axe"], gridcolor="#E8F5EE"),
+                    yaxis=dict(title=""),
+                )
+                st.plotly_chart(style(fig), use_container_width=True)
 
-        # ══════════════════════════════════════════════════════════════════════
-        # 💧 EAU POTABLE (AEP)
-        # ══════════════════════════════════════════════════════════════════════
-        if "Eau potable" in theme_eau:
-            if df_aep_eau is None:
-                st.info("📂 Fichier eau potable introuvable.")
-                st.stop()
+            def display_recap_table(metros, df_data, meta_dict, val_func=get_val):
+                lignes = []
+                for m in metros:
+                    row = {"Métropole": m}
+                    for code, meta in meta_dict.items():
+                        v = val_func(df_data, m, code)
+                        row[meta["titre"]] = fv(v, meta["dec"], meta["suf"])
+                        if meta.get("moy_fr") is not None and pd.notna(v):
+                            delta = v - meta["moy_fr"]
+                            if meta["higher_better"]:
+                                ecart = ("↑ Au-dessus" if delta > 0
+                                        else ("↓ En dessous" if delta < 0 else "= Égal"))
+                            else:
+                                ecart = ("↓ Mieux" if delta < 0
+                                        else ("↑ Moins bon" if delta > 0 else "= Égal"))
+                            row[f"Écart vs France ({code})"] = (
+                                f"{delta:+.2f}{meta['suf']} ({ecart})"
+                            )
+                    lignes.append(row)
+                st.dataframe(
+                    pd.DataFrame(lignes).set_index("Métropole"),
+                    use_container_width=True,
+                )
 
-            df_sel = df_aep_eau[df_aep_eau["metropole"].isin(sel_metros_eau)].copy()
+            # ══════════════════════════════════════════════════════════════════════
+            # 💧 EAU POTABLE (AEP) — 10 indicateurs
+            # ══════════════════════════════════════════════════════════════════════
+            if theme_eau == "💧 Eau potable (AEP)":
+                if df_aep_eau is None:
+                    st.info("📂 Fichier eau potable introuvable.")
+                    st.stop()
 
-            st.subheader("Indicateurs — Eau potable 2020")
+                df_sel = df_aep_eau[df_aep_eau["metropole"].isin(sel_metros_eau)].copy()
+                st.subheader("Indicateurs — Eau potable 2020")
 
-            IND_AEP_META = {
-                "D102.0": {"titre": "Prix TTC du service (120 m³)", "axe": "€/m³ TTC", "moy_fr": 2.52, "moy_label": "Moy. France (janv. 2025) : 2,52 €/m³", "higher_better": False, "dec": 2, "suf": " €/m³", "help": "D102.0 — Prix tout compris (120 m³)."},
-                "D151.0": {"titre": "Délai max d'ouverture branchements", "axe": "jours", "moy_fr": None, "moy_label": None, "higher_better": False, "dec": 0, "suf": " j", "help": "D151.0 — Délai maximum pour les nouveaux abonnés."},
-                "P101.1": {"titre": "Conformité bactériologique", "axe": "%", "moy_fr": 96.4, "moy_label": "Moy. France : 96,4 %", "higher_better": True, "dec": 1, "suf": " %", "help": "P101.1 — Taux de conformité sur les paramètres bactériologiques."},
-                "P102.1": {"titre": "Conformité physico-chimique", "axe": "%", "moy_fr": 90.6, "moy_label": "Moy. France : 90,6 %", "higher_better": True, "dec": 1, "suf": " %", "help": "P102.1 — Taux de conformité sur les paramètres physico-chimiques."},
-                "P104.3": {"titre": "Rendement du réseau", "axe": "%", "moy_fr": 84.4, "moy_label": "Moy. France : 84,4 %", "higher_better": True, "dec": 1, "suf": " %", "help": "P104.3 — Rendement du réseau de distribution."},
-                "P106.3": {"titre": "Indice linéaire de perte", "axe": "m³/km/j", "moy_fr": 2.6, "moy_label": "Moy. France : 2,6 m³/km/j", "higher_better": False, "dec": 1, "suf": " m³/km/j", "help": "P106.3 — Indice linéaire de perte en réseau (m³ par km de réseau et par jour)."},
-                "P107.2": {"titre": "Taux de renouvellement des réseaux", "axe": "%", "moy_fr": 0.69, "moy_label": "Moy. France : 0,69 %", "higher_better": True, "dec": 2, "suf": " %", "help": "P107.2 — Taux moyen des renouvellements des réseaux d'eau potable."},
-                "P108.3": {"titre": "Protection des captages", "axe": "%", "moy_fr": 84.7, "moy_label": "Moy. France : 84,7 %", "higher_better": True, "dec": 1, "suf": " %", "help": "P108.3 — Indice d'avancement de la protection de la ressource en eau."},
-                "P154.0": {"titre": "Taux d'impayés", "axe": "%", "moy_fr": 2.56, "moy_label": "Moy. France : 2,56 %", "higher_better": False, "dec": 2, "suf": " %", "help": "P154.0 — Taux d'impayés sur les factures d'eau de l'année précédente."},
-                "P155.1": {"titre": "Taux de réclamations", "axe": "pour 1000 hab", "moy_fr": 2.57, "moy_label": "Moy. France : 2,57 / 1000 hab", "higher_better": False, "dec": 2, "suf": " / 1000 hab", "help": "P155.1 — Taux de réclamations pour 1000 habitants."},
-            }
+                IND_AEP_META = {
+                    "D102.0": {
+                        "titre": "Prix TTC du service (120 m³)",
+                        "axe": "€/m³ TTC",
+                        "moy_fr": 2.52,
+                        "moy_label": "Moy. France (janv. 2025) : 2,52 €/m³",
+                        "higher_better": False, "dec": 2, "suf": " €/m³",
+                        "help": "D102.0 — Prix tout compris pour 120 m³/an (ménage de référence).",
+                    },
+                    "D151.0": {
+                        "titre": "Délai max d'ouverture des branchements",
+                        "axe": "jours",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": False, "dec": 0, "suf": " j",
+                        "help": "D151.0 — Délai maximum garanti pour ouvrir un branchement à un nouvel abonné.",
+                    },
+                    "P101.1": {
+                        "titre": "Conformité bactériologique",
+                        "axe": "%",
+                        "moy_fr": 96.4,
+                        "moy_label": "Moy. France : 96,4 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": "P101.1 — Taux d'analyses conformes aux normes bactériologiques (contrôle ARS).",
+                    },
+                    "P102.1": {
+                        "titre": "Conformité physico-chimique",
+                        "axe": "%",
+                        "moy_fr": 90.6,
+                        "moy_label": "Moy. France : 90,6 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": "P102.1 — Taux d'analyses conformes aux normes physico-chimiques (contrôle ARS).",
+                    },
+                    "P104.3": {
+                        "titre": "Rendement du réseau de distribution",
+                        "axe": "%",
+                        "moy_fr": 84.4,
+                        "moy_label": "Moy. France : 84,4 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": "P104.3 — Volume consommé / volume distribué × 100. Plus élevé = moins de fuites.",
+                    },
+                    "P106.3": {
+                        "titre": "Indice linéaire de perte en réseau",
+                        "axe": "m³/km/j",
+                        "moy_fr": 2.6,
+                        "moy_label": "Moy. France : 2,6 m³/km/j",
+                        "higher_better": False, "dec": 1, "suf": " m³/km/j",
+                        "help": "P106.3 — Volume perdu par fuite par km de réseau et par jour. Plus bas = moins de fuites.",
+                    },
+                    "P107.2": {
+                        "titre": "Taux de renouvellement des réseaux AEP",
+                        "axe": "%/an",
+                        "moy_fr": 0.69,
+                        "moy_label": "Moy. France : 0,69 %/an",
+                        "higher_better": True, "dec": 2, "suf": " %",
+                        "help": "P107.2 — Longueur de canalisations renouvelées / longueur totale × 100 (moy. 5 ans).",
+                    },
+                    "P108.3": {
+                        "titre": "Indice d'avancement protection captages",
+                        "axe": "%",
+                        "moy_fr": 84.7,
+                        "moy_label": "Moy. France : 84,7 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": "P108.3 — Part des captages dotés d'un arrêté préfectoral de protection. Objectif : 100 %.",
+                    },
+                    "P154.0": {
+                        "titre": "Taux d'impayés sur factures AEP",
+                        "axe": "%",
+                        "moy_fr": 2.56,
+                        "moy_label": "Moy. France : 2,56 %",
+                        "higher_better": False, "dec": 2, "suf": " %",
+                        "help": "P154.0 — Part des factures de l'année N-1 impayées à la clôture de l'exercice.",
+                    },
+                    "P155.1": {
+                        "titre": "Taux de réclamations AEP",
+                        "axe": "/ 1 000 hab.",
+                        "moy_fr": 2.57,
+                        "moy_label": "Moy. France : 2,57 / 1000 hab.",
+                        "higher_better": False, "dec": 2, "suf": " / 1000 hab.",
+                        "help": "P155.1 — Nombre de réclamations écrites reçues pour 1 000 habitants.",
+                    },
+                }
 
-            # Boucle d'affichage pour présenter les 10 graphiques en grille (2 colonnes)
-            indicators_list = ["D102.0", "D151.0", "P101.1", "P102.1", "P104.3", "P106.3", "P107.2", "P108.3", "P154.0", "P155.1"]
-            
-            for i in range(0, len(indicators_list), 2):
-                cols = st.columns(2)
-                for j in range(2):
-                    if i + j < len(indicators_list):
-                        ind_code = indicators_list[i + j]
-                        with cols[j]:
-                            st.markdown(f"##### {IND_AEP_META[ind_code]['titre']}", help=IND_AEP_META[ind_code]["help"])
-                            chart_indicateur(ind_code, sel_metros_eau, eau_colors, df_sel, IND_AEP_META)
+                indicators_aep = [
+                    "D102.0", "D151.0",
+                    "P101.1", "P102.1",
+                    "P104.3", "P106.3",
+                    "P107.2", "P108.3",
+                    "P154.0", "P155.1",
+                ]
 
-            st.markdown("---")
-            st.subheader("Tableau comparatif vs moyenne nationale")
-            display_recap_table(sel_metros_eau, df_sel, IND_AEP_META)
+                for i in range(0, len(indicators_aep), 2):
+                    cols = st.columns(2)
+                    for j in range(2):
+                        if i + j < len(indicators_aep):
+                            code = indicators_aep[i + j]
+                            with cols[j]:
+                                st.markdown(
+                                    f"##### {IND_AEP_META[code]['titre']}",
+                                    help=IND_AEP_META[code]["help"],
+                                )
+                                chart_indicateur(code, sel_metros_eau, eau_colors,
+                                                df_sel, IND_AEP_META)
 
-            with st.expander("Fiche méthodologique — Indicateurs AEP"):
+                st.markdown("---")
+                st.subheader("Tableau comparatif — Eau potable vs moyenne nationale")
+                display_recap_table(sel_metros_eau, df_sel, IND_AEP_META)
+
+                with st.expander("📋 Fiche méthodologique — Indicateurs AEP"):
+                    st.markdown("""
+    | Code | Indicateur | Interprétation |
+    |---|---|---|
+    | **D102.0** | Prix TTC | Facture type pour 120 m³/an. Référence nationale de comparaison. |
+    | **D151.0** | Délai max raccordement | Réactivité pour ouvrir un branchement. Lacunaire pour les gestions fragmentées. |
+    | **P101.1** | Conformité bactériologique | Qualité microbiologique de l'eau distribuée (contrôle ARS). |
+    | **P102.1** | Conformité physico-chimique | Respect des normes chimiques de l'eau distribuée. |
+    | **P104.3** | Rendement réseau | Efficacité : moins de fuites = mieux. Objectif réglementaire : 85 %. |
+    | **P106.3** | Indice linéaire de perte | Intensité des fuites par km de réseau. Plus bas = mieux. |
+    | **P107.2** | Renouvellement réseaux | Effort d'investissement. 1 %/an = renouvellement complet en 100 ans. |
+    | **P108.3** | Protection des captages | Sécurisation de la ressource en eau brute. Obligatoire depuis 1992. |
+    | **P154.0** | Taux d'impayés | Factures non honorées. Peut signaler des difficultés sociales. |
+    | **P155.1** | Taux de réclamations | Satisfaction usagers. Peut être sous-évalué si non agrégé localement. |
+    """)
+
+            # ══════════════════════════════════════════════════════════════════════
+            # 🚿 ASSAINISSEMENT COLLECTIF (AC) — 10 indicateurs
+            # ══════════════════════════════════════════════════════════════════════
+            elif theme_eau == "🚿 Assainissement collectif (AC)":
+                if df_ac_eau is None:
+                    st.info("📂 Fichier assainissement collectif introuvable.")
+                    st.stop()
+
+                df_sel = df_ac_eau[df_ac_eau["metropole"].isin(sel_metros_eau)].copy()
+                st.subheader("Indicateurs — Assainissement collectif 2020")
+
+                IND_AC_META = {
+                    "D201.0": {
+                        "titre": "Population desservie en assainissement collectif",
+                        "axe": "habitants",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": True, "dec": 0, "suf": " hab.",
+                        "help": (
+                            "D201.0 — Nombre d'habitants desservis par un réseau de collecte "
+                            "des eaux usées. Un habitant est considéré desservi dès lors qu'un "
+                            "réseau existe devant son immeuble, qu'il y soit raccordé ou non. "
+                            "⚠️ D201.1 absent des données — D201.0 utilisé en substitution."
+                        ),
+                    },
+                    "D204.0": {
+                        "titre": "Prix TTC assainissement collectif (120 m³)",
+                        "axe": "€/m³ TTC",
+                        "moy_fr": 1.86,
+                        "moy_label": "Moy. France (janv. 2025) : 1,86 €/m³",
+                        "higher_better": False, "dec": 2, "suf": " €/m³",
+                        "help": (
+                            "D204.0 — Prix TTC du service d'assainissement collectif au m³, "
+                            "calculé pour une consommation de référence de 120 m³/an."
+                        ),
+                    },
+                    "P201.1": {
+                        "titre": "Taux de desserte par réseau de collecte",
+                        "axe": "%",
+                        "moy_fr": 97.2,
+                        "moy_label": "Moy. France : 97,2 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": (
+                            "P201.1 — Rapport entre le nombre d'abonnés du service AC et le nombre "
+                            "potentiel d'abonnés de la zone relevant du collectif. 100 % = tous les "
+                            "logements de la zone sont desservis par un réseau existant."
+                        ),
+                    },
+                    "P203.3": {
+                        "titre": "Conformité de la collecte des effluents",
+                        "axe": "%",
+                        "moy_fr": 84.5,
+                        "moy_label": "Moy. France : 84,5 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": (
+                            "P203.3 — Part des systèmes de collecte conformes aux prescriptions "
+                            "de la Directive ERU. Peut dépasser 100 % en raison des eaux parasites "
+                            "(pluies s'infiltrant dans les réseaux) qui augmentent les volumes collectés."
+                        ),
+                    },
+                    "P204.3": {
+                        "titre": "Conformité des équipements d'épuration (STEU)",
+                        "axe": "%",
+                        "moy_fr": 88.3,
+                        "moy_label": "Moy. France : 88,3 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": (
+                            "P204.3 — Indicateur 0 ou 100 pour chaque STEU > 2 000 EH, "
+                            "pondéré par les charges brutes de pollution. Évalue la conformité "
+                            "des équipements physiques de la station (capacité, ouvrages)."
+                        ),
+                    },
+                    "P205.3": {
+                        "titre": "Conformité performance des ouvrages d'épuration",
+                        "axe": "%",
+                        "moy_fr": 86.7,
+                        "moy_label": "Moy. France : 86,7 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": (
+                            "P205.3 — Indicateur 0 ou 100 pour chaque STEU > 2 000 EH, évaluant "
+                            "si les performances réelles de traitement (qualité des rejets) respectent "
+                            "les seuils réglementaires. Distinct de P204.3 qui juge les équipements."
+                        ),
+                    },
+                    "P252.2": {
+                        "titre": "Points noirs du réseau de collecte",
+                        "axe": "nb / 100 km",
+                        "moy_fr": 3.1,
+                        "moy_label": "Moy. France : 3,1 / 100 km",
+                        "higher_better": False, "dec": 1, "suf": " / 100 km",
+                        "help": (
+                            "P252.2 — Nombre de tronçons nécessitant des interventions fréquentes "
+                            "de curage (≥ 2 fois/an) pour 100 km de réseau. Plus bas = meilleur état "
+                            "du réseau. Indique les points problématiques (dépôts, racines, sections insuffisantes)."
+                        ),
+                    },
+                    "P253.2": {
+                        "titre": "Taux de renouvellement des réseaux de collecte",
+                        "axe": "%/an",
+                        "moy_fr": 0.60,
+                        "moy_label": "Moy. France : 0,60 %/an",
+                        "higher_better": True, "dec": 2, "suf": " %/an",
+                        "help": (
+                            "P253.2 — Taux moyen de renouvellement des canalisations sur 5 ans "
+                            "(longueur renouvelée / longueur totale × 100). 1 %/an = renouvellement "
+                            "complet en 100 ans. En dessous, le réseau vieillit plus vite qu'il n'est entretenu."
+                        ),
+                    },
+                    "P257.0": {
+                        "titre": "Taux d'impayés sur factures AC",
+                        "axe": "%",
+                        "moy_fr": 2.10,
+                        "moy_label": "Moy. France : 2,10 %",
+                        "higher_better": False, "dec": 2, "suf": " %",
+                        "help": (
+                            "P257.0 — Part des factures d'assainissement de l'année N-1 impayées "
+                            "à la clôture de l'exercice. Un taux élevé peut signaler des difficultés "
+                            "sociales ou des défauts de gestion du recouvrement."
+                        ),
+                    },
+                    "P258.1": {
+                        "titre": "Taux de réclamations AC",
+                        "axe": "/ 1 000 abonnés",
+                        "moy_fr": 2.30,
+                        "moy_label": "Moy. France : 2,30 / 1000 abonnés",
+                        "higher_better": False, "dec": 2, "suf": " / 1000 ab.",
+                        "help": (
+                            "P258.1 — Nombre de réclamations écrites reçues par le service AC "
+                            "pour 1 000 abonnés. Mesure la satisfaction usagers et la qualité "
+                            "de la relation clientèle."
+                        ),
+                    },
+                }
+
+                indicators_ac = [
+                    "D201.0", "D204.0",
+                    "P201.1", "P203.3",
+                    "P204.3", "P205.3",
+                    "P252.2", "P253.2",
+                    "P257.0", "P258.1",
+                ]
+
+                for i in range(0, len(indicators_ac), 2):
+                    cols = st.columns(2)
+                    for j in range(2):
+                        if i + j < len(indicators_ac):
+                            code = indicators_ac[i + j]
+                            with cols[j]:
+                                st.markdown(
+                                    f"##### {IND_AC_META[code]['titre']}",
+                                    help=IND_AC_META[code]["help"],
+                                )
+                                chart_indicateur(code, sel_metros_eau, eau_colors,
+                                                df_sel, IND_AC_META)
+
+                st.markdown("---")
+                st.subheader("Tableau comparatif — AC vs moyenne nationale")
+                display_recap_table(sel_metros_eau, df_sel, IND_AC_META)
+
+                with st.expander("📋 Fiche méthodologique — Indicateurs AC"):
+                    st.markdown("""
+    | Code | Indicateur | Interprétation |
+    |---|---|---|
+    | **D201.0** | Population desservie | Habitants couverts par un réseau collectif (raccordés ou raccordables). |
+    | **D204.0** | Prix TTC (120 m³) | Coût du service AC pour un ménage de référence. |
+    | **P201.1** | Taux de desserte | Part des logements de la zone AC avec un réseau en façade. |
+    | **P203.3** | Conformité collecte ERU | Maîtrise des déversements non traités. Peut dépasser 100 % (eaux parasites). |
+    | **P204.3** | Conformité équipements STEU | Stations d'épuration conformes en équipements (capacité, ouvrages). |
+    | **P205.3** | Conformité performance STEU | Stations atteignant leurs objectifs de rejet réglementaires. |
+    | **P252.2** | Points noirs réseau | Tronçons nécessitant des curages fréquents. Moins = meilleur état. |
+    | **P253.2** | Renouvellement réseau collecte | Effort de maintenance. 1 %/an = renouvellement en 100 ans. |
+    | **P257.0** | Taux d'impayés AC | Factures AC non honorées. Enjeu social et de recouvrement. |
+    | **P258.1** | Taux de réclamations AC | Litiges usagers pour 1 000 abonnés. Qualité de la relation clientèle. |
+    """)
+
+            # ══════════════════════════════════════════════════════════════════════
+            # 🏡 ASSAINISSEMENT NON COLLECTIF (ANC) — 3 indicateurs
+            # ══════════════════════════════════════════════════════════════════════
+            elif theme_eau == "🏡 Assainissement non collectif (ANC)":
+                if df_anc_eau is None:
+                    st.info("📂 Fichier assainissement non collectif introuvable.")
+                    st.stop()
+
+                df_sel = df_anc_eau[df_anc_eau["metropole"].isin(sel_metros_eau)].copy()
+                for col_anc in ["D301.0", "D302.0", "P301.3", "VP.166"]:
+                    if col_anc in df_sel.columns:
+                        df_sel[col_anc] = pd.to_numeric(
+                            df_sel[col_anc].astype(str).str.replace(",", "."),
+                            errors="coerce",
+                        )
+
+                st.subheader("Indicateurs — Assainissement non collectif 2020")
+
+                IND_ANC_META = {
+                    "D301.0": {
+                        "titre": "Installations ANC recensées",
+                        "axe": "installations",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": True, "dec": 0, "suf": "",
+                        "help": (
+                            "D301.0 — Nombre total de dispositifs ANC (fosses septiques, filtres à "
+                            "sable, micro-stations, phytoépuration…) recensés sur le territoire. "
+                            "Concerne les habitations non raccordées au réseau public."
+                        ),
+                    },
+                    "D302.0": {
+                        "titre": "Taux de conformité des dispositifs ANC",
+                        "axe": "%",
+                        "moy_fr": 58.0,
+                        "moy_label": "Moy. France : ~58 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": (
+                            "D302.0 — Part des installations jugées conformes lors du dernier "
+                            "contrôle SPANC. Une installation conforme ne présente pas de risque "
+                            "sanitaire ou environnemental avéré. Les non conformes doivent être "
+                            "réhabilitées dans un délai fixé par l'arrêté du 27/04/2012."
+                        ),
+                    },
+                    "P301.3": {
+                        "titre": "Taux de réhabilitation des installations ANC",
+                        "axe": "%",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": (
+                            "P301.3 — Part des installations non conformes ayant fait l'objet "
+                            "d'une réhabilitation dans l'année. Un taux élevé traduit une politique "
+                            "active de mise aux normes. À lire conjointement avec D302.0 : un faible "
+                            "taux de conformité couplé à un fort taux de réhabilitation indique "
+                            "un territoire en bonne trajectoire."
+                        ),
+                    },
+                }
+
+                indicators_anc = ["D301.0", "D302.0", "P301.3"]
+
+                # D301.0 en pleine largeur (volume), D302.0 et P301.3 côte à côte
+                st.markdown(
+                    f"##### {IND_ANC_META['D301.0']['titre']}",
+                    help=IND_ANC_META["D301.0"]["help"],
+                )
+                chart_indicateur("D301.0", sel_metros_eau, eau_colors,
+                                df_sel, IND_ANC_META)
+
+                cols_anc = st.columns(2)
+                with cols_anc[0]:
+                    st.markdown(
+                        f"##### {IND_ANC_META['D302.0']['titre']}",
+                        help=IND_ANC_META["D302.0"]["help"],
+                    )
+                    chart_indicateur("D302.0", sel_metros_eau, eau_colors,
+                                    df_sel, IND_ANC_META)
+                with cols_anc[1]:
+                    st.markdown(
+                        f"##### {IND_ANC_META['P301.3']['titre']}",
+                        help=IND_ANC_META["P301.3"]["help"],
+                    )
+                    chart_indicateur("P301.3", sel_metros_eau, eau_colors,
+                                    df_sel, IND_ANC_META)
+
+                st.markdown("---")
+                st.subheader("Tableau comparatif — ANC")
+                display_recap_table(sel_metros_eau, df_sel, IND_ANC_META)
+
+                with st.expander("📋 Fiche méthodologique — Indicateurs ANC"):
+                    st.markdown("""
+    | Code | Indicateur | Interprétation |
+    |---|---|---|
+    | **D301.0** | Installations recensées | Volume du parc autonome sur le territoire. Reflète l'ampleur du SPANC. |
+    | **D302.0** | Taux de conformité | Part des installations sans risque sanitaire ou environnemental avéré. |
+    | **P301.3** | Taux de réhabilitation | Dynamique de mise aux normes des installations défaillantes. |
+    """)
+
+            # ══════════════════════════════════════════════════════════════════════
+            # 💶 DÉTAIL TARIFAIRE
+            # ══════════════════════════════════════════════════════════════════════
+            else:
+                if df_tar_eau is None:
+                    st.info("📂 Fichier tarifaire introuvable.")
+                    st.stop()
+
+                df_sel_tar = df_tar_eau[
+                    df_tar_eau["metropole"].isin(sel_metros_eau)
+                ].copy()
+
                 st.markdown("""
-                | Code | Indicateur | Interprétation |
-                |---|---|---|
-                | **D102.0** | Prix TTC | Facture type pour 120m³ de consommation. |
-                | **D151.0** | Délai max raccordement | Réactivité des services pour ouvrir un branchement. *Attention : donnée souvent lacunaire pour les gestions éclatées.* |
-                | **P101.1** | Conformité bactériologique | Qualité microbiologique de l'eau distribuée. |
-                | **P102.1** | Conformité physico-chimique | Respect des normes chimiques de l'eau. |
-                | **P104.3** | Rendement réseau | Efficacité de la distribution (moins de fuites = mieux). |
-                | **P106.3** | Indice linéaire de perte | Intensité des fuites sur le réseau rapportée à sa longueur. |
-                | **P107.2** | Renouvellement des réseaux | Effort d'investissement pour maintenir l'infrastructure. |
-                | **P108.3** | Protection des captages | Sécurisation de la ressource en eau brute. |
-                | **P154.0** | Taux d'impayés | Proportion de factures non honorées l'année précédente. |
-                | **P155.1** | Taux de réclamations | Volume de litiges clients rapporté à la population. *Peut être sous-évalué si les réclamations locales ne sont pas agrégées.* |
-                """)
+                <div style='background:#fff8e1;padding:10px 14px;border-radius:8px;
+                            border-left:4px solid #F9A825;font-size:0.85em;margin-bottom:16px;'>
+                    <b>Structure de la facture d'eau :</b> prix volumique HT + abonnement
+                    + redevances agence de l'eau + TVA (5,5 % eau potable, 10 % assainissement).
+                    Pour Saint-Étienne, chaque commune a un tarif propre :
+                    les valeurs sont des moyennes pondérées par le nombre d'abonnés.
+                </div>""", unsafe_allow_html=True)
 
-        # ══════════════════════════════════════════════════════════════════════
-        # 🚿 ASSAINISSEMENT COLLECTIF (AC)
-        # ══════════════════════════════════════════════════════════════════════
-        elif "collectif" in theme_eau:
-            if df_ac_eau is None:
-                st.info("📂 Fichier assainissement collectif introuvable.")
-                st.stop()
+                st.subheader("Indicateurs tarifaires — Eau 2020")
 
-            df_sel = df_ac_eau[df_ac_eau["metropole"].isin(sel_metros_eau)].copy()
+                IND_TAR_META = {
+                    "D102.0": {
+                        "titre": "Prix TTC eau potable (120 m³)",
+                        "axe": "€/m³ TTC",
+                        "moy_fr": 2.52,
+                        "moy_label": "Moy. France (janv. 2025) : 2,52 €/m³",
+                        "higher_better": False, "dec": 2, "suf": " €/m³",
+                        "help": "Coût global pour l'usager eau potable.",
+                    },
+                    "VP.179": {
+                        "titre": "Part volumique HT (collectivité)",
+                        "axe": "€/m³",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": False, "dec": 2, "suf": " €/m³",
+                        "help": "Levier d'incitation à la sobriété hydrique.",
+                    },
+                    "VP.178": {
+                        "titre": "Abonnement annuel",
+                        "axe": "€/an",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": False, "dec": 0, "suf": " €",
+                        "help": "Part fixe indépendante de la consommation.",
+                    },
+                    "VP.216": {
+                        "titre": "Redevance agence de l'eau",
+                        "axe": "€/m³",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": False, "dec": 3, "suf": " €/m³",
+                        "help": "Contribution au financement du bassin versant.",
+                    },
+                }
 
-            st.subheader("Indicateurs — Assainissement collectif 2020")
+                indicators_tar = ["D102.0", "VP.179", "VP.178", "VP.216"]
+                for i in range(0, len(indicators_tar), 2):
+                    cols_t = st.columns(2)
+                    for j in range(2):
+                        if i + j < len(indicators_tar):
+                            code_t = indicators_tar[i + j]
+                            with cols_t[j]:
+                                st.markdown(
+                                    f"##### {IND_TAR_META[code_t]['titre']}",
+                                    help=IND_TAR_META[code_t]["help"],
+                                )
+                                chart_indicateur(code_t, sel_metros_eau, eau_colors,
+                                                df_sel_tar, IND_TAR_META,
+                                                val_func=get_val_tar)
 
-            IND_AC_META = {
-                "P204.3": {"titre": "Conformité équipements STEP", "axe": "%", "moy_fr": None, "moy_label": None, "higher_better": True, "dec": 1, "suf": " %", "help": "P204.3 — Équipements aux normes ERU."},
-                "P205.3": {"titre": "Performances d'épuration", "axe": "%", "moy_fr": None, "moy_label": None, "higher_better": True, "dec": 1, "suf": " %", "help": "P205.3 — Objectifs de traitement atteints."},
-                "P203.3": {"titre": "Taux de collecte", "axe": "%", "moy_fr": None, "moy_label": None, "higher_better": True, "dec": 1, "suf": " %", "help": "P203.3 — Effluents bien acheminés vers les STEP."},
-                "P206.3": {"titre": "Conformité gestion des boues", "axe": "%", "moy_fr": None, "moy_label": None, "higher_better": True, "dec": 1, "suf": " %", "help": "P206.3 — Boues valorisées réglementairement."},
-            }
+                st.markdown("---")
+                st.subheader("Tableau comparatif — Tarification")
+                display_recap_table(sel_metros_eau, df_sel_tar,
+                                    IND_TAR_META, val_func=get_val_tar)
 
-            s1c1, s1c2 = st.columns(2)
-            with s1c1:
-                st.markdown(f"##### {IND_AC_META['P204.3']['titre']}", help=IND_AC_META["P204.3"]["help"])
-                chart_indicateur("P204.3", sel_metros_eau, eau_colors, df_sel, IND_AC_META)
-            with s1c2:
-                st.markdown(f"##### {IND_AC_META['P205.3']['titre']}", help=IND_AC_META["P205.3"]["help"])
-                chart_indicateur("P205.3", sel_metros_eau, eau_colors, df_sel, IND_AC_META)
-
-            s2c1, s2c2 = st.columns(2)
-            with s2c1:
-                st.markdown(f"##### {IND_AC_META['P203.3']['titre']}", help=IND_AC_META["P203.3"]["help"])
-                chart_indicateur("P203.3", sel_metros_eau, eau_colors, df_sel, IND_AC_META)
-            with s2c2:
-                st.markdown(f"##### {IND_AC_META['P206.3']['titre']}", help=IND_AC_META["P206.3"]["help"])
-                chart_indicateur("P206.3", sel_metros_eau, eau_colors, df_sel, IND_AC_META)
-
-            st.markdown("---")
-            st.subheader("Tableau comparatif (AC)")
-            display_recap_table(sel_metros_eau, df_sel, IND_AC_META)
-
-            with st.expander("Fiche méthodologique — Indicateurs AC"):
-                st.markdown("""
-                | Code | Indicateur | Interprétation |
-                |---|---|---|
-                | **P204.3** | Équipements STEP | Conformité réglementaire des stations (directive ERU). |
-                | **P205.3** | Performance épuration | Capacité à atteindre les objectifs de dépollution. |
-                | **P203.3** | Taux de collecte | Efficacité de l'acheminement des eaux usées (>100% possible si eaux parasites). |
-                | **P206.3** | Gestion des boues | Conformité de l'évacuation/valorisation des résidus. |
-                """)
-
-        # # ══════════════════════════════════════════════════════════════════════
-        # # 🏡 ASSAINISSEMENT NON COLLECTIF (ANC)
-        # # ══════════════════════════════════════════════════════════════════════
-        # elif "non collectif" in theme_eau:
-        #     if df_anc_eau is None:
-        #         st.info("📂 Fichier assainissement non collectif introuvable.")
-        #         st.stop()
-
-        #     df_sel = df_anc_eau[df_anc_eau["metropole"].isin(sel_metros_eau)].copy()
-        #     for col_anc in ["D301.0", "D302.0", "P301.3", "VP.181", "VP.167", "VP.166"]:
-        #         if col_anc in df_sel.columns:
-        #             df_sel[col_anc] = pd.to_numeric(df_sel[col_anc].astype(str).str.replace(",", "."), errors="coerce")
-
-        #     st.subheader("Indicateurs — Assainissement non collectif 2020")
-
-        #     IND_ANC_META = {
-        #         "D301.0": {"titre": "Installations ANC recensées", "axe": "installations", "moy_fr": None, "moy_label": None, "higher_better": True, "dec": 0, "suf": "", "help": "D301.0 — Nombre total d'installations."},
-        #         "D302.0": {"titre": "Taux de conformité", "axe": "%", "moy_fr": None, "moy_label": None, "higher_better": True, "dec": 1, "suf": " %", "help": "D302.0 — Installations sans risque sanitaire."},
-        #         "P301.3": {"titre": "Taux de réhabilitation", "axe": "%", "moy_fr": None, "moy_label": None, "higher_better": True, "dec": 1, "suf": " %", "help": "P301.3 — Dynamique de mise aux normes."},
-        #         "VP.166": {"titre": "Installations non conformes", "axe": "nb", "moy_fr": None, "moy_label": None, "higher_better": False, "dec": 0, "suf": "", "help": "VP.166 — Nombre brut de non conformités."},
-        #     }
-
-        #     s1c1, s1c2 = st.columns(2)
-        #     with s1c1:
-        #         st.markdown(f"##### {IND_ANC_META['D302.0']['titre']}", help=IND_ANC_META["D302.0"]["help"])
-        #         chart_indicateur("D302.0", sel_metros_eau, eau_colors, df_sel, IND_ANC_META)
-        #     with s1c2:
-        #         st.markdown(f"##### {IND_ANC_META['P301.3']['titre']}", help=IND_ANC_META["P301.3"]["help"])
-        #         chart_indicateur("P301.3", sel_metros_eau, eau_colors, df_sel, IND_ANC_META)
-
-        #     st.markdown("---")
-        #     st.subheader("Tableau comparatif (ANC)")
-        #     display_recap_table(sel_metros_eau, df_sel, IND_ANC_META)
-
-        #     with st.expander("Fiche méthodologique — Indicateurs ANC"):
-        #         st.markdown("""
-        #         | Code | Indicateur | Interprétation |
-        #         |---|---|---|
-        #         | **D301.0** | Nombre d'installations | Volume du parc autonome sur le territoire. |
-        #         | **D302.0** | Taux de conformité | État sanitaire et environnemental du parc. |
-        #         | **P301.3** | Taux de réhabilitation | Effort d'amélioration des installations défectueuses. |
-        #         """)
-
-        # # ══════════════════════════════════════════════════════════════════════
-        # # 💶 DÉTAIL TARIFAIRE
-        # # ══════════════════════════════════════════════════════════════════════
-        # else:
-        #     if df_tar_eau is None:
-        #         st.info("📂 Fichier tarifaire introuvable.")
-        #         st.stop()
-
-        #     df_sel_tar = df_tar_eau[df_tar_eau["metropole"].isin(sel_metros_eau)].copy()
-
-        #     st.markdown("""
-        #     <div style='background:#fff8e1;padding:10px 14px;border-radius:8px;
-        #                 border-left:4px solid #F9A825;font-size:0.85em;margin-bottom:16px;'>
-        #         <b>Structure de la facture d'eau :</b> prix volumique HT + abonnement
-        #         + redevances agence de l'eau + TVA (5,5 % eau potable, 10 % assainissement).
-        #         Pour Saint-Étienne, chaque commune a un tarif propre :
-        #         les valeurs sont des moyennes pondérées par le nombre d'abonnés.
-        #     </div>""", unsafe_allow_html=True)
-
-        #     st.subheader("Indicateurs tarifaires — Eau 2020")
-
-        #     IND_TAR_META = {
-        #         "D102.0": {"titre": "Prix TTC du service (120 m³)", "axe": "€/m³ TTC", "moy_fr": 2.52, "moy_label": "Moy. France", "higher_better": False, "dec": 2, "suf": " €/m³", "help": "Coût global pour l'usager."},
-        #         "VP.179": {"titre": "Part volumique HT (collectivité)", "axe": "€/m³", "moy_fr": None, "moy_label": None, "higher_better": False, "dec": 2, "suf": " €/m³", "help": "Levier d'incitation à la sobriété."},
-        #         "VP.178": {"titre": "Abonnement annuel", "axe": "€/an", "moy_fr": None, "moy_label": None, "higher_better": False, "dec": 0, "suf": " €", "help": "Part fixe indépendante de la consommation."},
-        #         "VP.216": {"titre": "Redevance Agence de l'eau", "axe": "€/m³", "moy_fr": None, "moy_label": None, "higher_better": False, "dec": 3, "suf": " €/m³", "help": "Contribution financement bassin versant."},
-        #     }
-
-        #     s1c1, s1c2 = st.columns(2)
-        #     with s1c1:
-        #         st.markdown(f"##### {IND_TAR_META['VP.179']['titre']}", help=IND_TAR_META["VP.179"]["help"])
-        #         chart_indicateur("VP.179", sel_metros_eau, eau_colors, df_sel_tar, IND_TAR_META, val_func=get_val_tar)
-        #     with s1c2:
-        #         st.markdown(f"##### {IND_TAR_META['VP.178']['titre']}", help=IND_TAR_META["VP.178"]["help"])
-        #         chart_indicateur("VP.178", sel_metros_eau, eau_colors, df_sel_tar, IND_TAR_META, val_func=get_val_tar)
-
-        #     st.markdown("---")
-        #     st.subheader("Tableau comparatif (Tarification)")
-        #     display_recap_table(sel_metros_eau, df_sel_tar, IND_TAR_META, val_func=get_val_tar)
-
-        #     with st.expander("Fiche méthodologique — Tarification"):
-        #         st.markdown("""
-        #         | Code | Indicateur | Interprétation |
-        #         |---|---|---|
-        #         | **D102.0** | Prix TTC (120m³) | Facture type (eau potable) pour un foyer moyen. |
-        #         | **VP.179** | Part volumique HT | Rémunération directe de la collectivité pour le service rendu. |
-        #         | **VP.178** | Abonnement | Couvre les charges fixes. Un abonnement élevé réduit l'incitation financière à économiser l'eau. |
-        #         | **VP.216** | Redevance Agence | Taxes reversées aux Agences de l'Eau pour protéger la ressource au niveau du bassin hydrographique. |
-        #         """)
+                with st.expander("📋 Fiche méthodologique — Tarification"):
+                    st.markdown("""
+    | Code | Indicateur | Interprétation |
+    |---|---|---|
+    | **D102.0** | Prix TTC (120 m³) | Facture type eau potable. Référence nationale de comparaison. |
+    | **VP.179** | Part volumique HT | Rémunération du service. Principal levier d'incitation à économiser. |
+    | **VP.178** | Abonnement | Part fixe. Élevé = frein à la sobriété hydrique. |
+    | **VP.216** | Redevance agence | Taxes reversées pour protéger la ressource au niveau du bassin. |
+    """)
 
     # # ── Onglet 4 : Déchets & Transition ──────────────────────────────────────
     # with tab_env4:

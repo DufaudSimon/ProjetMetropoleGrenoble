@@ -4704,7 +4704,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34022,Baillargues,34,91661,Villebon-sur-Yvette,91,5.04,2019
 34022,Baillargues,34,94065,Rungis,94,5.04,2019
 34022,Baillargues,34,95527,Roissy-en-France,95,30.25,2019
-34022,Baillargues,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.04,2019
 34023,Balaruc-les-Bains,34,34057,Castelnau-le-Lez,34,14.74,2019
 34023,Balaruc-les-Bains,34,34087,Cournonsec,34,9.82,2019
 34023,Balaruc-les-Bains,34,34088,Cournonterral,34,9.82,2019
@@ -4771,7 +4770,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34027,Beaulieu,34,34337,Villeneuve-lès-Maguelone,34,5.33,2019
 34027,Beaulieu,34,92012,Boulogne-Billancourt,92,5.21,2019
 34027,Beaulieu,34,95018,Argenteuil,95,5.09,2019
-34027,Beaulieu,34,SUC1L,GENEVE,XX,5.09,2019
 34028,Bédarieux,34,34172,Montpellier,34,14.12,2019
 34028,Bédarieux,34,34259,Saint-Georges-d'Orques,34,5.0,2019
 34029,Bélarga,34,34123,Juvignac,34,11.24,2019
@@ -5078,10 +5076,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34057,Castelnau-le-Lez,34,94081,Vitry-sur-Seine,94,1.1,2019
 34057,Castelnau-le-Lez,34,95063,Bezons,95,0.88,2019
 34057,Castelnau-le-Lez,34,95527,Roissy-en-France,95,15.02,2019
-34057,Castelnau-le-Lez,34,97611,Mamoudzou,97,6.45,2019
-34057,Castelnau-le-Lez,34,BE25R,WAVRE,XX,5.53,2019
-34057,Castelnau-le-Lez,34,SUC1L,GENEVE,XX,5.21,2019
-34057,Castelnau-le-Lez,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,2.5,2019
 34058,Castries,34,06152,Valbonne,06,5.09,2019
 34058,Castries,34,13104,Sausset-les-Pins,13,5.09,2019
 34058,Castries,34,13201,Marseille 1er Arrondissement,13,4.97,2019
@@ -5235,7 +5229,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34077,Clapiers,34,91161,Chilly-Mazarin,91,5.41,2019
 34077,Clapiers,34,92012,Boulogne-Billancourt,92,5.41,2019
 34077,Clapiers,34,95527,Roissy-en-France,95,5.41,2019
-34077,Clapiers,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.73,2019
 34078,Claret,34,34022,Baillargues,34,10.0,2019
 34078,Claret,34,34057,Castelnau-le-Lez,34,15.0,2019
 34078,Claret,34,34058,Castries,34,5.0,2019
@@ -5329,7 +5322,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34087,Cournonsec,34,83061,Fréjus,83,4.99,2019
 34087,Cournonsec,34,83119,Saint-Tropez,83,5.12,2019
 34087,Cournonsec,34,83137,Toulon,83,4.99,2019
-34087,Cournonsec,34,BE830,MARCHE EN FAMENNE,XX,5.12,2019
 34088,Cournonterral,34,12145,Millau,12,5.16,2019
 34088,Cournonterral,34,13001,Aix-en-Provence,13,5.16,2019
 34088,Cournonterral,34,30125,Garons,30,5.16,2019
@@ -5460,7 +5452,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34090,Le Crès,34,92044,Levallois-Perret,92,10.0,2019
 34090,Le Crès,34,92062,Puteaux,92,5.0,2019
 34090,Le Crès,34,95527,Roissy-en-France,95,15.0,2019
-34090,Le Crès,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,10.0,2019
 34091,Le Cros,34,34172,Montpellier,34,10.0,2019
 34094,Espondeilhan,34,34057,Castelnau-le-Lez,34,4.83,2019
 34094,Espondeilhan,34,34172,Montpellier,34,4.83,2019
@@ -5535,7 +5526,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34102,Fontanès,34,34309,Teyran,34,9.99,2019
 34102,Fontanès,34,34318,Vacquières,34,5.03,2019
 34102,Fontanès,34,93066,Saint-Denis,93,5.03,2019
-34102,Fontanès,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.0,2019
 34103,Fontès,34,34123,Juvignac,34,4.97,2019
 34103,Fontès,34,34169,Montferrier-sur-Lez,34,4.97,2019
 34103,Fontès,34,34172,Montpellier,34,14.91,2019
@@ -5745,7 +5735,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34120,Jacou,34,91458,Nozay,91,5.0,2019
 34120,Jacou,34,94080,Vincennes,94,5.0,2019
 34120,Jacou,34,95527,Roissy-en-France,95,5.0,2019
-34120,Jacou,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.0,2019
 34121,Joncels,34,34120,Jacou,34,5.24,2019
 34121,Joncels,34,34172,Montpellier,34,5.24,2019
 34121,Joncels,34,34202,Pignan,34,5.24,2019
@@ -6014,7 +6003,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34129,Lattes,34,93064,Rosny-sous-Bois,93,2.97,2019
 34129,Lattes,34,95127,Cergy,95,3.72,2019
 34129,Lattes,34,95527,Roissy-en-France,95,28.23,2019
-34129,Lattes,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.68,2019
 34130,Laurens,34,34172,Montpellier,34,15.17,2019
 34130,Laurens,34,38185,Grenoble,38,5.09,2019
 34131,Lauret,34,34169,Montferrier-sur-Lez,34,5.14,2019
@@ -6364,8 +6352,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34169,Montferrier-sur-Lez,34,92026,Courbevoie,92,10.0,2019
 34169,Montferrier-sur-Lez,34,92063,Rueil-Malmaison,92,5.0,2019
 34169,Montferrier-sur-Lez,34,95527,Roissy-en-France,95,15.0,2019
-34169,Montferrier-sur-Lez,34,97120,Pointe-à-Pitre,97,5.0,2019
-34169,Montferrier-sur-Lez,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.0,2019
 34171,Montoulieu,34,34058,Castries,34,10.12,2019
 34171,Montoulieu,34,34172,Montpellier,34,10.12,2019
 34172,Montpellier,34,01033,Valserhône,01,2.05,2019
@@ -7049,19 +7035,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34172,Montpellier,34,95527,Roissy-en-France,95,115.35,2019
 34172,Montpellier,34,95572,Saint-Ouen-l'Aumône,95,3.09,2019
 34172,Montpellier,34,95607,Taverny,95,1.21,2019
-34172,Montpellier,34,97356,Camopi,97,3.76,2019
-34172,Montpellier,34,97605,Chiconi,97,3.66,2019
-34172,Montpellier,34,97616,Sada,97,8.66,2019
-34172,Montpellier,34,98818,Nouméa,98,7.9,2019
-34172,Montpellier,34,AL157,SAARBRUECKEN,XX,14.31,2019
-34172,Montpellier,34,BE56B,MOMIGNIES,XX,3.55,2019
-34172,Montpellier,34,SU611,BALE,XX,3.63,2019
-34172,Montpellier,34,SU96F,LAUSANNE,XX,6.92,2019
-34172,Montpellier,34,SU97T,MORGES,XX,1.04,2019
-34172,Montpellier,34,SUC1L,GENEVE,XX,22.84,2019
-34172,Montpellier,34,SUC1X,PLAN LES OUATES,XX,14.35,2019
-34172,Montpellier,34,SUQ1B,ZUG,XX,5.66,2019
-34172,Montpellier,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,118.51,2019
 34173,Montpeyroux,34,34057,Castelnau-le-Lez,34,5.05,2019
 34173,Montpeyroux,34,34123,Juvignac,34,15.16,2019
 34173,Montpeyroux,34,34129,Lattes,34,15.11,2019
@@ -7484,7 +7457,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34227,Restinclières,34,84091,Piolenc,84,5.0,2019
 34227,Restinclières,34,91661,Villebon-sur-Yvette,91,5.0,2019
 34227,Restinclières,34,92040,Issy-les-Moulineaux,92,5.0,2019
-34227,Restinclières,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.0,2019
 34230,Les Rives,34,34172,Montpellier,34,5.07,2019
 34232,Roquebrun,34,38200,Jarrie,38,4.84,2019
 34235,Rosis,34,34172,Montpellier,34,10.2,2019
@@ -7689,7 +7661,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34249,Saint-Drézéry,34,75114,Paris 14e Arrondissement,75,4.82,2019
 34249,Saint-Drézéry,34,81065,Castres,81,4.82,2019
 34249,Saint-Drézéry,34,95527,Roissy-en-France,95,4.82,2019
-34249,Saint-Drézéry,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,9.63,2019
 34250,Saint-Étienne-d'Albagnan,34,34172,Montpellier,34,4.76,2019
 34251,Saint-Étienne-de-Gourgas,34,34134,Lavérune,34,5.03,2019
 34251,Saint-Étienne-de-Gourgas,34,34172,Montpellier,34,20.06,2019
@@ -7760,7 +7731,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34256,Saint-Geniès-des-Mourgues,34,34344,La Grande-Motte,34,10.54,2019
 34256,Saint-Geniès-des-Mourgues,34,75117,Paris 17e Arrondissement,75,5.37,2019
 34256,Saint-Geniès-des-Mourgues,34,92044,Levallois-Perret,92,5.47,2019
-34256,Saint-Geniès-des-Mourgues,34,MO001,Monaco (MO001),XX,5.37,2019
 34258,Saint-Geniès-de-Fontedit,34,34172,Montpellier,34,15.0,2019
 34259,Saint-Georges-d'Orques,34,02415,Laversine,02,9.88,2019
 34259,Saint-Georges-d'Orques,34,13066,Noves,13,4.94,2019
@@ -7954,9 +7924,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34270,Saint-Jean-de-Védas,34,93078,Villepinte,93,11.09,2019
 34270,Saint-Jean-de-Védas,34,94065,Rungis,94,5.37,2019
 34270,Saint-Jean-de-Védas,34,94076,Villejuif,94,5.54,2019
-34270,Saint-Jean-de-Védas,34,97801,97801,97,5.72,2019
-34270,Saint-Jean-de-Védas,34,BE540,MOUSCRON,XX,5.37,2019
-34270,Saint-Jean-de-Védas,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,10.92,2019
 34272,Saint-Just,34,34022,Baillargues,34,39.85,2019
 34272,Saint-Just,34,34057,Castelnau-le-Lez,34,39.85,2019
 34272,Saint-Just,34,34058,Castries,34,14.95,2019
@@ -8360,7 +8327,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34327,Vendargues,34,75106,Paris 6e Arrondissement,75,5.17,2019
 34327,Vendargues,34,75114,Paris 14e Arrondissement,75,5.08,2019
 34327,Vendargues,34,75115,Paris 15e Arrondissement,75,5.14,2019
-34327,Vendargues,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.11,2019
 34328,Vendémian,34,34057,Castelnau-le-Lez,34,9.72,2019
 34328,Vendémian,34,34123,Juvignac,34,19.44,2019
 34328,Vendémian,34,34134,Lavérune,34,4.86,2019
@@ -8465,7 +8431,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34337,Villeneuve-lès-Maguelone,34,92049,Montrouge,92,5.0,2019
 34337,Villeneuve-lès-Maguelone,34,92075,Vanves,92,5.0,2019
 34337,Villeneuve-lès-Maguelone,34,95527,Roissy-en-France,95,5.0,2019
-34337,Villeneuve-lès-Maguelone,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.0,2019
 34338,Villeneuvette,34,34172,Montpellier,34,4.93,2019
 34340,Villetelle,34,34022,Baillargues,34,5.38,2019
 34340,Villetelle,34,34090,Le Crès,34,5.38,2019
@@ -8952,9 +8917,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35024,Betton,35,95218,Éragny,95,1.03,2019
 35024,Betton,35,95277,Gonesse,95,1.02,2019
 35024,Betton,35,95527,Roissy-en-France,95,1.03,2019
-35024,Betton,35,BE551,ECAUSSINES,XX,3.39,2019
-35024,Betton,35,SUC28,VERNIER,XX,3.39,2019
-35024,Betton,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,3.79,2019
 35025,Billé,35,35206,Noyal-Châtillon-sur-Seiche,35,4.99,2019
 35025,Billé,35,35238,Rennes,35,25.0,2019
 35025,Billé,35,35278,Saint-Grégoire,35,4.98,2019
@@ -9418,12 +9380,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35047,Bruz,35,94076,Villejuif,94,1.08,2019
 35047,Bruz,35,95127,Cergy,95,1.95,2019
 35047,Bruz,35,95527,Roissy-en-France,95,1.95,2019
-35047,Bruz,35,97217,Le Marin,97,3.65,2019
-35047,Bruz,35,97415,Saint-Paul,97,0.97,2019
-35047,Bruz,35,BE216,EVERE,XX,5.06,2019
-35047,Bruz,35,BE21C,SAINT-GILLES(SINT-GI,XX,5.06,2019
-35047,Bruz,35,BE540,MOUSCRON,XX,3.18,2019
-35047,Bruz,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,9.08,2019
 35049,Cancale,35,35055,Chantepie,35,4.98,2019
 35049,Cancale,35,35238,Rennes,35,34.8,2019
 35049,Cancale,35,35275,Saint-Gilles,35,5.25,2019
@@ -9627,10 +9583,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35051,Cesson-Sévigné,35,95063,Bezons,95,3.35,2019
 35051,Cesson-Sévigné,35,95127,Cergy,95,2.96,2019
 35051,Cesson-Sévigné,35,95527,Roissy-en-France,95,6.64,2019
-35051,Cesson-Sévigné,35,97227,Sainte-Luce,97,3.15,2019
-35051,Cesson-Sévigné,35,LU320,LUXEMBOURG,XX,3.92,2019
-35051,Cesson-Sévigné,35,SUC1L,GENEVE,XX,3.93,2019
-35051,Cesson-Sévigné,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,9.5,2019
 35052,Champeaux,35,35051,Cesson-Sévigné,35,15.43,2019
 35052,Champeaux,35,35238,Rennes,35,25.76,2019
 35052,Champeaux,35,35281,Saint-Jacques-de-la-Lande,35,5.14,2019
@@ -10061,8 +10013,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35066,Chartres-de-Bretagne,35,92004,Asnières-sur-Seine,92,5.01,2019
 35066,Chartres-de-Bretagne,35,92012,Boulogne-Billancourt,92,5.19,2019
 35066,Chartres-de-Bretagne,35,92063,Rueil-Malmaison,92,5.13,2019
-35066,Chartres-de-Bretagne,35,97416,Saint-Pierre,97,5.07,2019
-35066,Chartres-de-Bretagne,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.07,2019
 35067,Chasné-sur-Illet,35,35001,Acigné,35,14.72,2019
 35067,Chasné-sur-Illet,35,35024,Betton,35,34.36,2019
 35067,Chasné-sur-Illet,35,35032,Bourgbarré,35,4.91,2019
@@ -10310,7 +10260,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35080,Cintré,35,56167,Plougoumelen,56,4.87,2019
 35080,Cintré,35,75108,Paris 8e Arrondissement,75,9.73,2019
 35080,Cintré,35,93066,Saint-Denis,93,4.87,2019
-35080,Cintré,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.87,2019
 35081,Clayes,35,22305,Saint-Jouan-de-l'Isle,22,4.99,2019
 35081,Clayes,35,35001,Acigné,35,9.98,2019
 35081,Clayes,35,35024,Betton,35,4.99,2019
@@ -10433,7 +10382,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35088,Corps-Nuds,35,56178,Pontivy,56,5.19,2019
 35088,Corps-Nuds,35,75117,Paris 17e Arrondissement,75,5.19,2019
 35088,Corps-Nuds,35,91377,Massy,91,5.19,2019
-35088,Corps-Nuds,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.24,2019
 35089,La Couyère,35,35032,Bourgbarré,35,4.92,2019
 35089,La Couyère,35,35047,Bruz,35,4.69,2019
 35089,La Couyère,35,35051,Cesson-Sévigné,35,9.96,2019
@@ -11166,7 +11114,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35139,Laillé,35,75117,Paris 17e Arrondissement,75,4.96,2019
 35139,Laillé,35,86194,Poitiers,86,4.96,2019
 35139,Laillé,35,92064,Saint-Cloud,92,4.96,2019
-35139,Laillé,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.96,2019
 35140,Lalleu,35,35051,Cesson-Sévigné,35,5.29,2019
 35140,Lalleu,35,35139,Laillé,35,4.97,2019
 35140,Lalleu,35,35196,Mordelles,35,5.29,2019
@@ -11985,7 +11932,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35206,Noyal-Châtillon-sur-Seiche,35,78640,Vélizy-Villacoublay,78,5.18,2019
 35206,Noyal-Châtillon-sur-Seiche,35,85109,Les Herbiers,85,4.93,2019
 35206,Noyal-Châtillon-sur-Seiche,35,92026,Courbevoie,92,5.05,2019
-35206,Noyal-Châtillon-sur-Seiche,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.05,2019
 35207,Noyal-sur-Vilaine,35,35001,Acigné,35,45.0,2019
 35207,Noyal-sur-Vilaine,35,35024,Betton,35,5.0,2019
 35207,Noyal-sur-Vilaine,35,35032,Bourgbarré,35,10.0,2019
@@ -12222,7 +12168,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35210,Pacé,35,92050,Nanterre,92,2.61,2019
 35210,Pacé,35,92063,Rueil-Malmaison,92,5.42,2019
 35210,Pacé,35,95051,Beauchamp,95,2.6,2019
-35210,Pacé,35,97411,Saint-Denis,97,5.26,2019
 35211,Paimpont,35,35024,Betton,35,5.44,2019
 35211,Paimpont,35,35047,Bruz,35,16.92,2019
 35211,Paimpont,35,35051,Cesson-Sévigné,35,5.44,2019
@@ -13177,13 +13122,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35238,Rennes,35,95127,Cergy,95,6.0,2019
 35238,Rennes,35,95527,Roissy-en-France,95,18.93,2019
 35238,Rennes,35,95572,Saint-Ouen-l'Aumône,95,3.29,2019
-35238,Rennes,35,97103,Baie-Mahault,97,0.93,2019
-35238,Rennes,35,97231,Les Trois-Îlets,97,3.63,2019
-35238,Rennes,35,97502,97502,97,1.02,2019
-35238,Rennes,35,AL000,LEIPZIG,XX,3.39,2019
-35238,Rennes,35,BE540,MOUSCRON,XX,2.19,2019
-35238,Rennes,35,SU15U,ZURICH,XX,3.39,2019
-35238,Rennes,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,99.35,2019
 35239,Retiers,35,35001,Acigné,35,5.05,2019
 35239,Retiers,35,35032,Bourgbarré,35,10.09,2019
 35239,Retiers,35,35039,Brécé,35,5.05,2019
@@ -13293,7 +13231,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35240,Le Rheu,35,92007,Bagneux,92,10.61,2019
 35240,Le Rheu,35,92073,Suresnes,92,5.16,2019
 35240,Le Rheu,35,94017,Champigny-sur-Marne,94,5.16,2019
-35240,Le Rheu,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,10.05,2019
 35241,La Richardais,35,35066,Chartres-de-Bretagne,35,5.0,2019
 35241,La Richardais,35,35189,Montgermont,35,5.0,2019
 35241,La Richardais,35,35238,Rennes,35,35.0,2019
@@ -13390,7 +13327,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35245,Romillé,35,53107,Gorron,53,5.05,2019
 35245,Romillé,35,56083,Hennebont,56,5.18,2019
 35245,Romillé,35,85222,Saint-Gilles-Croix-de-Vie,85,15.21,2019
-35245,Romillé,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.25,2019
 35246,Roz-Landrieux,35,35051,Cesson-Sévigné,35,10.13,2019
 35246,Roz-Landrieux,35,35210,Pacé,35,5.05,2019
 35246,Roz-Landrieux,35,35238,Rennes,35,25.41,2019
@@ -13799,7 +13735,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35278,Saint-Grégoire,35,93078,Villepinte,93,5.0,2019
 35278,Saint-Grégoire,35,94018,Charenton-le-Pont,94,5.0,2019
 35278,Saint-Grégoire,35,95527,Roissy-en-France,95,5.0,2019
-35278,Saint-Grégoire,35,AL157,SAARBRUECKEN,XX,5.0,2019
 35279,Saint-Guinoux,35,35238,Rennes,35,25.02,2019
 35280,Saint-Hilaire-des-Landes,35,35001,Acigné,35,5.0,2019
 35280,Saint-Hilaire-des-Landes,35,35024,Betton,35,5.0,2019
@@ -13977,7 +13912,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35281,Saint-Jacques-de-la-Lande,35,95277,Gonesse,95,3.12,2019
 35281,Saint-Jacques-de-la-Lande,35,95280,Goussainville,95,3.55,2019
 35281,Saint-Jacques-de-la-Lande,35,95527,Roissy-en-France,95,2.83,2019
-35281,Saint-Jacques-de-la-Lande,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.08,2019
 35282,Rives-du-Couesnon,35,35001,Acigné,35,5.0,2019
 35282,Rives-du-Couesnon,35,35024,Betton,35,4.99,2019
 35282,Rives-du-Couesnon,35,35032,Bourgbarré,35,5.0,2019
@@ -14642,7 +14576,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35351,Le Verger,35,56075,Guer,56,4.86,2019
 35351,Le Verger,35,56165,Ploërmel,56,4.93,2019
 35351,Le Verger,35,56260,Vannes,56,5.06,2019
-35351,Le Verger,35,SUC28,VERNIER,XX,4.99,2019
 35352,Vern-sur-Seiche,35,22050,Dinan,22,4.93,2019
 35352,Vern-sur-Seiche,35,22093,Lamballe-Armor,22,4.93,2019
 35352,Vern-sur-Seiche,35,22278,Saint-Brieuc,22,14.78,2019
@@ -15721,9 +15654,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38126,Corenc,38,74191,Morzine,74,5.09,2019
 38126,Corenc,38,75112,Paris 12e Arrondissement,75,4.96,2019
 38126,Corenc,38,92026,Courbevoie,92,5.15,2019
-38126,Corenc,38,BE63S,WELKENRAEDT,XX,5.15,2019
-38126,Corenc,38,SU95M,GLAND,XX,4.96,2019
-38126,Corenc,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.84,2019
 38127,Cornillon-en-Trièves,38,38170,Fontanil-Cornillon,38,4.94,2019
 38127,Cornillon-en-Trièves,38,38185,Grenoble,38,4.94,2019
 38127,Cornillon-en-Trièves,38,38229,Meylan,38,4.94,2019
@@ -15854,7 +15784,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38150,Domène,38,73155,Méry,73,5.02,2019
 38150,Domène,38,73171,Montmélian,73,9.89,2019
 38150,Domène,38,94033,Fontenay-sous-Bois,94,4.86,2019
-38150,Domène,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.94,2019
 38151,Échirolles,38,01088,Charnoz-sur-Ain,01,1.98,2019
 38151,Échirolles,38,01376,Saint-Maurice-de-Beynost,01,1.05,2019
 38151,Échirolles,38,01390,Saint-Vulbas,01,3.48,2019
@@ -16038,10 +15967,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38151,Échirolles,38,92048,Meudon,92,3.67,2019
 38151,Échirolles,38,94034,Fresnes,94,3.14,2019
 38151,Échirolles,38,94069,Saint-Maurice,94,2.84,2019
-38151,Échirolles,38,97611,Mamoudzou,97,2.83,2019
-38151,Échirolles,38,SU9BX,YVERDON LES BAINS,XX,0.99,2019
-38151,Échirolles,38,SUC1L,GENEVE,XX,11.97,2019
-38151,Échirolles,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,6.41,2019
 38152,Eclose-Badinières,38,38170,Fontanil-Cornillon,38,5.1,2019
 38153,Engins,38,38151,Échirolles,38,5.09,2019
 38153,Engins,38,38169,Fontaine,38,10.18,2019
@@ -16308,9 +16233,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38169,Fontaine,38,92040,Issy-les-Moulineaux,92,2.72,2019
 38169,Fontaine,38,93048,Montreuil,93,3.37,2019
 38169,Fontaine,38,95127,Cergy,95,2.91,2019
-38169,Fontaine,38,SU42R,CRESSIER (FRIBOURG),XX,3.07,2019
-38169,Fontaine,38,SU97T,MORGES,XX,1.02,2019
-38169,Fontaine,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.92,2019
 38170,Fontanil-Cornillon,38,26362,Valence,26,4.69,2019
 38170,Fontanil-Cornillon,38,38039,Bernin,38,4.69,2019
 38170,Fontanil-Cornillon,38,38045,Biviers,38,4.69,2019
@@ -16464,8 +16386,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38179,Gières,38,92026,Courbevoie,92,5.0,2019
 38179,Gières,38,92048,Meudon,92,5.0,2019
 38179,Gières,38,93029,Drancy,93,5.0,2019
-38179,Gières,38,SUC1L,GENEVE,XX,5.0,2019
-38179,Gières,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.0,2019
 38180,Gillonnay,38,38151,Échirolles,38,5.0,2019
 38180,Gillonnay,38,38169,Fontaine,38,5.0,2019
 38180,Gillonnay,38,38185,Grenoble,38,10.0,2019
@@ -16972,16 +16892,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38185,Grenoble,38,95127,Cergy,95,0.74,2019
 38185,Grenoble,38,95510,Puiseux-Pontoise,95,2.95,2019
 38185,Grenoble,38,95527,Roissy-en-France,95,14.49,2019
-38185,Grenoble,38,97801,97801,97,3.17,2019
-38185,Grenoble,38,ALHE0,HAMBURG,XX,0.98,2019
-38185,Grenoble,38,SU15U,ZURICH,XX,3.11,2019
-38185,Grenoble,38,SU54K,ZUCHWIL,XX,2.93,2019
-38185,Grenoble,38,SU611,BALE,XX,2.91,2019
-38185,Grenoble,38,SU92Y,CHAVANNES PRES RENEN,XX,3.01,2019
-38185,Grenoble,38,SUB2B,MARIN EPAGNIER,XX,6.39,2019
-38185,Grenoble,38,SUC1L,GENEVE,XX,42.96,2019
-38185,Grenoble,38,SUC1X,PLAN LES OUATES,XX,14.38,2019
-38185,Grenoble,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,75.72,2019
 38186,Gresse-en-Vercors,38,38151,Échirolles,38,10.24,2019
 38186,Gresse-en-Vercors,38,38158,Eybens,38,5.12,2019
 38186,Gresse-en-Vercors,38,38185,Grenoble,38,15.37,2019
@@ -17150,9 +17060,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38200,Jarrie,38,69387,Lyon 7e Arrondissement,69,5.0,2019
 38200,Jarrie,38,73065,Chambéry,73,5.0,2019
 38200,Jarrie,38,92012,Boulogne-Billancourt,92,5.0,2019
-38200,Jarrie,38,97701,97701,97,5.0,2019
-38200,Jarrie,38,SU611,BALE,XX,5.0,2019
-38200,Jarrie,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.0,2019
 38203,Laffrey,38,38059,Brié-et-Angonnes,38,5.34,2019
 38203,Laffrey,38,38111,Claix,38,5.1,2019
 38203,Laffrey,38,38151,Échirolles,38,26.82,2019
@@ -17416,11 +17323,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38229,Meylan,38,93051,Noisy-le-Grand,93,2.84,2019
 38229,Meylan,38,93066,Saint-Denis,93,2.92,2019
 38229,Meylan,38,94011,Bonneuil-sur-Marne,94,2.79,2019
-38229,Meylan,38,97801,97801,97,1.28,2019
-38229,Meylan,38,AL157,SAARBRUECKEN,XX,2.53,2019
-38229,Meylan,38,SU15U,ZURICH,XX,5.31,2019
-38229,Meylan,38,SUC1L,GENEVE,XX,4.79,2019
-38229,Meylan,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,3.56,2019
 38230,Meyrié,38,38185,Grenoble,38,24.33,2019
 38230,Meyrié,38,38540,Veurey-Voroize,38,4.25,2019
 38231,Meyrieu-les-Étangs,38,38185,Grenoble,38,4.98,2019
@@ -17820,7 +17722,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38281,Noyarey,38,69127,Marcy-l'Étoile,69,5.26,2019
 38281,Noyarey,38,69243,Tarare,69,5.26,2019
 38281,Noyarey,38,73171,Montmélian,73,5.26,2019
-38281,Noyarey,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.08,2019
 38284,Ornacieux-Balbins,38,38158,Eybens,38,4.8,2019
 38284,Ornacieux-Balbins,38,38169,Fontaine,38,5.18,2019
 38284,Ornacieux-Balbins,38,38185,Grenoble,38,10.09,2019
@@ -18050,8 +17951,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38317,Le Pont-de-Claix,38,74305,Ville-la-Grand,74,2.96,2019
 38317,Le Pont-de-Claix,38,78383,Maurepas,78,3.14,2019
 38317,Le Pont-de-Claix,38,94011,Bonneuil-sur-Marne,94,0.96,2019
-38317,Le Pont-de-Claix,38,SUC1L,GENEVE,XX,10.42,2019
-38317,Le Pont-de-Claix,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,2.67,2019
 38318,Pont-Évêque,38,38151,Échirolles,38,5.1,2019
 38318,Pont-Évêque,38,38185,Grenoble,38,15.31,2019
 38318,Pont-Évêque,38,42218,Saint-Étienne,42,15.31,2019
@@ -18309,7 +18208,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38364,Saint-Barthélemy-de-Séchilienne,38,38478,Séchilienne,38,14.71,2019
 38364,Saint-Barthélemy-de-Séchilienne,38,38486,Seyssins,38,4.84,2019
 38364,Saint-Barthélemy-de-Séchilienne,38,38524,Varces-Allières-et-Risset,38,9.81,2019
-38364,Saint-Barthélemy-de-Séchilienne,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.84,2019
 38366,Saint-Baudille-et-Pipet,38,38111,Claix,38,5.0,2019
 38368,Saint-Blaise-du-Buis,38,38151,Échirolles,38,10.62,2019
 38368,Saint-Blaise-du-Buis,38,38169,Fontaine,38,5.35,2019
@@ -18490,10 +18388,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38382,Saint-Égrève,38,93059,Pierrefitte-sur-Seine,93,0.96,2019
 38382,Saint-Égrève,38,93070,Saint-Ouen-sur-Seine,93,1.02,2019
 38382,Saint-Égrève,38,95527,Roissy-en-France,95,3.27,2019
-38382,Saint-Égrève,38,97701,97701,97,2.83,2019
-38382,Saint-Égrève,38,SU96F,LAUSANNE,XX,3.17,2019
-38382,Saint-Égrève,38,SUC1L,GENEVE,XX,3.04,2019
-38382,Saint-Égrève,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,15.89,2019
 38383,Saint-Étienne-de-Crossey,38,38151,Échirolles,38,10.41,2019
 38383,Saint-Étienne-de-Crossey,38,38169,Fontaine,38,4.89,2019
 38383,Saint-Étienne-de-Crossey,38,38170,Fontanil-Cornillon,38,25.5,2019
@@ -19025,12 +18919,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38421,Saint-Martin-d'Hères,38,94028,Créteil,94,2.69,2019
 38421,Saint-Martin-d'Hères,38,94065,Rungis,94,8.09,2019
 38421,Saint-Martin-d'Hères,38,95572,Saint-Ouen-l'Aumône,95,3.16,2019
-38421,Saint-Martin-d'Hères,38,97213,Le Lamentin,97,3.08,2019
-38421,Saint-Martin-d'Hères,38,SU611,BALE,XX,2.52,2019
-38421,Saint-Martin-d'Hères,38,SUC1L,GENEVE,XX,4.58,2019
-38421,Saint-Martin-d'Hères,38,SUC1U,MEYRIN,XX,3.15,2019
-38421,Saint-Martin-d'Hères,38,SUC23,SATIGNY,XX,1.07,2019
-38421,Saint-Martin-d'Hères,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,12.94,2019
 38422,Saint-Martin-d'Uriage,38,38057,Bresson,38,10.0,2019
 38422,Saint-Martin-d'Uriage,38,38059,Brié-et-Angonnes,38,5.0,2019
 38422,Saint-Martin-d'Uriage,38,38071,Champ-sur-Drac,38,5.0,2019
@@ -19560,9 +19448,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38474,Sassenage,38,78586,Sartrouville,78,2.46,2019
 38474,Sassenage,38,94077,Villeneuve-le-Roi,94,1.0,2019
 38474,Sassenage,38,95127,Cergy,95,1.0,2019
-38474,Sassenage,38,SUA4O,SION,XX,5.0,2019
-38474,Sassenage,38,SUC1L,GENEVE,XX,2.84,2019
-38474,Sassenage,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,2.46,2019
 38475,Satolas-et-Bonce,38,38169,Fontaine,38,5.2,2019
 38475,Satolas-et-Bonce,38,38185,Grenoble,38,5.32,2019
 38475,Satolas-et-Bonce,38,38423,Saint-Martin-le-Vinoux,38,5.2,2019
@@ -19733,12 +19618,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38485,Seyssinet-Pariset,38,92062,Puteaux,92,2.55,2019
 38485,Seyssinet-Pariset,38,93066,Saint-Denis,93,2.83,2019
 38485,Seyssinet-Pariset,38,95127,Cergy,95,2.82,2019
-38485,Seyssinet-Pariset,38,AL157,SAARBRUECKEN,XX,1.85,2019
-38485,Seyssinet-Pariset,38,ALADG,PEITING,XX,2.79,2019
-38485,Seyssinet-Pariset,38,SU95E,FOUNEX,XX,2.71,2019
-38485,Seyssinet-Pariset,38,SU99G,ROLLE,XX,2.51,2019
-38485,Seyssinet-Pariset,38,SUC1L,GENEVE,XX,5.95,2019
-38485,Seyssinet-Pariset,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,2.79,2019
 38486,Seyssins,38,26118,Épinouze,26,5.01,2019
 38486,Seyssins,38,38039,Bernin,38,25.26,2019
 38486,Seyssins,38,38057,Bresson,38,4.81,2019
@@ -19793,8 +19672,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38486,Seyssins,38,92064,Saint-Cloud,92,5.43,2019
 38486,Seyssins,38,93055,Pantin,93,5.01,2019
 38486,Seyssins,38,95527,Roissy-en-France,95,5.22,2019
-38486,Seyssins,38,SUC1L,GENEVE,XX,5.22,2019
-38486,Seyssins,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.66,2019
 38487,Seyssuel,38,38185,Grenoble,38,5.04,2019
 38487,Seyssuel,38,42218,Saint-Étienne,42,10.21,2019
 38489,Siévoz,38,38185,Grenoble,38,10.0,2019
@@ -19987,7 +19864,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38516,La Tronche,38,75120,Paris 20e Arrondissement,75,5.07,2019
 38516,La Tronche,38,84133,La Tour-d'Aigues,84,9.96,2019
 38516,La Tronche,38,92025,Colombes,92,4.9,2019
-38516,La Tronche,38,SUC1L,GENEVE,XX,5.0,2019
 38517,Tullins,38,38111,Claix,38,10.12,2019
 38517,Tullins,38,38150,Domène,38,10.19,2019
 38517,Tullins,38,38151,Échirolles,38,81.6,2019
@@ -20192,7 +20068,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38533,Venon,38,38516,La Tronche,38,21.8,2019
 38533,Venon,38,38533,Venon,38,52.89,2019
 38533,Venon,38,91272,Gif-sur-Yvette,91,4.66,2019
-38533,Venon,38,SU97T,MORGES,XX,5.04,2019
 38536,Vernioz,38,42186,Rive-de-Gier,42,5.0,2019
 38537,La Verpillière,38,38185,Grenoble,38,20.22,2019
 38537,La Verpillière,38,42218,Saint-Étienne,42,5.07,2019
@@ -20866,7 +20741,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42032,Cellieu,42,69382,Lyon 2e Arrondissement,69,5.13,2019
 42032,Cellieu,42,69383,Lyon 3e Arrondissement,69,5.13,2019
 42032,Cellieu,42,69387,Lyon 7e Arrondissement,69,9.82,2019
-42032,Cellieu,42,SUC1C,CHENE BOUGERIES,XX,5.04,2019
 42033,Le Cergne,42,42222,Saint-Galmier,42,5.0,2019
 42035,Cezay,42,42005,Andrézieux-Bouthéon,42,5.0,2019
 42035,Cezay,42,42218,Saint-Étienne,42,5.0,2019
@@ -21076,7 +20950,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42044,Le Chambon-Feugerolles,42,71306,Montceau-les-Mines,71,12.16,2019
 42044,Le Chambon-Feugerolles,42,71342,Paray-le-Monial,71,3.22,2019
 42044,Le Chambon-Feugerolles,42,73024,Les Avanchers-Valmorel,73,8.45,2019
-42044,Le Chambon-Feugerolles,42,SUC1L,GENEVE,XX,5.66,2019
 42046,Champdieu,42,42005,Andrézieux-Bouthéon,42,54.9,2019
 42046,Champdieu,42,42207,Saint-Chamond,42,5.03,2019
 42046,Champdieu,42,42218,Saint-Étienne,42,90.64,2019
@@ -22380,7 +22253,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42183,La Ricamarie,42,69387,Lyon 7e Arrondissement,69,5.0,2019
 42183,La Ricamarie,42,69389,Lyon 9e Arrondissement,69,5.0,2019
 42183,La Ricamarie,42,75110,Paris 10e Arrondissement,75,5.0,2019
-42183,La Ricamarie,42,97502,97502,97,10.0,2019
 42184,Riorges,42,38170,Fontanil-Cornillon,38,1.87,2019
 42184,Riorges,42,42005,Andrézieux-Bouthéon,42,2.46,2019
 42184,Riorges,42,42097,La Fouillouse,42,3.61,2019
@@ -22706,7 +22578,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42189,Roche-la-Molière,42,92063,Rueil-Malmaison,92,3.22,2019
 42189,Roche-la-Molière,42,94003,Arcueil,94,2.75,2019
 42189,Roche-la-Molière,42,94079,Villiers-sur-Marne,94,2.81,2019
-42189,Roche-la-Molière,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,2.66,2019
 42191,Roisey,42,42207,Saint-Chamond,42,5.11,2019
 42191,Roisey,42,42218,Saint-Étienne,42,10.25,2019
 42191,Roisey,42,42302,Sorbiers,42,5.11,2019
@@ -23041,9 +22912,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42207,Saint-Chamond,42,92064,Saint-Cloud,92,2.57,2019
 42207,Saint-Chamond,42,93078,Villepinte,93,2.66,2019
 42207,Saint-Chamond,42,95527,Roissy-en-France,95,2.6,2019
-42207,Saint-Chamond,42,SU96F,LAUSANNE,XX,5.93,2019
-42207,Saint-Chamond,42,SUC1L,GENEVE,XX,2.53,2019
-42207,Saint-Chamond,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,6.36,2019
 42208,Saint-Christo-en-Jarez,42,03274,Sorbier,03,4.98,2019
 42208,Saint-Christo-en-Jarez,42,38449,Saint-Quentin-Fallavier,38,4.98,2019
 42208,Saint-Christo-en-Jarez,42,42005,Andrézieux-Bouthéon,42,24.92,2019
@@ -23703,15 +23571,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42218,Saint-Étienne,42,95039,Auvers-sur-Oise,95,3.57,2019
 42218,Saint-Étienne,42,95268,Garges-lès-Gonesse,95,1.03,2019
 42218,Saint-Étienne,42,95527,Roissy-en-France,95,6.34,2019
-42218,Saint-Étienne,42,97311,Saint-Laurent-du-Maroni,97,3.54,2019
-42218,Saint-Étienne,42,97611,Mamoudzou,97,6.64,2019
-42218,Saint-Étienne,42,AL123,LEBACH,XX,3.24,2019
-42218,Saint-Étienne,42,BE540,MOUSCRON,XX,2.88,2019
-42218,Saint-Étienne,42,SU137,KLOTEN,XX,0.9,2019
-42218,Saint-Étienne,42,SU93W,CRANS PRES CELIGNY,XX,1.22,2019
-42218,Saint-Étienne,42,SU96F,LAUSANNE,XX,3.3,2019
-42218,Saint-Étienne,42,SUC1L,GENEVE,XX,18.53,2019
-42218,Saint-Étienne,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,42.32,2019
 42219,Saint-Étienne-le-Molard,42,42005,Andrézieux-Bouthéon,42,19.94,2019
 42219,Saint-Étienne-le-Molard,42,42097,La Fouillouse,42,9.97,2019
 42219,Saint-Étienne-le-Molard,42,42207,Saint-Chamond,42,4.99,2019
@@ -23803,7 +23662,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42222,Saint-Galmier,42,74119,Évian-les-Bains,74,5.1,2019
 42222,Saint-Galmier,42,78423,Montigny-le-Bretonneux,78,5.26,2019
 42222,Saint-Galmier,42,92023,Clamart,92,4.94,2019
-42222,Saint-Galmier,42,AL358,BOETZINGEN,XX,10.22,2019
 42223,Saint-Genest-Lerpt,42,01185,Plateau d'Hauteville,01,10.46,2019
 42223,Saint-Genest-Lerpt,42,03321,Yzeure,03,5.1,2019
 42223,Saint-Genest-Lerpt,42,07337,Vernosc-lès-Annonay,07,10.2,2019
@@ -23868,7 +23726,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42223,Saint-Genest-Lerpt,42,69388,Lyon 8e Arrondissement,69,4.86,2019
 42223,Saint-Genest-Lerpt,42,69389,Lyon 9e Arrondissement,69,10.2,2019
 42223,Saint-Genest-Lerpt,42,75109,Paris 9e Arrondissement,75,4.98,2019
-42223,Saint-Genest-Lerpt,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.98,2019
 42224,Saint-Genest-Malifaux,42,42005,Andrézieux-Bouthéon,42,29.68,2019
 42224,Saint-Genest-Malifaux,42,42044,Le Chambon-Feugerolles,42,24.74,2019
 42224,Saint-Genest-Malifaux,42,42092,L'Étrat,42,4.95,2019
@@ -24052,7 +23909,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42234,Saint-Héand,42,73296,Tignes,73,9.94,2019
 42234,Saint-Héand,42,78208,Élancourt,78,4.97,2019
 42234,Saint-Héand,42,83129,Six-Fours-les-Plages,83,4.97,2019
-42234,Saint-Héand,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.97,2019
 42235,Saint-Hilaire-Cusson-la-Valmitte,42,42097,La Fouillouse,42,5.15,2019
 42235,Saint-Hilaire-Cusson-la-Valmitte,42,42099,Fraisses,42,5.07,2019
 42235,Saint-Hilaire-Cusson-la-Valmitte,42,42218,Saint-Étienne,42,15.2,2019
@@ -24321,7 +24177,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42259,Saint-Martin-la-Plaine,42,92044,Levallois-Perret,92,4.97,2019
 42259,Saint-Martin-la-Plaine,42,92060,Le Plessis-Robinson,92,4.97,2019
 42259,Saint-Martin-la-Plaine,42,92063,Rueil-Malmaison,92,5.06,2019
-42259,Saint-Martin-la-Plaine,42,SU95G,GENOLIER,XX,5.06,2019
 42260,Saint-Martin-la-Sauveté,42,42005,Andrézieux-Bouthéon,42,5.0,2019
 42260,Saint-Martin-la-Sauveté,42,42092,L'Étrat,42,5.0,2019
 42261,Saint-Martin-Lestra,42,42005,Andrézieux-Bouthéon,42,5.0,2019
@@ -24412,7 +24267,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42266,Saint-Nizier-de-Fornas,42,43205,Saint-Just-Malmont,43,5.0,2019
 42266,Saint-Nizier-de-Fornas,42,43224,Sainte-Sigolène,43,5.0,2019
 42266,Saint-Nizier-de-Fornas,42,92026,Courbevoie,92,5.0,2019
-42266,Saint-Nizier-de-Fornas,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.0,2019
 42268,Vézelin-sur-Loire,42,42005,Andrézieux-Bouthéon,42,4.99,2019
 42268,Vézelin-sur-Loire,42,42097,La Fouillouse,42,5.0,2019
 42268,Vézelin-sur-Loire,42,42218,Saint-Étienne,42,4.93,2019
@@ -24585,7 +24439,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42275,Saint-Priest-en-Jarez,42,69387,Lyon 7e Arrondissement,69,15.17,2019
 42275,Saint-Priest-en-Jarez,42,69388,Lyon 8e Arrondissement,69,5.0,2019
 42275,Saint-Priest-en-Jarez,42,74063,Châtel,74,5.0,2019
-42275,Saint-Priest-en-Jarez,42,SUC1L,GENEVE,XX,4.94,2019
 42278,Saint-Priest-la-Vêtre,42,42097,La Fouillouse,42,4.97,2019
 42279,Saint-Just-Saint-Rambert,42,38151,Échirolles,38,2.82,2019
 42279,Saint-Just-Saint-Rambert,42,38185,Grenoble,38,2.78,2019
@@ -24918,7 +24771,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42305,La Talaudière,42,69388,Lyon 8e Arrondissement,69,5.08,2019
 42305,La Talaudière,42,74173,Megève,74,5.17,2019
 42305,La Talaudière,42,92062,Puteaux,92,5.08,2019
-42305,La Talaudière,42,SUC1L,GENEVE,XX,5.08,2019
 42306,Tarentaise,42,42092,L'Étrat,42,5.13,2019
 42306,Tarentaise,42,42095,Firminy,42,5.1,2019
 42306,Tarentaise,42,42097,La Fouillouse,42,5.04,2019
@@ -25148,7 +25000,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42320,Valfleury,42,69266,Villeurbanne,69,4.92,2019
 42320,Valfleury,42,69382,Lyon 2e Arrondissement,69,4.92,2019
 42320,Valfleury,42,69383,Lyon 3e Arrondissement,69,9.84,2019
-42320,Valfleury,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.92,2019
 42321,La Valla-sur-Rochefort,42,42005,Andrézieux-Bouthéon,42,5.0,2019
 42322,La Valla-en-Gier,42,01043,Beynost,01,5.06,2019
 42322,La Valla-en-Gier,42,42038,Chalain-le-Comtal,42,5.06,2019
@@ -25301,7 +25152,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42330,Villars,42,83069,Hyères,83,5.17,2019
 42330,Villars,42,92044,Levallois-Perret,92,4.87,2019
 42330,Villars,42,93007,Le Blanc-Mesnil,93,4.97,2019
-42330,Villars,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.97,2019
 42331,Villemontais,42,42005,Andrézieux-Bouthéon,42,4.99,2019
 42331,Villemontais,42,42186,Rive-de-Gier,42,4.99,2019
 42331,Villemontais,42,42218,Saint-Étienne,42,4.99,2019
@@ -28868,8 +28718,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76005,Amfreville-la-Mi-Voie,76,76728,La Vaupalière,76,4.97,2019
 76005,Amfreville-la-Mi-Voie,76,77438,Saint-Thibault-des-Vignes,77,4.97,2019
 76005,Amfreville-la-Mi-Voie,76,78297,Guyancourt,78,9.94,2019
-76005,Amfreville-la-Mi-Voie,76,SU99K,ROMANEL SUR MORGES,XX,5.02,2019
-76005,Amfreville-la-Mi-Voie,76,SUO33,LUGANO,XX,5.08,2019
 76006,Amfreville-les-Champs,76,76451,Mont-Saint-Aignan,76,5.06,2019
 76006,Amfreville-les-Champs,76,76681,Sotteville-lès-Rouen,76,5.06,2019
 76007,Anceaumeville,76,76108,Bois-Guillaume,76,14.7,2019
@@ -28942,7 +28790,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76020,Anneville-Ambourville,76,76759,Yville-sur-Seine,76,5.13,2019
 76020,Anneville-Ambourville,76,78361,Mantes-la-Jolie,78,5.01,2019
 76020,Anneville-Ambourville,76,92049,Montrouge,92,5.13,2019
-76020,Anneville-Ambourville,76,BE25M,RIXENSART,XX,5.01,2019
 76021,Annouville-Vilmesnil,76,76095,Bihorel,76,10.5,2019
 76021,Annouville-Vilmesnil,76,76319,Grand-Couronne,76,4.91,2019
 76021,Annouville-Vilmesnil,76,76322,Le Grand-Quevilly,76,4.6,2019
@@ -29423,7 +29270,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76095,Bihorel,76,94028,Créteil,94,5.04,2019
 76095,Bihorel,76,94033,Fontenay-sous-Bois,94,5.04,2019
 76095,Bihorel,76,95527,Roissy-en-France,95,5.04,2019
-76095,Bihorel,76,BE570,TOURNAI,XX,5.04,2019
 76096,Biville-la-Baignarde,76,76108,Bois-Guillaume,76,5.07,2019
 76096,Biville-la-Baignarde,76,76157,Canteleu,76,10.2,2019
 76096,Biville-la-Baignarde,76,76216,Déville-lès-Rouen,76,5.04,2019
@@ -29544,7 +29390,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76103,Bonsecours,76,92050,Nanterre,92,5.11,2019
 76103,Bonsecours,76,92051,Neuilly-sur-Seine,92,9.89,2019
 76103,Bonsecours,76,93055,Pantin,93,5.11,2019
-76103,Bonsecours,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.11,2019
 76104,Blosseville,76,76575,Saint-Étienne-du-Rouvray,76,5.02,2019
 76105,Le Bocasse,76,76157,Canteleu,76,5.19,2019
 76105,Le Bocasse,76,76178,Cléon,76,9.66,2019
@@ -29796,13 +29641,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76108,Bois-Guillaume,76,95430,Montsoult,95,2.78,2019
 76108,Bois-Guillaume,76,95527,Roissy-en-France,95,3.85,2019
 76108,Bois-Guillaume,76,95572,Saint-Ouen-l'Aumône,95,2.68,2019
-76108,Bois-Guillaume,76,97117,Le Moule,97,1.39,2019
-76108,Bois-Guillaume,76,98735,Papeete,98,6.22,2019
-76108,Bois-Guillaume,76,98818,Nouméa,98,2.76,2019
-76108,Bois-Guillaume,76,AL157,SAARBRUECKEN,XX,1.13,2019
-76108,Bois-Guillaume,76,BE21E,SCHAERBEEK(SCHAARBEE,XX,2.67,2019
-76108,Bois-Guillaume,76,BE25F,NIVELLES,XX,2.68,2019
-76108,Bois-Guillaume,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,3.11,2019
 76109,Bois-Héroult,76,76540,Rouen,76,10.52,2019
 76109,Bois-Héroult,76,76591,Saint-Jacques-sur-Darnétal,76,15.78,2019
 76109,Bois-Héroult,76,76681,Sotteville-lès-Rouen,76,5.26,2019
@@ -30284,7 +30122,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76157,Canteleu,76,94022,Choisy-le-Roi,94,2.56,2019
 76157,Canteleu,76,94065,Rungis,94,2.88,2019
 76157,Canteleu,76,95527,Roissy-en-France,95,3.81,2019
-76157,Canteleu,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,3.46,2019
 76158,Canville-les-Deux-Églises,76,76322,Le Grand-Quevilly,76,4.91,2019
 76158,Canville-les-Deux-Églises,76,76451,Mont-Saint-Aignan,76,9.94,2019
 76158,Canville-les-Deux-Églises,76,76540,Rouen,76,4.97,2019
@@ -30464,7 +30301,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76165,Caudebec-lès-Elbeuf,76,92026,Courbevoie,92,3.78,2019
 76165,Caudebec-lès-Elbeuf,76,92062,Puteaux,92,3.86,2019
 76165,Caudebec-lès-Elbeuf,76,94043,Le Kremlin-Bicêtre,94,1.01,2019
-76165,Caudebec-lès-Elbeuf,76,BE214,BRUXELLES(BRUSSEL),XX,2.81,2019
 76166,Le Caule-Sainte-Beuve,76,76540,Rouen,76,5.0,2019
 76167,Cauville-sur-Mer,76,76540,Rouen,76,20.0,2019
 76167,Cauville-sur-Mer,76,76709,Le Trait,76,5.0,2019
@@ -30744,7 +30580,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76212,Darnétal,76,78350,Louveciennes,78,5.0,2019
 76212,Darnétal,76,80021,Amiens,80,5.12,2019
 76212,Darnétal,76,95018,Argenteuil,95,5.04,2019
-76212,Darnétal,76,BE72A,NEERPELT,XX,5.04,2019
 76213,Daubeuf-Serville,76,76591,Saint-Jacques-sur-Darnétal,76,5.07,2019
 76214,Dénestanville,76,76540,Rouen,76,5.02,2019
 76216,Déville-lès-Rouen,76,14118,Caen,14,4.58,2019
@@ -30893,7 +30728,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76216,Déville-lès-Rouen,76,93055,Pantin,93,3.44,2019
 76216,Déville-lès-Rouen,76,93066,Saint-Denis,93,7.33,2019
 76216,Déville-lès-Rouen,76,94028,Créteil,94,1.07,2019
-76216,Déville-lès-Rouen,76,LU317,MONDERCANGE,XX,2.98,2019
 76217,Dieppe,76,34022,Baillargues,34,2.98,2019
 76217,Dieppe,76,76108,Bois-Guillaume,76,5.51,2019
 76217,Dieppe,76,76131,La Bouille,76,2.59,2019
@@ -31463,7 +31297,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76273,Fontaine-sous-Préaux,76,76591,Saint-Jacques-sur-Darnétal,76,9.7,2019
 76273,Fontaine-sous-Préaux,76,76705,Tourville-la-Rivière,76,4.85,2019
 76273,Fontaine-sous-Préaux,76,78686,Viroflay,78,4.85,2019
-76273,Fontaine-sous-Préaux,76,MO001,Monaco (MO001),XX,4.85,2019
 76275,Fontenay,76,76540,Rouen,76,5.0,2019
 76276,Forges-les-Eaux,76,76108,Bois-Guillaume,76,19.63,2019
 76276,Forges-les-Eaux,76,76131,La Bouille,76,5.06,2019
@@ -31999,8 +31832,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76322,Le Grand-Quevilly,76,93070,Saint-Ouen-sur-Seine,93,2.75,2019
 76322,Le Grand-Quevilly,76,94017,Champigny-sur-Marne,94,1.01,2019
 76322,Le Grand-Quevilly,76,95585,Sarcelles,95,3.57,2019
-76322,Le Grand-Quevilly,76,97128,Sainte-Anne,97,3.4,2019
-76322,Le Grand-Quevilly,76,AL3JO,MUELLHEIM,XX,3.02,2019
 76323,Graval,76,76498,Le Petit-Quevilly,76,5.2,2019
 76323,Graval,76,76540,Rouen,76,5.2,2019
 76324,Grèges,76,76157,Canteleu,76,4.98,2019
@@ -32297,7 +32128,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76367,Houppeville,76,76758,Yvetot,76,5.26,2019
 76367,Houppeville,76,91679,Villiers-le-Bâcle,91,5.23,2019
 76367,Houppeville,76,92062,Puteaux,92,5.23,2019
-76367,Houppeville,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.23,2019
 76368,Houquetot,76,76631,Saint-Paër,76,5.0,2019
 76369,La Houssaye-Béranger,76,76157,Canteleu,76,9.96,2019
 76369,La Houssaye-Béranger,76,76216,Déville-lès-Rouen,76,4.87,2019
@@ -32631,7 +32461,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76402,Malaunay,76,76758,Yvetot,76,20.0,2019
 76402,Malaunay,76,86194,Poitiers,86,5.0,2019
 76402,Malaunay,76,94041,Ivry-sur-Seine,94,5.0,2019
-76402,Malaunay,76,97217,Le Marin,97,5.0,2019
 76404,Manéglise,76,76540,Rouen,76,5.0,2019
 76405,Manéhouville,76,76540,Rouen,76,10.0,2019
 76406,Maniquerville,76,76377,Isneauville,76,5.04,2019
@@ -32772,7 +32601,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76410,Maromme,76,94081,Vitry-sur-Seine,94,2.1,2019
 76410,Maromme,76,95476,Osny,95,4.42,2019
 76410,Maromme,76,95527,Roissy-en-France,95,11.84,2019
-76410,Maromme,76,LU214,JUNGLINSTER,XX,2.9,2019
 76411,Marques,76,76451,Mont-Saint-Aignan,76,5.0,2019
 76412,Martainville-Épreville,76,76069,Belbeuf,76,10.17,2019
 76412,Martainville-Épreville,76,76108,Bois-Guillaume,76,10.43,2019
@@ -32951,7 +32779,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76429,Le Mesnil-Esnard,76,92073,Suresnes,92,5.0,2019
 76429,Le Mesnil-Esnard,76,94065,Rungis,94,5.0,2019
 76429,Le Mesnil-Esnard,76,95527,Roissy-en-France,95,5.0,2019
-76429,Le Mesnil-Esnard,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.0,2019
 76431,Le Mesnil-Lieubray,76,76681,Sotteville-lès-Rouen,76,5.0,2019
 76433,Mesnil-Panneville,76,76095,Bihorel,76,4.98,2019
 76433,Mesnil-Panneville,76,76157,Canteleu,76,20.09,2019
@@ -33346,9 +33173,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76451,Mont-Saint-Aignan,76,94065,Rungis,94,3.75,2019
 76451,Mont-Saint-Aignan,76,95277,Gonesse,95,2.64,2019
 76451,Mont-Saint-Aignan,76,95527,Roissy-en-France,95,3.46,2019
-76451,Mont-Saint-Aignan,76,AL157,SAARBRUECKEN,XX,2.87,2019
-76451,Mont-Saint-Aignan,76,SUC1L,GENEVE,XX,3.87,2019
-76451,Mont-Saint-Aignan,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,6.38,2019
 76452,Montville,76,76095,Bihorel,76,15.0,2019
 76452,Montville,76,76103,Bonsecours,76,10.0,2019
 76452,Montville,76,76108,Bois-Guillaume,76,85.0,2019
@@ -33997,7 +33821,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76497,Petit-Couronne,76,93072,Stains,93,4.98,2019
 76497,Petit-Couronne,76,94081,Vitry-sur-Seine,94,4.98,2019
 76497,Petit-Couronne,76,95500,Pontoise,95,9.96,2019
-76497,Petit-Couronne,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.98,2019
 76498,Le Petit-Quevilly,76,01160,Ferney-Voltaire,01,3.84,2019
 76498,Le Petit-Quevilly,76,06027,Cagnes-sur-Mer,06,11.18,2019
 76498,Le Petit-Quevilly,76,08139,Deville,08,3.17,2019
@@ -34221,7 +34044,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76498,Le Petit-Quevilly,76,95219,Ermont,95,7.94,2019
 76498,Le Petit-Quevilly,76,95500,Pontoise,95,1.17,2019
 76498,Le Petit-Quevilly,76,95572,Saint-Ouen-l'Aumône,95,3.73,2019
-76498,Le Petit-Quevilly,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,3.29,2019
 76499,Petiville,76,76498,Le Petit-Quevilly,76,4.96,2019
 76499,Petiville,76,76540,Rouen,76,5.02,2019
 76499,Petiville,76,76709,Le Trait,76,5.02,2019
@@ -34361,7 +34183,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76514,Quévreville-la-Poterie,76,76753,Ymare,76,10.0,2019
 76514,Quévreville-la-Poterie,76,78423,Montigny-le-Bretonneux,78,5.0,2019
 76514,Quévreville-la-Poterie,76,92022,Chaville,92,5.0,2019
-76514,Quévreville-la-Poterie,76,97415,Saint-Paul,97,5.0,2019
 76515,Quiberville,76,76451,Mont-Saint-Aignan,76,5.07,2019
 76515,Quiberville,76,76540,Rouen,76,10.13,2019
 76515,Quiberville,76,76750,Yainville,76,5.07,2019
@@ -35086,17 +34907,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76540,Rouen,76,95572,Saint-Ouen-l'Aumône,95,11.94,2019
 76540,Rouen,76,95598,Soisy-sous-Montmorency,95,3.54,2019
 76540,Rouen,76,95607,Taverny,95,7.06,2019
-76540,Rouen,76,97103,Baie-Mahault,97,0.94,2019
-76540,Rouen,76,97230,La Trinité,97,1.06,2019
-76540,Rouen,76,97307,Matoury,97,3.92,2019
-76540,Rouen,76,97413,Saint-Leu,97,7.23,2019
-76540,Rouen,76,AL3UR,WEIL AM RHEIN,XX,3.28,2019
-76540,Rouen,76,BE214,BRUXELLES(BRUSSEL),XX,2.94,2019
-76540,Rouen,76,BE21H,WOLUWE-SAINT-LAMBERT,XX,3.67,2019
-76540,Rouen,76,BE72A,NEERPELT,XX,3.73,2019
-76540,Rouen,76,SUC1L,GENEVE,XX,24.42,2019
-76540,Rouen,76,SUC1U,MEYRIN,XX,3.39,2019
-76540,Rouen,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,24.38,2019
 76541,Roumare,76,76005,Amfreville-la-Mi-Voie,76,5.46,2019
 76541,Roumare,76,76095,Bihorel,76,10.64,2019
 76541,Roumare,76,76108,Bois-Guillaume,76,38.53,2019
@@ -36707,7 +36517,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76681,Sotteville-lès-Rouen,76,95476,Osny,95,6.91,2019
 76681,Sotteville-lès-Rouen,76,95585,Sarcelles,95,3.66,2019
 76681,Sotteville-lès-Rouen,76,95604,Survilliers,95,1.09,2019
-76681,Sotteville-lès-Rouen,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,1.13,2019
 76682,Sotteville-sous-le-Val,76,27008,Alizay,27,5.0,2019
 76682,Sotteville-sous-le-Val,76,27015,Andé,27,5.0,2019
 76682,Sotteville-sous-le-Val,76,27151,Charleval,27,5.0,2019
@@ -38216,26 +38025,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 95637,Vauréal,95,38474,Sassenage,38,1.11,2019
 95637,Vauréal,95,76540,Rouen,76,6.65,2019
 95637,Vauréal,95,76575,Saint-Étienne-du-Rouvray,76,4.51,2019
-97101,Les Abymes,97,38200,Jarrie,38,2.49,2019
-97103,Baie-Mahault,97,34172,Montpellier,34,2.95,2019
-97113,Le Gosier,97,38200,Jarrie,38,1.0,2019
-97118,Petit-Bourg,97,42218,Saint-Étienne,42,2.69,2019
-97132,Trois-Rivières,97,38200,Jarrie,38,5.08,2019
-97209,Fort-de-France,97,34172,Montpellier,34,2.5,2019
-97209,Fort-de-France,97,35131,L'Hermitage,35,4.99,2019
-97307,Matoury,97,76540,Rouen,76,3.48,2019
-97401,Les Avirons,97,38185,Grenoble,38,2.54,2019
-97407,Le Port,97,34172,Montpellier,34,2.49,2019
-97408,La Possession,97,34172,Montpellier,34,2.44,2019
-97409,Saint-André,97,35278,Saint-Grégoire,35,2.5,2019
-97409,Saint-André,97,76540,Rouen,76,2.51,2019
-97411,Saint-Denis,97,34172,Montpellier,34,7.32,2019
-97411,Saint-Denis,97,38229,Meylan,38,2.79,2019
-97415,Saint-Paul,97,35131,L'Hermitage,35,1.0,2019
-97415,Saint-Paul,97,42218,Saint-Étienne,42,2.49,2019
-97416,Saint-Pierre,97,42218,Saint-Étienne,42,5.0,2019
-97416,Saint-Pierre,97,76540,Rouen,76,5.36,2019
-97423,Les Trois-Bassins,97,35131,L'Hermitage,35,5.04,2019
 01004,Ambérieu-en-Bugey,01,42218,Saint-Étienne,42,4.99,2022
 01005,Ambérieux-en-Dombes,01,38185,Grenoble,38,5.13,2022
 01007,Ambronay,01,38185,Grenoble,38,5.43,2022
@@ -43120,7 +42909,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34022,Baillargues,34,91661,Villebon-sur-Yvette,91,5.1,2022
 34022,Baillargues,34,94065,Rungis,94,5.1,2022
 34022,Baillargues,34,95527,Roissy-en-France,95,30.5,2022
-34022,Baillargues,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.86,2022
 34023,Balaruc-les-Bains,34,34057,Castelnau-le-Lez,34,15.17,2022
 34023,Balaruc-les-Bains,34,34087,Cournonsec,34,10.11,2022
 34023,Balaruc-les-Bains,34,34088,Cournonterral,34,10.11,2022
@@ -43512,7 +43300,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34057,Castelnau-le-Lez,34,94065,Rungis,94,1.62,2022
 34057,Castelnau-le-Lez,34,95063,Bezons,95,8.49,2022
 34057,Castelnau-le-Lez,34,95527,Roissy-en-France,95,19.35,2022
-34057,Castelnau-le-Lez,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,3.02,2022
 34058,Castries,34,06018,Biot,06,4.78,2022
 34058,Castries,34,11255,Montredon-des-Corbières,11,9.66,2022
 34058,Castries,34,11262,Narbonne,11,4.98,2022
@@ -43598,7 +43385,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34058,Castries,34,91538,Saint-Aubin,91,4.83,2022
 34058,Castries,34,92026,Courbevoie,92,9.36,2022
 34058,Castries,34,93070,Saint-Ouen-sur-Seine,93,4.78,2022
-34058,Castries,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,9.61,2022
 34060,Causse-de-la-Selle,34,34120,Jacou,34,5.09,2022
 34060,Causse-de-la-Selle,34,34172,Montpellier,34,45.83,2022
 34060,Causse-de-la-Selle,34,34198,Pérols,34,5.09,2022
@@ -43857,7 +43643,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34088,Cournonterral,34,85146,Montaigu-Vendée,85,4.63,2022
 34088,Cournonterral,34,91661,Villebon-sur-Yvette,91,4.54,2022
 34088,Cournonterral,34,93066,Saint-Denis,93,4.6,2022
-34088,Cournonterral,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.57,2022
 34090,Le Crès,34,06033,Carros,06,4.7,2022
 34090,Le Crès,34,06084,Mouans-Sartoux,06,4.88,2022
 34090,Le Crès,34,13005,Aubagne,13,4.98,2022
@@ -43926,7 +43711,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34090,Le Crès,34,92044,Levallois-Perret,92,9.95,2022
 34090,Le Crès,34,92062,Puteaux,92,4.98,2022
 34090,Le Crès,34,95527,Roissy-en-France,95,14.65,2022
-34090,Le Crès,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,9.96,2022
 34091,Le Cros,34,34172,Montpellier,34,7.6,2022
 34094,Espondeilhan,34,34057,Castelnau-le-Lez,34,5.21,2022
 34094,Espondeilhan,34,34172,Montpellier,34,5.19,2022
@@ -43997,7 +43781,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34095,Fabrègues,34,93064,Rosny-sous-Bois,93,5.01,2022
 34095,Fabrègues,34,94028,Créteil,94,5.01,2022
 34095,Fabrègues,34,95527,Roissy-en-France,95,5.01,2022
-34095,Fabrègues,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.01,2022
 34097,Félines-Minervois,34,34172,Montpellier,34,5.0,2022
 34101,Florensac,34,34058,Castries,34,4.87,2022
 34101,Florensac,34,34087,Cournonsec,34,9.73,2022
@@ -44178,7 +43961,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34116,Grabels,34,91111,Briis-sous-Forges,91,5.0,2022
 34116,Grabels,34,92063,Rueil-Malmaison,92,5.0,2022
 34116,Grabels,34,93047,Montfermeil,93,5.0,2022
-34116,Grabels,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,10.0,2022
 34118,Guzargues,34,34057,Castelnau-le-Lez,34,9.57,2022
 34118,Guzargues,34,34120,Jacou,34,19.07,2022
 34118,Guzargues,34,34172,Montpellier,34,62.0,2022
@@ -44237,7 +44019,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34120,Jacou,34,91458,Nozay,91,5.01,2022
 34120,Jacou,34,94080,Vincennes,94,5.13,2022
 34120,Jacou,34,95527,Roissy-en-France,95,5.01,2022
-34120,Jacou,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.01,2022
 34121,Joncels,34,34120,Jacou,34,3.35,2022
 34121,Joncels,34,34172,Montpellier,34,4.38,2022
 34121,Joncels,34,34202,Pignan,34,4.79,2022
@@ -44379,10 +44160,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34123,Juvignac,34,91377,Massy,91,2.38,2022
 34123,Juvignac,34,92026,Courbevoie,92,4.76,2022
 34123,Juvignac,34,93005,Aulnay-sous-Bois,93,1.19,2022
-34123,Juvignac,34,97218,Le Morne-Rouge,97,2.38,2022
-34123,Juvignac,34,97611,Mamoudzou,97,4.76,2022
-34123,Juvignac,34,SUC1L,GENEVE,XX,1.19,2022
-34123,Juvignac,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.93,2022
 34124,Lacoste,34,34172,Montpellier,34,14.63,2022
 34125,Lagamas,34,34172,Montpellier,34,10.48,2022
 34125,Lagamas,34,34259,Saint-Georges-d'Orques,34,5.24,2022
@@ -44554,8 +44331,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34129,Lattes,34,93070,Saint-Ouen-sur-Seine,93,1.22,2022
 34129,Lattes,34,95127,Cergy,95,4.74,2022
 34129,Lattes,34,95527,Roissy-en-France,95,23.0,2022
-34129,Lattes,34,BE540,MOUSCRON,XX,3.21,2022
-34129,Lattes,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,8.75,2022
 34130,Laurens,34,34172,Montpellier,34,20.09,2022
 34131,Lauret,34,34057,Castelnau-le-Lez,34,4.78,2022
 34131,Lauret,34,34090,Le Crès,34,9.55,2022
@@ -44919,8 +44694,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34169,Montferrier-sur-Lez,34,92026,Courbevoie,92,10.45,2022
 34169,Montferrier-sur-Lez,34,92063,Rueil-Malmaison,92,5.22,2022
 34169,Montferrier-sur-Lez,34,95527,Roissy-en-France,95,15.67,2022
-34169,Montferrier-sur-Lez,34,97120,Pointe-à-Pitre,97,5.22,2022
-34169,Montferrier-sur-Lez,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.22,2022
 34172,Montpellier,34,01004,Ambérieu-en-Bugey,01,1.17,2022
 34172,Montpellier,34,01053,Bourg-en-Bresse,01,3.3,2022
 34172,Montpellier,34,01283,Oyonnax,01,7.2,2022
@@ -45560,20 +45333,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34172,Montpellier,34,95527,Roissy-en-France,95,60.59,2022
 34172,Montpellier,34,95572,Saint-Ouen-l'Aumône,95,3.02,2022
 34172,Montpellier,34,95607,Taverny,95,3.51,2022
-34172,Montpellier,34,97101,Les Abymes,97,2.86,2022
-34172,Montpellier,34,97118,Petit-Bourg,97,4.74,2022
-34172,Montpellier,34,97302,Cayenne,97,9.3,2022
-34172,Montpellier,34,97304,Kourou,97,1.0,2022
-34172,Montpellier,34,97407,Le Port,97,3.8,2022
-34172,Montpellier,34,97411,Saint-Denis,97,1.2,2022
-34172,Montpellier,34,97616,Sada,97,11.56,2022
-34172,Montpellier,34,AL157,SAARBRUECKEN,XX,1.28,2022
-34172,Montpellier,34,BE540,MOUSCRON,XX,7.68,2022
-34172,Montpellier,34,SU97T,MORGES,XX,1.51,2022
-34172,Montpellier,34,SUC1L,GENEVE,XX,19.32,2022
-34172,Montpellier,34,SUC1U,MEYRIN,XX,1.69,2022
-34172,Montpellier,34,SUC1X,PLAN LES OUATES,XX,6.11,2022
-34172,Montpellier,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,97.06,2022
 34173,Montpeyroux,34,34123,Juvignac,34,4.83,2022
 34173,Montpeyroux,34,34129,Lattes,34,4.71,2022
 34173,Montpeyroux,34,34172,Montpellier,34,133.78,2022
@@ -46026,7 +45785,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34227,Restinclières,34,84091,Piolenc,84,6.01,2022
 34227,Restinclières,34,91661,Villebon-sur-Yvette,91,6.01,2022
 34227,Restinclières,34,92040,Issy-les-Moulineaux,92,6.01,2022
-34227,Restinclières,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,6.05,2022
 34232,Roquebrun,34,34172,Montpellier,34,4.66,2022
 34235,Rosis,34,34172,Montpellier,34,4.46,2022
 34236,Rouet,34,34102,Fontanès,34,10.62,2022
@@ -46256,7 +46014,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34249,Saint-Drézéry,34,75114,Paris 14e Arrondissement,75,5.05,2022
 34249,Saint-Drézéry,34,81065,Castres,81,5.05,2022
 34249,Saint-Drézéry,34,95527,Roissy-en-France,95,5.05,2022
-34249,Saint-Drézéry,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,10.43,2022
 34251,Saint-Étienne-de-Gourgas,34,34172,Montpellier,34,10.52,2022
 34251,Saint-Étienne-de-Gourgas,34,34270,Saint-Jean-de-Védas,34,5.35,2022
 34254,Saint-Félix-de-Lodez,34,34057,Castelnau-le-Lez,34,20.12,2022
@@ -46546,8 +46303,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34270,Saint-Jean-de-Védas,34,93073,Tremblay-en-France,93,5.0,2022
 34270,Saint-Jean-de-Védas,34,94004,Boissy-Saint-Léger,94,5.0,2022
 34270,Saint-Jean-de-Védas,34,94065,Rungis,94,5.0,2022
-34270,Saint-Jean-de-Védas,34,LU320,LUXEMBOURG,XX,5.0,2022
-34270,Saint-Jean-de-Védas,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.0,2022
 34272,Saint-Just,34,34022,Baillargues,34,39.81,2022
 34272,Saint-Just,34,34057,Castelnau-le-Lez,34,39.69,2022
 34272,Saint-Just,34,34058,Castries,34,14.79,2022
@@ -46981,8 +46736,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34327,Vendargues,34,92044,Levallois-Perret,92,4.33,2022
 34327,Vendargues,34,92050,Nanterre,92,4.61,2022
 34327,Vendargues,34,94054,Orly,94,9.22,2022
-34327,Vendargues,34,98818,Nouméa,98,4.9,2022
-34327,Vendargues,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,9.51,2022
 34328,Vendémian,34,34057,Castelnau-le-Lez,34,10.14,2022
 34328,Vendémian,34,34123,Juvignac,34,19.95,2022
 34328,Vendémian,34,34134,Lavérune,34,4.74,2022
@@ -47107,8 +46860,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 34337,Villeneuve-lès-Maguelone,34,93066,Saint-Denis,93,2.65,2022
 34337,Villeneuve-lès-Maguelone,34,93073,Tremblay-en-France,93,2.65,2022
 34337,Villeneuve-lès-Maguelone,34,95527,Roissy-en-France,95,11.3,2022
-34337,Villeneuve-lès-Maguelone,34,BE540,MOUSCRON,XX,0.95,2022
-34337,Villeneuve-lès-Maguelone,34,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.88,2022
 34340,Villetelle,34,34022,Baillargues,34,9.6,2022
 34340,Villetelle,34,34057,Castelnau-le-Lez,34,14.43,2022
 34340,Villetelle,34,34058,Castries,34,4.81,2022
@@ -47578,7 +47329,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35024,Betton,35,94043,Le Kremlin-Bicêtre,94,5.61,2022
 35024,Betton,35,94065,Rungis,94,4.21,2022
 35024,Betton,35,95218,Éragny,95,1.61,2022
-35024,Betton,35,SUC1L,GENEVE,XX,4.7,2022
 35025,Billé,35,35051,Cesson-Sévigné,35,17.01,2022
 35025,Billé,35,35066,Chartres-de-Bretagne,35,4.57,2022
 35025,Billé,35,35238,Rennes,35,9.22,2022
@@ -48075,8 +47825,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35047,Bruz,35,94043,Le Kremlin-Bicêtre,94,3.66,2022
 35047,Bruz,35,94074,Valenton,94,1.48,2022
 35047,Bruz,35,95527,Roissy-en-France,95,3.66,2022
-35047,Bruz,35,97217,Le Marin,97,4.93,2022
-35047,Bruz,35,BE540,MOUSCRON,XX,4.86,2022
 35049,Cancale,35,35051,Cesson-Sévigné,35,4.96,2022
 35049,Cancale,35,35055,Chantepie,35,4.89,2022
 35049,Cancale,35,35238,Rennes,35,78.49,2022
@@ -48288,7 +48036,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35051,Cesson-Sévigné,35,93048,Montreuil,93,6.37,2022
 35051,Cesson-Sévigné,35,94015,Bry-sur-Marne,94,4.22,2022
 35051,Cesson-Sévigné,35,95527,Roissy-en-France,95,3.26,2022
-35051,Cesson-Sévigné,35,SUC1L,GENEVE,XX,6.37,2022
 35052,Champeaux,35,35001,Acigné,35,5.14,2022
 35052,Champeaux,35,35047,Bruz,35,5.14,2022
 35052,Champeaux,35,35051,Cesson-Sévigné,35,15.43,2022
@@ -48722,7 +48469,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35066,Chartres-de-Bretagne,35,93073,Tremblay-en-France,93,4.79,2022
 35066,Chartres-de-Bretagne,35,93077,Villemomble,93,4.75,2022
 35066,Chartres-de-Bretagne,35,94067,Saint-Mandé,94,4.75,2022
-35066,Chartres-de-Bretagne,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.79,2022
 35067,Chasné-sur-Illet,35,35001,Acigné,35,15.77,2022
 35067,Chasné-sur-Illet,35,35024,Betton,35,36.8,2022
 35067,Chasné-sur-Illet,35,35032,Bourgbarré,35,5.25,2022
@@ -48878,7 +48624,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35076,Chavagne,35,56165,Ploërmel,56,9.17,2022
 35076,Chavagne,35,63113,Clermont-Ferrand,63,9.12,2022
 35076,Chavagne,35,78640,Vélizy-Villacoublay,78,4.67,2022
-35076,Chavagne,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.67,2022
 35077,Chelun,35,35001,Acigné,35,4.87,2022
 35077,Chelun,35,35032,Bourgbarré,35,4.93,2022
 35077,Chelun,35,35088,Corps-Nuds,35,4.93,2022
@@ -48982,7 +48727,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35080,Cintré,35,56167,Plougoumelen,56,5.23,2022
 35080,Cintré,35,75108,Paris 8e Arrondissement,75,10.46,2022
 35080,Cintré,35,93066,Saint-Denis,93,5.21,2022
-35080,Cintré,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.25,2022
 35081,Clayes,35,22305,Saint-Jouan-de-l'Isle,22,5.39,2022
 35081,Clayes,35,35001,Acigné,35,10.35,2022
 35081,Clayes,35,35024,Betton,35,5.18,2022
@@ -49849,7 +49593,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35139,Laillé,35,75117,Paris 17e Arrondissement,75,5.0,2022
 35139,Laillé,35,86194,Poitiers,86,5.0,2022
 35139,Laillé,35,92064,Saint-Cloud,92,5.0,2022
-35139,Laillé,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.15,2022
 35140,Lalleu,35,35001,Acigné,35,5.03,2022
 35140,Lalleu,35,35039,Brécé,35,5.03,2022
 35140,Lalleu,35,35088,Corps-Nuds,35,5.03,2022
@@ -50547,7 +50290,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35196,Mordelles,35,92036,Gennevilliers,92,5.02,2022
 35196,Mordelles,35,92048,Meudon,92,5.02,2022
 35196,Mordelles,35,93051,Noisy-le-Grand,93,5.02,2022
-35196,Mordelles,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.02,2022
 35197,Mouazé,35,35001,Acigné,35,5.17,2022
 35197,Mouazé,35,35024,Betton,35,45.28,2022
 35197,Mouazé,35,35047,Bruz,35,14.78,2022
@@ -50979,7 +50721,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35210,Pacé,35,94038,L'Haÿ-les-Roses,94,2.78,2022
 35210,Pacé,35,95051,Beauchamp,95,2.57,2022
 35210,Pacé,35,95527,Roissy-en-France,95,5.27,2022
-35210,Pacé,35,97103,Baie-Mahault,97,3.38,2022
 35211,Paimpont,35,35047,Bruz,35,19.84,2022
 35211,Paimpont,35,35066,Chartres-de-Bretagne,35,4.96,2022
 35211,Paimpont,35,35076,Chavagne,35,14.88,2022
@@ -51903,14 +51644,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35238,Rennes,35,95370,Marines,95,5.35,2022
 35238,Rennes,35,95527,Roissy-en-France,95,33.64,2022
 35238,Rennes,35,95607,Taverny,95,1.02,2022
-35238,Rennes,35,97302,Cayenne,97,2.17,2022
-35238,Rennes,35,97411,Saint-Denis,97,1.18,2022
-35238,Rennes,35,97604,Bouéni,97,1.15,2022
-35238,Rennes,35,97611,Mamoudzou,97,5.18,2022
-35238,Rennes,35,BE540,MOUSCRON,XX,1.59,2022
-35238,Rennes,35,MO001,Monaco (MO001),XX,1.29,2022
-35238,Rennes,35,SU9AP,TOLOCHENAZ,XX,1.11,2022
-35238,Rennes,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,70.72,2022
 35239,Retiers,35,35032,Bourgbarré,35,51.51,2022
 35239,Retiers,35,35047,Bruz,35,35.71,2022
 35239,Retiers,35,35051,Cesson-Sévigné,35,64.77,2022
@@ -52039,7 +51772,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35240,Le Rheu,35,93055,Pantin,93,4.99,2022
 35240,Le Rheu,35,93066,Saint-Denis,93,9.99,2022
 35240,Le Rheu,35,94037,Gentilly,94,4.99,2022
-35240,Le Rheu,35,BE215,ETTERBEEK,XX,4.99,2022
 35241,La Richardais,35,35066,Chartres-de-Bretagne,35,5.68,2022
 35241,La Richardais,35,35189,Montgermont,35,5.37,2022
 35241,La Richardais,35,35238,Rennes,35,38.23,2022
@@ -52539,7 +52271,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35278,Saint-Grégoire,35,93078,Villepinte,93,5.29,2022
 35278,Saint-Grégoire,35,94018,Charenton-le-Pont,94,4.96,2022
 35278,Saint-Grégoire,35,95527,Roissy-en-France,95,4.96,2022
-35278,Saint-Grégoire,35,AL157,SAARBRUECKEN,XX,5.18,2022
 35279,Saint-Guinoux,35,35238,Rennes,35,25.67,2022
 35280,Saint-Hilaire-des-Landes,35,35001,Acigné,35,5.04,2022
 35280,Saint-Hilaire-des-Landes,35,35024,Betton,35,5.21,2022
@@ -52719,7 +52450,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35281,Saint-Jacques-de-la-Lande,35,92062,Puteaux,92,5.11,2022
 35281,Saint-Jacques-de-la-Lande,35,94065,Rungis,94,2.33,2022
 35281,Saint-Jacques-de-la-Lande,35,95527,Roissy-en-France,95,8.27,2022
-35281,Saint-Jacques-de-la-Lande,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,10.97,2022
 35282,Rives-du-Couesnon,35,35024,Betton,35,4.94,2022
 35282,Rives-du-Couesnon,35,35047,Bruz,35,9.95,2022
 35282,Rives-du-Couesnon,35,35051,Cesson-Sévigné,35,74.21,2022
@@ -52972,7 +52702,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35315,Saint-Sulpice-la-Forêt,35,35353,Vezin-le-Coquet,35,10.01,2022
 35315,Saint-Sulpice-la-Forêt,35,50025,Avranches,50,5.01,2022
 35315,Saint-Sulpice-la-Forêt,35,92062,Puteaux,92,5.01,2022
-35315,Saint-Sulpice-la-Forêt,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.01,2022
 35316,Saint-Sulpice-des-Landes,35,35047,Bruz,35,15.33,2022
 35316,Saint-Sulpice-des-Landes,35,35066,Chartres-de-Bretagne,35,5.0,2022
 35316,Saint-Sulpice-des-Landes,35,35206,Noyal-Châtillon-sur-Seiche,35,4.72,2022
@@ -53513,9 +53242,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 35353,Vezin-le-Coquet,35,78646,Versailles,78,4.99,2022
 35353,Vezin-le-Coquet,35,87085,Limoges,87,4.99,2022
 35353,Vezin-le-Coquet,35,92026,Courbevoie,92,4.99,2022
-35353,Vezin-le-Coquet,35,97611,Mamoudzou,97,9.98,2022
-35353,Vezin-le-Coquet,35,BE215,ETTERBEEK,XX,4.99,2022
-35353,Vezin-le-Coquet,35,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.99,2022
 35354,Vieux-Viel,35,35024,Betton,35,4.89,2022
 35354,Vieux-Viel,35,35051,Cesson-Sévigné,35,5.05,2022
 35354,Vieux-Viel,35,35238,Rennes,35,5.05,2022
@@ -54511,10 +54237,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38126,Corenc,38,75102,Paris 2e Arrondissement,75,4.99,2022
 38126,Corenc,38,75115,Paris 15e Arrondissement,75,9.98,2022
 38126,Corenc,38,91534,Saclay,91,9.9,2022
-38126,Corenc,38,SU13F,MAENNEDORF,XX,4.87,2022
-38126,Corenc,38,SUC1L,GENEVE,XX,4.99,2022
-38126,Corenc,38,SUC1U,MEYRIN,XX,9.82,2022
-38126,Corenc,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,9.78,2022
 38127,Cornillon-en-Trièves,38,38185,Grenoble,38,9.94,2022
 38127,Cornillon-en-Trièves,38,38229,Meylan,38,4.97,2022
 38127,Cornillon-en-Trièves,38,38486,Seyssins,38,4.97,2022
@@ -54838,11 +54560,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38151,Échirolles,38,94041,Ivry-sur-Seine,94,4.16,2022
 38151,Échirolles,38,94065,Rungis,94,2.97,2022
 38151,Échirolles,38,94069,Saint-Maurice,94,5.16,2022
-38151,Échirolles,38,97611,Mamoudzou,97,4.91,2022
-38151,Échirolles,38,SU92D,BUSSIGNY PRES LAUSAN,XX,3.42,2022
-38151,Échirolles,38,SU99A,RENENS,XX,2.32,2022
-38151,Échirolles,38,SUC1L,GENEVE,XX,9.81,2022
-38151,Échirolles,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.45,2022
 38152,Eclose-Badinières,38,38185,Grenoble,38,25.08,2022
 38152,Eclose-Badinières,38,38229,Meylan,38,5.02,2022
 38153,Engins,38,38151,Échirolles,38,4.73,2022
@@ -55124,9 +54841,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38169,Fontaine,38,92044,Levallois-Perret,92,6.28,2022
 38169,Fontaine,38,93055,Pantin,93,2.49,2022
 38169,Fontaine,38,95127,Cergy,95,4.43,2022
-38169,Fontaine,38,SU42R,CRESSIER (FRIBOURG),XX,5.05,2022
-38169,Fontaine,38,SU9A8,SAVIGNY,XX,4.25,2022
-38169,Fontaine,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,10.63,2022
 38170,Fontanil-Cornillon,38,26362,Valence,26,5.28,2022
 38170,Fontanil-Cornillon,38,38039,Bernin,38,5.11,2022
 38170,Fontanil-Cornillon,38,38045,Biviers,38,4.95,2022
@@ -55287,8 +55001,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38179,Gières,38,92026,Courbevoie,92,5.17,2022
 38179,Gières,38,92048,Meudon,92,5.19,2022
 38179,Gières,38,93029,Drancy,93,5.15,2022
-38179,Gières,38,SUC1L,GENEVE,XX,5.17,2022
-38179,Gières,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.15,2022
 38180,Gillonnay,38,38151,Échirolles,38,5.18,2022
 38180,Gillonnay,38,38169,Fontaine,38,4.71,2022
 38180,Gillonnay,38,38185,Grenoble,38,9.87,2022
@@ -55759,19 +55471,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38185,Grenoble,38,94080,Vincennes,94,5.0,2022
 38185,Grenoble,38,95527,Roissy-en-France,95,9.58,2022
 38185,Grenoble,38,95582,Sannois,95,2.86,2022
-38185,Grenoble,38,97611,Mamoudzou,97,1.06,2022
-38185,Grenoble,38,AL157,SAARBRUECKEN,XX,4.55,2022
-38185,Grenoble,38,SU15U,ZURICH,XX,3.74,2022
-38185,Grenoble,38,SU274,MOUTIER,XX,8.81,2022
-38185,Grenoble,38,SU96F,LAUSANNE,XX,5.48,2022
-38185,Grenoble,38,SU997,PUIDOUX,XX,3.4,2022
-38185,Grenoble,38,SUA2F,FINHAUT,XX,2.96,2022
-38185,Grenoble,38,SUB2B,MARIN EPAGNIER,XX,4.79,2022
-38185,Grenoble,38,SUC1L,GENEVE,XX,35.28,2022
-38185,Grenoble,38,SUC1X,PLAN LES OUATES,XX,23.5,2022
-38185,Grenoble,38,SUC23,SATIGNY,XX,3.44,2022
-38185,Grenoble,38,SUC28,VERNIER,XX,3.25,2022
-38185,Grenoble,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,91.19,2022
 38186,Gresse-en-Vercors,38,38151,Échirolles,38,8.91,2022
 38186,Gresse-en-Vercors,38,38158,Eybens,38,4.86,2022
 38186,Gresse-en-Vercors,38,38185,Grenoble,38,14.05,2022
@@ -55931,9 +55630,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38200,Jarrie,38,69387,Lyon 7e Arrondissement,69,5.23,2022
 38200,Jarrie,38,73065,Chambéry,73,5.06,2022
 38200,Jarrie,38,92012,Boulogne-Billancourt,92,5.14,2022
-38200,Jarrie,38,97701,97701,97,5.06,2022
-38200,Jarrie,38,SU611,BALE,XX,5.14,2022
-38200,Jarrie,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.06,2022
 38203,Laffrey,38,38059,Brié-et-Angonnes,38,4.78,2022
 38203,Laffrey,38,38071,Champ-sur-Drac,38,4.78,2022
 38203,Laffrey,38,38151,Échirolles,38,9.55,2022
@@ -56196,14 +55892,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38229,Meylan,38,94069,Saint-Maurice,94,3.61,2022
 38229,Meylan,38,94080,Vincennes,94,3.99,2022
 38229,Meylan,38,95527,Roissy-en-France,95,3.99,2022
-38229,Meylan,38,97416,Saint-Pierre,97,1.05,2022
-38229,Meylan,38,97801,97801,97,1.65,2022
-38229,Meylan,38,AL157,SAARBRUECKEN,XX,0.94,2022
-38229,Meylan,38,SU953,EYSINS,XX,1.17,2022
-38229,Meylan,38,SU96F,LAUSANNE,XX,1.22,2022
-38229,Meylan,38,SUC1L,GENEVE,XX,3.14,2022
-38229,Meylan,38,SUC1T,MEINIER,XX,3.78,2022
-38229,Meylan,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,3.1,2022
 38230,Meyrié,38,42218,Saint-Étienne,42,4.93,2022
 38231,Meyrieu-les-Étangs,38,38185,Grenoble,38,4.92,2022
 38235,Miribel-Lanchâtre,38,38023,Avignonet,38,5.45,2022
@@ -56826,7 +56514,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38317,Le Pont-de-Claix,38,74281,Thonon-les-Bains,74,2.73,2022
 38317,Le Pont-de-Claix,38,74305,Ville-la-Grand,74,4.23,2022
 38317,Le Pont-de-Claix,38,92044,Levallois-Perret,92,2.73,2022
-38317,Le Pont-de-Claix,38,SUC1L,GENEVE,XX,4.4,2022
 38318,Pont-Évêque,38,38185,Grenoble,38,13.35,2022
 38318,Pont-Évêque,38,42218,Saint-Étienne,42,4.39,2022
 38319,Pont-en-Royans,38,38185,Grenoble,38,19.95,2022
@@ -57256,8 +56943,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38382,Saint-Égrève,38,93048,Montreuil,93,3.68,2022
 38382,Saint-Égrève,38,93066,Saint-Denis,93,1.56,2022
 38382,Saint-Égrève,38,93070,Saint-Ouen-sur-Seine,93,1.44,2022
-38382,Saint-Égrève,38,SUC1L,GENEVE,XX,3.83,2022
-38382,Saint-Égrève,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,10.09,2022
 38383,Saint-Étienne-de-Crossey,38,38151,Échirolles,38,10.0,2022
 38383,Saint-Étienne-de-Crossey,38,38158,Eybens,38,4.96,2022
 38383,Saint-Étienne-de-Crossey,38,38169,Fontaine,38,25.03,2022
@@ -57779,13 +57464,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38421,Saint-Martin-d'Hères,38,93066,Saint-Denis,93,6.7,2022
 38421,Saint-Martin-d'Hères,38,94081,Vitry-sur-Seine,94,3.72,2022
 38421,Saint-Martin-d'Hères,38,95527,Roissy-en-France,95,5.07,2022
-38421,Saint-Martin-d'Hères,38,97611,Mamoudzou,97,3.14,2022
-38421,Saint-Martin-d'Hères,38,SU43I,FRIBOURG,XX,4.69,2022
-38421,Saint-Martin-d'Hères,38,SU96F,LAUSANNE,XX,1.35,2022
-38421,Saint-Martin-d'Hères,38,SU997,PUIDOUX,XX,5.29,2022
-38421,Saint-Martin-d'Hères,38,SUC1L,GENEVE,XX,2.43,2022
-38421,Saint-Martin-d'Hères,38,SUC23,SATIGNY,XX,5.02,2022
-38421,Saint-Martin-d'Hères,38,SUC25,THONEX,XX,1.24,2022
 38422,Saint-Martin-d'Uriage,38,38057,Bresson,38,9.38,2022
 38422,Saint-Martin-d'Uriage,38,38059,Brié-et-Angonnes,38,4.79,2022
 38422,Saint-Martin-d'Uriage,38,38071,Champ-sur-Drac,38,4.79,2022
@@ -57879,9 +57557,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38423,Saint-Martin-le-Vinoux,38,93066,Saint-Denis,93,5.09,2022
 38423,Saint-Martin-le-Vinoux,38,94033,Fontenay-sous-Bois,94,4.96,2022
 38423,Saint-Martin-le-Vinoux,38,95306,Herblay-sur-Seine,95,4.69,2022
-38423,Saint-Martin-le-Vinoux,38,AL157,SAARBRUECKEN,XX,5.09,2022
-38423,Saint-Martin-le-Vinoux,38,SU43I,FRIBOURG,XX,4.96,2022
-38423,Saint-Martin-le-Vinoux,38,SUC1L,GENEVE,XX,4.56,2022
 38424,Saint-Maurice-en-Trièves,38,38151,Échirolles,38,4.97,2022
 38424,Saint-Maurice-en-Trièves,38,38169,Fontaine,38,9.94,2022
 38424,Saint-Maurice-en-Trièves,38,38185,Grenoble,38,9.94,2022
@@ -58327,8 +58002,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38474,Sassenage,38,75120,Paris 20e Arrondissement,75,0.9,2022
 38474,Sassenage,38,78498,Poissy,78,9.05,2022
 38474,Sassenage,38,94003,Arcueil,94,3.23,2022
-38474,Sassenage,38,AL157,SAARBRUECKEN,XX,3.93,2022
-38474,Sassenage,38,SUC1L,GENEVE,XX,7.97,2022
 38475,Satolas-et-Bonce,38,38516,La Tronche,38,4.98,2022
 38478,Séchilienne,38,07186,Privas,07,4.97,2022
 38478,Séchilienne,38,38005,Allemond,38,9.94,2022
@@ -58471,9 +58144,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38485,Seyssinet-Pariset,38,92062,Puteaux,92,4.06,2022
 38485,Seyssinet-Pariset,38,94067,Saint-Mandé,94,2.92,2022
 38485,Seyssinet-Pariset,38,95527,Roissy-en-France,95,7.5,2022
-38485,Seyssinet-Pariset,38,ALADG,PEITING,XX,4.36,2022
-38485,Seyssinet-Pariset,38,SU95E,FOUNEX,XX,4.23,2022
-38485,Seyssinet-Pariset,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,11.06,2022
 38486,Seyssins,38,26362,Valence,26,15.01,2022
 38486,Seyssins,38,38039,Bernin,38,20.01,2022
 38486,Seyssins,38,38053,Bourgoin-Jallieu,38,5.0,2022
@@ -58530,7 +58200,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38486,Seyssins,38,73212,Val-d'Arc,73,5.0,2022
 38486,Seyssins,38,74010,Annecy,74,5.0,2022
 38486,Seyssins,38,75101,Paris 1er Arrondissement,75,5.0,2022
-38486,Seyssins,38,SUC1L,GENEVE,XX,5.0,2022
 38487,Seyssuel,38,38151,Échirolles,38,9.32,2022
 38487,Seyssuel,38,38185,Grenoble,38,9.35,2022
 38487,Seyssuel,38,38281,Noyarey,38,4.7,2022
@@ -58750,7 +58419,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38516,La Tronche,38,93073,Tremblay-en-France,93,4.98,2022
 38516,La Tronche,38,94037,Gentilly,94,4.97,2022
 38516,La Tronche,38,94041,Ivry-sur-Seine,94,4.98,2022
-38516,La Tronche,38,SUB2F,NEUCHATEL,XX,4.98,2022
 38517,Tullins,38,38057,Bresson,38,5.01,2022
 38517,Tullins,38,38111,Claix,38,5.01,2022
 38517,Tullins,38,38151,Échirolles,38,105.28,2022
@@ -58939,7 +58607,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38529,Vaulnaveys-le-Haut,38,73329,Voglans,73,4.99,2022
 38529,Vaulnaveys-le-Haut,38,74133,Gaillard,74,9.97,2022
 38529,Vaulnaveys-le-Haut,38,75108,Paris 8e Arrondissement,75,4.99,2022
-38529,Vaulnaveys-le-Haut,38,SUC1L,GENEVE,XX,4.99,2022
 38530,Vaulx-Milieu,38,38179,Gières,38,5.0,2022
 38530,Vaulx-Milieu,38,38185,Grenoble,38,20.17,2022
 38530,Vaulx-Milieu,38,38229,Meylan,38,10.53,2022
@@ -59116,10 +58783,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 38545,Vif,38,74056,Chamonix-Mont-Blanc,74,10.36,2022
 38545,Vif,38,75113,Paris 13e Arrondissement,75,4.99,2022
 38545,Vif,38,83119,Saint-Tropez,83,5.12,2022
-38545,Vif,38,97611,Mamoudzou,97,4.99,2022
-38545,Vif,38,SU95M,GLAND,XX,4.93,2022
-38545,Vif,38,SUC1L,GENEVE,XX,5.12,2022
-38545,Vif,38,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.99,2022
 38546,Vignieu,38,38185,Grenoble,38,4.7,2022
 38546,Vignieu,38,38474,Sassenage,38,4.41,2022
 38547,Villard-Bonnot,38,38059,Brié-et-Angonnes,38,10.28,2022
@@ -59508,9 +59171,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42005,Andrézieux-Bouthéon,42,91494,Le Plessis-Pâté,91,5.62,2022
 42005,Andrézieux-Bouthéon,42,92026,Courbevoie,92,4.71,2022
 42005,Andrézieux-Bouthéon,42,94033,Fontenay-sous-Bois,94,4.71,2022
-42005,Andrézieux-Bouthéon,42,LU320,LUXEMBOURG,XX,5.05,2022
-42005,Andrézieux-Bouthéon,42,SU983,NYON,XX,4.88,2022
-42005,Andrézieux-Bouthéon,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.05,2022
 42006,Apinac,42,42218,Saint-Étienne,42,9.68,2022
 42009,Arthun,42,42095,Firminy,42,9.16,2022
 42009,Arthun,42,42218,Saint-Étienne,42,24.25,2022
@@ -59692,7 +59352,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42032,Cellieu,42,69387,Lyon 7e Arrondissement,69,4.9,2022
 42032,Cellieu,42,73248,Saint-Jean-de-Maurienne,73,9.77,2022
 42032,Cellieu,42,84019,Bollène,84,4.93,2022
-42032,Cellieu,42,SUB1W,LA COTE AUX FEES,XX,4.88,2022
 42033,Le Cergne,42,42222,Saint-Galmier,42,4.61,2022
 42035,Cezay,42,42005,Andrézieux-Bouthéon,42,5.2,2022
 42035,Cezay,42,42218,Saint-Étienne,42,5.2,2022
@@ -59896,7 +59555,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42044,Le Chambon-Feugerolles,42,75115,Paris 15e Arrondissement,75,2.78,2022
 42044,Le Chambon-Feugerolles,42,92046,Malakoff,92,3.15,2022
 42044,Le Chambon-Feugerolles,42,93001,Aubervilliers,93,1.03,2022
-42044,Le Chambon-Feugerolles,42,SUC1L,GENEVE,XX,9.15,2022
 42046,Champdieu,42,42005,Andrézieux-Bouthéon,42,68.98,2022
 42046,Champdieu,42,42097,La Fouillouse,42,25.07,2022
 42046,Champdieu,42,42218,Saint-Étienne,42,68.84,2022
@@ -59972,7 +59630,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42053,Châteauneuf,42,73054,Bourg-Saint-Maurice,73,4.9,2022
 42053,Châteauneuf,42,75105,Paris 5e Arrondissement,75,4.86,2022
 42053,Châteauneuf,42,94054,Orly,94,4.92,2022
-42053,Châteauneuf,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.92,2022
 42054,Châtelneuf,42,42218,Saint-Étienne,42,10.05,2022
 42054,Châtelneuf,42,42222,Saint-Galmier,42,4.96,2022
 42055,Châtelus,42,42275,Saint-Priest-en-Jarez,42,5.19,2022
@@ -61174,7 +60831,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42183,La Ricamarie,42,69387,Lyon 7e Arrondissement,69,5.44,2022
 42183,La Ricamarie,42,69389,Lyon 9e Arrondissement,69,5.44,2022
 42183,La Ricamarie,42,75110,Paris 10e Arrondissement,75,5.25,2022
-42183,La Ricamarie,42,97502,97502,97,10.16,2022
 42184,Riorges,42,38170,Fontanil-Cornillon,38,3.04,2022
 42184,Riorges,42,38185,Grenoble,38,6.08,2022
 42184,Riorges,42,42005,Andrézieux-Bouthéon,42,3.08,2022
@@ -61347,9 +61003,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42186,Rive-de-Gier,42,86194,Poitiers,86,5.13,2022
 42186,Rive-de-Gier,42,92044,Levallois-Perret,92,2.58,2022
 42186,Rive-de-Gier,42,93063,Romainville,93,5.23,2022
-42186,Rive-de-Gier,42,SU91Q,BIERE,XX,3.56,2022
-42186,Rive-de-Gier,42,SUC1L,GENEVE,XX,3.56,2022
-42186,Rive-de-Gier,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,2.8,2022
 42187,Roanne,42,38158,Eybens,38,0.97,2022
 42187,Roanne,42,38185,Grenoble,38,4.67,2022
 42187,Roanne,42,42005,Andrézieux-Bouthéon,42,12.2,2022
@@ -61791,8 +61444,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42207,Saint-Chamond,42,94041,Ivry-sur-Seine,94,3.02,2022
 42207,Saint-Chamond,42,94044,Limeil-Brévannes,94,6.44,2022
 42207,Saint-Chamond,42,94054,Orly,94,3.99,2022
-42207,Saint-Chamond,42,SUC1L,GENEVE,XX,4.09,2022
-42207,Saint-Chamond,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,2.69,2022
 42208,Saint-Christo-en-Jarez,42,03274,Sorbier,03,5.12,2022
 42208,Saint-Christo-en-Jarez,42,38449,Saint-Quentin-Fallavier,38,4.65,2022
 42208,Saint-Christo-en-Jarez,42,42005,Andrézieux-Bouthéon,42,24.96,2022
@@ -62463,17 +62114,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42218,Saint-Étienne,42,95268,Garges-lès-Gonesse,95,1.62,2022
 42218,Saint-Étienne,42,95500,Pontoise,95,4.39,2022
 42218,Saint-Étienne,42,95612,Le Thillay,95,6.18,2022
-42218,Saint-Étienne,42,97204,Le Carbet,97,1.16,2022
-42218,Saint-Étienne,42,97311,Saint-Laurent-du-Maroni,97,3.52,2022
-42218,Saint-Étienne,42,BE540,MOUSCRON,XX,5.51,2022
-42218,Saint-Étienne,42,SU2BF,VILLERET,XX,4.12,2022
-42218,Saint-Étienne,42,SU96F,LAUSANNE,XX,13.55,2022
-42218,Saint-Étienne,42,SU999,RANCES,XX,4.73,2022
-42218,Saint-Étienne,42,SUA5M,ZERMATT,XX,2.86,2022
-42218,Saint-Étienne,42,SUC1L,GENEVE,XX,18.18,2022
-42218,Saint-Étienne,42,SUC1U,MEYRIN,XX,7.34,2022
-42218,Saint-Étienne,42,SUC28,VERNIER,XX,2.53,2022
-42218,Saint-Étienne,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,48.71,2022
 42219,Saint-Étienne-le-Molard,42,42005,Andrézieux-Bouthéon,42,19.71,2022
 42219,Saint-Étienne-le-Molard,42,42097,La Fouillouse,42,10.05,2022
 42219,Saint-Étienne-le-Molard,42,42207,Saint-Chamond,42,5.15,2022
@@ -62624,7 +62264,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42223,Saint-Genest-Lerpt,42,75115,Paris 15e Arrondissement,75,4.94,2022
 42223,Saint-Genest-Lerpt,42,75116,Paris 16e Arrondissement,75,4.96,2022
 42223,Saint-Genest-Lerpt,42,91386,Mennecy,91,9.88,2022
-42223,Saint-Genest-Lerpt,42,AL34Z,BOEBLINGEN,XX,4.96,2022
 42224,Saint-Genest-Malifaux,42,42005,Andrézieux-Bouthéon,42,29.94,2022
 42224,Saint-Genest-Malifaux,42,42044,Le Chambon-Feugerolles,42,24.54,2022
 42224,Saint-Genest-Malifaux,42,42092,L'Étrat,42,5.18,2022
@@ -62803,7 +62442,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42234,Saint-Héand,42,73296,Tignes,73,9.64,2022
 42234,Saint-Héand,42,78208,Élancourt,78,5.12,2022
 42234,Saint-Héand,42,83129,Six-Fours-les-Plages,83,5.01,2022
-42234,Saint-Héand,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.92,2022
 42235,Saint-Hilaire-Cusson-la-Valmitte,42,42218,Saint-Étienne,42,34.34,2022
 42235,Saint-Hilaire-Cusson-la-Valmitte,42,42262,Saint-Maurice-en-Gourgois,42,9.45,2022
 42235,Saint-Hilaire-Cusson-la-Valmitte,42,42275,Saint-Priest-en-Jarez,42,5.2,2022
@@ -63110,7 +62748,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42262,Saint-Maurice-en-Gourgois,42,63113,Clermont-Ferrand,63,5.02,2022
 42262,Saint-Maurice-en-Gourgois,42,69382,Lyon 2e Arrondissement,69,5.02,2022
 42262,Saint-Maurice-en-Gourgois,42,92040,Issy-les-Moulineaux,92,5.02,2022
-42262,Saint-Maurice-en-Gourgois,42,SUC1L,GENEVE,XX,5.02,2022
 42264,Saint-Médard-en-Forez,42,42005,Andrézieux-Bouthéon,42,45.53,2022
 42264,Saint-Médard-en-Forez,42,42043,Chambœuf,42,4.58,2022
 42264,Saint-Médard-en-Forez,42,42095,Firminy,42,5.5,2022
@@ -63149,7 +62786,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42266,Saint-Nizier-de-Fornas,42,43205,Saint-Just-Malmont,43,5.12,2022
 42266,Saint-Nizier-de-Fornas,42,43224,Sainte-Sigolène,43,4.61,2022
 42266,Saint-Nizier-de-Fornas,42,92026,Courbevoie,92,4.78,2022
-42266,Saint-Nizier-de-Fornas,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.12,2022
 42269,Saint-Paul-d'Uzore,42,42218,Saint-Étienne,42,19.4,2022
 42269,Saint-Paul-d'Uzore,42,42222,Saint-Galmier,42,9.7,2022
 42269,Saint-Paul-d'Uzore,42,42234,Saint-Héand,42,4.85,2022
@@ -63566,7 +63202,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42302,Sorbiers,42,80039,Ault,80,4.98,2022
 42302,Sorbiers,42,93073,Tremblay-en-France,93,4.98,2022
 42302,Sorbiers,42,94041,Ivry-sur-Seine,94,4.92,2022
-42302,Sorbiers,42,SUC1L,GENEVE,XX,4.98,2022
 42303,Souternon,42,42005,Andrézieux-Bouthéon,42,5.9,2022
 42304,Sury-le-Comtal,42,42005,Andrézieux-Bouthéon,42,428.96,2022
 42304,Sury-le-Comtal,42,42043,Chambœuf,42,5.06,2022
@@ -63662,7 +63297,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42305,La Talaudière,42,75108,Paris 8e Arrondissement,75,4.92,2022
 42305,La Talaudière,42,75115,Paris 15e Arrondissement,75,5.0,2022
 42305,La Talaudière,42,94021,Chevilly-Larue,94,4.92,2022
-42305,La Talaudière,42,97611,Mamoudzou,97,10.33,2022
 42306,Tarentaise,42,42005,Andrézieux-Bouthéon,42,15.12,2022
 42306,Tarentaise,42,42044,Le Chambon-Feugerolles,42,5.04,2022
 42306,Tarentaise,42,42095,Firminy,42,5.04,2022
@@ -63901,7 +63535,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 42320,Valfleury,42,69266,Villeurbanne,69,5.07,2022
 42320,Valfleury,42,69382,Lyon 2e Arrondissement,69,5.08,2022
 42320,Valfleury,42,69383,Lyon 3e Arrondissement,69,10.17,2022
-42320,Valfleury,42,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.07,2022
 42322,La Valla-en-Gier,42,38087,Chasse-sur-Rhône,38,4.8,2022
 42322,La Valla-en-Gier,42,38544,Vienne,38,4.8,2022
 42322,La Valla-en-Gier,42,42005,Andrézieux-Bouthéon,42,4.8,2022
@@ -68254,7 +67887,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76095,Bihorel,76,94028,Créteil,94,4.85,2022
 76095,Bihorel,76,94033,Fontenay-sous-Bois,94,4.99,2022
 76095,Bihorel,76,95527,Roissy-en-France,95,5.13,2022
-76095,Bihorel,76,BE570,TOURNAI,XX,4.99,2022
 76096,Biville-la-Baignarde,76,76108,Bois-Guillaume,76,5.06,2022
 76096,Biville-la-Baignarde,76,76157,Canteleu,76,5.06,2022
 76096,Biville-la-Baignarde,76,76178,Cléon,76,5.06,2022
@@ -68627,9 +68259,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76108,Bois-Guillaume,76,94041,Ivry-sur-Seine,94,5.92,2022
 76108,Bois-Guillaume,76,94065,Rungis,94,6.39,2022
 76108,Bois-Guillaume,76,94077,Villeneuve-le-Roi,94,4.59,2022
-76108,Bois-Guillaume,76,98818,Nouméa,98,4.49,2022
-76108,Bois-Guillaume,76,BE384,VEURNE (FURNES),XX,3.03,2022
-76108,Bois-Guillaume,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,3.45,2022
 76109,Bois-Héroult,76,76540,Rouen,76,8.79,2022
 76109,Bois-Héroult,76,76591,Saint-Jacques-sur-Darnétal,76,13.18,2022
 76109,Bois-Héroult,76,76681,Sotteville-lès-Rouen,76,4.39,2022
@@ -69111,7 +68740,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76157,Canteleu,76,95211,Ennery,95,1.14,2022
 76157,Canteleu,76,95218,Éragny,95,3.86,2022
 76157,Canteleu,76,95268,Garges-lès-Gonesse,95,6.89,2022
-76157,Canteleu,76,SUC1L,GENEVE,XX,4.69,2022
 76158,Canville-les-Deux-Églises,76,76451,Mont-Saint-Aignan,76,4.8,2022
 76158,Canville-les-Deux-Églises,76,76540,Rouen,76,4.8,2022
 76159,Cany-Barville,76,76108,Bois-Guillaume,76,5.05,2022
@@ -69312,7 +68940,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76165,Caudebec-lès-Elbeuf,76,94043,Le Kremlin-Bicêtre,94,1.0,2022
 76165,Caudebec-lès-Elbeuf,76,94076,Villejuif,94,0.95,2022
 76165,Caudebec-lès-Elbeuf,76,95120,Butry-sur-Oise,95,3.11,2022
-76165,Caudebec-lès-Elbeuf,76,97611,Mamoudzou,97,1.09,2022
 76166,Le Caule-Sainte-Beuve,76,76540,Rouen,76,4.8,2022
 76167,Cauville-sur-Mer,76,76540,Rouen,76,21.28,2022
 76167,Cauville-sur-Mer,76,76709,Le Trait,76,5.2,2022
@@ -69598,7 +69225,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76212,Darnétal,76,92012,Boulogne-Billancourt,92,4.83,2022
 76212,Darnétal,76,92026,Courbevoie,92,4.83,2022
 76212,Darnétal,76,94041,Ivry-sur-Seine,94,5.2,2022
-76212,Darnétal,76,97405,Petite-Île,97,5.07,2022
 76213,Daubeuf-Serville,76,76575,Saint-Étienne-du-Rouvray,76,5.04,2022
 76213,Daubeuf-Serville,76,76750,Yainville,76,4.93,2022
 76214,Dénestanville,76,76108,Bois-Guillaume,76,4.88,2022
@@ -69750,7 +69376,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76216,Déville-lès-Rouen,76,93073,Tremblay-en-France,93,8.29,2022
 76216,Déville-lès-Rouen,76,94046,Maisons-Alfort,94,3.25,2022
 76216,Déville-lès-Rouen,76,95476,Osny,95,3.09,2022
-76216,Déville-lès-Rouen,76,BE384,VEURNE (FURNES),XX,3.48,2022
 76217,Dieppe,76,76095,Bihorel,76,3.0,2022
 76217,Dieppe,76,76108,Bois-Guillaume,76,24.71,2022
 76217,Dieppe,76,76157,Canteleu,76,3.09,2022
@@ -70294,7 +69919,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76273,Fontaine-sous-Préaux,76,76591,Saint-Jacques-sur-Darnétal,76,9.89,2022
 76273,Fontaine-sous-Préaux,76,76705,Tourville-la-Rivière,76,4.94,2022
 76273,Fontaine-sous-Préaux,76,78686,Viroflay,78,4.94,2022
-76273,Fontaine-sous-Préaux,76,MO001,Monaco (MO001),XX,4.96,2022
 76275,Fontenay,76,76540,Rouen,76,5.93,2022
 76276,Forges-les-Eaux,76,76108,Bois-Guillaume,76,14.91,2022
 76276,Forges-les-Eaux,76,76157,Canteleu,76,4.97,2022
@@ -70602,7 +70226,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76319,Grand-Couronne,76,93005,Aulnay-sous-Bois,93,4.99,2022
 76319,Grand-Couronne,76,94041,Ivry-sur-Seine,94,4.99,2022
 76319,Grand-Couronne,76,94081,Vitry-sur-Seine,94,4.99,2022
-76319,Grand-Couronne,76,MO001,Monaco (MO001),XX,4.99,2022
 76321,Les Grandes-Ventes,76,76377,Isneauville,76,4.67,2022
 76321,Les Grandes-Ventes,76,76451,Mont-Saint-Aignan,76,5.14,2022
 76321,Les Grandes-Ventes,76,76474,Notre-Dame-de-Bondeville,76,4.67,2022
@@ -70799,9 +70422,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76322,Le Grand-Quevilly,76,93008,Bobigny,93,3.72,2022
 76322,Le Grand-Quevilly,76,93070,Saint-Ouen-sur-Seine,93,7.43,2022
 76322,Le Grand-Quevilly,76,95277,Gonesse,95,3.65,2022
-76322,Le Grand-Quevilly,76,97120,Pointe-à-Pitre,97,3.63,2022
-76322,Le Grand-Quevilly,76,AL3JO,MUELLHEIM,XX,4.09,2022
-76322,Le Grand-Quevilly,76,SUC1L,GENEVE,XX,3.24,2022
 76323,Graval,76,76319,Grand-Couronne,76,10.06,2022
 76323,Graval,76,76451,Mont-Saint-Aignan,76,10.06,2022
 76324,Grèges,76,76157,Canteleu,76,4.64,2022
@@ -70972,7 +70592,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76354,Hénouville,76,77121,Collégien,77,5.03,2022
 76354,Hénouville,76,78646,Versailles,78,4.81,2022
 76354,Hénouville,76,94077,Villeneuve-le-Roi,94,4.81,2022
-76354,Hénouville,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.03,2022
 76355,Héricourt-en-Caux,76,76322,Le Grand-Quevilly,76,5.01,2022
 76355,Héricourt-en-Caux,76,76540,Rouen,76,10.45,2022
 76356,Hermanville,76,76540,Rouen,76,5.04,2022
@@ -71117,8 +70736,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76367,Houppeville,76,92009,Bois-Colombes,92,4.88,2022
 76367,Houppeville,76,92044,Levallois-Perret,92,4.88,2022
 76367,Houppeville,76,94037,Gentilly,94,5.13,2022
-76367,Houppeville,76,MO001,Monaco (MO001),XX,5.13,2022
-76367,Houppeville,76,SUD1T,DELEMONT,XX,5.0,2022
 76368,Houquetot,76,76631,Saint-Paër,76,5.45,2022
 76369,La Houssaye-Béranger,76,76157,Canteleu,76,9.7,2022
 76369,La Houssaye-Béranger,76,76216,Déville-lès-Rouen,76,9.7,2022
@@ -71353,7 +70970,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76391,La Londe,76,76758,Yvetot,76,4.84,2022
 76391,La Londe,76,92049,Montrouge,92,5.0,2022
 76391,La Londe,76,94021,Chevilly-Larue,94,5.33,2022
-76391,La Londe,76,97360,Apatou,97,5.16,2022
 76392,Londinières,76,76116,Boos,76,5.06,2022
 76392,Londinières,76,76498,Le Petit-Quevilly,76,5.06,2022
 76392,Londinières,76,76540,Rouen,76,10.12,2022
@@ -71486,7 +71102,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76402,Malaunay,76,76758,Yvetot,76,19.66,2022
 76402,Malaunay,76,86194,Poitiers,86,4.99,2022
 76402,Malaunay,76,94041,Ivry-sur-Seine,94,4.99,2022
-76402,Malaunay,76,97217,Le Marin,97,4.99,2022
 76404,Manéglise,76,76540,Rouen,76,5.35,2022
 76405,Manéhouville,76,76540,Rouen,76,9.82,2022
 76408,Manneville-la-Goupil,76,76222,Duclair,76,4.9,2022
@@ -71605,8 +71220,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76410,Maromme,76,92062,Puteaux,92,1.11,2022
 76410,Maromme,76,94081,Vitry-sur-Seine,94,3.91,2022
 76410,Maromme,76,95527,Roissy-en-France,95,9.43,2022
-76410,Maromme,76,LU321,BERTRANGE,XX,3.66,2022
-76410,Maromme,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,6.03,2022
 76411,Marques,76,76451,Mont-Saint-Aignan,76,5.36,2022
 76412,Martainville-Épreville,76,76108,Bois-Guillaume,76,24.37,2022
 76412,Martainville-Épreville,76,76319,Grand-Couronne,76,4.77,2022
@@ -71794,7 +71407,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76429,Le Mesnil-Esnard,76,92073,Suresnes,92,4.71,2022
 76429,Le Mesnil-Esnard,76,94065,Rungis,94,5.3,2022
 76429,Le Mesnil-Esnard,76,95527,Roissy-en-France,95,4.71,2022
-76429,Le Mesnil-Esnard,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.3,2022
 76433,Mesnil-Panneville,76,76157,Canteleu,76,4.96,2022
 76433,Mesnil-Panneville,76,76319,Grand-Couronne,76,4.98,2022
 76433,Mesnil-Panneville,76,76322,Le Grand-Quevilly,76,14.87,2022
@@ -72175,9 +71787,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76451,Mont-Saint-Aignan,76,94080,Vincennes,94,3.17,2022
 76451,Mont-Saint-Aignan,76,95277,Gonesse,95,3.69,2022
 76451,Mont-Saint-Aignan,76,95527,Roissy-en-France,95,7.3,2022
-76451,Mont-Saint-Aignan,76,AL157,SAARBRUECKEN,XX,4.29,2022
-76451,Mont-Saint-Aignan,76,AL398,ESCHBACH,XX,0.99,2022
-76451,Mont-Saint-Aignan,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,12.76,2022
 76452,Montville,76,76095,Bihorel,76,14.9,2022
 76452,Montville,76,76103,Bonsecours,76,10.45,2022
 76452,Montville,76,76108,Bois-Guillaume,76,85.93,2022
@@ -72835,7 +72444,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76497,Petit-Couronne,76,93072,Stains,93,5.2,2022
 76497,Petit-Couronne,76,94081,Vitry-sur-Seine,94,5.1,2022
 76497,Petit-Couronne,76,95500,Pontoise,95,9.73,2022
-76497,Petit-Couronne,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.0,2022
 76498,Le Petit-Quevilly,76,01160,Ferney-Voltaire,01,5.36,2022
 76498,Le Petit-Quevilly,76,08139,Deville,08,4.92,2022
 76498,Le Petit-Quevilly,76,14118,Caen,14,22.11,2022
@@ -73021,7 +72629,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76498,Le Petit-Quevilly,76,94038,L'Haÿ-les-Roses,94,9.65,2022
 76498,Le Petit-Quevilly,76,95218,Éragny,95,3.29,2022
 76498,Le Petit-Quevilly,76,95500,Pontoise,95,8.96,2022
-76498,Le Petit-Quevilly,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,4.38,2022
 76499,Petiville,76,76497,Petit-Couronne,76,4.71,2022
 76499,Petiville,76,76540,Rouen,76,9.71,2022
 76499,Petiville,76,76709,Le Trait,76,4.57,2022
@@ -73161,7 +72768,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76514,Quévreville-la-Poterie,76,76753,Ymare,76,9.97,2022
 76514,Quévreville-la-Poterie,76,78423,Montigny-le-Bretonneux,78,4.98,2022
 76514,Quévreville-la-Poterie,76,92022,Chaville,92,4.92,2022
-76514,Quévreville-la-Poterie,76,97415,Saint-Paul,97,5.02,2022
 76515,Quiberville-sur-Mer,76,76451,Mont-Saint-Aignan,76,4.89,2022
 76515,Quiberville-sur-Mer,76,76540,Rouen,76,9.77,2022
 76515,Quiberville-sur-Mer,76,76750,Yainville,76,4.71,2022
@@ -73837,13 +73443,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76540,Rouen,76,95500,Pontoise,95,7.47,2022
 76540,Rouen,76,95527,Roissy-en-France,95,36.29,2022
 76540,Rouen,76,95572,Saint-Ouen-l'Aumône,95,16.69,2022
-76540,Rouen,76,97302,Cayenne,97,3.55,2022
-76540,Rouen,76,97307,Matoury,97,5.54,2022
-76540,Rouen,76,97413,Saint-Leu,97,10.14,2022
-76540,Rouen,76,AL3FH,KEHL,XX,0.92,2022
-76540,Rouen,76,SUC1L,GENEVE,XX,33.16,2022
-76540,Rouen,76,SUC1U,MEYRIN,XX,5.32,2022
-76540,Rouen,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,37.55,2022
 76541,Roumare,76,76108,Bois-Guillaume,76,39.71,2022
 76541,Roumare,76,76157,Canteleu,76,9.93,2022
 76541,Roumare,76,76178,Cléon,76,4.96,2022
@@ -74786,7 +74385,6 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 76614,Saint-Martin-de-Boscherville,76,92040,Issy-les-Moulineaux,92,5.43,2022
 76614,Saint-Martin-de-Boscherville,76,92060,Le Plessis-Robinson,92,5.43,2022
 76614,Saint-Martin-de-Boscherville,76,93079,Villetaneuse,93,4.83,2022
-76614,Saint-Martin-de-Boscherville,76,ZZZZZ,Individus travaillant à l'étranger (sans précision de commune),XX,5.75,2022
 76615,Saint-Martin-du-Bec,76,76157,Canteleu,76,4.95,2022
 76615,Saint-Martin-du-Bec,76,76322,Le Grand-Quevilly,76,4.95,2022
 76616,Saint-Martin-du-Manoir,76,76322,Le Grand-Quevilly,76,5.5,2022
@@ -77039,29 +76637,3 @@ code_residence,commune_residence,dep_residence,code_travail,commune_travail,dep_
 95637,Vauréal,95,35245,Romillé,35,4.0,2022
 95637,Vauréal,95,38474,Sassenage,38,1.63,2022
 95680,Villiers-le-Bel,95,34120,Jacou,34,2.19,2022
-97107,Capesterre-Belle-Eau,97,38229,Meylan,38,3.51,2022
-97113,Le Gosier,97,38185,Grenoble,38,2.69,2022
-97116,Morne-à-l'Eau,97,38200,Jarrie,38,2.82,2022
-97118,Petit-Bourg,97,38200,Jarrie,38,1.14,2022
-97132,Trois-Rivières,97,38200,Jarrie,38,4.98,2022
-97209,Fort-de-France,97,34172,Montpellier,34,3.65,2022
-97209,Fort-de-France,97,38185,Grenoble,38,5.0,2022
-97213,Le Lamentin,97,42242,Saint-Joseph,42,4.12,2022
-97230,La Trinité,97,35238,Rennes,35,6.19,2022
-97231,Les Trois-Îlets,97,35238,Rennes,35,5.57,2022
-97302,Cayenne,97,35238,Rennes,35,1.32,2022
-97307,Matoury,97,76540,Rouen,76,5.48,2022
-97309,Remire-Montjoly,97,34172,Montpellier,34,2.54,2022
-97311,Saint-Laurent-du-Maroni,97,35238,Rennes,35,4.96,2022
-97405,Petite-Île,97,35275,Saint-Gilles,35,3.17,2022
-97407,Le Port,97,35238,Rennes,35,3.61,2022
-97411,Saint-Denis,97,34172,Montpellier,34,8.02,2022
-97411,Saint-Denis,97,38185,Grenoble,38,9.73,2022
-97413,Saint-Leu,97,35131,L'Hermitage,35,4.48,2022
-97414,Saint-Louis,97,34172,Montpellier,34,4.25,2022
-97415,Saint-Paul,97,34172,Montpellier,34,6.75,2022
-97415,Saint-Paul,97,35131,L'Hermitage,35,1.57,2022
-97415,Saint-Paul,97,35238,Rennes,35,2.28,2022
-97416,Saint-Pierre,97,38185,Grenoble,38,1.0,2022
-97418,Sainte-Marie,97,38185,Grenoble,38,5.0,2022
-97423,Les Trois-Bassins,97,35131,L'Hermitage,35,5.19,2022

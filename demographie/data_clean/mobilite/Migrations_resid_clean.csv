@@ -2730,7 +2730,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 86194,Poitiers,86,34022,Baillargues,34,5.04,2019
 92004,Asnières-sur-Seine,92,34022,Baillargues,34,15.12,2019
 93066,Saint-Denis,93,34022,Baillargues,34,5.04,2019
-99999,Résidence antérieure dans un pays étranger,99,34022,Baillargues,34,40.33,2019
 34095,Fabrègues,34,34023,Balaruc-les-Bains,34,4.91,2019
 34172,Montpellier,34,34023,Balaruc-les-Bains,34,29.47,2019
 76216,Déville-lès-Rouen,76,34023,Balaruc-les-Bains,34,29.47,2019
@@ -2759,8 +2758,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69049,Chasselay,69,34027,Beaulieu,34,5.21,2019
 81065,Castres,81,34027,Beaulieu,34,5.45,2019
 81120,Labruguière,81,34027,Beaulieu,34,10.42,2019
-97416,Saint-Pierre,97,34027,Beaulieu,34,5.09,2019
-99999,Résidence antérieure dans un pays étranger,99,34027,Beaulieu,34,4.98,2019
 34057,Castelnau-le-Lez,34,34028,Bédarieux,34,10.08,2019
 34172,Montpellier,34,34028,Bédarieux,34,19.98,2019
 34172,Montpellier,34,34029,Bélarga,34,5.96,2019
@@ -3077,12 +3074,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94046,Maisons-Alfort,94,34057,Castelnau-le-Lez,34,23.0,2019
 94067,Saint-Mandé,94,34057,Castelnau-le-Lez,34,25.24,2019
 95127,Cergy,95,34057,Castelnau-le-Lez,34,12.85,2019
-97129,Sainte-Rose,97,34057,Castelnau-le-Lez,34,1.1,2019
-97209,Fort-de-France,97,34057,Castelnau-le-Lez,34,0.91,2019
-97411,Saint-Denis,97,34057,Castelnau-le-Lez,34,5.21,2019
-97422,Le Tampon,97,34057,Castelnau-le-Lez,34,4.99,2019
-97617,Tsingoni,97,34057,Castelnau-le-Lez,34,1.25,2019
-99999,Résidence antérieure dans un pays étranger,99,34057,Castelnau-le-Lez,34,69.44,2019
 12208,Saint-Affrique,12,34058,Castries,34,5.03,2019
 13019,Cabriès,13,34058,Castries,34,10.18,2019
 13027,Châteaurenard,13,34058,Castries,34,5.16,2019
@@ -3128,7 +3119,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76392,Londinières,76,34058,Castries,34,9.93,2019
 94081,Vitry-sur-Seine,94,34058,Castries,34,10.18,2019
 95563,Saint-Leu-la-Forêt,95,34058,Castries,34,10.18,2019
-99999,Résidence antérieure dans un pays étranger,99,34058,Castries,34,10.18,2019
 34172,Montpellier,34,34060,Causse-de-la-Selle,34,10.66,2019
 34172,Montpellier,34,34063,Caux,34,18.71,2019
 34172,Montpellier,34,34065,Cazedarnes,34,5.0,2019
@@ -3180,7 +3170,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76540,Rouen,76,34077,Clapiers,34,4.73,2019
 83126,La Seyne-sur-Mer,83,34077,Clapiers,34,5.17,2019
 91103,Brétigny-sur-Orge,91,34077,Clapiers,34,5.17,2019
-99999,Résidence antérieure dans un pays étranger,99,34077,Clapiers,34,34.03,2019
 34022,Baillargues,34,34078,Claret,34,10.0,2019
 34120,Jacou,34,34078,Claret,34,20.0,2019
 34217,Prades-le-Lez,34,34078,Claret,34,15.0,2019
@@ -3215,7 +3204,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 75107,Paris 7e Arrondissement,75,34087,Cournonsec,34,10.5,2019
 75114,Paris 14e Arrondissement,75,34087,Cournonsec,34,5.25,2019
 94002,Alfortville,94,34087,Cournonsec,34,10.24,2019
-99999,Résidence antérieure dans un pays étranger,99,34087,Cournonsec,34,5.12,2019
 04070,Digne-les-Bains,04,34088,Cournonterral,34,5.19,2019
 09122,Foix,09,34088,Cournonterral,34,15.28,2019
 12145,Millau,12,34088,Cournonterral,34,20.37,2019
@@ -3253,7 +3241,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69094,Grézieu-la-Varenne,69,34088,Cournonterral,34,5.12,2019
 77053,Brie-Comte-Robert,77,34088,Cournonterral,34,20.37,2019
 81004,Albi,81,34088,Cournonterral,34,10.31,2019
-99999,Résidence antérieure dans un pays étranger,99,34088,Cournonterral,34,5.12,2019
 38382,Saint-Égrève,38,34089,Creissan,34,10.0,2019
 06095,Peymeinade,06,34090,Le Crès,34,5.0,2019
 06108,La Roquette-sur-Siagne,06,34090,Le Crès,34,5.0,2019
@@ -3289,9 +3276,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 81052,Cambon,81,34090,Le Crès,34,20.0,2019
 85194,Les Sables-d'Olonne,85,34090,Le Crès,34,10.0,2019
 93066,Saint-Denis,93,34090,Le Crès,34,20.0,2019
-97229,Schœlcher,97,34090,Le Crès,34,10.0,2019
-97304,Kourou,97,34090,Le Crès,34,10.0,2019
-99999,Résidence antérieure dans un pays étranger,99,34090,Le Crès,34,15.0,2019
 06088,Nice,06,34095,Fabrègues,34,19.86,2019
 13047,Istres,13,34095,Fabrègues,34,5.54,2019
 13209,Marseille 9e Arrondissement,13,34095,Fabrègues,34,5.86,2019
@@ -3331,8 +3315,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 73222,Saint-Alban-Leysse,73,34095,Fabrègues,34,5.54,2019
 95527,Roissy-en-France,95,34095,Fabrègues,34,15.74,2019
 95539,Saint-Brice-sous-Forêt,95,34095,Fabrègues,34,5.86,2019
-98725,Mahina,98,34095,Fabrègues,34,30.95,2019
-99999,Résidence antérieure dans un pays étranger,99,34095,Fabrègues,34,19.86,2019
 34172,Montpellier,34,34096,Faugères,34,5.0,2019
 34172,Montpellier,34,34101,Florensac,34,20.04,2019
 34259,Saint-Georges-d'Orques,34,34101,Florensac,34,4.96,2019
@@ -3341,7 +3323,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 34102,Fontanès,34,34102,Fontanès,34,305.94,2019
 34297,Sauteyrargues,34,34102,Fontanès,34,5.05,2019
 78224,L'Étang-la-Ville,78,34102,Fontanès,34,10.07,2019
-99999,Résidence antérieure dans un pays étranger,99,34102,Fontanès,34,5.0,2019
 34172,Montpellier,34,34103,Fontès,34,4.97,2019
 38151,Échirolles,38,34105,Fouzilhon,34,10.58,2019
 34057,Castelnau-le-Lez,34,34108,Frontignan,34,21.88,2019
@@ -3454,9 +3435,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 86194,Poitiers,86,34116,Grabels,34,5.38,2019
 87045,Cieux,87,34116,Grabels,34,10.75,2019
 94081,Vitry-sur-Seine,94,34116,Grabels,34,10.69,2019
-97131,Terre-de-Haut,97,34116,Grabels,34,10.75,2019
-97208,Fonds-Saint-Denis,97,34116,Grabels,34,10.69,2019
-99999,Résidence antérieure dans un pays étranger,99,34116,Grabels,34,64.22,2019
 34172,Montpellier,34,34117,Graissessac,34,5.2,2019
 34090,Le Crès,34,34118,Guzargues,34,5.0,2019
 34172,Montpellier,34,34119,Hérépian,34,10.04,2019
@@ -3496,8 +3474,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92012,Boulogne-Billancourt,92,34120,Jacou,34,5.0,2019
 92014,Bourg-la-Reine,92,34120,Jacou,34,20.0,2019
 92063,Rueil-Malmaison,92,34120,Jacou,34,20.0,2019
-98758,Uturoa,98,34120,Jacou,34,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,34120,Jacou,34,10.0,2019
 34259,Saint-Georges-d'Orques,34,34121,Joncels,34,31.42,2019
 34123,Juvignac,34,34122,Jonquières,34,9.53,2019
 05023,Briançon,05,34123,Juvignac,34,5.03,2019
@@ -3584,10 +3560,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95218,Éragny,95,34123,Juvignac,34,1.06,2019
 95306,Herblay-sur-Seine,95,34123,Juvignac,34,5.76,2019
 95313,L'Isle-Adam,95,34123,Juvignac,34,12.08,2019
-97302,Cayenne,97,34123,Juvignac,34,1.06,2019
-97411,Saint-Denis,97,34123,Juvignac,34,10.57,2019
-97415,Saint-Paul,97,34123,Juvignac,34,4.51,2019
-99999,Résidence antérieure dans un pays étranger,99,34123,Juvignac,34,26.28,2019
 34172,Montpellier,34,34126,Lamalou-les-Bains,34,10.51,2019
 34022,Baillargues,34,34127,Lansargues,34,5.0,2019
 34057,Castelnau-le-Lez,34,34127,Lansargues,34,15.0,2019
@@ -3759,9 +3731,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93057,Les Pavillons-sous-Bois,93,34129,Lattes,34,9.56,2019
 95127,Cergy,95,34129,Lattes,34,3.85,2019
 95480,Parmain,95,34129,Lattes,34,1.07,2019
-97416,Saint-Pierre,97,34129,Lattes,34,11.17,2019
-98818,Nouméa,98,34129,Lattes,34,3.07,2019
-99999,Résidence antérieure dans un pays étranger,99,34129,Lattes,34,63.98,2019
 34172,Montpellier,34,34130,Laurens,34,5.17,2019
 34337,Villeneuve-lès-Maguelone,34,34131,Lauret,34,5.95,2019
 11069,Carcassonne,11,34134,Lavérune,34,5.0,2019
@@ -3782,7 +3751,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 34295,Saussan,34,34134,Lavérune,34,5.0,2019
 34341,Villeveyrac,34,34134,Lavérune,34,5.0,2019
 85194,Les Sables-d'Olonne,85,34134,Lavérune,34,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,34134,Lavérune,34,10.0,2019
 34172,Montpellier,34,34136,Lézignan-la-Cèbe,34,10.25,2019
 34179,Murviel-lès-Montpellier,34,34136,Lézignan-la-Cèbe,34,5.18,2019
 34172,Montpellier,34,34138,Lieuran-Cabrières,34,5.25,2019
@@ -3930,8 +3898,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 78646,Versailles,78,34169,Montferrier-sur-Lez,34,5.0,2019
 89024,Auxerre,89,34169,Montferrier-sur-Lez,34,5.0,2019
 94016,Cachan,94,34169,Montferrier-sur-Lez,34,5.0,2019
-97120,Pointe-à-Pitre,97,34169,Montferrier-sur-Lez,34,10.0,2019
-99999,Résidence antérieure dans un pays étranger,99,34169,Montferrier-sur-Lez,34,20.0,2019
 01001,L'Abergement-Clémenciat,01,34172,Montpellier,34,3.64,2019
 01024,Attignat,01,34172,Montpellier,34,0.89,2019
 01033,Valserhône,01,34172,Montpellier,34,1.02,2019
@@ -5749,81 +5715,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95598,Soisy-sous-Montmorency,95,34172,Montpellier,34,4.94,2019
 95628,Valmondois,95,34172,Montpellier,34,1.02,2019
 95637,Vauréal,95,34172,Montpellier,34,4.75,2019
-97101,Les Abymes,97,34172,Montpellier,34,16.39,2019
-97103,Baie-Mahault,97,34172,Montpellier,34,8.16,2019
-97104,Baillif,97,34172,Montpellier,34,0.77,2019
-97107,Capesterre-Belle-Eau,97,34172,Montpellier,34,1.05,2019
-97112,Grand-Bourg,97,34172,Montpellier,34,1.07,2019
-97113,Le Gosier,97,34172,Montpellier,34,43.93,2019
-97114,Goyave,97,34172,Montpellier,34,0.89,2019
-97115,Lamentin,97,34172,Montpellier,34,18.15,2019
-97116,Morne-à-l'Eau,97,34172,Montpellier,34,1.0,2019
-97117,Le Moule,97,34172,Montpellier,34,12.62,2019
-97120,Pointe-à-Pitre,97,34172,Montpellier,34,7.86,2019
-97121,Pointe-Noire,97,34172,Montpellier,34,0.88,2019
-97125,Saint-François,97,34172,Montpellier,34,6.46,2019
-97128,Sainte-Anne,97,34172,Montpellier,34,7.61,2019
-97129,Sainte-Rose,97,34172,Montpellier,34,1.05,2019
-97132,Trois-Rivières,97,34172,Montpellier,34,0.97,2019
-97134,Vieux-Habitants,97,34172,Montpellier,34,1.05,2019
-97205,Case-Pilote,97,34172,Montpellier,34,9.15,2019
-97206,Le Diamant,97,34172,Montpellier,34,5.57,2019
-97207,Ducos,97,34172,Montpellier,34,4.74,2019
-97209,Fort-de-France,97,34172,Montpellier,34,35.71,2019
-97210,Le François,97,34172,Montpellier,34,4.04,2019
-97213,Le Lamentin,97,34172,Montpellier,34,18.57,2019
-97214,Le Lorrain,97,34172,Montpellier,34,3.89,2019
-97216,Le Marigot,97,34172,Montpellier,34,0.88,2019
-97217,Le Marin,97,34172,Montpellier,34,2.04,2019
-97220,Rivière-Pilote,97,34172,Montpellier,34,1.0,2019
-97221,Rivière-Salée,97,34172,Montpellier,34,2.05,2019
-97223,Saint-Esprit,97,34172,Montpellier,34,1.04,2019
-97225,Saint-Pierre,97,34172,Montpellier,34,1.04,2019
-97227,Sainte-Luce,97,34172,Montpellier,34,11.2,2019
-97228,Sainte-Marie,97,34172,Montpellier,34,0.89,2019
-97229,Schœlcher,97,34172,Montpellier,34,2.08,2019
-97230,La Trinité,97,34172,Montpellier,34,6.12,2019
-97231,Les Trois-Îlets,97,34172,Montpellier,34,7.97,2019
-97234,Bellefontaine,97,34172,Montpellier,34,0.88,2019
-97302,Cayenne,97,34172,Montpellier,34,24.33,2019
-97305,Macouria,97,34172,Montpellier,34,1.01,2019
-97307,Matoury,97,34172,Montpellier,34,3.07,2019
-97309,Remire-Montjoly,97,34172,Montpellier,34,15.36,2019
-97311,Saint-Laurent-du-Maroni,97,34172,Montpellier,34,16.49,2019
-97403,Entre-Deux,97,34172,Montpellier,34,1.84,2019
-97407,Le Port,97,34172,Montpellier,34,11.94,2019
-97408,La Possession,97,34172,Montpellier,34,8.4,2019
-97409,Saint-André,97,34172,Montpellier,34,3.47,2019
-97411,Saint-Denis,97,34172,Montpellier,34,91.82,2019
-97412,Saint-Joseph,97,34172,Montpellier,34,1.26,2019
-97413,Saint-Leu,97,34172,Montpellier,34,15.58,2019
-97414,Saint-Louis,97,34172,Montpellier,34,9.44,2019
-97415,Saint-Paul,97,34172,Montpellier,34,30.18,2019
-97416,Saint-Pierre,97,34172,Montpellier,34,18.55,2019
-97418,Sainte-Marie,97,34172,Montpellier,34,5.77,2019
-97419,Sainte-Rose,97,34172,Montpellier,34,3.14,2019
-97420,Sainte-Suzanne,97,34172,Montpellier,34,3.13,2019
-97422,Le Tampon,97,34172,Montpellier,34,23.56,2019
-97424,Cilaos,97,34172,Montpellier,34,0.96,2019
-97502,97502,97,34172,Montpellier,34,15.09,2019
-97601,Acoua,97,34172,Montpellier,34,0.89,2019
-97605,Chiconi,97,34172,Montpellier,34,1.07,2019
-97608,Dzaoudzi,97,34172,Montpellier,34,8.15,2019
-97609,Kani-Kéli,97,34172,Montpellier,34,8.97,2019
-97610,Koungou,97,34172,Montpellier,34,1.01,2019
-97611,Mamoudzou,97,34172,Montpellier,34,1.05,2019
-97801,97801,97,34172,Montpellier,34,41.97,2019
-98715,Faaa,98,34172,Montpellier,34,3.68,2019
-98725,Mahina,98,34172,Montpellier,34,0.99,2019
-98734,Papara,98,34172,Montpellier,34,3.78,2019
-98735,Papeete,98,34172,Montpellier,34,26.32,2019
-98738,Punaauia,98,34172,Montpellier,34,7.36,2019
-98803,Bourail,98,34172,Montpellier,34,1.07,2019
-98805,Dumbéa,98,34172,Montpellier,34,2.72,2019
-98817,Mont-Dore (le),98,34172,Montpellier,34,1.0,2019
-98818,Nouméa,98,34172,Montpellier,34,65.21,2019
-98821,Païta,98,34172,Montpellier,34,3.39,2019
-99999,Résidence antérieure dans un pays étranger,99,34172,Montpellier,34,3991.72,2019
 34172,Montpellier,34,34173,Montpeyroux,34,25.42,2019
 34129,Lattes,34,34174,Moulès-et-Baucels,34,5.0,2019
 34172,Montpellier,34,34174,Moulès-et-Baucels,34,25.0,2019
@@ -5848,8 +5739,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 34270,Saint-Jean-de-Védas,34,34179,Murviel-lès-Montpellier,34,9.97,2019
 34333,Vic-la-Gardiole,34,34179,Murviel-lès-Montpellier,34,4.97,2019
 42218,Saint-Étienne,42,34179,Murviel-lès-Montpellier,34,4.7,2019
-97132,Trois-Rivières,97,34179,Murviel-lès-Montpellier,34,14.92,2019
-99999,Résidence antérieure dans un pays étranger,99,34179,Murviel-lès-Montpellier,34,4.7,2019
 38185,Grenoble,38,34180,Nébian,34,5.21,2019
 34172,Montpellier,34,34187,Olargues,34,5.08,2019
 34129,Lattes,34,34192,Palavas-les-Flots,34,38.92,2019
@@ -5909,7 +5798,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 89466,Villeroy,89,34198,Pérols,34,5.0,2019
 92040,Issy-les-Moulineaux,92,34198,Pérols,34,25.0,2019
 94034,Fresnes,94,34198,Pérols,34,40.0,2019
-99999,Résidence antérieure dans un pays étranger,99,34198,Pérols,34,35.0,2019
 34172,Montpellier,34,34199,Pézenas,34,20.38,2019
 38185,Grenoble,38,34199,Pézenas,34,6.25,2019
 13047,Istres,13,34202,Pignan,34,22.79,2019
@@ -5941,7 +5829,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 84080,Monteux,84,34202,Pignan,34,5.69,2019
 86066,Châtellerault,86,34202,Pignan,34,11.4,2019
 91319,Janvry,91,34202,Pignan,34,28.5,2019
-99999,Résidence antérieure dans un pays étranger,99,34202,Pignan,34,17.09,2019
 34095,Fabrègues,34,34204,Plaissan,34,10.0,2019
 34172,Montpellier,34,34204,Plaissan,34,10.0,2019
 34172,Montpellier,34,34207,Pomérols,34,5.07,2019
@@ -5987,7 +5874,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 78401,Meulan-en-Yvelines,78,34217,Prades-le-Lez,34,5.97,2019
 78498,Poissy,78,34217,Prades-le-Lez,34,5.42,2019
 82005,Aucamville,82,34217,Prades-le-Lez,34,5.69,2019
-99999,Résidence antérieure dans un pays étranger,99,34217,Prades-le-Lez,34,32.0,2019
 34172,Montpellier,34,34222,Puilacher,34,9.7,2019
 13069,Pélissanne,13,34227,Restinclières,34,10.0,2019
 13204,Marseille 4e Arrondissement,13,34227,Restinclières,34,5.0,2019
@@ -6011,7 +5897,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 34307,Sussargues,34,34227,Restinclières,34,20.0,2019
 66021,Bompas,66,34227,Restinclières,34,5.0,2019
 91458,Nozay,91,34227,Restinclières,34,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,34227,Restinclières,34,20.0,2019
 34217,Prades-le-Lez,34,34232,Roquebrun,34,10.06,2019
 34172,Montpellier,34,34235,Rosis,34,4.98,2019
 34120,Jacou,34,34237,Roujan,34,5.43,2019
@@ -6089,7 +5974,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 75112,Paris 12e Arrondissement,75,34249,Saint-Drézéry,34,4.82,2019
 81065,Castres,81,34249,Saint-Drézéry,34,4.82,2019
 93032,Gagny,93,34249,Saint-Drézéry,34,14.45,2019
-99999,Résidence antérieure dans un pays étranger,99,34249,Saint-Drézéry,34,33.72,2019
 34088,Cournonterral,34,34254,Saint-Félix-de-Lodez,34,19.08,2019
 34057,Castelnau-le-Lez,34,34255,Saint-Gély-du-Fesc,34,8.24,2019
 34172,Montpellier,34,34255,Saint-Gély-du-Fesc,34,200.97,2019
@@ -6137,7 +6021,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 91549,Sainte-Geneviève-des-Bois,91,34259,Saint-Georges-d'Orques,34,4.94,2019
 94078,Villeneuve-Saint-Georges,94,34259,Saint-Georges-d'Orques,34,4.94,2019
 95409,Moisselles,95,34259,Saint-Georges-d'Orques,34,4.94,2019
-99999,Résidence antérieure dans un pays étranger,99,34259,Saint-Georges-d'Orques,34,9.88,2019
 38169,Fontaine,38,34262,Saint-Guiraud,34,10.0,2019
 34249,Saint-Drézéry,34,34263,Saint-Hilaire-de-Beauvoir,34,9.86,2019
 34307,Sussargues,34,34263,Saint-Hilaire-de-Beauvoir,34,19.73,2019
@@ -6218,8 +6101,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93008,Bobigny,93,34270,Saint-Jean-de-Védas,34,5.21,2019
 93070,Saint-Ouen-sur-Seine,93,34270,Saint-Jean-de-Védas,34,5.9,2019
 94068,Saint-Maur-des-Fossés,94,34270,Saint-Jean-de-Védas,34,5.9,2019
-97410,Saint-Benoît,97,34270,Saint-Jean-de-Védas,34,11.43,2019
-99999,Résidence antérieure dans un pays étranger,99,34270,Saint-Jean-de-Védas,34,37.29,2019
 34022,Baillargues,34,34272,Saint-Just,34,9.96,2019
 34123,Juvignac,34,34272,Saint-Just,34,14.95,2019
 34172,Montpellier,34,34272,Saint-Just,34,4.98,2019
@@ -6259,7 +6140,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 34295,Saussan,34,34295,Saussan,34,1440.07,2019
 34337,Villeneuve-lès-Maguelone,34,34295,Saussan,34,30.41,2019
 63226,Mur-sur-Allier,63,34295,Saussan,34,15.28,2019
-99999,Résidence antérieure dans un pays étranger,99,34295,Saussan,34,10.19,2019
 34057,Castelnau-le-Lez,34,34296,Saussines,34,5.08,2019
 34058,Castries,34,34296,Saussines,34,5.08,2019
 34172,Montpellier,34,34296,Saussines,34,20.3,2019
@@ -6316,8 +6196,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 59350,Lille,59,34307,Sussargues,34,5.0,2019
 69003,Albigny-sur-Saône,69,34307,Sussargues,34,20.0,2019
 75118,Paris 18e Arrondissement,75,34307,Sussargues,34,5.0,2019
-97422,Le Tampon,97,34307,Sussargues,34,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,34307,Sussargues,34,15.0,2019
 34057,Castelnau-le-Lez,34,34309,Teyran,34,10.62,2019
 34058,Castries,34,34309,Teyran,34,5.68,2019
 34077,Clapiers,34,34309,Teyran,34,18.58,2019
@@ -6388,7 +6266,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 84038,Cheval-Blanc,84,34327,Vendargues,34,20.31,2019
 84087,Orange,84,34327,Vendargues,34,10.28,2019
 92044,Levallois-Perret,92,34327,Vendargues,34,5.17,2019
-99999,Résidence antérieure dans un pays étranger,99,34327,Vendargues,34,20.43,2019
 34123,Juvignac,34,34328,Vendémian,34,14.58,2019
 34172,Montpellier,34,34328,Vendémian,34,14.58,2019
 34172,Montpellier,34,34329,Vendres,34,5.02,2019
@@ -6449,7 +6326,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 91345,Longjumeau,91,34337,Villeneuve-lès-Maguelone,34,15.0,2019
 91540,Saint-Chéron,91,34337,Villeneuve-lès-Maguelone,34,20.0,2019
 95176,Cormeilles-en-Parisis,95,34337,Villeneuve-lès-Maguelone,34,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,34337,Villeneuve-lès-Maguelone,34,35.0,2019
 34172,Montpellier,34,34340,Villetelle,34,5.14,2019
 34090,Le Crès,34,34341,Villeveyrac,34,35.51,2019
 34095,Fabrègues,34,34341,Villeveyrac,34,15.36,2019
@@ -6499,7 +6375,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 74136,Le Grand-Bornand,74,35001,Acigné,35,5.15,2019
 75112,Paris 12e Arrondissement,75,35001,Acigné,35,5.55,2019
 95019,Arnouville,95,35001,Acigné,35,4.97,2019
-99999,Résidence antérieure dans un pays étranger,99,35001,Acigné,35,21.0,2019
 35206,Noyal-Châtillon-sur-Seiche,35,35002,Amanlis,35,10.34,2019
 35238,Rennes,35,35002,Amanlis,35,20.6,2019
 35352,Vern-sur-Seiche,35,35002,Amanlis,35,5.17,2019
@@ -6692,8 +6567,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94028,Créteil,94,35024,Betton,35,14.08,2019
 95019,Arnouville,95,35024,Betton,35,5.09,2019
 95313,L'Isle-Adam,95,35024,Betton,35,3.65,2019
-97413,Saint-Leu,97,35024,Betton,35,7.09,2019
-99999,Résidence antérieure dans un pays étranger,99,35024,Betton,35,9.15,2019
 35024,Betton,35,35027,Boisgervilly,35,5.0,2019
 35047,Bruz,35,35027,Boisgervilly,35,15.0,2019
 35066,Chartres-de-Bretagne,35,35027,Boisgervilly,35,10.0,2019
@@ -6742,7 +6615,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 49092,Chemillé-en-Anjou,49,35032,Bourgbarré,35,5.44,2019
 53130,Laval,53,35032,Bourgbarré,35,5.23,2019
 78033,Aulnay-sur-Mauldre,78,35032,Bourgbarré,35,20.92,2019
-97360,Apatou,97,35032,Bourgbarré,35,5.16,2019
 35039,Brécé,35,35033,Bourg-des-Comptes,35,15.18,2019
 35047,Bruz,35,35033,Bourg-des-Comptes,35,5.11,2019
 35051,Cesson-Sévigné,35,35033,Bourg-des-Comptes,35,10.17,2019
@@ -7118,16 +6990,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95051,Beauchamp,95,35047,Bruz,35,3.67,2019
 95149,Chaumontel,95,35047,Bruz,35,1.22,2019
 95218,Éragny,95,35047,Bruz,35,1.22,2019
-97213,Le Lamentin,97,35047,Bruz,35,2.23,2019
-97307,Matoury,97,35047,Bruz,35,0.97,2019
-97410,Saint-Benoît,97,35047,Bruz,35,1.05,2019
-97413,Saint-Leu,97,35047,Bruz,35,1.22,2019
-97415,Saint-Paul,97,35047,Bruz,35,0.97,2019
-97422,Le Tampon,97,35047,Bruz,35,11.24,2019
-97611,Mamoudzou,97,35047,Bruz,35,0.97,2019
-98738,Punaauia,98,35047,Bruz,35,2.14,2019
-98818,Nouméa,98,35047,Bruz,35,1.05,2019
-99999,Résidence antérieure dans un pays étranger,99,35047,Bruz,35,80.02,2019
 35055,Chantepie,35,35049,Cancale,35,15.74,2019
 35059,La Chapelle-des-Fougeretz,35,35049,Cancale,35,28.88,2019
 35120,Gévezé,35,35049,Cancale,35,5.25,2019
@@ -7437,11 +7299,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94081,Vitry-sur-Seine,94,35051,Cesson-Sévigné,35,1.02,2019
 95203,Eaubonne,95,35051,Cesson-Sévigné,35,5.33,2019
 95637,Vauréal,95,35051,Cesson-Sévigné,35,1.0,2019
-97407,Le Port,97,35051,Cesson-Sévigné,35,1.02,2019
-97411,Saint-Denis,97,35051,Cesson-Sévigné,35,1.02,2019
-97413,Saint-Leu,97,35051,Cesson-Sévigné,35,1.0,2019
-97415,Saint-Paul,97,35051,Cesson-Sévigné,35,7.06,2019
-99999,Résidence antérieure dans un pays étranger,99,35051,Cesson-Sévigné,35,145.82,2019
 35139,Laillé,35,35054,Chanteloup,35,15.18,2019
 35208,Orgères,35,35054,Chanteloup,35,5.11,2019
 35238,Rennes,35,35054,Chanteloup,35,15.18,2019
@@ -7581,9 +7438,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95063,Bezons,95,35055,Chantepie,35,3.79,2019
 95607,Taverny,95,35055,Chantepie,35,0.97,2019
 95637,Vauréal,95,35055,Chantepie,35,1.95,2019
-97224,Saint-Joseph,97,35055,Chantepie,35,8.42,2019
-98818,Nouméa,98,35055,Chantepie,35,2.97,2019
-99999,Résidence antérieure dans un pays étranger,99,35055,Chantepie,35,38.1,2019
 35281,Saint-Jacques-de-la-Lande,35,35056,La Chapelle-aux-Filtzméens,35,15.03,2019
 35047,Bruz,35,35057,La Chapelle-Bouëxic,35,5.07,2019
 35238,Rennes,35,35057,La Chapelle-Bouëxic,35,15.21,2019
@@ -7630,7 +7484,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 91661,Villebon-sur-Yvette,91,35059,La Chapelle-des-Fougeretz,35,25.29,2019
 92023,Clamart,92,35059,La Chapelle-des-Fougeretz,35,20.23,2019
 95306,Herblay-sur-Seine,95,35059,La Chapelle-des-Fougeretz,35,5.06,2019
-99999,Résidence antérieure dans un pays étranger,99,35059,La Chapelle-des-Fougeretz,35,10.12,2019
 35024,Betton,35,35065,La Chapelle-Thouarault,35,14.83,2019
 35040,Breteil,35,35065,La Chapelle-Thouarault,35,4.94,2019
 35065,La Chapelle-Thouarault,35,35065,La Chapelle-Thouarault,35,1997.5,2019
@@ -7648,7 +7501,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 49244,Mauges-sur-Loire,49,35065,La Chapelle-Thouarault,35,4.94,2019
 49248,Ombrée d'Anjou,49,35065,La Chapelle-Thouarault,35,4.94,2019
 77274,Marcilly,77,35065,La Chapelle-Thouarault,35,19.78,2019
-97415,Saint-Paul,97,35065,La Chapelle-Thouarault,35,9.89,2019
 03321,Yzeure,03,35066,Chartres-de-Bretagne,35,5.19,2019
 09085,Castillon-en-Couserans,09,35066,Chartres-de-Bretagne,35,5.19,2019
 17300,La Rochelle,17,35066,Chartres-de-Bretagne,35,10.26,2019
@@ -7719,7 +7571,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 87085,Limoges,87,35066,Chartres-de-Bretagne,35,5.01,2019
 89387,Sens,89,35066,Chartres-de-Bretagne,35,10.14,2019
 92024,Clichy,92,35066,Chartres-de-Bretagne,35,5.19,2019
-99999,Résidence antérieure dans un pays étranger,99,35066,Chartres-de-Bretagne,35,38.85,2019
 35024,Betton,35,35067,Chasné-sur-Illet,35,4.91,2019
 35047,Bruz,35,35067,Chasné-sur-Illet,35,9.82,2019
 35051,Cesson-Sévigné,35,35067,Chasné-sur-Illet,35,9.82,2019
@@ -7960,7 +7811,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 85194,Les Sables-d'Olonne,85,35120,Gévezé,35,10.0,2019
 86290,La Villedieu-du-Clain,86,35120,Gévezé,35,20.0,2019
 92020,Châtillon,92,35120,Gévezé,35,15.0,2019
-99999,Résidence antérieure dans un pays étranger,99,35120,Gévezé,35,5.0,2019
 35238,Rennes,35,35121,Gosné,35,15.15,2019
 35334,Thorigné-Fouillard,35,35121,Gosné,35,5.05,2019
 35047,Bruz,35,35123,Goven,35,40.28,2019
@@ -8049,7 +7899,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 72264,Sablé-sur-Sarthe,72,35131,L'Hermitage,35,5.0,2019
 75120,Paris 20e Arrondissement,75,35131,L'Hermitage,35,5.0,2019
 92040,Issy-les-Moulineaux,92,35131,L'Hermitage,35,20.0,2019
-99999,Résidence antérieure dans un pays étranger,99,35131,L'Hermitage,35,35.0,2019
 35051,Cesson-Sévigné,35,35133,Iffendic,35,15.76,2019
 35238,Rennes,35,35133,Iffendic,35,12.95,2019
 35275,Saint-Gilles,35,35133,Iffendic,35,5.31,2019
@@ -8091,7 +7940,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 78397,Le Mesnil-Saint-Denis,78,35139,Laillé,35,4.96,2019
 86066,Châtellerault,86,35139,Laillé,35,4.96,2019
 94081,Vitry-sur-Seine,94,35139,Laillé,35,24.78,2019
-99999,Résidence antérieure dans un pays étranger,99,35139,Laillé,35,54.51,2019
 35238,Rennes,35,35140,Lalleu,35,5.29,2019
 35363,Pont-Péan,35,35140,Lalleu,35,5.29,2019
 35238,Rennes,35,35142,Landéan,35,4.92,2019
@@ -8234,11 +8082,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76648,Saint-Saëns,76,35189,Montgermont,35,5.0,2019
 91573,Saint-Pierre-du-Perray,91,35189,Montgermont,35,5.0,2019
 94042,Joinville-le-Pont,94,35189,Montgermont,35,5.0,2019
-97222,Le Robert,97,35189,Montgermont,35,20.0,2019
-97409,Saint-André,97,35189,Montgermont,35,10.0,2019
-97411,Saint-Denis,97,35189,Montgermont,35,10.0,2019
-97412,Saint-Joseph,97,35189,Montgermont,35,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,35189,Montgermont,35,5.0,2019
 35051,Cesson-Sévigné,35,35193,Montreuil-le-Gast,35,5.14,2019
 35055,Chantepie,35,35193,Montreuil-le-Gast,35,15.31,2019
 35059,La Chapelle-des-Fougeretz,35,35193,Montreuil-le-Gast,35,10.31,2019
@@ -8307,7 +8150,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 89198,Gurgy,89,35196,Mordelles,35,19.16,2019
 95018,Argenteuil,95,35196,Mordelles,35,5.4,2019
 95436,Mours,95,35196,Mordelles,35,5.4,2019
-99999,Résidence antérieure dans un pays étranger,99,35196,Mordelles,35,4.79,2019
 35001,Acigné,35,35197,Mouazé,35,10.25,2019
 35024,Betton,35,35197,Mouazé,35,31.15,2019
 35039,Brécé,35,35197,Mouazé,35,15.97,2019
@@ -8390,8 +8232,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94017,Champigny-sur-Marne,94,35206,Noyal-Châtillon-sur-Seiche,35,5.31,2019
 94041,Ivry-sur-Seine,94,35206,Noyal-Châtillon-sur-Seiche,35,5.31,2019
 95018,Argenteuil,95,35206,Noyal-Châtillon-sur-Seiche,35,15.16,2019
-97222,Le Robert,97,35206,Noyal-Châtillon-sur-Seiche,35,5.05,2019
-99999,Résidence antérieure dans un pays étranger,99,35206,Noyal-Châtillon-sur-Seiche,35,30.08,2019
 35001,Acigné,35,35207,Noyal-sur-Vilaine,35,15.0,2019
 35032,Bourgbarré,35,35207,Noyal-sur-Vilaine,35,5.0,2019
 35051,Cesson-Sévigné,35,35207,Noyal-sur-Vilaine,35,40.0,2019
@@ -8429,7 +8269,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 50359,Mortain-Bocage,50,35208,Orgères,35,5.59,2019
 56061,La Gacilly,56,35208,Orgères,35,5.33,2019
 90010,Belfort,90,35208,Orgères,35,11.05,2019
-99999,Résidence antérieure dans un pays étranger,99,35208,Orgères,35,10.73,2019
 13040,Fuveau,13,35210,Pacé,35,2.61,2019
 14118,Caen,14,35210,Pacé,35,8.15,2019
 17347,Saint-Jean-d'Angély,17,35210,Pacé,35,1.02,2019
@@ -8554,7 +8393,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94003,Arcueil,94,35210,Pacé,35,10.78,2019
 94015,Bry-sur-Marne,94,35210,Pacé,35,7.92,2019
 94058,Le Perreux-sur-Marne,94,35210,Pacé,35,2.79,2019
-99999,Résidence antérieure dans un pays étranger,99,35210,Pacé,35,27.7,2019
 35047,Bruz,35,35211,Paimpont,35,10.13,2019
 35208,Orgères,35,35212,Pancé,35,10.27,2019
 35238,Rennes,35,35212,Pancé,35,10.27,2019
@@ -10368,59 +10206,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95572,Saint-Ouen-l'Aumône,95,35238,Rennes,35,5.0,2019
 95574,Saint-Prix,95,35238,Rennes,35,1.16,2019
 95585,Sarcelles,95,35238,Rennes,35,2.1,2019
-97101,Les Abymes,97,35238,Rennes,35,36.31,2019
-97103,Baie-Mahault,97,35238,Rennes,35,7.8,2019
-97105,Basse-Terre,97,35238,Rennes,35,1.06,2019
-97106,Bouillante,97,35238,Rennes,35,1.18,2019
-97107,Capesterre-Belle-Eau,97,35238,Rennes,35,1.01,2019
-97120,Pointe-à-Pitre,97,35238,Rennes,35,1.16,2019
-97124,Saint-Claude,97,35238,Rennes,35,1.01,2019
-97125,Saint-François,97,35238,Rennes,35,14.75,2019
-97128,Sainte-Anne,97,35238,Rennes,35,9.22,2019
-97129,Sainte-Rose,97,35238,Rennes,35,1.14,2019
-97209,Fort-de-France,97,35238,Rennes,35,25.63,2019
-97210,Le François,97,35238,Rennes,35,3.34,2019
-97213,Le Lamentin,97,35238,Rennes,35,3.23,2019
-97222,Le Robert,97,35238,Rennes,35,0.99,2019
-97223,Saint-Esprit,97,35238,Rennes,35,0.93,2019
-97226,Sainte-Anne,97,35238,Rennes,35,7.12,2019
-97227,Sainte-Luce,97,35238,Rennes,35,3.52,2019
-97229,Schœlcher,97,35238,Rennes,35,10.03,2019
-97230,La Trinité,97,35238,Rennes,35,6.96,2019
-97231,Les Trois-Îlets,97,35238,Rennes,35,1.16,2019
-97232,Le Vauclin,97,35238,Rennes,35,4.04,2019
-97302,Cayenne,97,35238,Rennes,35,47.63,2019
-97304,Kourou,97,35238,Rennes,35,24.49,2019
-97305,Macouria,97,35238,Rennes,35,4.87,2019
-97307,Matoury,97,35238,Rennes,35,1.94,2019
-97311,Saint-Laurent-du-Maroni,97,35238,Rennes,35,3.59,2019
-97402,Bras-Panon,97,35238,Rennes,35,1.62,2019
-97408,La Possession,97,35238,Rennes,35,15.54,2019
-97409,Saint-André,97,35238,Rennes,35,7.6,2019
-97411,Saint-Denis,97,35238,Rennes,35,20.01,2019
-97413,Saint-Leu,97,35238,Rennes,35,5.37,2019
-97415,Saint-Paul,97,35238,Rennes,35,3.33,2019
-97416,Saint-Pierre,97,35238,Rennes,35,22.16,2019
-97420,Sainte-Suzanne,97,35238,Rennes,35,1.14,2019
-97422,Le Tampon,97,35238,Rennes,35,8.87,2019
-97502,97502,97,35238,Rennes,35,9.11,2019
-97601,Acoua,97,35238,Rennes,35,3.83,2019
-97602,Bandraboua,97,35238,Rennes,35,0.81,2019
-97603,Bandrele,97,35238,Rennes,35,8.77,2019
-97604,Bouéni,97,35238,Rennes,35,3.14,2019
-97606,Chirongui,97,35238,Rennes,35,1.14,2019
-97607,Dembeni,97,35238,Rennes,35,2.02,2019
-97608,Dzaoudzi,97,35238,Rennes,35,3.54,2019
-97610,Koungou,97,35238,Rennes,35,6.84,2019
-97611,Mamoudzou,97,35238,Rennes,35,32.88,2019
-97612,Mtsamboro,97,35238,Rennes,35,8.75,2019
-97616,Sada,97,35238,Rennes,35,1.82,2019
-98725,Mahina,98,35238,Rennes,35,2.74,2019
-98735,Papeete,98,35238,Rennes,35,6.69,2019
-98736,Pirae,98,35238,Rennes,35,1.16,2019
-98805,Dumbéa,98,35238,Rennes,35,1.14,2019
-98818,Nouméa,98,35238,Rennes,35,7.5,2019
-99999,Résidence antérieure dans un pays étranger,99,35238,Rennes,35,2340.82,2019
 35238,Rennes,35,35239,Retiers,35,10.06,2019
 35352,Vern-sur-Seiche,35,35239,Retiers,35,15.12,2019
 13118,Coudoux,13,35240,Le Rheu,35,20.1,2019
@@ -10522,8 +10307,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94019,Chennevières-sur-Marne,94,35240,Le Rheu,35,10.61,2019
 94076,Villejuif,94,35240,Le Rheu,35,5.3,2019
 95218,Éragny,95,35240,Le Rheu,35,2.5,2019
-97611,Mamoudzou,97,35240,Le Rheu,35,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,35240,Le Rheu,35,26.25,2019
 35001,Acigné,35,35241,La Richardais,35,5.0,2019
 35032,Bourgbarré,35,35241,La Richardais,35,15.0,2019
 35216,Parthenay-de-Bretagne,35,35241,La Richardais,35,5.0,2019
@@ -10553,7 +10336,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 60395,Méru,60,35245,Romillé,35,24.9,2019
 80569,Morcourt,80,35245,Romillé,35,5.11,2019
 95563,Saint-Leu-la-Forêt,95,35245,Romillé,35,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,35245,Romillé,35,5.32,2019
 35238,Rennes,35,35246,Roz-Landrieux,35,5.1,2019
 35066,Chartres-de-Bretagne,35,35249,Sainte-Anne-sur-Vilaine,35,20.05,2019
 35238,Rennes,35,35249,Sainte-Anne-sur-Vilaine,35,5.01,2019
@@ -10625,8 +10407,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 56195,La Roche-Bernard,56,35266,Saint-Erblon,35,4.83,2019
 56243,Séné,56,35266,Saint-Erblon,35,4.83,2019
 71270,Mâcon,71,35266,Saint-Erblon,35,9.66,2019
-97603,Bandrele,97,35266,Saint-Erblon,35,4.83,2019
-99999,Résidence antérieure dans un pays étranger,99,35266,Saint-Erblon,35,9.66,2019
 35032,Bourgbarré,35,35271,Saint-Georges-de-Reintembault,35,4.96,2019
 35210,Pacé,35,35274,Saint-Germain-sur-Ille,35,5.49,2019
 35238,Rennes,35,35274,Saint-Germain-sur-Ille,35,36.57,2019
@@ -10735,7 +10515,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92024,Clichy,92,35278,Saint-Grégoire,35,20.0,2019
 94018,Charenton-le-Pont,94,35278,Saint-Grégoire,35,10.0,2019
 94037,Gentilly,94,35278,Saint-Grégoire,35,15.0,2019
-99999,Résidence antérieure dans un pays étranger,99,35278,Saint-Grégoire,35,20.0,2019
 35238,Rennes,35,35279,Saint-Guinoux,35,5.0,2019
 35001,Acigné,35,35280,Saint-Hilaire-des-Landes,35,10.0,2019
 35238,Rennes,35,35280,Saint-Hilaire-des-Landes,35,5.0,2019
@@ -10936,12 +10715,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93066,Saint-Denis,93,35281,Saint-Jacques-de-la-Lande,35,4.59,2019
 94041,Ivry-sur-Seine,94,35281,Saint-Jacques-de-la-Lande,35,1.07,2019
 94073,Thiais,94,35281,Saint-Jacques-de-la-Lande,35,9.19,2019
-97302,Cayenne,97,35281,Saint-Jacques-de-la-Lande,35,15.76,2019
-97305,Macouria,97,35281,Saint-Jacques-de-la-Lande,35,13.38,2019
-97403,Entre-Deux,97,35281,Saint-Jacques-de-la-Lande,35,2.83,2019
-97411,Saint-Denis,97,35281,Saint-Jacques-de-la-Lande,35,5.35,2019
-97415,Saint-Paul,97,35281,Saint-Jacques-de-la-Lande,35,1.85,2019
-99999,Résidence antérieure dans un pays étranger,99,35281,Saint-Jacques-de-la-Lande,35,107.68,2019
 35245,Romillé,35,35282,Rives-du-Couesnon,35,15.0,2019
 35238,Rennes,35,35284,Saint-Jouan-des-Guérets,35,10.08,2019
 35238,Rennes,35,35287,Saint-Lunaire,35,5.14,2019
@@ -11091,7 +10864,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 91339,Linas,91,35334,Thorigné-Fouillard,35,10.0,2019
 91549,Sainte-Geneviève-des-Bois,91,35334,Thorigné-Fouillard,35,5.0,2019
 94028,Créteil,94,35334,Thorigné-Fouillard,35,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,35334,Thorigné-Fouillard,35,5.0,2019
 35080,Cintré,35,35335,Thourie,35,4.9,2019
 35281,Saint-Jacques-de-la-Lande,35,35335,Thourie,35,9.8,2019
 35051,Cesson-Sévigné,35,35337,Tinténiac,35,5.06,2019
@@ -11114,7 +10886,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 35281,Saint-Jacques-de-la-Lande,35,35351,Le Verger,35,4.99,2019
 35351,Le Verger,35,35351,Le Verger,35,1317.76,2019
 49007,Angers,49,35351,Le Verger,35,4.93,2019
-99999,Résidence antérieure dans un pays étranger,99,35351,Le Verger,35,10.11,2019
 14076,Blainville-sur-Orne,14,35352,Vern-sur-Seiche,35,4.93,2019
 22278,Saint-Brieuc,22,35352,Vern-sur-Seiche,35,14.78,2019
 22320,Saint-Nicodème,22,35352,Vern-sur-Seiche,35,4.87,2019
@@ -11163,7 +10934,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 78126,La Celle-Saint-Cloud,78,35352,Vern-sur-Seiche,35,9.85,2019
 78551,Saint-Germain-en-Laye,78,35352,Vern-sur-Seiche,35,19.7,2019
 85099,Le Girouard,85,35352,Vern-sur-Seiche,35,14.78,2019
-99999,Résidence antérieure dans un pays étranger,99,35352,Vern-sur-Seiche,35,9.85,2019
 25418,Nancray,25,35353,Vezin-le-Coquet,35,25.41,2019
 35005,Arbrissel,35,35353,Vezin-le-Coquet,35,5.95,2019
 35095,Dol-de-Bretagne,35,35353,Vezin-le-Coquet,35,5.95,2019
@@ -11187,7 +10957,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 56260,Vannes,56,35353,Vezin-le-Coquet,35,5.95,2019
 67302,Monswiller,67,35353,Vezin-le-Coquet,35,5.72,2019
 85191,La Roche-sur-Yon,85,35353,Vezin-le-Coquet,35,5.95,2019
-99999,Résidence antérieure dans un pays étranger,99,35353,Vezin-le-Coquet,35,16.11,2019
 35055,Chantepie,35,35355,Vieux-Vy-sur-Couesnon,35,9.94,2019
 35238,Rennes,35,35355,Vieux-Vy-sur-Couesnon,35,15.47,2019
 35240,Le Rheu,35,35355,Vieux-Vy-sur-Couesnon,35,5.41,2019
@@ -11244,7 +11013,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 85190,Rocheservière,85,35363,Pont-Péan,35,5.03,2019
 92026,Courbevoie,92,35363,Pont-Péan,35,5.03,2019
 95680,Villiers-le-Bel,95,35363,Pont-Péan,35,5.03,2019
-99999,Résidence antérieure dans un pays étranger,99,35363,Pont-Péan,35,10.05,2019
 34172,Montpellier,34,36006,Argenton-sur-Creuse,36,4.8,2019
 76640,Saint-Pierre-lès-Elbeuf,76,36006,Argenton-sur-Creuse,36,4.99,2019
 38185,Grenoble,38,36018,Le Blanc,36,5.0,2019
@@ -11388,7 +11156,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38529,Vaulnaveys-le-Haut,38,38057,Bresson,38,5.05,2019
 38565,Voreppe,38,38057,Bresson,38,5.05,2019
 75114,Paris 14e Arrondissement,75,38057,Bresson,38,15.16,2019
-99999,Résidence antérieure dans un pays étranger,99,38057,Bresson,38,5.05,2019
 38185,Grenoble,38,38058,Brézins,38,4.94,2019
 38524,Varces-Allières-et-Risset,38,38058,Brézins,38,9.88,2019
 38059,Brié-et-Angonnes,38,38059,Brié-et-Angonnes,38,2320.01,2019
@@ -11422,7 +11189,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38200,Jarrie,38,38068,Champagnier,38,22.04,2019
 38328,Quaix-en-Chartreuse,38,38068,Champagnier,38,5.18,2019
 38563,Voiron,38,38068,Champagnier,38,14.0,2019
-99999,Résidence antérieure dans un pays étranger,99,38068,Champagnier,38,22.85,2019
 38071,Champ-sur-Drac,38,38071,Champ-sur-Drac,38,2952.74,2019
 38151,Échirolles,38,38071,Champ-sur-Drac,38,19.49,2019
 38169,Fontaine,38,38071,Champ-sur-Drac,38,19.49,2019
@@ -11434,7 +11200,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38527,Vaujany,38,38071,Champ-sur-Drac,38,9.75,2019
 38562,Vizille,38,38071,Champ-sur-Drac,38,14.62,2019
 59004,Aix-en-Pévèle,59,38071,Champ-sur-Drac,38,4.87,2019
-99999,Résidence antérieure dans un pays étranger,99,38071,Champ-sur-Drac,38,9.75,2019
 38485,Seyssinet-Pariset,38,38072,Chanas,38,10.0,2019
 38151,Échirolles,38,38073,Chantepérier,38,4.69,2019
 38150,Domène,38,38074,Chantesse,38,15.0,2019
@@ -11530,7 +11295,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 75105,Paris 5e Arrondissement,75,38126,Corenc,38,5.09,2019
 75115,Paris 15e Arrondissement,75,38126,Corenc,38,24.93,2019
 84007,Avignon,84,38126,Corenc,38,4.96,2019
-99999,Résidence antérieure dans un pays étranger,99,38126,Corenc,38,15.4,2019
 38151,Échirolles,38,38128,Corps,38,4.74,2019
 38325,Proveysieux,38,38129,Corrençon-en-Vercors,38,5.0,2019
 35238,Rennes,35,38130,La Côte-Saint-André,38,10.0,2019
@@ -11602,7 +11366,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 74010,Annecy,74,38150,Domène,38,4.86,2019
 77040,Boissise-le-Roi,77,38150,Domène,38,5.1,2019
 77108,Chelles,77,38150,Domène,38,5.1,2019
-99999,Résidence antérieure dans un pays étranger,99,38150,Domène,38,9.58,2019
 01354,Saint-Genis-Pouilly,01,38151,Échirolles,38,1.13,2019
 06018,Biot,06,38151,Échirolles,38,0.99,2019
 06069,Grasse,06,38151,Échirolles,38,24.25,2019
@@ -11811,12 +11574,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95018,Argenteuil,95,38151,Échirolles,38,5.0,2019
 95127,Cergy,95,38151,Échirolles,38,1.13,2019
 95392,Mériel,95,38151,Échirolles,38,0.96,2019
-97105,Basse-Terre,97,38151,Échirolles,38,2.09,2019
-97128,Sainte-Anne,97,38151,Échirolles,38,1.13,2019
-97411,Saint-Denis,97,38151,Échirolles,38,1.05,2019
-97416,Saint-Pierre,97,38151,Échirolles,38,2.09,2019
-97611,Mamoudzou,97,38151,Échirolles,38,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,38151,Échirolles,38,198.89,2019
 38185,Grenoble,38,38153,Engins,38,15.27,2019
 38421,Saint-Martin-d'Hères,38,38157,Estrablin,38,4.88,2019
 13205,Marseille 5e Arrondissement,13,38158,Eybens,38,2.66,2019
@@ -11863,9 +11620,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 74010,Annecy,74,38158,Eybens,38,2.69,2019
 83115,Sainte-Maxime,83,38158,Eybens,38,2.66,2019
 92026,Courbevoie,92,38158,Eybens,38,4.78,2019
-97306,Mana,97,38158,Eybens,38,5.0,2019
-97611,Mamoudzou,97,38158,Eybens,38,5.46,2019
-99999,Résidence antérieure dans un pays étranger,99,38158,Eybens,38,12.13,2019
 38185,Grenoble,38,38161,Faramans,38,10.21,2019
 38421,Saint-Martin-d'Hères,38,38161,Faramans,38,5.11,2019
 38169,Fontaine,38,38162,Faverges-de-la-Tour,38,5.09,2019
@@ -12033,10 +11787,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94081,Vitry-sur-Seine,94,38169,Fontaine,38,3.36,2019
 95018,Argenteuil,95,38169,Fontaine,38,1.02,2019
 95585,Sarcelles,95,38169,Fontaine,38,3.25,2019
-97302,Cayenne,97,38169,Fontaine,38,1.07,2019
-97416,Saint-Pierre,97,38169,Fontaine,38,3.07,2019
-97615,Pamandzi,97,38169,Fontaine,38,7.74,2019
-99999,Résidence antérieure dans un pays étranger,99,38169,Fontaine,38,236.0,2019
 26139,Génissieux,26,38170,Fontanil-Cornillon,38,4.69,2019
 38013,Apprieu,38,38170,Fontanil-Cornillon,38,5.02,2019
 38017,Assieu,38,38170,Fontanil-Cornillon,38,9.37,2019
@@ -12140,7 +11890,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 87085,Limoges,87,38179,Gières,38,15.0,2019
 91377,Massy,91,38179,Gières,38,5.0,2019
 92078,Villeneuve-la-Garenne,92,38179,Gières,38,15.0,2019
-99999,Résidence antérieure dans un pays étranger,99,38179,Gières,38,15.0,2019
 34172,Montpellier,34,38181,Goncelin,38,5.02,2019
 38068,Champagnier,38,38181,Goncelin,38,5.0,2019
 38150,Domène,38,38181,Goncelin,38,5.0,2019
@@ -13351,36 +13100,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95450,Neuville-sur-Oise,95,38185,Grenoble,38,1.06,2019
 95500,Pontoise,95,38185,Grenoble,38,3.31,2019
 95582,Sannois,95,38185,Grenoble,38,1.06,2019
-97103,Baie-Mahault,97,38185,Grenoble,38,0.93,2019
-97118,Petit-Bourg,97,38185,Grenoble,38,0.97,2019
-97124,Saint-Claude,97,38185,Grenoble,38,3.3,2019
-97128,Sainte-Anne,97,38185,Grenoble,38,1.06,2019
-97207,Ducos,97,38185,Grenoble,38,1.26,2019
-97209,Fort-de-France,97,38185,Grenoble,38,1.1,2019
-97213,Le Lamentin,97,38185,Grenoble,38,1.1,2019
-97221,Rivière-Salée,97,38185,Grenoble,38,1.08,2019
-97229,Schœlcher,97,38185,Grenoble,38,4.01,2019
-97231,Les Trois-Îlets,97,38185,Grenoble,38,7.29,2019
-97307,Matoury,97,38185,Grenoble,38,1.15,2019
-97408,La Possession,97,38185,Grenoble,38,14.29,2019
-97409,Saint-André,97,38185,Grenoble,38,12.0,2019
-97411,Saint-Denis,97,38185,Grenoble,38,11.38,2019
-97412,Saint-Joseph,97,38185,Grenoble,38,1.07,2019
-97413,Saint-Leu,97,38185,Grenoble,38,11.09,2019
-97415,Saint-Paul,97,38185,Grenoble,38,15.14,2019
-97416,Saint-Pierre,97,38185,Grenoble,38,4.79,2019
-97418,Sainte-Marie,97,38185,Grenoble,38,0.96,2019
-97420,Sainte-Suzanne,97,38185,Grenoble,38,3.31,2019
-97422,Le Tampon,97,38185,Grenoble,38,3.4,2019
-97610,Koungou,97,38185,Grenoble,38,0.95,2019
-97611,Mamoudzou,97,38185,Grenoble,38,12.39,2019
-97613,M'Tsangamouji,97,38185,Grenoble,38,18.42,2019
-97801,97801,97,38185,Grenoble,38,1.99,2019
-98735,Papeete,98,38185,Grenoble,38,1.0,2019
-98738,Punaauia,98,38185,Grenoble,38,6.53,2019
-98817,Mont-Dore (le),98,38185,Grenoble,38,1.01,2019
-98818,Nouméa,98,38185,Grenoble,38,7.25,2019
-99999,Résidence antérieure dans un pays étranger,99,38185,Grenoble,38,2530.96,2019
 38158,Eybens,38,38186,Gresse-en-Vercors,38,5.12,2019
 38185,Grenoble,38,38186,Gresse-en-Vercors,38,5.12,2019
 38187,Le Gua,38,38186,Gresse-en-Vercors,38,10.24,2019
@@ -13430,8 +13149,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38562,Vizille,38,38200,Jarrie,38,15.0,2019
 42056,Chavanay,42,38200,Jarrie,38,5.0,2019
 83032,Carcès,83,38200,Jarrie,38,10.0,2019
-97125,Saint-François,97,38200,Jarrie,38,20.0,2019
-99999,Résidence antérieure dans un pays étranger,99,38200,Jarrie,38,5.0,2019
 38169,Fontaine,38,38203,Laffrey,38,4.98,2019
 38185,Grenoble,38,38203,Laffrey,38,5.1,2019
 38279,Notre-Dame-de-Mésage,38,38203,Laffrey,38,5.1,2019
@@ -13631,11 +13348,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94046,Maisons-Alfort,94,38229,Meylan,38,3.98,2019
 94058,Le Perreux-sur-Marne,94,38229,Meylan,38,0.98,2019
 94068,Saint-Maur-des-Fossés,94,38229,Meylan,38,1.28,2019
-97229,Schœlcher,97,38229,Meylan,38,2.92,2019
-97413,Saint-Leu,97,38229,Meylan,38,2.83,2019
-97418,Sainte-Marie,97,38229,Meylan,38,5.24,2019
-97611,Mamoudzou,97,38229,Meylan,38,2.8,2019
-99999,Résidence antérieure dans un pays étranger,99,38229,Meylan,38,69.59,2019
 38071,Champ-sur-Drac,38,38235,Miribel-Lanchâtre,38,15.0,2019
 38151,Échirolles,38,38235,Miribel-Lanchâtre,38,5.0,2019
 38235,Miribel-Lanchâtre,38,38235,Miribel-Lanchâtre,38,410.0,2019
@@ -13672,7 +13384,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76540,Rouen,76,38249,Montbonnot-Saint-Martin,38,10.0,2019
 38252,Montchaboud,38,38252,Montchaboud,38,304.11,2019
 38317,Le Pont-de-Claix,38,38252,Montchaboud,38,10.41,2019
-99999,Résidence antérieure dans un pays étranger,99,38252,Montchaboud,38,4.72,2019
 38229,Meylan,38,38254,Monteynard,38,10.6,2019
 38524,Varces-Allières-et-Risset,38,38254,Monteynard,38,15.4,2019
 38562,Vizille,38,38254,Monteynard,38,34.66,2019
@@ -13706,7 +13417,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38271,Murianette,38,38271,Murianette,38,760.0,2019
 38334,Revel,38,38271,Murianette,38,5.0,2019
 38421,Saint-Martin-d'Hères,38,38271,Murianette,38,25.0,2019
-99999,Résidence antérieure dans un pays étranger,99,38271,Murianette,38,5.0,2019
 42218,Saint-Étienne,42,38276,Nivolas-Vermelle,38,5.0,2019
 06088,Nice,06,38277,Notre-Dame-de-Commiers,38,5.16,2019
 38187,Le Gua,38,38277,Notre-Dame-de-Commiers,38,26.39,2019
@@ -13840,10 +13550,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 83141,Trans-en-Provence,83,38317,Le Pont-de-Claix,38,2.27,2019
 94059,Le Plessis-Trévise,94,38317,Le Pont-de-Claix,38,10.51,2019
 95176,Cormeilles-en-Parisis,95,38317,Le Pont-de-Claix,38,13.09,2019
-97133,Vieux-Fort,97,38317,Le Pont-de-Claix,38,2.62,2019
-97213,Le Lamentin,97,38317,Le Pont-de-Claix,38,5.0,2019
-97416,Saint-Pierre,97,38317,Le Pont-de-Claix,38,2.58,2019
-99999,Résidence antérieure dans un pays étranger,99,38317,Le Pont-de-Claix,38,38.55,2019
 38474,Sassenage,38,38318,Pont-Évêque,38,5.1,2019
 38382,Saint-Égrève,38,38321,Prébois,38,9.94,2019
 38325,Proveysieux,38,38325,Proveysieux,38,524.09,2019
@@ -13875,7 +13581,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38185,Grenoble,38,38361,Saint-Arey,38,10.26,2019
 34172,Montpellier,34,38363,Saint-Barthélemy,38,14.97,2019
 38364,Saint-Barthélemy-de-Séchilienne,38,38364,Saint-Barthélemy-de-Séchilienne,38,387.18,2019
-99999,Résidence antérieure dans un pays étranger,99,38364,Saint-Barthélemy-de-Séchilienne,38,19.35,2019
 38421,Saint-Martin-d'Hères,38,38368,Saint-Blaise-du-Buis,38,20.75,2019
 38185,Grenoble,38,38372,Saint-Bueil,38,5.0,2019
 38169,Fontaine,38,38373,Saint-Cassien,38,15.08,2019
@@ -13989,9 +13694,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93001,Aubervilliers,93,38382,Saint-Égrève,38,2.95,2019
 94016,Cachan,94,38382,Saint-Égrève,38,3.04,2019
 94022,Choisy-le-Roi,94,38382,Saint-Égrève,38,2.83,2019
-97302,Cayenne,97,38382,Saint-Égrève,38,0.99,2019
-98734,Papara,98,38382,Saint-Égrève,38,3.17,2019
-99999,Résidence antérieure dans un pays étranger,99,38382,Saint-Égrève,38,114.23,2019
 38185,Grenoble,38,38383,Saint-Étienne-de-Crossey,38,9.98,2019
 38317,Le Pont-de-Claix,38,38383,Saint-Étienne-de-Crossey,38,19.55,2019
 38151,Échirolles,38,38384,Saint-Étienne-de-Saint-Geoirs,38,10.2,2019
@@ -14015,7 +13717,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 63113,Clermont-Ferrand,63,38388,Saint-Georges-de-Commiers,38,5.0,2019
 83146,La Verdière,83,38388,Saint-Georges-de-Commiers,38,5.0,2019
 91645,Verrières-le-Buisson,91,38388,Saint-Georges-de-Commiers,38,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,38388,Saint-Georges-de-Commiers,38,10.0,2019
 38185,Grenoble,38,38389,Saint-Georges-d'Espéranche,38,5.0,2019
 38151,Échirolles,38,38390,Saint-Gervais,38,15.16,2019
 38486,Seyssins,38,38391,Saint-Guillaume,38,10.25,2019
@@ -14575,22 +14276,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94078,Villeneuve-Saint-Georges,94,38421,Saint-Martin-d'Hères,38,1.04,2019
 95127,Cergy,95,38421,Saint-Martin-d'Hères,38,6.32,2019
 95426,Montlignon,95,38421,Saint-Martin-d'Hères,38,3.08,2019
-97115,Lamentin,97,38421,Saint-Martin-d'Hères,38,1.04,2019
-97121,Pointe-Noire,97,38421,Saint-Martin-d'Hères,38,1.04,2019
-97129,Sainte-Rose,97,38421,Saint-Martin-d'Hères,38,1.04,2019
-97212,Gros-Morne,97,38421,Saint-Martin-d'Hères,38,1.06,2019
-97213,Le Lamentin,97,38421,Saint-Martin-d'Hères,38,3.08,2019
-97214,Le Lorrain,97,38421,Saint-Martin-d'Hères,38,3.33,2019
-97309,Remire-Montjoly,97,38421,Saint-Martin-d'Hères,38,2.08,2019
-97410,Saint-Benoît,97,38421,Saint-Martin-d'Hères,38,1.06,2019
-97411,Saint-Denis,97,38421,Saint-Martin-d'Hères,38,7.71,2019
-97415,Saint-Paul,97,38421,Saint-Martin-d'Hères,38,2.08,2019
-97416,Saint-Pierre,97,38421,Saint-Martin-d'Hères,38,1.04,2019
-97502,97502,97,38421,Saint-Martin-d'Hères,38,1.04,2019
-97615,Pamandzi,97,38421,Saint-Martin-d'Hères,38,22.92,2019
-98735,Papeete,98,38421,Saint-Martin-d'Hères,38,4.79,2019
-98818,Nouméa,98,38421,Saint-Martin-d'Hères,38,5.3,2019
-99999,Résidence antérieure dans un pays étranger,99,38421,Saint-Martin-d'Hères,38,380.41,2019
 38059,Brié-et-Angonnes,38,38422,Saint-Martin-d'Uriage,38,20.0,2019
 38151,Échirolles,38,38422,Saint-Martin-d'Uriage,38,10.0,2019
 38158,Eybens,38,38422,Saint-Martin-d'Uriage,38,25.0,2019
@@ -14633,7 +14318,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 73065,Chambéry,73,38423,Saint-Martin-le-Vinoux,38,5.17,2019
 74157,Lyaud,74,38423,Saint-Martin-le-Vinoux,38,5.17,2019
 85128,Luçon,85,38423,Saint-Martin-le-Vinoux,38,5.17,2019
-99999,Résidence antérieure dans un pays étranger,99,38423,Saint-Martin-le-Vinoux,38,45.26,2019
 42207,Saint-Chamond,42,38425,Saint-Maurice-l'Exil,38,5.34,2019
 38158,Eybens,38,38429,Saint-Michel-les-Portes,38,9.79,2019
 38472,Sarcenas,38,38430,Saint-Mury-Monteymond,38,19.31,2019
@@ -14699,7 +14383,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38471,Le Sappey-en-Chartreuse,38,38471,Le Sappey-en-Chartreuse,38,1020.0,2019
 38565,Voreppe,38,38471,Le Sappey-en-Chartreuse,38,10.0,2019
 73065,Chambéry,73,38471,Le Sappey-en-Chartreuse,38,10.0,2019
-99999,Résidence antérieure dans un pays étranger,99,38471,Le Sappey-en-Chartreuse,38,10.0,2019
 38472,Sarcenas,38,38472,Sarcenas,38,193.26,2019
 03042,Le Breuil,03,38474,Sassenage,38,5.28,2019
 04112,Manosque,04,38474,Sassenage,38,5.34,2019
@@ -14768,7 +14451,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 75112,Paris 12e Arrondissement,75,38474,Sassenage,38,5.47,2019
 78586,Sartrouville,78,38474,Sassenage,38,2.46,2019
 87085,Limoges,87,38474,Sassenage,38,2.67,2019
-99999,Résidence antérieure dans un pays étranger,99,38474,Sassenage,38,43.41,2019
 38185,Grenoble,38,38475,Satolas-et-Bonce,38,10.4,2019
 42218,Saint-Étienne,42,38475,Satolas-et-Bonce,38,5.32,2019
 38052,Le Bourg-d'Oisans,38,38478,Séchilienne,38,10.08,2019
@@ -14871,11 +14553,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93072,Stains,93,38485,Seyssinet-Pariset,38,2.57,2019
 94016,Cachan,94,38485,Seyssinet-Pariset,38,2.57,2019
 95197,Deuil-la-Barre,95,38485,Seyssinet-Pariset,38,2.83,2019
-97103,Baie-Mahault,97,38485,Seyssinet-Pariset,38,2.24,2019
-97302,Cayenne,97,38485,Seyssinet-Pariset,38,2.42,2019
-97307,Matoury,97,38485,Seyssinet-Pariset,38,2.73,2019
-97309,Remire-Montjoly,97,38485,Seyssinet-Pariset,38,2.82,2019
-99999,Résidence antérieure dans un pays étranger,99,38485,Seyssinet-Pariset,38,53.92,2019
 04070,Digne-les-Bains,04,38486,Seyssins,38,32.59,2019
 06088,Nice,06,38486,Seyssins,38,10.86,2019
 26307,Saint-Jean-en-Royans,26,38486,Seyssins,38,5.0,2019
@@ -14911,8 +14588,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 73065,Chambéry,73,38486,Seyssins,38,10.43,2019
 74010,Annecy,74,38486,Seyssins,38,5.43,2019
 91161,Chilly-Mazarin,91,38486,Seyssins,38,5.43,2019
-97416,Saint-Pierre,97,38486,Seyssins,38,10.86,2019
-99999,Résidence antérieure dans un pays étranger,99,38486,Seyssins,38,10.23,2019
 42207,Saint-Chamond,42,38487,Seyssuel,38,10.34,2019
 38111,Claix,38,38492,Sinard,38,10.33,2019
 38185,Grenoble,38,38492,Sinard,38,20.1,2019
@@ -15003,8 +14678,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 75114,Paris 14e Arrondissement,75,38516,La Tronche,38,9.96,2019
 91122,Bures-sur-Yvette,91,38516,La Tronche,38,5.16,2019
 93066,Saint-Denis,93,38516,La Tronche,38,5.07,2019
-97416,Saint-Pierre,97,38516,La Tronche,38,5.16,2019
-99999,Résidence antérieure dans un pays étranger,99,38516,La Tronche,38,44.21,2019
 38169,Fontaine,38,38517,Tullins,38,5.24,2019
 38185,Grenoble,38,38517,Tullins,38,96.68,2019
 38248,Montaud,38,38517,Tullins,38,5.24,2019
@@ -15074,9 +14747,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 83050,Draguignan,83,38524,Varces-Allières-et-Risset,38,15.12,2019
 83110,Rougiers,83,38524,Varces-Allières-et-Risset,38,5.04,2019
 91201,Draveil,91,38524,Varces-Allières-et-Risset,38,5.04,2019
-97302,Cayenne,97,38524,Varces-Allières-et-Risset,38,20.16,2019
-97411,Saint-Denis,97,38524,Varces-Allières-et-Risset,38,24.87,2019
-99999,Résidence antérieure dans un pays étranger,99,38524,Varces-Allières-et-Risset,38,30.24,2019
 38382,Saint-Égrève,38,38526,Vatilieu,38,10.05,2019
 38185,Grenoble,38,38527,Vaujany,38,4.93,2019
 38185,Grenoble,38,38528,Vaulnaveys-le-Bas,38,30.63,2019
@@ -15085,7 +14755,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38528,Vaulnaveys-le-Bas,38,38528,Vaulnaveys-le-Bas,38,1226.73,2019
 38562,Vizille,38,38528,Vaulnaveys-le-Bas,38,20.69,2019
 38565,Voreppe,38,38528,Vaulnaveys-le-Bas,38,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,38528,Vaulnaveys-le-Bas,38,5.0,2019
 01053,Bourg-en-Bresse,01,38529,Vaulnaveys-le-Haut,38,10.61,2019
 26362,Valence,26,38529,Vaulnaveys-le-Haut,38,5.34,2019
 38037,Bellegarde-Poussieu,38,38529,Vaulnaveys-le-Haut,38,5.34,2019
@@ -15113,7 +14782,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 81116,Labastide-Saint-Georges,81,38529,Vaulnaveys-le-Haut,38,26.76,2019
 83061,Fréjus,83,38529,Vaulnaveys-le-Haut,38,5.31,2019
 83069,Hyères,83,38529,Vaulnaveys-le-Haut,38,5.29,2019
-99999,Résidence antérieure dans un pays étranger,99,38529,Vaulnaveys-le-Haut,38,21.43,2019
 34154,Mauguio,34,38533,Venon,38,5.44,2019
 38200,Jarrie,38,38533,Venon,38,5.04,2019
 38485,Seyssinet-Pariset,38,38533,Venon,38,5.88,2019
@@ -15193,7 +14861,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 83090,Ollioules,83,38545,Vif,38,5.18,2019
 83137,Toulon,83,38545,Vif,38,5.35,2019
 93066,Saint-Denis,93,38545,Vif,38,5.18,2019
-97420,Sainte-Suzanne,97,38545,Vif,38,5.18,2019
 38150,Domène,38,38547,Villard-Bonnot,38,4.95,2019
 38151,Échirolles,38,38547,Villard-Bonnot,38,9.9,2019
 38169,Fontaine,38,38547,Villard-Bonnot,38,49.49,2019
@@ -15407,7 +15074,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 83107,Roquebrune-sur-Argens,83,42005,Andrézieux-Bouthéon,42,10.33,2019
 91201,Draveil,91,42005,Andrézieux-Bouthéon,42,5.16,2019
 94044,Limeil-Brévannes,94,42005,Andrézieux-Bouthéon,42,5.16,2019
-99999,Résidence antérieure dans un pays étranger,99,42005,Andrézieux-Bouthéon,42,20.54,2019
 42218,Saint-Étienne,42,42006,Apinac,42,10.42,2019
 42097,La Fouillouse,42,42010,Aveizieux,42,15.02,2019
 42206,Saint-Bonnet-les-Oules,42,42010,Aveizieux,42,10.12,2019
@@ -15445,7 +15111,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42207,Saint-Chamond,42,42032,Cellieu,42,20.24,2019
 42218,Saint-Étienne,42,42032,Cellieu,42,5.21,2019
 42242,Saint-Joseph,42,42032,Cellieu,42,5.13,2019
-99999,Résidence antérieure dans un pays étranger,99,42032,Cellieu,42,5.04,2019
 42036,Chagnon,42,42036,Chagnon,42,435.94,2019
 42207,Saint-Chamond,42,42036,Chagnon,42,10.74,2019
 42225,Genilac,42,42036,Chagnon,42,15.12,2019
@@ -15509,7 +15174,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 74281,Thonon-les-Bains,74,42044,Le Chambon-Feugerolles,42,6.53,2019
 79191,Niort,79,42044,Le Chambon-Feugerolles,42,2.59,2019
 91228,Évry-Courcouronnes,91,42044,Le Chambon-Feugerolles,42,1.43,2019
-99999,Résidence antérieure dans un pays étranger,99,42044,Le Chambon-Feugerolles,42,11.46,2019
 38185,Grenoble,38,42052,Charlieu,42,10.0,2019
 26353,Les Tourrettes,26,42053,Châteauneuf,42,15.33,2019
 38053,Bourgoin-Jallieu,38,42053,Châteauneuf,42,5.3,2019
@@ -15547,7 +15211,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69136,Montagny,69,42083,Dargoire,42,5.15,2019
 42085,Doizieux,42,42085,Doizieux,42,825.31,2019
 42308,La Terrasse-sur-Dorlay,42,42085,Doizieux,42,5.18,2019
-99999,Résidence antérieure dans un pays étranger,99,42085,Doizieux,42,4.97,2019
 42218,Saint-Étienne,42,42087,Écotay-l'Olme,42,5.21,2019
 42222,Saint-Galmier,42,42087,Écotay-l'Olme,42,9.76,2019
 07241,Saint-Germain,07,42092,L'Étrat,42,4.89,2019
@@ -15566,7 +15229,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42316,Unieux,42,42092,L'Étrat,42,4.89,2019
 42330,Villars,42,42092,L'Étrat,42,4.89,2019
 76498,Le Petit-Quevilly,76,42092,L'Étrat,42,4.89,2019
-99999,Résidence antérieure dans un pays étranger,99,42092,L'Étrat,42,4.89,2019
 42093,Farnay,42,42093,Farnay,42,1364.85,2019
 42103,La Grand-Croix,42,42093,Farnay,42,15.16,2019
 42186,Rive-de-Gier,42,42093,Farnay,42,15.16,2019
@@ -15630,7 +15292,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 73322,Villarodin-Bourget,73,42095,Firminy,42,9.3,2019
 74224,La Roche-sur-Foron,74,42095,Firminy,42,0.95,2019
 84007,Avignon,84,42095,Firminy,42,1.03,2019
-99999,Résidence antérieure dans un pays étranger,99,42095,Firminy,42,43.65,2019
 42075,Craintilleux,42,42096,Fontanès,42,14.96,2019
 42096,Fontanès,42,42096,Fontanès,42,678.01,2019
 42275,Saint-Priest-en-Jarez,42,42096,Fontanès,42,4.99,2019
@@ -15693,7 +15354,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69091,Givors,69,42103,La Grand-Croix,42,10.35,2019
 69204,Saint-Genis-Laval,69,42103,La Grand-Croix,42,5.17,2019
 69381,Lyon 1er Arrondissement,69,42103,La Grand-Croix,42,5.07,2019
-99999,Résidence antérieure dans un pays étranger,99,42103,La Grand-Croix,42,25.45,2019
 42218,Saint-Étienne,42,42105,Grézieux-le-Fromental,42,5.67,2019
 42043,Chambœuf,42,42108,L'Hôpital-le-Grand,42,20.58,2019
 14366,Lisieux,14,42110,L'Horme,42,10.0,2019
@@ -15712,7 +15372,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42308,La Terrasse-sur-Dorlay,42,42110,L'Horme,42,15.0,2019
 62684,Racquinghem,62,42110,L'Horme,42,5.0,2019
 69238,Saint-Symphorien-sur-Coise,69,42110,L'Horme,42,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,42110,L'Horme,42,5.0,2019
 42218,Saint-Étienne,42,42112,Jarnosse,42,10.0,2019
 42044,Le Chambon-Feugerolles,42,42115,Jonzieux,42,15.0,2019
 42218,Saint-Étienne,42,42115,Jonzieux,42,20.0,2019
@@ -15737,7 +15396,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69166,Riverie,69,42123,Lorette,42,5.05,2019
 69184,Sainte-Catherine,69,42123,Lorette,42,5.05,2019
 77251,Lieusaint,77,42123,Lorette,42,10.1,2019
-99999,Résidence antérieure dans un pays étranger,99,42123,Lorette,42,5.05,2019
 42218,Saint-Étienne,42,42126,Luriecq,42,5.05,2019
 34172,Montpellier,34,42127,Mably,42,4.97,2019
 42218,Saint-Étienne,42,42127,Mably,42,9.95,2019
@@ -15784,7 +15442,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42305,La Talaudière,42,42167,Pavezin,42,4.85,2019
 69141,Mornant,69,42167,Pavezin,42,4.85,2019
 74026,La Balme-de-Sillingy,74,42167,Pavezin,42,4.85,2019
-99999,Résidence antérieure dans un pays étranger,99,42167,Pavezin,42,9.69,2019
 38185,Grenoble,38,42168,Pélussin,42,10.0,2019
 42095,Firminy,42,42168,Pélussin,42,5.0,2019
 42186,Rive-de-Gier,42,42168,Pélussin,42,20.0,2019
@@ -15822,7 +15479,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 84007,Avignon,84,42183,La Ricamarie,42,40.0,2019
 92040,Issy-les-Moulineaux,92,42183,La Ricamarie,42,10.0,2019
 95582,Sannois,95,42183,La Ricamarie,42,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,42183,La Ricamarie,42,60.0,2019
 42218,Saint-Étienne,42,42184,Riorges,42,21.05,2019
 42005,Andrézieux-Bouthéon,42,42185,Rivas,42,14.64,2019
 42218,Saint-Étienne,42,42185,Rivas,42,14.64,2019
@@ -15917,8 +15573,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 86140,Lussac-les-Châteaux,86,42186,Rive-de-Gier,42,3.65,2019
 89025,Avallon,89,42186,Rive-de-Gier,42,10.75,2019
 95127,Cergy,95,42186,Rive-de-Gier,42,5.56,2019
-97310,Roura,97,42186,Rive-de-Gier,42,2.97,2019
-99999,Résidence antérieure dans un pays étranger,99,42186,Rive-de-Gier,42,61.15,2019
 35238,Rennes,35,42187,Roanne,42,2.78,2019
 38185,Grenoble,38,42187,Roanne,42,9.78,2019
 42005,Andrézieux-Bouthéon,42,42187,Roanne,42,5.87,2019
@@ -15970,7 +15624,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 75111,Paris 11e Arrondissement,75,42189,Roche-la-Molière,42,2.88,2019
 87085,Limoges,87,42189,Roche-la-Molière,42,2.67,2019
 89302,Plessis-Saint-Jean,89,42189,Roche-la-Molière,42,3.4,2019
-99999,Résidence antérieure dans un pays étranger,99,42189,Roche-la-Molière,42,2.58,2019
 42059,Chazelles-sur-Lyon,42,42192,Rozier-Côtes-d'Aurec,42,5.0,2019
 42192,Rozier-Côtes-d'Aurec,42,42192,Rozier-Côtes-d'Aurec,42,400.0,2019
 42204,Saint-Bonnet-le-Château,42,42192,Rozier-Côtes-d'Aurec,42,5.0,2019
@@ -16122,9 +15775,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 89024,Auxerre,89,42207,Saint-Chamond,42,2.74,2019
 92020,Châtillon,92,42207,Saint-Chamond,42,5.69,2019
 93066,Saint-Denis,93,42207,Saint-Chamond,42,2.6,2019
-97106,Bouillante,97,42207,Saint-Chamond,42,8.14,2019
-97422,Le Tampon,97,42207,Saint-Chamond,42,10.95,2019
-99999,Résidence antérieure dans un pays étranger,99,42207,Saint-Chamond,42,114.54,2019
 07197,Roiffieux,07,42208,Saint-Christo-en-Jarez,42,4.98,2019
 31555,Toulouse,31,42208,Saint-Christo-en-Jarez,42,14.95,2019
 42032,Cellieu,42,42208,Saint-Christo-en-Jarez,42,9.97,2019
@@ -17116,49 +16766,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95280,Goussainville,95,42218,Saint-Étienne,42,3.36,2019
 95424,Montigny-lès-Cormeilles,95,42218,Saint-Étienne,42,14.15,2019
 95604,Survilliers,95,42218,Saint-Étienne,42,6.35,2019
-97103,Baie-Mahault,97,42218,Saint-Étienne,42,3.38,2019
-97105,Basse-Terre,97,42218,Saint-Étienne,42,2.88,2019
-97115,Lamentin,97,42218,Saint-Étienne,42,5.0,2019
-97117,Le Moule,97,42218,Saint-Étienne,42,3.21,2019
-97120,Pointe-à-Pitre,97,42218,Saint-Étienne,42,1.03,2019
-97125,Saint-François,97,42218,Saint-Étienne,42,1.03,2019
-97128,Sainte-Anne,97,42218,Saint-Étienne,42,1.0,2019
-97132,Trois-Rivières,97,42218,Saint-Étienne,42,0.96,2019
-97207,Ducos,97,42218,Saint-Étienne,42,2.68,2019
-97209,Fort-de-France,97,42218,Saint-Étienne,42,9.88,2019
-97213,Le Lamentin,97,42218,Saint-Étienne,42,3.49,2019
-97216,Le Marigot,97,42218,Saint-Étienne,42,3.12,2019
-97217,Le Marin,97,42218,Saint-Étienne,42,3.31,2019
-97220,Rivière-Pilote,97,42218,Saint-Étienne,42,14.69,2019
-97231,Les Trois-Îlets,97,42218,Saint-Étienne,42,6.73,2019
-97302,Cayenne,97,42218,Saint-Étienne,42,43.36,2019
-97304,Kourou,97,42218,Saint-Étienne,42,6.26,2019
-97306,Mana,97,42218,Saint-Étienne,42,3.33,2019
-97307,Matoury,97,42218,Saint-Étienne,42,2.87,2019
-97353,Maripasoula,97,42218,Saint-Étienne,42,2.98,2019
-97402,Bras-Panon,97,42218,Saint-Étienne,42,1.02,2019
-97403,Entre-Deux,97,42218,Saint-Étienne,42,3.05,2019
-97407,Le Port,97,42218,Saint-Étienne,42,1.92,2019
-97409,Saint-André,97,42218,Saint-Étienne,42,5.85,2019
-97410,Saint-Benoît,97,42218,Saint-Étienne,42,20.19,2019
-97411,Saint-Denis,97,42218,Saint-Étienne,42,12.43,2019
-97412,Saint-Joseph,97,42218,Saint-Étienne,42,4.28,2019
-97416,Saint-Pierre,97,42218,Saint-Étienne,42,8.72,2019
-97418,Sainte-Marie,97,42218,Saint-Étienne,42,0.85,2019
-97603,Bandrele,97,42218,Saint-Étienne,42,3.93,2019
-97605,Chiconi,97,42218,Saint-Étienne,42,0.96,2019
-97607,Dembeni,97,42218,Saint-Étienne,42,2.95,2019
-97611,Mamoudzou,97,42218,Saint-Étienne,42,28.51,2019
-97614,Ouangani,97,42218,Saint-Étienne,42,0.96,2019
-97615,Pamandzi,97,42218,Saint-Étienne,42,1.03,2019
-97617,Tsingoni,97,42218,Saint-Étienne,42,3.24,2019
-97801,97801,97,42218,Saint-Étienne,42,4.03,2019
-98735,Papeete,98,42218,Saint-Étienne,42,3.17,2019
-98811,Koné,98,42218,Saint-Étienne,42,9.01,2019
-98817,Mont-Dore (le),98,42218,Saint-Étienne,42,3.19,2019
-98818,Nouméa,98,42218,Saint-Étienne,42,6.38,2019
-98822,Poindimié,98,42218,Saint-Étienne,42,3.0,2019
-99999,Résidence antérieure dans un pays étranger,99,42218,Saint-Étienne,42,1390.82,2019
 42218,Saint-Étienne,42,42219,Saint-Étienne-le-Molard,42,4.99,2019
 42218,Saint-Étienne,42,42221,Sainte-Foy-Saint-Sulpice,42,20.26,2019
 02691,Saint-Quentin,02,42222,Saint-Galmier,42,10.86,2019
@@ -17200,7 +16807,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69248,Thizy-les-Bourgs,69,42222,Saint-Galmier,42,5.26,2019
 73100,Domessin,73,42222,Saint-Galmier,42,5.26,2019
 78440,Les Mureaux,78,42222,Saint-Galmier,42,23.94,2019
-99999,Résidence antérieure dans un pays étranger,99,42222,Saint-Galmier,42,23.94,2019
 04122,Mirabeau,04,42223,Saint-Genest-Lerpt,42,14.57,2019
 31022,Aucamville,31,42223,Saint-Genest-Lerpt,42,14.93,2019
 35068,Châteaubourg,35,42223,Saint-Genest-Lerpt,42,10.2,2019
@@ -17257,7 +16863,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69266,Villeurbanne,69,42225,Genilac,42,9.89,2019
 69294,Sérézin-du-Rhône,69,42225,Genilac,42,10.29,2019
 74010,Annecy,74,42225,Genilac,42,4.98,2019
-99999,Résidence antérieure dans un pays étranger,99,42225,Genilac,42,5.14,2019
 42218,Saint-Étienne,42,42228,Saint-Georges-Haute-Ville,42,25.19,2019
 42222,Saint-Galmier,42,42228,Saint-Georges-Haute-Ville,42,10.09,2019
 42218,Saint-Étienne,42,42230,Saint-Germain-Laval,42,5.0,2019
@@ -17309,8 +16914,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42311,La Tour-en-Jarez,42,42237,Saint-Jean-Bonnefonds,42,5.0,2019
 63124,Cournon-d'Auvergne,63,42237,Saint-Jean-Bonnefonds,42,5.0,2019
 69034,Caluire-et-Cuire,69,42237,Saint-Jean-Bonnefonds,42,20.0,2019
-97406,La Plaine-des-Palmistes,97,42237,Saint-Jean-Bonnefonds,42,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,42237,Saint-Jean-Bonnefonds,42,5.0,2019
 42218,Saint-Étienne,42,42238,Saint-Jean-la-Vêtre,42,4.98,2019
 34172,Montpellier,34,42241,Saint-Jodard,42,5.0,2019
 42186,Rive-de-Gier,42,42242,Saint-Joseph,42,25.0,2019
@@ -17368,7 +16971,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42204,Saint-Bonnet-le-Château,42,42266,Saint-Nizier-de-Fornas,42,10.0,2019
 42266,Saint-Nizier-de-Fornas,42,42266,Saint-Nizier-de-Fornas,42,605.0,2019
 42312,La Tourette,42,42266,Saint-Nizier-de-Fornas,42,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,42266,Saint-Nizier-de-Fornas,42,5.0,2019
 42222,Saint-Galmier,42,42267,Saint-Nizier-sous-Charlieu,42,5.0,2019
 42234,Saint-Héand,42,42267,Saint-Nizier-sous-Charlieu,42,5.0,2019
 42218,Saint-Étienne,42,42268,Vézelin-sur-Loire,42,10.17,2019
@@ -17398,7 +17000,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94052,Nogent-sur-Marne,94,42271,Saint-Paul-en-Jarez,42,5.0,2019
 95002,Ableiges,95,42271,Saint-Paul-en-Jarez,42,5.0,2019
 95040,Avernes,95,42271,Saint-Paul-en-Jarez,42,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,42271,Saint-Paul-en-Jarez,42,25.0,2019
 42218,Saint-Étienne,42,42272,Saint-Pierre-de-Bœuf,42,10.05,2019
 07010,Annonay,07,42275,Saint-Priest-en-Jarez,42,5.06,2019
 13001,Aix-en-Provence,13,42275,Saint-Priest-en-Jarez,42,5.0,2019
@@ -17436,7 +17037,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 74031,Beaumont,74,42275,Saint-Priest-en-Jarez,42,14.83,2019
 74080,La Clusaz,74,42275,Saint-Priest-en-Jarez,42,5.11,2019
 85306,Xanton-Chassenon,85,42275,Saint-Priest-en-Jarez,42,5.11,2019
-99999,Résidence antérieure dans un pays étranger,99,42275,Saint-Priest-en-Jarez,42,10.11,2019
 38185,Grenoble,38,42279,Saint-Just-Saint-Rambert,42,2.76,2019
 42005,Andrézieux-Bouthéon,42,42279,Saint-Just-Saint-Rambert,42,30.95,2019
 42044,Le Chambon-Feugerolles,42,42279,Saint-Just-Saint-Rambert,42,7.5,2019
@@ -17505,8 +17105,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 73015,Les Allues,73,42302,Sorbiers,42,5.01,2019
 74005,Allinges,74,42302,Sorbiers,42,4.93,2019
 91421,Montgeron,91,42302,Sorbiers,42,5.05,2019
-97423,Les Trois-Bassins,97,42302,Sorbiers,42,10.02,2019
-99999,Résidence antérieure dans un pays étranger,99,42302,Sorbiers,42,5.01,2019
 42043,Chambœuf,42,42304,Sury-le-Comtal,42,10.14,2019
 42097,La Fouillouse,42,42304,Sury-le-Comtal,42,5.07,2019
 42218,Saint-Étienne,42,42304,Sury-le-Comtal,42,71.05,2019
@@ -17550,7 +17148,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 83061,Fréjus,83,42305,La Talaudière,42,10.34,2019
 86092,Dangé-Saint-Romain,86,42305,La Talaudière,42,10.53,2019
 87050,Couzeix,87,42305,La Talaudière,42,14.96,2019
-99999,Résidence antérieure dans un pays étranger,99,42305,La Talaudière,42,20.23,2019
 42218,Saint-Étienne,42,42306,Tarentaise,42,10.08,2019
 42225,Genilac,42,42307,Tartaras,42,9.7,2019
 42307,Tartaras,42,42307,Tartaras,42,819.75,2019
@@ -17570,7 +17167,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42234,Saint-Héand,42,42311,La Tour-en-Jarez,42,5.28,2019
 42275,Saint-Priest-en-Jarez,42,42311,La Tour-en-Jarez,42,19.39,2019
 42311,La Tour-en-Jarez,42,42311,La Tour-en-Jarez,42,1288.54,2019
-99999,Résidence antérieure dans un pays étranger,99,42311,La Tour-en-Jarez,42,65.0,2019
 42218,Saint-Étienne,42,42312,La Tourette,42,5.0,2019
 42266,Saint-Nizier-de-Fornas,42,42312,La Tourette,42,25.0,2019
 42207,Saint-Chamond,42,42313,Trelins,42,5.54,2019
@@ -17603,8 +17199,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 63113,Clermont-Ferrand,63,42316,Unieux,42,5.0,2019
 69266,Villeurbanne,69,42316,Unieux,42,5.0,2019
 83050,Draguignan,83,42316,Unieux,42,10.02,2019
-97417,Saint-Philippe,97,42316,Unieux,42,15.02,2019
-99999,Résidence antérieure dans un pays étranger,99,42316,Unieux,42,5.0,2019
 34172,Montpellier,34,42318,Usson-en-Forez,42,9.97,2019
 42103,La Grand-Croix,42,42318,Usson-en-Forez,42,4.99,2019
 42218,Saint-Étienne,42,42318,Usson-en-Forez,42,4.99,2019
@@ -20678,7 +20272,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 84137,Vaison-la-Romaine,84,76005,Amfreville-la-Mi-Voie,76,5.08,2019
 91514,Quincy-sous-Sénart,91,76005,Amfreville-la-Mi-Voie,76,5.08,2019
 93010,Bondy,93,76005,Amfreville-la-Mi-Voie,76,10.05,2019
-99999,Résidence antérieure dans un pays étranger,99,76005,Amfreville-la-Mi-Voie,76,14.96,2019
 76366,Le Houlme,76,76007,Anceaumeville,76,4.9,2019
 76540,Rouen,76,76007,Anceaumeville,76,9.8,2019
 76575,Saint-Étienne-du-Rouvray,76,76007,Anceaumeville,76,19.59,2019
@@ -20810,8 +20403,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76681,Sotteville-lès-Rouen,76,76095,Bihorel,76,5.04,2019
 77449,Serris,77,76095,Bihorel,76,5.04,2019
 78638,Vaux-sur-Seine,78,76095,Bihorel,76,5.04,2019
-97411,Saint-Denis,97,76095,Bihorel,76,5.04,2019
-99999,Résidence antérieure dans un pays étranger,99,76095,Bihorel,76,85.65,2019
 76410,Maromme,76,76096,Biville-la-Baignarde,76,10.2,2019
 76540,Rouen,76,76096,Biville-la-Baignarde,76,5.1,2019
 76108,Bois-Guillaume,76,76100,Blainville-Crevon,76,19.88,2019
@@ -20853,7 +20444,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92048,Meudon,92,76103,Bonsecours,76,14.84,2019
 92063,Rueil-Malmaison,92,76103,Bonsecours,76,14.84,2019
 95313,L'Isle-Adam,95,76103,Bonsecours,76,14.84,2019
-99999,Résidence antérieure dans un pays étranger,99,76103,Bonsecours,76,25.56,2019
 76402,Malaunay,76,76105,Le Bocasse,76,14.83,2019
 76212,Darnétal,76,76106,Bois-d'Ennebourg,76,15.0,2019
 76410,Maromme,76,76106,Bois-d'Ennebourg,76,10.0,2019
@@ -20996,9 +20586,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94068,Saint-Maur-des-Fossés,94,76108,Bois-Guillaume,76,6.35,2019
 94080,Vincennes,94,76108,Bois-Guillaume,76,8.87,2019
 95197,Deuil-la-Barre,95,76108,Bois-Guillaume,76,1.93,2019
-97128,Sainte-Anne,97,76108,Bois-Guillaume,76,5.56,2019
-98735,Papeete,98,76108,Bois-Guillaume,76,9.33,2019
-99999,Résidence antérieure dans un pays étranger,99,76108,Bois-Guillaume,76,34.35,2019
 76212,Darnétal,76,76111,Bois-l'Évêque,76,15.0,2019
 76322,Le Grand-Quevilly,76,76111,Bois-l'Évêque,76,20.0,2019
 76560,Saint-Aubin-Épinay,76,76111,Bois-l'Évêque,76,5.0,2019
@@ -21162,8 +20749,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93062,Le Raincy,93,76157,Canteleu,76,3.43,2019
 95039,Auvers-sur-Oise,95,76157,Canteleu,76,1.96,2019
 95052,Beaumont-sur-Oise,95,76157,Canteleu,76,1.92,2019
-97415,Saint-Paul,97,76157,Canteleu,76,3.31,2019
-99999,Résidence antérieure dans un pays étranger,99,76157,Canteleu,76,32.11,2019
 76451,Mont-Saint-Aignan,76,76159,Cany-Barville,76,5.15,2019
 76540,Rouen,76,76159,Cany-Barville,76,5.15,2019
 76640,Saint-Pierre-lès-Elbeuf,76,76159,Cany-Barville,76,5.06,2019
@@ -21245,7 +20830,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93049,Neuilly-Plaisance,93,76165,Caudebec-lès-Elbeuf,76,4.02,2019
 95504,Presles,95,76165,Caudebec-lès-Elbeuf,76,3.78,2019
 95585,Sarcelles,95,76165,Caudebec-lès-Elbeuf,76,2.67,2019
-99999,Résidence antérieure dans un pays étranger,99,76165,Caudebec-lès-Elbeuf,76,8.92,2019
 76540,Rouen,76,76167,Cauville-sur-Mer,76,10.0,2019
 27090,Bosroumois,27,76178,Cléon,76,5.03,2019
 27375,Louviers,27,76178,Cléon,76,5.03,2019
@@ -21357,8 +20941,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 78362,Mantes-la-Ville,78,76212,Darnétal,76,20.0,2019
 80114,Bosquel,80,76212,Darnétal,76,5.12,2019
 93053,Noisy-le-Sec,93,76212,Darnétal,76,19.85,2019
-97305,Macouria,97,76212,Darnétal,76,5.12,2019
-99999,Résidence antérieure dans un pays étranger,99,76212,Darnétal,76,35.59,2019
 14118,Caen,14,76216,Déville-lès-Rouen,76,17.22,2019
 14252,Estrées-la-Campagne,14,76216,Déville-lès-Rouen,76,3.02,2019
 14699,Touques,14,76216,Déville-lès-Rouen,76,1.91,2019
@@ -21470,7 +21052,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94017,Champigny-sur-Marne,94,76216,Déville-lès-Rouen,76,1.07,2019
 94021,Chevilly-Larue,94,76216,Déville-lès-Rouen,76,1.91,2019
 94058,Le Perreux-sur-Marne,94,76216,Déville-lès-Rouen,76,0.96,2019
-99999,Résidence antérieure dans un pays étranger,99,76216,Déville-lès-Rouen,76,26.13,2019
 76108,Bois-Guillaume,76,76217,Dieppe,76,5.46,2019
 76212,Darnétal,76,76217,Dieppe,76,10.32,2019
 76216,Déville-lès-Rouen,76,76217,Dieppe,76,3.52,2019
@@ -21698,9 +21279,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93078,Villepinte,93,76231,Elbeuf,76,2.65,2019
 94041,Ivry-sur-Seine,94,76231,Elbeuf,76,3.36,2019
 95582,Sannois,95,76231,Elbeuf,76,2.31,2019
-97101,Les Abymes,97,76231,Elbeuf,76,3.66,2019
-97103,Baie-Mahault,97,76231,Elbeuf,76,3.66,2019
-99999,Résidence antérieure dans un pays étranger,99,76231,Elbeuf,76,102.42,2019
 76540,Rouen,76,76234,Émanville,76,10.0,2019
 76540,Rouen,76,76235,Envermeu,76,5.07,2019
 27448,Pacy-sur-Eure,27,76237,Épinay-sur-Duclair,76,10.0,2019
@@ -21808,7 +21386,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76599,Saint-Léger-du-Bourg-Denis,76,76319,Grand-Couronne,76,5.17,2019
 76640,Saint-Pierre-lès-Elbeuf,76,76319,Grand-Couronne,76,5.17,2019
 76681,Sotteville-lès-Rouen,76,76319,Grand-Couronne,76,19.79,2019
-99999,Résidence antérieure dans un pays étranger,99,76319,Grand-Couronne,76,30.13,2019
 03183,Le Montet,03,76322,Le Grand-Quevilly,76,3.55,2019
 08362,Rethel,08,76322,Le Grand-Quevilly,76,1.11,2019
 11069,Carcassonne,11,76322,Le Grand-Quevilly,76,3.67,2019
@@ -21940,7 +21517,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92048,Meudon,92,76322,Le Grand-Quevilly,76,4.92,2019
 94022,Choisy-le-Roi,94,76322,Le Grand-Quevilly,76,0.94,2019
 95018,Argenteuil,95,76322,Le Grand-Quevilly,76,7.31,2019
-99999,Résidence antérieure dans un pays étranger,99,76322,Le Grand-Quevilly,76,26.81,2019
 76561,Saint-Aubin-lès-Elbeuf,76,76323,Graval,76,10.4,2019
 76540,Rouen,76,76324,Grèges,76,4.98,2019
 76222,Duclair,76,76325,Grémonville,76,4.99,2019
@@ -22048,7 +21624,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76614,Saint-Martin-de-Boscherville,76,76367,Houppeville,76,5.23,2019
 76681,Sotteville-lès-Rouen,76,76367,Houppeville,76,15.68,2019
 76728,La Vaupalière,76,76367,Houppeville,76,5.29,2019
-99999,Résidence antérieure dans un pays étranger,99,76367,Houppeville,76,5.23,2019
 76451,Mont-Saint-Aignan,76,76374,Incheville,76,5.0,2019
 27229,Évreux,27,76377,Isneauville,76,5.0,2019
 76095,Bihorel,76,76377,Isneauville,76,12.27,2019
@@ -22121,8 +21696,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76621,Saint-Martin-Osmonville,76,76402,Malaunay,76,10.0,2019
 76628,Saint-Ouen-du-Breuil,76,76402,Malaunay,76,10.0,2019
 86194,Poitiers,86,76402,Malaunay,76,15.0,2019
-97113,Le Gosier,97,76402,Malaunay,76,5.0,2019
-97132,Trois-Rivières,97,76402,Malaunay,76,15.0,2019
 76540,Rouen,76,76403,Malleville-les-Grès,76,9.95,2019
 14118,Caen,14,76410,Maromme,76,4.66,2019
 14606,Saint-Léger-Dubosq,14,76410,Maromme,76,2.1,2019
@@ -22223,8 +21796,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92062,Puteaux,92,76410,Maromme,76,2.1,2019
 93073,Tremblay-en-France,93,76410,Maromme,76,11.89,2019
 94034,Fresnes,94,76410,Maromme,76,1.02,2019
-97119,Petit-Canal,97,76410,Maromme,76,6.29,2019
-99999,Résidence antérieure dans un pays étranger,99,76410,Maromme,76,23.63,2019
 76095,Bihorel,76,76412,Martainville-Épreville,76,5.28,2019
 76212,Darnétal,76,76412,Martainville-Épreville,76,20.73,2019
 76474,Notre-Dame-de-Bondeville,76,76412,Martainville-Épreville,76,15.45,2019
@@ -22288,7 +21859,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 83082,Montferrat,83,76429,Le Mesnil-Esnard,76,5.0,2019
 92026,Courbevoie,92,76429,Le Mesnil-Esnard,76,10.0,2019
 94065,Rungis,94,76429,Le Mesnil-Esnard,76,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,76429,Le Mesnil-Esnard,76,40.0,2019
 76212,Darnétal,76,76433,Mesnil-Panneville,76,15.07,2019
 76402,Malaunay,76,76433,Mesnil-Panneville,76,5.02,2019
 76540,Rouen,76,76433,Mesnil-Panneville,76,5.06,2019
@@ -22629,13 +22199,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95127,Cergy,95,76451,Mont-Saint-Aignan,76,1.26,2019
 95197,Deuil-la-Barre,95,76451,Mont-Saint-Aignan,76,2.17,2019
 95288,Groslay,95,76451,Mont-Saint-Aignan,76,0.95,2019
-97128,Sainte-Anne,97,76451,Mont-Saint-Aignan,76,1.16,2019
-97209,Fort-de-France,97,76451,Mont-Saint-Aignan,76,0.95,2019
-97411,Saint-Denis,97,76451,Mont-Saint-Aignan,76,7.3,2019
-97416,Saint-Pierre,97,76451,Mont-Saint-Aignan,76,4.04,2019
-97611,Mamoudzou,97,76451,Mont-Saint-Aignan,76,5.95,2019
-97612,Mtsamboro,97,76451,Mont-Saint-Aignan,76,1.16,2019
-99999,Résidence antérieure dans un pays étranger,99,76451,Mont-Saint-Aignan,76,228.47,2019
 76095,Bihorel,76,76452,Montville,76,5.0,2019
 76322,Le Grand-Quevilly,76,76452,Montville,76,10.0,2019
 76350,Hautot-sur-Seine,76,76452,Montville,76,10.0,2019
@@ -22698,7 +22261,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76575,Saint-Étienne-du-Rouvray,76,76474,Notre-Dame-de-Bondeville,76,10.03,2019
 76594,Saint-Jean-du-Cardonnay,76,76474,Notre-Dame-de-Bondeville,76,10.03,2019
 76681,Sotteville-lès-Rouen,76,76474,Notre-Dame-de-Bondeville,76,15.04,2019
-99999,Résidence antérieure dans un pays étranger,99,76474,Notre-Dame-de-Bondeville,76,15.04,2019
 13206,Marseille 6e Arrondissement,13,76475,Franqueville-Saint-Pierre,76,5.0,2019
 14333,Honfleur,14,76475,Franqueville-Saint-Pierre,76,5.0,2019
 24082,Carsac-Aillac,24,76475,Franqueville-Saint-Pierre,76,10.01,2019
@@ -22722,7 +22284,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76631,Saint-Paër,76,76475,Franqueville-Saint-Pierre,76,20.02,2019
 76681,Sotteville-lès-Rouen,76,76475,Franqueville-Saint-Pierre,76,20.02,2019
 95127,Cergy,95,76475,Franqueville-Saint-Pierre,76,5.0,2019
-99999,Résidence antérieure dans un pays étranger,99,76475,Franqueville-Saint-Pierre,76,15.01,2019
 76540,Rouen,76,76476,Port-Jérôme-sur-Seine,76,5.05,2019
 76165,Caudebec-lès-Elbeuf,76,76482,Offranville,76,9.93,2019
 35238,Rennes,35,76484,Oissel,76,1.04,2019
@@ -22807,7 +22368,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76681,Sotteville-lès-Rouen,76,76497,Petit-Couronne,76,34.84,2019
 78646,Versailles,78,76497,Petit-Couronne,76,4.98,2019
 94077,Villeneuve-le-Roi,94,76497,Petit-Couronne,76,29.87,2019
-99999,Résidence antérieure dans un pays étranger,99,76497,Petit-Couronne,76,9.96,2019
 01170,Béard-Géovreissiat,01,76498,Le Petit-Quevilly,76,0.97,2019
 01192,Izernore,01,76498,Le Petit-Quevilly,76,0.97,2019
 01249,Miribel,01,76498,Le Petit-Quevilly,76,1.59,2019
@@ -22960,8 +22520,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93031,Épinay-sur-Seine,93,76498,Le Petit-Quevilly,76,2.22,2019
 93055,Pantin,93,76498,Le Petit-Quevilly,76,5.36,2019
 93064,Rosny-sous-Bois,93,76498,Le Petit-Quevilly,76,11.19,2019
-97118,Petit-Bourg,97,76498,Le Petit-Quevilly,76,2.68,2019
-99999,Résidence antérieure dans un pays étranger,99,76498,Le Petit-Quevilly,76,95.86,2019
 76457,Moulineaux,76,76499,Petiville,76,5.08,2019
 76095,Bihorel,76,76502,Pierreval,76,10.48,2019
 76322,Le Grand-Quevilly,76,76502,Pierreval,76,5.0,2019
@@ -22980,7 +22538,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76475,Franqueville-Saint-Pierre,76,76514,Quévreville-la-Poterie,76,5.0,2019
 76498,Le Petit-Quevilly,76,76514,Quévreville-la-Poterie,76,5.0,2019
 76514,Quévreville-la-Poterie,76,76514,Quévreville-la-Poterie,76,965.0,2019
-97415,Saint-Paul,97,76514,Quévreville-la-Poterie,76,5.0,2019
 76216,Déville-lès-Rouen,76,76515,Quiberville,76,5.07,2019
 76095,Bihorel,76,76517,Quincampoix,76,17.53,2019
 76216,Déville-lès-Rouen,76,76517,Quincampoix,76,15.79,2019
@@ -24228,36 +23785,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95607,Taverny,95,76540,Rouen,76,1.21,2019
 95637,Vauréal,95,76540,Rouen,76,1.06,2019
 95652,Viarmes,95,76540,Rouen,76,3.54,2019
-97101,Les Abymes,97,76540,Rouen,76,7.96,2019
-97103,Baie-Mahault,97,76540,Rouen,76,1.13,2019
-97107,Capesterre-Belle-Eau,97,76540,Rouen,76,5.54,2019
-97113,Le Gosier,97,76540,Rouen,76,6.73,2019
-97120,Pointe-à-Pitre,97,76540,Rouen,76,7.57,2019
-97121,Pointe-Noire,97,76540,Rouen,76,1.01,2019
-97128,Sainte-Anne,97,76540,Rouen,76,2.41,2019
-97202,Les Anses-d'Arlet,97,76540,Rouen,76,3.51,2019
-97209,Fort-de-France,97,76540,Rouen,76,17.63,2019
-97210,Le François,97,76540,Rouen,76,6.7,2019
-97219,Le Prêcheur,97,76540,Rouen,76,1.21,2019
-97222,Le Robert,97,76540,Rouen,76,6.68,2019
-97227,Sainte-Luce,97,76540,Rouen,76,7.2,2019
-97228,Sainte-Marie,97,76540,Rouen,76,3.62,2019
-97408,La Possession,97,76540,Rouen,76,0.96,2019
-97409,Saint-André,97,76540,Rouen,76,6.84,2019
-97411,Saint-Denis,97,76540,Rouen,76,7.16,2019
-97412,Saint-Joseph,97,76540,Rouen,76,5.74,2019
-97413,Saint-Leu,97,76540,Rouen,76,34.14,2019
-97416,Saint-Pierre,97,76540,Rouen,76,3.27,2019
-97422,Le Tampon,97,76540,Rouen,76,12.61,2019
-97502,97502,97,76540,Rouen,76,4.19,2019
-97607,Dembeni,97,76540,Rouen,76,1.11,2019
-97611,Mamoudzou,97,76540,Rouen,76,1.02,2019
-97801,97801,97,76540,Rouen,76,2.97,2019
-98734,Papara,98,76540,Rouen,76,4.71,2019
-98735,Papeete,98,76540,Rouen,76,7.14,2019
-98813,La Foa,98,76540,Rouen,76,3.47,2019
-98818,Nouméa,98,76540,Rouen,76,3.19,2019
-99999,Résidence antérieure dans un pays étranger,99,76540,Rouen,76,1053.54,2019
 76216,Déville-lès-Rouen,76,76541,Roumare,76,16.66,2019
 76498,Le Petit-Quevilly,76,76541,Roumare,76,11.5,2019
 76540,Rouen,76,76541,Roumare,76,27.28,2019
@@ -24282,7 +23809,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76429,Le Mesnil-Esnard,76,76558,Saint-Aubin-Celloville,76,10.0,2019
 76475,Franqueville-Saint-Pierre,76,76558,Saint-Aubin-Celloville,76,20.0,2019
 76558,Saint-Aubin-Celloville,76,76558,Saint-Aubin-Celloville,76,1100.0,2019
-99999,Résidence antérieure dans un pays étranger,99,76558,Saint-Aubin-Celloville,76,5.0,2019
 76540,Rouen,76,76559,Saint-Aubin-de-Crétot,76,5.34,2019
 27580,Saint-Ouen-de-Thouberville,27,76560,Saint-Aubin-Épinay,76,5.0,2019
 76005,Amfreville-la-Mi-Voie,76,76560,Saint-Aubin-Épinay,76,10.0,2019
@@ -24290,7 +23816,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76519,Rainfreville,76,76560,Saint-Aubin-Épinay,76,5.0,2019
 76560,Saint-Aubin-Épinay,76,76560,Saint-Aubin-Épinay,76,935.0,2019
 76599,Saint-Léger-du-Bourg-Denis,76,76560,Saint-Aubin-Épinay,76,10.0,2019
-99999,Résidence antérieure dans un pays étranger,99,76560,Saint-Aubin-Épinay,76,15.0,2019
 10323,Romilly-sur-Seine,10,76561,Saint-Aubin-lès-Elbeuf,76,15.13,2019
 14229,Dozulé,14,76561,Saint-Aubin-lès-Elbeuf,76,5.0,2019
 14514,Pont-l'Évêque,14,76561,Saint-Aubin-lès-Elbeuf,76,10.0,2019
@@ -24579,11 +24104,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95527,Roissy-en-France,95,76575,Saint-Étienne-du-Rouvray,76,0.97,2019
 95563,Saint-Leu-la-Forêt,95,76575,Saint-Étienne-du-Rouvray,76,1.94,2019
 95607,Taverny,95,76575,Saint-Étienne-du-Rouvray,76,13.73,2019
-97209,Fort-de-France,97,76575,Saint-Étienne-du-Rouvray,76,27.44,2019
-97411,Saint-Denis,97,76575,Saint-Étienne-du-Rouvray,76,1.94,2019
-97604,Bouéni,97,76575,Saint-Étienne-du-Rouvray,76,0.97,2019
-98738,Punaauia,98,76575,Saint-Étienne-du-Rouvray,76,1.05,2019
-99999,Résidence antérieure dans un pays étranger,99,76575,Saint-Étienne-du-Rouvray,76,324.26,2019
 76540,Rouen,76,76577,Sainte-Foy,76,10.0,2019
 76108,Bois-Guillaume,76,76580,Saint-Georges-sur-Fontaine,76,10.5,2019
 76575,Saint-Étienne-du-Rouvray,76,76580,Saint-Georges-sur-Fontaine,76,5.59,2019
@@ -24645,7 +24165,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76540,Rouen,76,76614,Saint-Martin-de-Boscherville,76,30.12,2019
 76614,Saint-Martin-de-Boscherville,76,76614,Saint-Martin-de-Boscherville,76,1410.67,2019
 76634,Saint-Pierre-de-Manneville,76,76614,Saint-Martin-de-Boscherville,76,5.03,2019
-99999,Résidence antérieure dans un pays étranger,99,76614,Saint-Martin-de-Boscherville,76,10.05,2019
 27375,Louviers,27,76617,Saint-Martin-du-Vivier,76,19.82,2019
 75120,Paris 20e Arrondissement,75,76617,Saint-Martin-du-Vivier,76,9.91,2019
 76108,Bois-Guillaume,76,76617,Saint-Martin-du-Vivier,76,19.82,2019
@@ -24715,7 +24234,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76681,Sotteville-lès-Rouen,76,76640,Saint-Pierre-lès-Elbeuf,76,15.47,2019
 76705,Tourville-la-Rivière,76,76640,Saint-Pierre-lès-Elbeuf,76,5.13,2019
 95197,Deuil-la-Barre,95,76640,Saint-Pierre-lès-Elbeuf,76,28.77,2019
-99999,Résidence antérieure dans un pays étranger,99,76640,Saint-Pierre-lès-Elbeuf,76,4.96,2019
 76540,Rouen,76,76641,Saint-Pierre-le-Vieux,76,5.08,2019
 76540,Rouen,76,76647,Saint-Romain-de-Colbosc,76,5.15,2019
 76322,Le Grand-Quevilly,76,76648,Saint-Saëns,76,10.08,2019
@@ -24893,11 +24411,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95127,Cergy,95,76681,Sotteville-lès-Rouen,76,11.42,2019
 95306,Herblay-sur-Seine,95,76681,Sotteville-lès-Rouen,76,1.13,2019
 95604,Survilliers,95,76681,Sotteville-lès-Rouen,76,1.09,2019
-97209,Fort-de-France,97,76681,Sotteville-lès-Rouen,76,1.13,2019
-97416,Saint-Pierre,97,76681,Sotteville-lès-Rouen,76,2.25,2019
-97502,97502,97,76681,Sotteville-lès-Rouen,76,10.5,2019
-98738,Punaauia,98,76681,Sotteville-lès-Rouen,76,1.13,2019
-99999,Résidence antérieure dans un pays étranger,99,76681,Sotteville-lès-Rouen,76,45.71,2019
 27469,Pont-de-l'Arche,27,76682,Sotteville-sous-le-Val,76,10.0,2019
 51454,Reims,51,76682,Sotteville-sous-le-Val,76,5.0,2019
 76457,Moulineaux,76,76682,Sotteville-sous-le-Val,76,15.0,2019
@@ -26656,161 +26169,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38185,Grenoble,38,95637,Vauréal,95,3.31,2019
 42218,Saint-Étienne,42,95680,Villiers-le-Bel,95,5.11,2019
 76498,Le Petit-Quevilly,76,95680,Villiers-le-Bel,95,13.12,2019
-34172,Montpellier,34,97101,Les Abymes,97,5.3,2019
-35238,Rennes,35,97101,Les Abymes,97,10.0,2019
-38185,Grenoble,38,97101,Les Abymes,97,12.49,2019
-76231,Elbeuf,76,97102,Anse-Bertrand,97,26.15,2019
-34172,Montpellier,34,97103,Baie-Mahault,97,7.87,2019
-35238,Rennes,35,97106,Bouillante,97,9.94,2019
-35315,Saint-Sulpice-la-Forêt,35,97107,Capesterre-Belle-Eau,97,5.29,2019
-38185,Grenoble,38,97107,Capesterre-Belle-Eau,97,5.0,2019
-34172,Montpellier,34,97109,Gourbeyre,97,5.04,2019
-34172,Montpellier,34,97113,Le Gosier,97,12.34,2019
-35238,Rennes,35,97113,Le Gosier,97,2.46,2019
-38185,Grenoble,38,97113,Le Gosier,97,2.5,2019
-34327,Vendargues,34,97115,Lamentin,97,4.86,2019
-35238,Rennes,35,97115,Lamentin,97,1.0,2019
-38185,Grenoble,38,97115,Lamentin,97,7.11,2019
-34172,Montpellier,34,97116,Morne-à-l'Eau,97,3.0,2019
-34172,Montpellier,34,97117,Le Moule,97,24.57,2019
-35204,Nouvoitou,35,97117,Le Moule,97,2.0,2019
-34172,Montpellier,34,97118,Petit-Bourg,97,9.27,2019
-35055,Chantepie,35,97118,Petit-Bourg,97,10.76,2019
-35238,Rennes,35,97118,Petit-Bourg,97,2.93,2019
-76410,Maromme,76,97118,Petit-Bourg,97,3.38,2019
-76540,Rouen,76,97118,Petit-Bourg,97,6.07,2019
-34172,Montpellier,34,97120,Pointe-à-Pitre,97,2.98,2019
-35238,Rennes,35,97121,Pointe-Noire,97,5.0,2019
-34095,Fabrègues,34,97124,Saint-Claude,97,4.64,2019
-34172,Montpellier,34,97124,Saint-Claude,97,12.39,2019
-35238,Rennes,35,97124,Saint-Claude,97,2.73,2019
-35334,Thorigné-Fouillard,35,97124,Saint-Claude,97,3.75,2019
-42218,Saint-Étienne,42,97124,Saint-Claude,97,4.64,2019
-76540,Rouen,76,97124,Saint-Claude,97,5.46,2019
-35352,Vern-sur-Seiche,35,97125,Saint-François,97,3.29,2019
-34090,Le Crès,34,97128,Sainte-Anne,97,2.42,2019
-34172,Montpellier,34,97128,Sainte-Anne,97,2.42,2019
-35238,Rennes,35,97128,Sainte-Anne,97,2.42,2019
-38033,Beaulieu,38,97128,Sainte-Anne,97,14.5,2019
-38229,Meylan,38,97128,Sainte-Anne,97,2.5,2019
-42099,Fraisses,42,97128,Sainte-Anne,97,3.47,2019
-42218,Saint-Étienne,42,97128,Sainte-Anne,97,3.47,2019
-76451,Mont-Saint-Aignan,76,97128,Sainte-Anne,97,2.42,2019
-34172,Montpellier,34,97129,Sainte-Rose,97,10.02,2019
-76216,Déville-lès-Rouen,76,97202,Les Anses-d'Arlet,97,23.95,2019
-38185,Grenoble,38,97204,Le Carbet,97,4.88,2019
-38185,Grenoble,38,97205,Case-Pilote,97,4.98,2019
-34172,Montpellier,34,97207,Ducos,97,17.79,2019
-76540,Rouen,76,97207,Ducos,97,7.47,2019
-34172,Montpellier,34,97209,Fort-de-France,97,25.45,2019
-34179,Murviel-lès-Montpellier,34,97209,Fort-de-France,97,2.21,2019
-38185,Grenoble,38,97209,Fort-de-France,97,2.5,2019
-76498,Le Petit-Quevilly,76,97209,Fort-de-France,97,10.93,2019
-76540,Rouen,76,97209,Fort-de-France,97,5.23,2019
-34172,Montpellier,34,97210,Le François,97,13.91,2019
-35047,Bruz,35,97210,Le François,97,7.47,2019
-35238,Rennes,35,97210,Le François,97,17.8,2019
-38185,Grenoble,38,97212,Gros-Morne,97,5.32,2019
-34172,Montpellier,34,97213,Le Lamentin,97,5.49,2019
-35047,Bruz,35,97213,Le Lamentin,97,5.0,2019
-34172,Montpellier,34,97218,Le Morne-Rouge,97,31.01,2019
-34172,Montpellier,34,97219,Le Prêcheur,97,4.41,2019
-34172,Montpellier,34,97220,Rivière-Pilote,97,5.39,2019
-76540,Rouen,76,97221,Rivière-Salée,97,2.57,2019
-34172,Montpellier,34,97222,Le Robert,97,2.5,2019
-76540,Rouen,76,97222,Le Robert,97,7.48,2019
-34172,Montpellier,34,97224,Saint-Joseph,97,2.38,2019
-76540,Rouen,76,97224,Saint-Joseph,97,2.38,2019
-34172,Montpellier,34,97229,Schœlcher,97,19.53,2019
-42218,Saint-Étienne,42,97229,Schœlcher,97,2.89,2019
-34172,Montpellier,34,97230,La Trinité,97,7.52,2019
-42192,Rozier-Côtes-d'Aurec,42,97230,La Trinité,97,12.52,2019
-76575,Saint-Étienne-du-Rouvray,76,97233,Le Morne-Vert,97,10.01,2019
-34172,Montpellier,34,97302,Cayenne,97,5.05,2019
-35238,Rennes,35,97302,Cayenne,97,53.42,2019
-38185,Grenoble,38,97302,Cayenne,97,5.1,2019
-76410,Maromme,76,97302,Cayenne,97,3.06,2019
-76540,Rouen,76,97302,Cayenne,97,5.32,2019
-34172,Montpellier,34,97304,Kourou,97,19.05,2019
-35238,Rennes,35,97304,Kourou,97,2.5,2019
-38185,Grenoble,38,97304,Kourou,97,5.03,2019
-42218,Saint-Étienne,42,97304,Kourou,97,2.51,2019
-42223,Saint-Genest-Lerpt,42,97304,Kourou,97,21.15,2019
-42316,Unieux,42,97304,Kourou,97,12.57,2019
-35196,Mordelles,35,97305,Macouria,97,4.79,2019
-76410,Maromme,76,97307,Matoury,97,4.48,2019
-34123,Juvignac,34,97309,Remire-Montjoly,97,5.2,2019
-34172,Montpellier,34,97309,Remire-Montjoly,97,5.57,2019
-35047,Bruz,35,97309,Remire-Montjoly,97,10.35,2019
-35238,Rennes,35,97309,Remire-Montjoly,97,8.86,2019
-38524,Varces-Allières-et-Risset,38,97309,Remire-Montjoly,97,2.62,2019
-76540,Rouen,76,97309,Remire-Montjoly,97,11.59,2019
-34090,Le Crès,34,97311,Saint-Laurent-du-Maroni,97,9.97,2019
-34172,Montpellier,34,97311,Saint-Laurent-du-Maroni,97,7.4,2019
-34172,Montpellier,34,97313,Montsinéry-Tonnegrande,97,4.71,2019
-34337,Villeneuve-lès-Maguelone,34,97313,Montsinéry-Tonnegrande,97,4.71,2019
-34172,Montpellier,34,97401,Les Avirons,97,9.2,2019
-35238,Rennes,35,97403,Entre-Deux,97,5.0,2019
-34172,Montpellier,34,97404,L'Étang-Salé,97,10.9,2019
-34217,Prades-le-Lez,34,97404,L'Étang-Salé,97,5.18,2019
-38185,Grenoble,38,97404,L'Étang-Salé,97,7.65,2019
-34172,Montpellier,34,97405,Petite-Île,97,5.51,2019
-42218,Saint-Étienne,42,97406,La Plaine-des-Palmistes,97,25.87,2019
-34172,Montpellier,34,97407,Le Port,97,5.19,2019
-35238,Rennes,35,97407,Le Port,97,7.58,2019
-38185,Grenoble,38,97407,Le Port,97,2.58,2019
-34172,Montpellier,34,97408,La Possession,97,22.0,2019
-35238,Rennes,35,97408,La Possession,97,1.0,2019
-34172,Montpellier,34,97409,Saint-André,97,5.02,2019
-34249,Saint-Drézéry,34,97409,Saint-André,97,7.51,2019
-38185,Grenoble,38,97409,Saint-André,97,2.62,2019
-34172,Montpellier,34,97410,Saint-Benoît,97,5.22,2019
-34116,Grabels,34,97411,Saint-Denis,97,10.0,2019
-34172,Montpellier,34,97411,Saint-Denis,97,77.86,2019
-34217,Prades-le-Lez,34,97411,Saint-Denis,97,5.0,2019
-34244,Saint-Brès,34,97411,Saint-Denis,97,2.5,2019
-35047,Bruz,35,97411,Saint-Denis,97,4.33,2019
-35206,Noyal-Châtillon-sur-Seiche,35,97411,Saint-Denis,97,15.0,2019
-35238,Rennes,35,97411,Saint-Denis,97,36.79,2019
-38169,Fontaine,38,97411,Saint-Denis,97,12.5,2019
-38179,Gières,38,97411,Saint-Denis,97,2.83,2019
-38185,Grenoble,38,97411,Saint-Denis,97,24.45,2019
-42218,Saint-Étienne,42,97411,Saint-Denis,97,13.33,2019
-76540,Rouen,76,97411,Saint-Denis,97,20.63,2019
-76681,Sotteville-lès-Rouen,76,97411,Saint-Denis,97,20.0,2019
-35238,Rennes,35,97412,Saint-Joseph,97,5.25,2019
-38185,Grenoble,38,97412,Saint-Joseph,97,10.05,2019
-76540,Rouen,76,97412,Saint-Joseph,97,2.48,2019
-34172,Montpellier,34,97413,Saint-Leu,97,2.98,2019
-35238,Rennes,35,97413,Saint-Leu,97,9.4,2019
-35250,Saint-Armel,35,97413,Saint-Leu,97,7.74,2019
-42218,Saint-Étienne,42,97413,Saint-Leu,97,12.66,2019
-34172,Montpellier,34,97414,Saint-Louis,97,2.84,2019
-34057,Castelnau-le-Lez,34,97415,Saint-Paul,97,11.57,2019
-34172,Montpellier,34,97415,Saint-Paul,97,47.06,2019
-35238,Rennes,35,97415,Saint-Paul,97,5.39,2019
-38185,Grenoble,38,97415,Saint-Paul,97,26.0,2019
-38382,Saint-Égrève,38,97415,Saint-Paul,97,7.49,2019
-42186,Rive-de-Gier,42,97415,Saint-Paul,97,8.67,2019
-42218,Saint-Étienne,42,97415,Saint-Paul,97,2.49,2019
-34120,Jacou,34,97416,Saint-Pierre,97,2.92,2019
-34172,Montpellier,34,97416,Saint-Pierre,97,39.54,2019
-35238,Rennes,35,97416,Saint-Pierre,97,18.66,2019
-35334,Thorigné-Fouillard,35,97416,Saint-Pierre,97,9.15,2019
-38169,Fontaine,38,97416,Saint-Pierre,97,2.5,2019
-38185,Grenoble,38,97416,Saint-Pierre,97,11.21,2019
-38524,Varces-Allières-et-Risset,38,97416,Saint-Pierre,97,2.5,2019
-42218,Saint-Étienne,42,97416,Saint-Pierre,97,8.97,2019
-42218,Saint-Étienne,42,97417,Saint-Philippe,97,5.27,2019
-34172,Montpellier,34,97418,Sainte-Marie,97,19.23,2019
-38185,Grenoble,38,97418,Sainte-Marie,97,5.47,2019
-76451,Mont-Saint-Aignan,76,97418,Sainte-Marie,97,2.51,2019
-76540,Rouen,76,97420,Sainte-Suzanne,97,2.46,2019
-34129,Lattes,34,97422,Le Tampon,97,4.99,2019
-35055,Chantepie,35,97422,Le Tampon,97,2.95,2019
-42218,Saint-Étienne,42,97422,Le Tampon,97,2.49,2019
-76540,Rouen,76,97422,Le Tampon,97,10.08,2019
-34172,Montpellier,34,97424,Cilaos,97,15.39,2019
 42242,Saint-Joseph,42,01004,Ambérieu-en-Bugey,01,4.99,2022
 38185,Grenoble,38,01026,Bâgé-le-Châtel,01,10.05,2022
 38545,Vif,38,01027,Balan,01,3.33,2022
@@ -29439,7 +28797,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 86194,Poitiers,86,34022,Baillargues,34,5.1,2022
 92004,Asnières-sur-Seine,92,34022,Baillargues,34,14.94,2022
 93066,Saint-Denis,93,34022,Baillargues,34,5.35,2022
-99999,Résidence antérieure dans un pays étranger,99,34022,Baillargues,34,40.45,2022
 34095,Fabrègues,34,34023,Balaruc-les-Bains,34,5.06,2022
 34172,Montpellier,34,34023,Balaruc-les-Bains,34,30.33,2022
 76216,Déville-lès-Rouen,76,34023,Balaruc-les-Bains,34,30.33,2022
@@ -29780,14 +29137,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94073,Thiais,94,34057,Castelnau-le-Lez,34,5.85,2022
 94076,Villejuif,94,34057,Castelnau-le-Lez,34,5.85,2022
 95355,Magny-en-Vexin,95,34057,Castelnau-le-Lez,34,14.04,2022
-97217,Le Marin,97,34057,Castelnau-le-Lez,34,1.39,2022
-97220,Rivière-Pilote,97,34057,Castelnau-le-Lez,34,1.34,2022
-97402,Bras-Panon,97,34057,Castelnau-le-Lez,34,1.39,2022
-97408,La Possession,97,34057,Castelnau-le-Lez,34,14.84,2022
-97418,Sainte-Marie,97,34057,Castelnau-le-Lez,34,1.39,2022
-98729,Moorea-Maiao,98,34057,Castelnau-le-Lez,34,1.34,2022
-98735,Papeete,98,34057,Castelnau-le-Lez,34,2.07,2022
-99999,Résidence antérieure dans un pays étranger,99,34057,Castelnau-le-Lez,34,106.43,2022
 05111,Puy-Sanières,05,34058,Castries,34,9.46,2022
 06085,Mougins,06,34058,Castries,34,4.88,2022
 13206,Marseille 6e Arrondissement,13,34058,Castries,34,4.68,2022
@@ -29828,7 +29177,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 80021,Amiens,80,34058,Castries,34,5.29,2022
 84035,Cavaillon,84,34058,Castries,34,18.92,2022
 93008,Bobigny,93,34058,Castries,34,9.46,2022
-99999,Résidence antérieure dans un pays étranger,99,34058,Castries,34,9.76,2022
 34090,Le Crès,34,34063,Caux,34,5.0,2022
 34172,Montpellier,34,34065,Cazedarnes,34,5.47,2022
 34120,Jacou,34,34066,Cazevieille,34,9.91,2022
@@ -29875,7 +29223,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92040,Issy-les-Moulineaux,92,34077,Clapiers,34,9.99,2022
 92044,Levallois-Perret,92,34077,Clapiers,34,5.0,2022
 95018,Argenteuil,95,34077,Clapiers,34,19.99,2022
-99999,Résidence antérieure dans un pays étranger,99,34077,Clapiers,34,9.99,2022
 34022,Baillargues,34,34078,Claret,34,10.23,2022
 34120,Jacou,34,34078,Claret,34,20.13,2022
 34217,Prades-le-Lez,34,34078,Claret,34,14.92,2022
@@ -29906,7 +29253,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 34270,Saint-Jean-de-Védas,34,34087,Cournonsec,34,30.44,2022
 34301,Sète,34,34087,Cournonsec,34,5.17,2022
 69383,Lyon 3e Arrondissement,69,34087,Cournonsec,34,5.02,2022
-99999,Résidence antérieure dans un pays étranger,99,34087,Cournonsec,34,10.21,2022
 11262,Narbonne,11,34088,Cournonterral,34,4.6,2022
 12037,Broquiès,12,34088,Cournonterral,34,4.6,2022
 13209,Marseille 9e Arrondissement,13,34088,Cournonterral,34,4.57,2022
@@ -29939,7 +29285,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 75115,Paris 15e Arrondissement,75,34088,Cournonterral,34,4.54,2022
 78362,Mantes-la-Ville,78,34088,Cournonterral,34,13.72,2022
 82094,Lauzerte,82,34088,Cournonterral,34,4.63,2022
-99999,Résidence antérieure dans un pays étranger,99,34088,Cournonterral,34,4.48,2022
 38382,Saint-Égrève,38,34089,Creissan,34,11.27,2022
 06095,Peymeinade,06,34090,Le Crès,34,5.07,2022
 06108,La Roquette-sur-Siagne,06,34090,Le Crès,34,4.88,2022
@@ -29975,9 +29320,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 81052,Cambon,81,34090,Le Crès,34,19.53,2022
 85194,Les Sables-d'Olonne,85,34090,Le Crès,34,10.15,2022
 93066,Saint-Denis,93,34090,Le Crès,34,19.53,2022
-97229,Schœlcher,97,34090,Le Crès,34,9.95,2022
-97304,Kourou,97,34090,Le Crès,34,10.15,2022
-99999,Résidence antérieure dans un pays étranger,99,34090,Le Crès,34,15.22,2022
 07070,Cornas,07,34095,Fabrègues,34,10.02,2022
 11136,Fanjeaux,11,34095,Fabrègues,34,5.0,2022
 12202,Rodez,12,34095,Fabrègues,34,5.01,2022
@@ -30023,7 +29365,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 78481,Le Pecq,78,34095,Fabrègues,34,5.01,2022
 84072,Mazan,84,34095,Fabrègues,34,5.01,2022
 86165,Montmorillon,86,34095,Fabrègues,34,5.01,2022
-99999,Résidence antérieure dans un pays étranger,99,34095,Fabrègues,34,20.03,2022
 34172,Montpellier,34,34096,Faugères,34,5.15,2022
 34172,Montpellier,34,34101,Florensac,34,4.69,2022
 76322,Le Grand-Quevilly,76,34101,Florensac,34,4.69,2022
@@ -30112,7 +29453,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92046,Malakoff,92,34116,Grabels,34,5.0,2022
 92071,Sceaux,92,34116,Grabels,34,5.0,2022
 94043,Le Kremlin-Bicêtre,94,34116,Grabels,34,5.0,2022
-99999,Résidence antérieure dans un pays étranger,99,34116,Grabels,34,64.99,2022
 34172,Montpellier,34,34117,Graissessac,34,5.22,2022
 34057,Castelnau-le-Lez,34,34118,Guzargues,34,4.8,2022
 34172,Montpellier,34,34118,Guzargues,34,9.52,2022
@@ -30153,8 +29493,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92012,Boulogne-Billancourt,92,34120,Jacou,34,5.26,2022
 92014,Bourg-la-Reine,92,34120,Jacou,34,20.03,2022
 92063,Rueil-Malmaison,92,34120,Jacou,34,20.03,2022
-98758,Uturoa,98,34120,Jacou,34,5.26,2022
-99999,Résidence antérieure dans un pays étranger,99,34120,Jacou,34,9.69,2022
 34259,Saint-Georges-d'Orques,34,34121,Joncels,34,20.1,2022
 34123,Juvignac,34,34122,Jonquières,34,10.36,2022
 04112,Manosque,04,34123,Juvignac,34,1.19,2022
@@ -30319,10 +29657,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95280,Goussainville,95,34123,Juvignac,34,1.19,2022
 95306,Herblay-sur-Seine,95,34123,Juvignac,34,6.47,2022
 95313,L'Isle-Adam,95,34123,Juvignac,34,6.72,2022
-97302,Cayenne,97,34123,Juvignac,34,1.19,2022
-97411,Saint-Denis,97,34123,Juvignac,34,6.72,2022
-97422,Le Tampon,97,34123,Juvignac,34,1.19,2022
-99999,Résidence antérieure dans un pays étranger,99,34123,Juvignac,34,45.2,2022
 34057,Castelnau-le-Lez,34,34126,Lamalou-les-Bains,34,5.24,2022
 34172,Montpellier,34,34126,Lamalou-les-Bains,34,10.08,2022
 34022,Baillargues,34,34127,Lansargues,34,5.3,2022
@@ -30484,10 +29818,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94059,Le Plessis-Trévise,94,34129,Lattes,34,1.22,2022
 95197,Deuil-la-Barre,95,34129,Lattes,34,5.92,2022
 95427,Montmagny,95,34129,Lattes,34,5.92,2022
-97415,Saint-Paul,97,34129,Lattes,34,5.28,2022
-97416,Saint-Pierre,97,34129,Lattes,34,18.76,2022
-98734,Papara,98,34129,Lattes,34,9.59,2022
-99999,Résidence antérieure dans un pays étranger,99,34129,Lattes,34,78.72,2022
 34172,Montpellier,34,34131,Lauret,34,4.78,2022
 11069,Carcassonne,11,34134,Lavérune,34,5.28,2022
 13205,Marseille 5e Arrondissement,13,34134,Lavérune,34,10.07,2022
@@ -30507,7 +29837,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 34295,Saussan,34,34134,Lavérune,34,5.12,2022
 34341,Villeveyrac,34,34134,Lavérune,34,5.28,2022
 85194,Les Sables-d'Olonne,85,34134,Lavérune,34,5.28,2022
-99999,Résidence antérieure dans un pays étranger,99,34134,Lavérune,34,10.24,2022
 34202,Pignan,34,34136,Lézignan-la-Cèbe,34,9.93,2022
 34172,Montpellier,34,34140,Lignan-sur-Orb,34,5.02,2022
 34172,Montpellier,34,34141,La Livinière,34,4.5,2022
@@ -30640,8 +29969,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 78646,Versailles,78,34169,Montferrier-sur-Lez,34,5.22,2022
 89024,Auxerre,89,34169,Montferrier-sur-Lez,34,5.0,2022
 94016,Cachan,94,34169,Montferrier-sur-Lez,34,5.22,2022
-97120,Pointe-à-Pitre,97,34169,Montferrier-sur-Lez,34,10.45,2022
-99999,Résidence antérieure dans un pays étranger,99,34169,Montferrier-sur-Lez,34,20.9,2022
 34337,Villeneuve-lès-Maguelone,34,34171,Montoulieu,34,5.08,2022
 01004,Ambérieu-en-Bugey,01,34172,Montpellier,34,4.96,2022
 01008,Ambutrix,01,34172,Montpellier,34,2.51,2022
@@ -32309,69 +31636,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95598,Soisy-sous-Montmorency,95,34172,Montpellier,34,1.5,2022
 95607,Taverny,95,34172,Montpellier,34,8.87,2022
 95680,Villiers-le-Bel,95,34172,Montpellier,34,1.38,2022
-97101,Les Abymes,97,34172,Montpellier,34,3.02,2022
-97103,Baie-Mahault,97,34172,Montpellier,34,12.36,2022
-97105,Basse-Terre,97,34172,Montpellier,34,3.52,2022
-97107,Capesterre-Belle-Eau,97,34172,Montpellier,34,5.0,2022
-97112,Grand-Bourg,97,34172,Montpellier,34,1.65,2022
-97113,Le Gosier,97,34172,Montpellier,34,11.66,2022
-97115,Lamentin,97,34172,Montpellier,34,3.6,2022
-97118,Petit-Bourg,97,34172,Montpellier,34,10.99,2022
-97119,Petit-Canal,97,34172,Montpellier,34,0.98,2022
-97120,Pointe-à-Pitre,97,34172,Montpellier,34,10.64,2022
-97121,Pointe-Noire,97,34172,Montpellier,34,1.84,2022
-97125,Saint-François,97,34172,Montpellier,34,1.82,2022
-97128,Sainte-Anne,97,34172,Montpellier,34,1.15,2022
-97129,Sainte-Rose,97,34172,Montpellier,34,3.97,2022
-97132,Trois-Rivières,97,34172,Montpellier,34,1.49,2022
-97205,Case-Pilote,97,34172,Montpellier,34,1.65,2022
-97207,Ducos,97,34172,Montpellier,34,7.43,2022
-97209,Fort-de-France,97,34172,Montpellier,34,13.08,2022
-97213,Le Lamentin,97,34172,Montpellier,34,7.91,2022
-97217,Le Marin,97,34172,Montpellier,34,2.47,2022
-97218,Le Morne-Rouge,97,34172,Montpellier,34,0.95,2022
-97222,Le Robert,97,34172,Montpellier,34,7.05,2022
-97223,Saint-Esprit,97,34172,Montpellier,34,6.51,2022
-97225,Saint-Pierre,97,34172,Montpellier,34,1.51,2022
-97227,Sainte-Luce,97,34172,Montpellier,34,17.68,2022
-97229,Schœlcher,97,34172,Montpellier,34,2.41,2022
-97230,La Trinité,97,34172,Montpellier,34,1.64,2022
-97231,Les Trois-Îlets,97,34172,Montpellier,34,11.63,2022
-97232,Le Vauclin,97,34172,Montpellier,34,1.31,2022
-97302,Cayenne,97,34172,Montpellier,34,42.5,2022
-97304,Kourou,97,34172,Montpellier,34,6.8,2022
-97305,Macouria,97,34172,Montpellier,34,1.55,2022
-97307,Matoury,97,34172,Montpellier,34,15.49,2022
-97309,Remire-Montjoly,97,34172,Montpellier,34,11.59,2022
-97401,Les Avirons,97,34172,Montpellier,34,5.75,2022
-97404,L'Étang-Salé,97,34172,Montpellier,34,8.82,2022
-97407,Le Port,97,34172,Montpellier,34,1.49,2022
-97408,La Possession,97,34172,Montpellier,34,2.6,2022
-97409,Saint-André,97,34172,Montpellier,34,10.1,2022
-97410,Saint-Benoît,97,34172,Montpellier,34,1.17,2022
-97411,Saint-Denis,97,34172,Montpellier,34,54.0,2022
-97412,Saint-Joseph,97,34172,Montpellier,34,1.28,2022
-97413,Saint-Leu,97,34172,Montpellier,34,10.87,2022
-97414,Saint-Louis,97,34172,Montpellier,34,2.65,2022
-97415,Saint-Paul,97,34172,Montpellier,34,31.19,2022
-97416,Saint-Pierre,97,34172,Montpellier,34,29.5,2022
-97418,Sainte-Marie,97,34172,Montpellier,34,2.62,2022
-97420,Sainte-Suzanne,97,34172,Montpellier,34,8.26,2022
-97422,Le Tampon,97,34172,Montpellier,34,18.49,2022
-97605,Chiconi,97,34172,Montpellier,34,10.0,2022
-97608,Dzaoudzi,97,34172,Montpellier,34,13.83,2022
-97610,Koungou,97,34172,Montpellier,34,1.55,2022
-97611,Mamoudzou,97,34172,Montpellier,34,21.68,2022
-97617,Tsingoni,97,34172,Montpellier,34,1.24,2022
-97701,97701,97,34172,Montpellier,34,4.62,2022
-97801,97801,97,34172,Montpellier,34,1.01,2022
-98725,Mahina,98,34172,Montpellier,34,4.84,2022
-98734,Papara,98,34172,Montpellier,34,1.1,2022
-98735,Papeete,98,34172,Montpellier,34,38.72,2022
-98758,Uturoa,98,34172,Montpellier,34,9.76,2022
-98805,Dumbéa,98,34172,Montpellier,34,6.16,2022
-98818,Nouméa,98,34172,Montpellier,34,74.96,2022
-99999,Résidence antérieure dans un pays étranger,99,34172,Montpellier,34,3467.92,2022
 34129,Lattes,34,34173,Montpeyroux,34,14.14,2022
 34172,Montpellier,34,34173,Montpeyroux,34,28.29,2022
 34202,Pignan,34,34173,Montpeyroux,34,10.13,2022
@@ -32461,7 +31725,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 89466,Villeroy,89,34198,Pérols,34,5.61,2022
 92040,Issy-les-Moulineaux,92,34198,Pérols,34,24.65,2022
 94034,Fresnes,94,34198,Pérols,34,40.72,2022
-99999,Résidence antérieure dans un pays étranger,99,34198,Pérols,34,38.2,2022
 34172,Montpellier,34,34199,Pézenas,34,20.26,2022
 38185,Grenoble,38,34199,Pézenas,34,5.0,2022
 07145,Lussas,07,34202,Pignan,34,4.76,2022
@@ -32509,8 +31772,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92002,Antony,92,34202,Pignan,34,5.11,2022
 92025,Colombes,92,34202,Pignan,34,4.6,2022
 95277,Gonesse,95,34202,Pignan,34,14.8,2022
-97101,Les Abymes,97,34202,Pignan,34,15.33,2022
-99999,Résidence antérieure dans un pays étranger,99,34202,Pignan,34,20.44,2022
 34095,Fabrègues,34,34204,Plaissan,34,11.86,2022
 34172,Montpellier,34,34204,Plaissan,34,11.92,2022
 34172,Montpellier,34,34207,Pomérols,34,5.39,2022
@@ -32593,7 +31854,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 34307,Sussargues,34,34227,Restinclières,34,24.04,2022
 66021,Bompas,66,34227,Restinclières,34,6.12,2022
 91458,Nozay,91,34227,Restinclières,34,6.01,2022
-99999,Résidence antérieure dans un pays étranger,99,34227,Restinclières,34,24.04,2022
 34172,Montpellier,34,34237,Roujan,34,15.08,2022
 34090,Le Crès,34,34239,Saint-André-de-Sangonis,34,5.05,2022
 34172,Montpellier,34,34239,Saint-André-de-Sangonis,34,120.55,2022
@@ -32679,7 +31939,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 75112,Paris 12e Arrondissement,75,34249,Saint-Drézéry,34,5.05,2022
 81065,Castres,81,34249,Saint-Drézéry,34,5.37,2022
 93032,Gagny,93,34249,Saint-Drézéry,34,15.62,2022
-99999,Résidence antérieure dans un pays étranger,99,34249,Saint-Drézéry,34,35.98,2022
 34057,Castelnau-le-Lez,34,34250,Saint-Étienne-d'Albagnan,34,10.36,2022
 34123,Juvignac,34,34254,Saint-Félix-de-Lodez,34,5.03,2022
 34134,Lavérune,34,34254,Saint-Félix-de-Lodez,34,10.06,2022
@@ -32731,7 +31990,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 91549,Sainte-Geneviève-des-Bois,91,34259,Saint-Georges-d'Orques,34,5.08,2022
 94078,Villeneuve-Saint-Georges,94,34259,Saint-Georges-d'Orques,34,5.08,2022
 95409,Moisselles,95,34259,Saint-Georges-d'Orques,34,4.95,2022
-99999,Résidence antérieure dans un pays étranger,99,34259,Saint-Georges-d'Orques,34,10.16,2022
 38169,Fontaine,38,34262,Saint-Guiraud,34,9.74,2022
 34249,Saint-Drézéry,34,34263,Saint-Hilaire-de-Beauvoir,34,10.4,2022
 34307,Sussargues,34,34263,Saint-Hilaire-de-Beauvoir,34,20.43,2022
@@ -32804,7 +32062,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93032,Gagny,93,34270,Saint-Jean-de-Védas,34,34.97,2022
 93057,Les Pavillons-sous-Bois,93,34270,Saint-Jean-de-Védas,34,5.0,2022
 95218,Éragny,95,34270,Saint-Jean-de-Védas,34,5.0,2022
-99999,Résidence antérieure dans un pays étranger,99,34270,Saint-Jean-de-Védas,34,24.98,2022
 34022,Baillargues,34,34272,Saint-Just,34,10.0,2022
 34123,Juvignac,34,34272,Saint-Just,34,14.69,2022
 34172,Montpellier,34,34272,Saint-Just,34,5.11,2022
@@ -32852,7 +32109,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69385,Lyon 5e Arrondissement,69,34295,Saussan,34,4.66,2022
 80021,Amiens,80,34295,Saussan,34,13.98,2022
 91667,Villemoisson-sur-Orge,91,34295,Saussan,34,9.32,2022
-99999,Résidence antérieure dans un pays étranger,99,34295,Saussan,34,9.32,2022
 34057,Castelnau-le-Lez,34,34296,Saussines,34,5.49,2022
 34058,Castries,34,34296,Saussines,34,5.49,2022
 34172,Montpellier,34,34296,Saussines,34,20.64,2022
@@ -32904,8 +32160,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 59350,Lille,59,34307,Sussargues,34,5.62,2022
 69003,Albigny-sur-Saône,69,34307,Sussargues,34,18.72,2022
 75118,Paris 18e Arrondissement,75,34307,Sussargues,34,4.97,2022
-97422,Le Tampon,97,34307,Sussargues,34,4.4,2022
-99999,Résidence antérieure dans un pays étranger,99,34307,Sussargues,34,14.92,2022
 34057,Castelnau-le-Lez,34,34309,Teyran,34,19.85,2022
 34058,Castries,34,34309,Teyran,34,4.96,2022
 34090,Le Crès,34,34309,Teyran,34,24.85,2022
@@ -32979,7 +32233,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 78133,Chambourcy,78,34327,Vendargues,34,9.22,2022
 93029,Drancy,93,34327,Vendargues,34,20.86,2022
 94041,Ivry-sur-Seine,94,34327,Vendargues,34,4.9,2022
-99999,Résidence antérieure dans un pays étranger,99,34327,Vendargues,34,14.71,2022
 34123,Juvignac,34,34328,Vendémian,34,14.71,2022
 34172,Montpellier,34,34328,Vendémian,34,15.2,2022
 34172,Montpellier,34,34332,Vias,34,34.95,2022
@@ -33051,7 +32304,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 91345,Longjumeau,91,34337,Villeneuve-lès-Maguelone,34,14.92,2022
 91540,Saint-Chéron,91,34337,Villeneuve-lès-Maguelone,34,19.21,2022
 95176,Cormeilles-en-Parisis,95,34337,Villeneuve-lès-Maguelone,34,5.02,2022
-99999,Résidence antérieure dans un pays étranger,99,34337,Villeneuve-lès-Maguelone,34,51.93,2022
 34172,Montpellier,34,34340,Villetelle,34,28.71,2022
 34088,Cournonterral,34,34341,Villeveyrac,34,9.8,2022
 34172,Montpellier,34,34341,Villeveyrac,34,19.36,2022
@@ -33110,8 +32362,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92051,Neuilly-sur-Seine,92,35001,Acigné,35,5.0,2022
 93005,Aulnay-sous-Bois,93,35001,Acigné,35,5.0,2022
 93051,Noisy-le-Grand,93,35001,Acigné,35,5.0,2022
-97611,Mamoudzou,97,35001,Acigné,35,5.0,2022
-99999,Résidence antérieure dans un pays étranger,99,35001,Acigné,35,5.0,2022
 35051,Cesson-Sévigné,35,35002,Amanlis,35,5.17,2022
 35055,Chantepie,35,35002,Amanlis,35,4.93,2022
 35088,Corps-Nuds,35,35002,Amanlis,35,4.93,2022
@@ -33282,7 +32532,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94065,Rungis,94,35024,Betton,35,5.78,2022
 94067,Saint-Mandé,94,35024,Betton,35,1.17,2022
 95313,L'Isle-Adam,95,35024,Betton,35,5.37,2022
-99999,Résidence antérieure dans un pays étranger,99,35024,Betton,35,6.53,2022
 35024,Betton,35,35027,Boisgervilly,35,5.43,2022
 35047,Bruz,35,35027,Boisgervilly,35,15.64,2022
 35066,Chartres-de-Bretagne,35,35027,Boisgervilly,35,10.86,2022
@@ -33332,7 +32581,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 59350,Lille,59,35032,Bourgbarré,35,4.76,2022
 69389,Lyon 9e Arrondissement,69,35032,Bourgbarré,35,4.54,2022
 85226,Saint-Hilaire-de-Riez,85,35032,Bourgbarré,35,4.65,2022
-99999,Résidence antérieure dans un pays étranger,99,35032,Bourgbarré,35,66.0,2022
 35047,Bruz,35,35033,Bourg-des-Comptes,35,15.06,2022
 35066,Chartres-de-Bretagne,35,35033,Bourg-des-Comptes,35,5.02,2022
 35139,Laillé,35,35033,Bourg-des-Comptes,35,10.04,2022
@@ -33610,12 +32858,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92075,Vanves,92,35047,Bruz,35,1.39,2022
 92077,Ville-d'Avray,92,35047,Bruz,35,3.83,2022
 95582,Sannois,95,35047,Bruz,35,1.23,2022
-97410,Saint-Benoît,97,35047,Bruz,35,1.57,2022
-97415,Saint-Paul,97,35047,Bruz,35,6.47,2022
-97611,Mamoudzou,97,35047,Bruz,35,1.48,2022
-98735,Papeete,98,35047,Bruz,35,4.88,2022
-98818,Nouméa,98,35047,Bruz,35,2.96,2022
-99999,Résidence antérieure dans un pays étranger,99,35047,Bruz,35,105.9,2022
 35024,Betton,35,35049,Cancale,35,9.78,2022
 35180,Miniac-sous-Bécherel,35,35049,Cancale,35,4.86,2022
 35238,Rennes,35,35049,Cancale,35,19.56,2022
@@ -33858,11 +33100,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95203,Eaubonne,95,35051,Cesson-Sévigné,35,5.9,2022
 95218,Éragny,95,35051,Cesson-Sévigné,35,13.45,2022
 95500,Pontoise,95,35051,Cesson-Sévigné,35,2.33,2022
-97101,Les Abymes,97,35051,Cesson-Sévigné,35,3.88,2022
-97407,Le Port,97,35051,Cesson-Sévigné,35,1.66,2022
-97411,Saint-Denis,97,35051,Cesson-Sévigné,35,1.66,2022
-97415,Saint-Paul,97,35051,Cesson-Sévigné,35,11.62,2022
-99999,Résidence antérieure dans un pays étranger,99,35051,Cesson-Sévigné,35,116.77,2022
 35066,Chartres-de-Bretagne,35,35054,Chanteloup,35,9.06,2022
 35088,Corps-Nuds,35,35054,Chanteloup,35,4.53,2022
 35240,Le Rheu,35,35054,Chanteloup,35,14.27,2022
@@ -33977,8 +33214,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95018,Argenteuil,95,35055,Chantepie,35,0.97,2022
 95063,Bezons,95,35055,Chantepie,35,3.78,2022
 95637,Vauréal,95,35055,Chantepie,35,1.94,2022
-98818,Nouméa,98,35055,Chantepie,35,3.27,2022
-99999,Résidence antérieure dans un pays étranger,99,35055,Chantepie,35,52.8,2022
 35024,Betton,35,35057,La Chapelle-Bouëxic,35,5.04,2022
 35059,La Chapelle-des-Fougeretz,35,35057,La Chapelle-Bouëxic,35,4.9,2022
 35238,Rennes,35,35057,La Chapelle-Bouëxic,35,4.77,2022
@@ -34026,7 +33261,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 91661,Villebon-sur-Yvette,91,35059,La Chapelle-des-Fougeretz,35,24.01,2022
 92023,Clamart,92,35059,La Chapelle-des-Fougeretz,35,19.74,2022
 95306,Herblay-sur-Seine,95,35059,La Chapelle-des-Fougeretz,35,5.14,2022
-99999,Résidence antérieure dans un pays étranger,99,35059,La Chapelle-des-Fougeretz,35,10.15,2022
 35001,Acigné,35,35060,La Chapelle du Lou du Lac,35,8.62,2022
 35245,Romillé,35,35060,La Chapelle du Lou du Lac,35,4.31,2022
 35275,Saint-Gilles,35,35060,La Chapelle du Lou du Lac,35,9.51,2022
@@ -34050,7 +33284,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 49244,Mauges-sur-Loire,49,35065,La Chapelle-Thouarault,35,5.09,2022
 49248,Ombrée d'Anjou,49,35065,La Chapelle-Thouarault,35,5.13,2022
 77274,Marcilly,77,35065,La Chapelle-Thouarault,35,20.03,2022
-97415,Saint-Paul,97,35065,La Chapelle-Thouarault,35,10.18,2022
 03094,Creuzier-le-Vieux,03,35066,Chartres-de-Bretagne,35,4.82,2022
 10357,Saint-Parres-aux-Tertres,10,35066,Chartres-de-Bretagne,35,9.54,2022
 22278,Saint-Brieuc,22,35066,Chartres-de-Bretagne,35,4.75,2022
@@ -34119,8 +33352,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92019,Châtenay-Malabry,92,35066,Chartres-de-Bretagne,35,14.24,2022
 94017,Champigny-sur-Marne,94,35066,Chartres-de-Bretagne,35,9.59,2022
 95585,Sarcelles,95,35066,Chartres-de-Bretagne,35,4.82,2022
-97611,Mamoudzou,97,35066,Chartres-de-Bretagne,35,9.59,2022
-99999,Résidence antérieure dans un pays étranger,99,35066,Chartres-de-Bretagne,35,38.26,2022
 35024,Betton,35,35067,Chasné-sur-Illet,35,5.24,2022
 35047,Bruz,35,35067,Chasné-sur-Illet,35,10.49,2022
 35051,Cesson-Sévigné,35,35067,Chasné-sur-Illet,35,10.5,2022
@@ -34187,8 +33418,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 81225,Rivières,81,35076,Chavagne,35,4.83,2022
 92012,Boulogne-Billancourt,92,35076,Chavagne,35,4.51,2022
 93006,Bagnolet,93,35076,Chavagne,35,9.12,2022
-97411,Saint-Denis,97,35076,Chavagne,35,4.51,2022
-99999,Résidence antérieure dans un pays étranger,99,35076,Chavagne,35,4.61,2022
 35238,Rennes,35,35077,Chelun,35,4.91,2022
 35363,Pont-Péan,35,35078,Cherrueix,35,4.87,2022
 76540,Rouen,76,35078,Cherrueix,35,10.24,2022
@@ -34261,7 +33490,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 49328,Saumur,49,35088,Corps-Nuds,35,4.91,2022
 58112,La Fermeté,58,35088,Corps-Nuds,35,14.72,2022
 91086,Bondoufle,91,35088,Corps-Nuds,35,9.55,2022
-99999,Résidence antérieure dans un pays étranger,99,35088,Corps-Nuds,35,14.59,2022
 35206,Noyal-Châtillon-sur-Seiche,35,35089,La Couyère,35,14.47,2022
 35047,Bruz,35,35090,Crevin,35,9.95,2022
 35051,Cesson-Sévigné,35,35090,Crevin,35,9.95,2022
@@ -34377,7 +33605,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 85194,Les Sables-d'Olonne,85,35120,Gévezé,35,10.91,2022
 86290,La Villedieu-du-Clain,86,35120,Gévezé,35,21.43,2022
 92020,Châtillon,92,35120,Gévezé,35,16.07,2022
-99999,Résidence antérieure dans un pays étranger,99,35120,Gévezé,35,5.45,2022
 35051,Cesson-Sévigné,35,35121,Gosné,35,9.68,2022
 35047,Bruz,35,35123,Goven,35,39.7,2022
 35051,Cesson-Sévigné,35,35123,Goven,35,5.0,2022
@@ -34470,7 +33697,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 72264,Sablé-sur-Sarthe,72,35131,L'Hermitage,35,5.22,2022
 75120,Paris 20e Arrondissement,75,35131,L'Hermitage,35,4.81,2022
 92040,Issy-les-Moulineaux,92,35131,L'Hermitage,35,19.24,2022
-99999,Résidence antérieure dans un pays étranger,99,35131,L'Hermitage,35,31.69,2022
 35001,Acigné,35,35133,Iffendic,35,10.0,2022
 35051,Cesson-Sévigné,35,35133,Iffendic,35,10.0,2022
 35080,Cintré,35,35133,Iffendic,35,19.99,2022
@@ -34519,7 +33745,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 78397,Le Mesnil-Saint-Denis,78,35139,Laillé,35,5.31,2022
 86066,Châtellerault,86,35139,Laillé,35,5.0,2022
 94081,Vitry-sur-Seine,94,35139,Laillé,35,23.57,2022
-99999,Résidence antérieure dans un pays étranger,99,35139,Laillé,35,50.36,2022
 35238,Rennes,35,35140,Lalleu,35,10.04,2022
 35238,Rennes,35,35143,Landujan,35,14.8,2022
 28336,Saint-Éman,28,35144,Langan,35,19.62,2022
@@ -34659,11 +33884,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76648,Saint-Saëns,76,35189,Montgermont,35,5.6,2022
 91573,Saint-Pierre-du-Perray,91,35189,Montgermont,35,5.6,2022
 94042,Joinville-le-Pont,94,35189,Montgermont,35,5.48,2022
-97222,Le Robert,97,35189,Montgermont,35,21.02,2022
-97409,Saint-André,97,35189,Montgermont,35,10.51,2022
-97411,Saint-Denis,97,35189,Montgermont,35,10.74,2022
-97412,Saint-Joseph,97,35189,Montgermont,35,5.37,2022
-99999,Résidence antérieure dans un pays étranger,99,35189,Montgermont,35,5.25,2022
 35059,La Chapelle-des-Fougeretz,35,35193,Montreuil-le-Gast,35,4.76,2022
 35120,Gévezé,35,35193,Montreuil-le-Gast,35,4.61,2022
 35238,Rennes,35,35193,Montreuil-le-Gast,35,48.36,2022
@@ -34735,7 +33955,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 91201,Draveil,91,35196,Mordelles,35,15.05,2022
 92040,Issy-les-Moulineaux,92,35196,Mordelles,35,20.06,2022
 93070,Saint-Ouen-sur-Seine,93,35196,Mordelles,35,5.02,2022
-99999,Résidence antérieure dans un pays étranger,99,35196,Mordelles,35,15.05,2022
 35047,Bruz,35,35197,Mouazé,35,4.63,2022
 35079,Chevaigné,35,35197,Mouazé,35,4.81,2022
 35238,Rennes,35,35197,Mouazé,35,25.33,2022
@@ -34761,7 +33980,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 35352,Vern-sur-Seiche,35,35204,Nouvoitou,35,4.69,2022
 44109,Nantes,44,35204,Nouvoitou,35,14.48,2022
 45234,Orléans,45,35204,Nouvoitou,35,5.01,2022
-99999,Résidence antérieure dans un pays étranger,99,35204,Nouvoitou,35,14.38,2022
 06027,Cagnes-sur-Mer,06,35206,Noyal-Châtillon-sur-Seiche,35,4.64,2022
 13203,Marseille 3e Arrondissement,13,35206,Noyal-Châtillon-sur-Seiche,35,4.72,2022
 17300,La Rochelle,17,35206,Noyal-Châtillon-sur-Seiche,35,4.64,2022
@@ -34821,9 +34039,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 91589,Savigny-sur-Orge,91,35206,Noyal-Châtillon-sur-Seiche,35,9.27,2022
 92024,Clichy,92,35206,Noyal-Châtillon-sur-Seiche,35,19.55,2022
 94016,Cachan,94,35206,Noyal-Châtillon-sur-Seiche,35,14.41,2022
-97416,Saint-Pierre,97,35206,Noyal-Châtillon-sur-Seiche,35,4.64,2022
-97617,Tsingoni,97,35206,Noyal-Châtillon-sur-Seiche,35,4.8,2022
-99999,Résidence antérieure dans un pays étranger,99,35206,Noyal-Châtillon-sur-Seiche,35,43.84,2022
 35001,Acigné,35,35207,Noyal-sur-Vilaine,35,16.39,2022
 35032,Bourgbarré,35,35207,Noyal-sur-Vilaine,35,5.46,2022
 35051,Cesson-Sévigné,35,35207,Noyal-sur-Vilaine,35,39.0,2022
@@ -34976,8 +34191,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93032,Gagny,93,35210,Pacé,35,12.51,2022
 93063,Romainville,93,35210,Pacé,35,2.78,2022
 95424,Montigny-lès-Cormeilles,95,35210,Pacé,35,7.81,2022
-98735,Papeete,98,35210,Pacé,35,3.39,2022
-99999,Résidence antérieure dans un pays étranger,99,35210,Pacé,35,40.21,2022
 35210,Pacé,35,35211,Paimpont,35,4.96,2022
 35238,Rennes,35,35211,Paimpont,35,9.92,2022
 35240,Le Rheu,35,35211,Paimpont,35,9.92,2022
@@ -36630,61 +35843,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95574,Saint-Prix,95,35238,Rennes,35,1.78,2022
 95585,Sarcelles,95,35238,Rennes,35,14.73,2022
 95607,Taverny,95,35238,Rennes,35,4.61,2022
-97101,Les Abymes,97,35238,Rennes,35,28.71,2022
-97103,Baie-Mahault,97,35238,Rennes,35,3.67,2022
-97113,Le Gosier,97,35238,Rennes,35,6.59,2022
-97116,Morne-à-l'Eau,97,35238,Rennes,35,0.98,2022
-97118,Petit-Bourg,97,35238,Rennes,35,6.65,2022
-97119,Petit-Canal,97,35238,Rennes,35,1.13,2022
-97120,Pointe-à-Pitre,97,35238,Rennes,35,2.85,2022
-97121,Pointe-Noire,97,35238,Rennes,35,3.53,2022
-97125,Saint-François,97,35238,Rennes,35,4.59,2022
-97128,Sainte-Anne,97,35238,Rennes,35,6.54,2022
-97129,Sainte-Rose,97,35238,Rennes,35,1.24,2022
-97132,Trois-Rivières,97,35238,Rennes,35,0.97,2022
-97208,Fonds-Saint-Denis,97,35238,Rennes,35,1.16,2022
-97209,Fort-de-France,97,35238,Rennes,35,1.09,2022
-97212,Gros-Morne,97,35238,Rennes,35,3.71,2022
-97213,Le Lamentin,97,35238,Rennes,35,1.55,2022
-97214,Le Lorrain,97,35238,Rennes,35,1.25,2022
-97222,Le Robert,97,35238,Rennes,35,2.76,2022
-97226,Sainte-Anne,97,35238,Rennes,35,2.32,2022
-97228,Sainte-Marie,97,35238,Rennes,35,1.42,2022
-97302,Cayenne,97,35238,Rennes,35,74.37,2022
-97304,Kourou,97,35238,Rennes,35,1.78,2022
-97306,Mana,97,35238,Rennes,35,1.24,2022
-97307,Matoury,97,35238,Rennes,35,2.56,2022
-97311,Saint-Laurent-du-Maroni,97,35238,Rennes,35,16.27,2022
-97401,Les Avirons,97,35238,Rennes,35,0.98,2022
-97402,Bras-Panon,97,35238,Rennes,35,8.84,2022
-97407,Le Port,97,35238,Rennes,35,1.12,2022
-97408,La Possession,97,35238,Rennes,35,1.28,2022
-97409,Saint-André,97,35238,Rennes,35,1.41,2022
-97410,Saint-Benoît,97,35238,Rennes,35,2.44,2022
-97411,Saint-Denis,97,35238,Rennes,35,43.93,2022
-97413,Saint-Leu,97,35238,Rennes,35,11.7,2022
-97414,Saint-Louis,97,35238,Rennes,35,2.34,2022
-97415,Saint-Paul,97,35238,Rennes,35,16.03,2022
-97416,Saint-Pierre,97,35238,Rennes,35,12.0,2022
-97420,Sainte-Suzanne,97,35238,Rennes,35,4.79,2022
-97421,Salazie,97,35238,Rennes,35,1.03,2022
-97422,Le Tampon,97,35238,Rennes,35,5.96,2022
-97502,97502,97,35238,Rennes,35,1.41,2022
-97601,Acoua,97,35238,Rennes,35,6.19,2022
-97603,Bandrele,97,35238,Rennes,35,1.97,2022
-97604,Bouéni,97,35238,Rennes,35,10.49,2022
-97605,Chiconi,97,35238,Rennes,35,1.12,2022
-97606,Chirongui,97,35238,Rennes,35,1.16,2022
-97608,Dzaoudzi,97,35238,Rennes,35,17.13,2022
-97611,Mamoudzou,97,35238,Rennes,35,75.71,2022
-97612,Mtsamboro,97,35238,Rennes,35,3.44,2022
-97615,Pamandzi,97,35238,Rennes,35,2.14,2022
-97616,Sada,97,35238,Rennes,35,2.97,2022
-98733,Paea,98,35238,Rennes,35,8.49,2022
-98736,Pirae,98,35238,Rennes,35,1.78,2022
-98813,La Foa,98,35238,Rennes,35,0.98,2022
-98818,Nouméa,98,35238,Rennes,35,11.2,2022
-99999,Résidence antérieure dans un pays étranger,99,35238,Rennes,35,2139.17,2022
 35055,Chantepie,35,35239,Retiers,35,10.29,2022
 35088,Corps-Nuds,35,35239,Retiers,35,14.89,2022
 35204,Nouvoitou,35,35239,Retiers,35,9.23,2022
@@ -36763,7 +35921,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92062,Puteaux,92,35240,Le Rheu,35,9.99,2022
 92063,Rueil-Malmaison,92,35240,Le Rheu,35,19.98,2022
 94016,Cachan,94,35240,Le Rheu,35,4.99,2022
-99999,Résidence antérieure dans un pays étranger,99,35240,Le Rheu,35,39.96,2022
 35001,Acigné,35,35241,La Richardais,35,5.68,2022
 35032,Bourgbarré,35,35241,La Richardais,35,16.11,2022
 35216,Parthenay-de-Bretagne,35,35241,La Richardais,35,5.68,2022
@@ -36877,8 +36034,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 56195,La Roche-Bernard,56,35266,Saint-Erblon,35,5.41,2022
 56243,Séné,56,35266,Saint-Erblon,35,5.34,2022
 71270,Mâcon,71,35266,Saint-Erblon,35,10.68,2022
-97603,Bandrele,97,35266,Saint-Erblon,35,5.09,2022
-99999,Résidence antérieure dans un pays étranger,99,35266,Saint-Erblon,35,10.68,2022
 76705,Tourville-la-Rivière,76,35271,Saint-Georges-de-Reintembault,35,10.09,2022
 35238,Rennes,35,35273,Saint-Germain-en-Coglès,35,14.8,2022
 35079,Chevaigné,35,35274,Saint-Germain-sur-Ille,35,15.29,2022
@@ -36989,7 +36144,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92024,Clichy,92,35278,Saint-Grégoire,35,19.83,2022
 94018,Charenton-le-Pont,94,35278,Saint-Grégoire,35,10.35,2022
 94037,Gentilly,94,35278,Saint-Grégoire,35,15.2,2022
-99999,Résidence antérieure dans un pays étranger,99,35278,Saint-Grégoire,35,20.16,2022
 35238,Rennes,35,35279,Saint-Guinoux,35,5.16,2022
 35001,Acigné,35,35280,Saint-Hilaire-des-Landes,35,10.42,2022
 35238,Rennes,35,35280,Saint-Hilaire-des-Landes,35,4.72,2022
@@ -37161,11 +36315,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94016,Cachan,94,35281,Saint-Jacques-de-la-Lande,35,4.23,2022
 94019,Chennevières-sur-Marne,94,35281,Saint-Jacques-de-la-Lande,35,3.53,2022
 95127,Cergy,95,35281,Saint-Jacques-de-la-Lande,35,3.53,2022
-97305,Macouria,97,35281,Saint-Jacques-de-la-Lande,35,20.2,2022
-97403,Entre-Deux,97,35281,Saint-Jacques-de-la-Lande,35,4.17,2022
-97411,Saint-Denis,97,35281,Saint-Jacques-de-la-Lande,35,8.08,2022
-97609,Kani-Kéli,97,35281,Saint-Jacques-de-la-Lande,35,2.79,2022
-99999,Résidence antérieure dans un pays étranger,99,35281,Saint-Jacques-de-la-Lande,35,74.58,2022
 35238,Rennes,35,35282,Rives-du-Couesnon,35,34.74,2022
 35281,Saint-Jacques-de-la-Lande,35,35282,Rives-du-Couesnon,35,4.81,2022
 35238,Rennes,35,35285,Saint-Just,35,4.97,2022
@@ -37304,7 +36453,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 91339,Linas,91,35334,Thorigné-Fouillard,35,10.38,2022
 91549,Sainte-Geneviève-des-Bois,91,35334,Thorigné-Fouillard,35,5.31,2022
 94028,Créteil,94,35334,Thorigné-Fouillard,35,5.31,2022
-99999,Résidence antérieure dans un pays étranger,99,35334,Thorigné-Fouillard,35,5.19,2022
 35080,Cintré,35,35335,Thourie,35,4.88,2022
 35281,Saint-Jacques-de-la-Lande,35,35335,Thourie,35,9.78,2022
 35238,Rennes,35,35336,Le Tiercent,35,9.95,2022
@@ -37375,7 +36523,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 78126,La Celle-Saint-Cloud,78,35352,Vern-sur-Seiche,35,10.32,2022
 78551,Saint-Germain-en-Laye,78,35352,Vern-sur-Seiche,35,19.26,2022
 85099,Le Girouard,85,35352,Vern-sur-Seiche,35,13.95,2022
-99999,Résidence antérieure dans un pays étranger,99,35352,Vern-sur-Seiche,35,10.16,2022
 16364,Sauvagnac,16,35353,Vezin-le-Coquet,35,5.0,2022
 22056,Évran,22,35353,Vezin-le-Coquet,35,4.99,2022
 31395,Muret,31,35353,Vezin-le-Coquet,35,9.98,2022
@@ -37406,7 +36553,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 91161,Chilly-Mazarin,91,35353,Vezin-le-Coquet,35,4.99,2022
 92014,Bourg-la-Reine,92,35353,Vezin-le-Coquet,35,9.98,2022
 94058,Le Perreux-sur-Marne,94,35353,Vezin-le-Coquet,35,14.97,2022
-99999,Résidence antérieure dans un pays étranger,99,35353,Vezin-le-Coquet,35,24.94,2022
 35079,Chevaigné,35,35355,Vieux-Vy-sur-Couesnon,35,9.69,2022
 35210,Pacé,35,35355,Vieux-Vy-sur-Couesnon,35,26.39,2022
 35238,Rennes,35,35355,Vieux-Vy-sur-Couesnon,35,19.38,2022
@@ -37458,7 +36604,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 85190,Rocheservière,85,35363,Pont-Péan,35,5.1,2022
 92026,Courbevoie,92,35363,Pont-Péan,35,4.72,2022
 95680,Villiers-le-Bel,95,35363,Pont-Péan,35,5.31,2022
-99999,Résidence antérieure dans un pays étranger,99,35363,Pont-Péan,35,10.21,2022
 76540,Rouen,76,36001,Aigurande,36,4.96,2022
 38185,Grenoble,38,36018,Le Blanc,36,5.08,2022
 35066,Chartres-de-Bretagne,35,36034,Chabris,36,4.96,2022
@@ -37593,7 +36738,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38529,Vaulnaveys-le-Haut,38,38057,Bresson,38,5.13,2022
 38565,Voreppe,38,38057,Bresson,38,5.28,2022
 75114,Paris 14e Arrondissement,75,38057,Bresson,38,14.96,2022
-99999,Résidence antérieure dans un pays étranger,99,38057,Bresson,38,4.85,2022
 38185,Grenoble,38,38058,Brézins,38,5.21,2022
 38524,Varces-Allières-et-Risset,38,38058,Brézins,38,10.59,2022
 38059,Brié-et-Angonnes,38,38059,Brié-et-Angonnes,38,2372.45,2022
@@ -37626,7 +36770,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38486,Seyssins,38,38068,Champagnier,38,5.05,2022
 69388,Lyon 8e Arrondissement,69,38068,Champagnier,38,20.2,2022
 78551,Saint-Germain-en-Laye,78,38068,Champagnier,38,15.15,2022
-98818,Nouméa,98,38068,Champagnier,38,5.05,2022
 38185,Grenoble,38,38070,Le Champ-près-Froges,38,14.34,2022
 38421,Saint-Martin-d'Hères,38,38070,Le Champ-près-Froges,38,4.55,2022
 38071,Champ-sur-Drac,38,38071,Champ-sur-Drac,38,3115.7,2022
@@ -37640,7 +36783,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38527,Vaujany,38,38071,Champ-sur-Drac,38,10.25,2022
 38562,Vizille,38,38071,Champ-sur-Drac,38,15.76,2022
 59004,Aix-en-Pévèle,59,38071,Champ-sur-Drac,38,5.32,2022
-99999,Résidence antérieure dans un pays étranger,99,38071,Champ-sur-Drac,38,10.16,2022
 42186,Rive-de-Gier,42,38072,Chanas,38,15.2,2022
 38421,Saint-Martin-d'Hères,38,38073,Chantepérier,38,9.17,2022
 38150,Domène,38,38074,Chantesse,38,15.7,2022
@@ -37741,7 +36883,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 75114,Paris 14e Arrondissement,75,38126,Corenc,38,4.87,2022
 92040,Issy-les-Moulineaux,92,38126,Corenc,38,4.95,2022
 94080,Vincennes,94,38126,Corenc,38,9.98,2022
-99999,Résidence antérieure dans un pays étranger,99,38126,Corenc,38,29.54,2022
 38151,Échirolles,38,38128,Corps,38,5.0,2022
 38325,Proveysieux,38,38129,Corrençon-en-Vercors,38,5.23,2022
 35238,Rennes,35,38130,La Côte-Saint-André,38,9.17,2022
@@ -37969,8 +37110,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94028,Créteil,94,38151,Échirolles,38,1.47,2022
 94037,Gentilly,94,38151,Échirolles,38,1.47,2022
 95018,Argenteuil,95,38151,Échirolles,38,3.33,2022
-97113,Le Gosier,97,38151,Échirolles,38,6.69,2022
-99999,Résidence antérieure dans un pays étranger,99,38151,Échirolles,38,256.77,2022
 38185,Grenoble,38,38153,Engins,38,13.24,2022
 38185,Grenoble,38,38154,Entraigues,38,10.47,2022
 38421,Saint-Martin-d'Hères,38,38157,Estrablin,38,5.07,2022
@@ -38027,9 +37166,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 81174,Montdragon,81,38158,Eybens,38,3.04,2022
 92026,Courbevoie,92,38158,Eybens,38,4.37,2022
 93048,Montreuil,93,38158,Eybens,38,4.98,2022
-97611,Mamoudzou,97,38158,Eybens,38,5.38,2022
-97617,Tsingoni,97,38158,Eybens,38,0.87,2022
-99999,Résidence antérieure dans un pays étranger,99,38158,Eybens,38,16.62,2022
 38421,Saint-Martin-d'Hères,38,38159,Eydoche,38,5.0,2022
 38151,Échirolles,38,38166,La Flachère,38,4.76,2022
 38185,Grenoble,38,38166,La Flachère,38,4.99,2022
@@ -38157,11 +37293,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93079,Villetaneuse,93,38169,Fontaine,38,1.12,2022
 94068,Saint-Maur-des-Fossés,94,38169,Fontaine,38,2.25,2022
 95127,Cergy,95,38169,Fontaine,38,3.35,2022
-97302,Cayenne,97,38169,Fontaine,38,1.77,2022
-97309,Remire-Montjoly,97,38169,Fontaine,38,4.83,2022
-97416,Saint-Pierre,97,38169,Fontaine,38,5.05,2022
-98738,Punaauia,98,38169,Fontaine,38,9.06,2022
-99999,Résidence antérieure dans un pays étranger,99,38169,Fontaine,38,74.95,2022
 26139,Génissieux,26,38170,Fontanil-Cornillon,38,5.28,2022
 38013,Apprieu,38,38170,Fontanil-Cornillon,38,5.0,2022
 38017,Assieu,38,38170,Fontanil-Cornillon,38,10.22,2022
@@ -38267,7 +37398,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 87085,Limoges,87,38179,Gières,38,15.54,2022
 91377,Massy,91,38179,Gières,38,5.19,2022
 92078,Villeneuve-la-Garenne,92,38179,Gières,38,15.44,2022
-99999,Résidence antérieure dans un pays étranger,99,38179,Gières,38,15.5,2022
 38185,Grenoble,38,38181,Goncelin,38,4.52,2022
 38421,Saint-Martin-d'Hères,38,38181,Goncelin,38,19.92,2022
 38485,Seyssinet-Pariset,38,38181,Goncelin,38,4.52,2022
@@ -39327,37 +38457,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95388,Menucourt,95,38185,Grenoble,38,11.97,2022
 95598,Soisy-sous-Montmorency,95,38185,Grenoble,38,2.51,2022
 95637,Vauréal,95,38185,Grenoble,38,3.58,2022
-97101,Les Abymes,97,38185,Grenoble,38,3.35,2022
-97103,Baie-Mahault,97,38185,Grenoble,38,1.42,2022
-97117,Le Moule,97,38185,Grenoble,38,1.18,2022
-97132,Trois-Rivières,97,38185,Grenoble,38,1.04,2022
-97133,Vieux-Fort,97,38185,Grenoble,38,17.27,2022
-97209,Fort-de-France,97,38185,Grenoble,38,2.66,2022
-97230,La Trinité,97,38185,Grenoble,38,1.37,2022
-97302,Cayenne,97,38185,Grenoble,38,23.23,2022
-97311,Saint-Laurent-du-Maroni,97,38185,Grenoble,38,7.08,2022
-97402,Bras-Panon,97,38185,Grenoble,38,9.23,2022
-97408,La Possession,97,38185,Grenoble,38,9.44,2022
-97409,Saint-André,97,38185,Grenoble,38,13.26,2022
-97411,Saint-Denis,97,38185,Grenoble,38,2.95,2022
-97413,Saint-Leu,97,38185,Grenoble,38,13.06,2022
-97415,Saint-Paul,97,38185,Grenoble,38,6.38,2022
-97416,Saint-Pierre,97,38185,Grenoble,38,0.89,2022
-97418,Sainte-Marie,97,38185,Grenoble,38,1.03,2022
-97419,Sainte-Rose,97,38185,Grenoble,38,2.83,2022
-97420,Sainte-Suzanne,97,38185,Grenoble,38,1.03,2022
-97421,Salazie,97,38185,Grenoble,38,2.83,2022
-97604,Bouéni,97,38185,Grenoble,38,1.31,2022
-97608,Dzaoudzi,97,38185,Grenoble,38,2.86,2022
-97610,Koungou,97,38185,Grenoble,38,1.51,2022
-97611,Mamoudzou,97,38185,Grenoble,38,7.4,2022
-97616,Sada,97,38185,Grenoble,38,4.23,2022
-97617,Tsingoni,97,38185,Grenoble,38,4.06,2022
-98735,Papeete,98,38185,Grenoble,38,9.55,2022
-98736,Pirae,98,38185,Grenoble,38,6.98,2022
-98738,Punaauia,98,38185,Grenoble,38,1.33,2022
-98818,Nouméa,98,38185,Grenoble,38,5.53,2022
-99999,Résidence antérieure dans un pays étranger,99,38185,Grenoble,38,2360.16,2022
 38158,Eybens,38,38186,Gresse-en-Vercors,38,5.15,2022
 38185,Grenoble,38,38186,Gresse-en-Vercors,38,4.86,2022
 38187,Le Gua,38,38186,Gresse-en-Vercors,38,9.72,2022
@@ -39369,7 +38468,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38235,Miribel-Lanchâtre,38,38187,Le Gua,38,25.24,2022
 38303,La Pierre,38,38187,Le Gua,38,9.79,2022
 38545,Vif,38,38187,Le Gua,38,29.82,2022
-99999,Résidence antérieure dans un pays étranger,99,38187,Le Gua,38,4.89,2022
 38158,Eybens,38,38188,Herbeys,38,20.04,2022
 38185,Grenoble,38,38188,Herbeys,38,15.44,2022
 38188,Herbeys,38,38188,Herbeys,38,1321.63,2022
@@ -39401,8 +38499,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38562,Vizille,38,38200,Jarrie,38,15.51,2022
 42056,Chavanay,42,38200,Jarrie,38,5.23,2022
 83032,Carcès,83,38200,Jarrie,38,10.45,2022
-97125,Saint-François,97,38200,Jarrie,38,20.25,2022
-99999,Résidence antérieure dans un pays étranger,99,38200,Jarrie,38,5.14,2022
 38059,Brié-et-Angonnes,38,38203,Laffrey,38,4.78,2022
 38150,Domène,38,38205,Lans-en-Vercors,38,5.34,2022
 38151,Échirolles,38,38205,Lans-en-Vercors,38,10.34,2022
@@ -39560,12 +38656,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94046,Maisons-Alfort,94,38229,Meylan,38,6.23,2022
 94068,Saint-Maur-des-Fossés,94,38229,Meylan,38,1.65,2022
 95063,Bezons,95,38229,Meylan,38,3.61,2022
-97229,Schœlcher,97,38229,Meylan,38,4.62,2022
-97309,Remire-Montjoly,97,38229,Meylan,38,10.79,2022
-97408,La Possession,97,38229,Meylan,38,3.61,2022
-97413,Saint-Leu,97,38229,Meylan,38,4.73,2022
-97611,Mamoudzou,97,38229,Meylan,38,1.23,2022
-99999,Résidence antérieure dans un pays étranger,99,38229,Meylan,38,76.62,2022
 34270,Saint-Jean-de-Védas,34,38230,Meyrié,38,9.86,2022
 38071,Champ-sur-Drac,38,38235,Miribel-Lanchâtre,38,15.0,2022
 38151,Échirolles,38,38235,Miribel-Lanchâtre,38,5.45,2022
@@ -39632,7 +38722,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38271,Murianette,38,38271,Murianette,38,784.99,2022
 38334,Revel,38,38271,Murianette,38,5.77,2022
 38421,Saint-Martin-d'Hères,38,38271,Murianette,38,23.16,2022
-99999,Résidence antérieure dans un pays étranger,99,38271,Murianette,38,4.89,2022
 38474,Sassenage,38,38272,Murinais,38,5.16,2022
 38185,Grenoble,38,38273,Nantes-en-Ratier,38,14.95,2022
 42218,Saint-Étienne,42,38276,Nivolas-Vermelle,38,5.08,2022
@@ -39738,8 +38827,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 75119,Paris 19e Arrondissement,75,38317,Le Pont-de-Claix,38,2.59,2022
 83023,Brignoles,83,38317,Le Pont-de-Claix,38,4.78,2022
 92062,Puteaux,92,38317,Le Pont-de-Claix,38,4.97,2022
-97611,Mamoudzou,97,38317,Le Pont-de-Claix,38,1.16,2022
-99999,Résidence antérieure dans un pays étranger,99,38317,Le Pont-de-Claix,38,54.35,2022
 38474,Sassenage,38,38321,Prébois,38,4.75,2022
 38185,Grenoble,38,38323,Pressins,38,5.04,2022
 38529,Vaulnaveys-le-Haut,38,38323,Pressins,38,4.94,2022
@@ -39898,8 +38985,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92063,Rueil-Malmaison,92,38382,Saint-Égrève,38,4.1,2022
 93032,Gagny,93,38382,Saint-Égrève,38,12.94,2022
 94038,L'Haÿ-les-Roses,94,38382,Saint-Égrève,38,6.56,2022
-97411,Saint-Denis,97,38382,Saint-Égrève,38,1.06,2022
-99999,Résidence antérieure dans un pays étranger,99,38382,Saint-Égrève,38,125.1,2022
 38382,Saint-Égrève,38,38383,Saint-Étienne-de-Crossey,38,19.95,2022
 38151,Échirolles,38,38384,Saint-Étienne-de-Saint-Geoirs,38,9.76,2022
 38169,Fontaine,38,38384,Saint-Étienne-de-Saint-Geoirs,38,29.95,2022
@@ -39922,7 +39007,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 63113,Clermont-Ferrand,63,38388,Saint-Georges-de-Commiers,38,5.35,2022
 83146,La Verdière,83,38388,Saint-Georges-de-Commiers,38,5.27,2022
 91645,Verrières-le-Buisson,91,38388,Saint-Georges-de-Commiers,38,5.3,2022
-99999,Résidence antérieure dans un pays étranger,99,38388,Saint-Georges-de-Commiers,38,10.6,2022
 38185,Grenoble,38,38389,Saint-Georges-d'Espéranche,38,5.09,2022
 38317,Le Pont-de-Claix,38,38390,Saint-Gervais,38,14.54,2022
 42218,Saint-Étienne,42,38390,Saint-Gervais,38,20.08,2022
@@ -40448,15 +39532,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95127,Cergy,95,38421,Saint-Martin-d'Hères,38,20.3,2022
 95219,Ermont,95,38421,Saint-Martin-d'Hères,38,3.65,2022
 95424,Montigny-lès-Cormeilles,95,38421,Saint-Martin-d'Hères,38,0.97,2022
-97217,Le Marin,97,38421,Saint-Martin-d'Hères,38,0.97,2022
-97222,Le Robert,97,38421,Saint-Martin-d'Hères,38,0.97,2022
-97306,Mana,97,38421,Saint-Martin-d'Hères,38,0.97,2022
-97353,Maripasoula,97,38421,Saint-Martin-d'Hères,38,3.46,2022
-97410,Saint-Benoît,97,38421,Saint-Martin-d'Hères,38,1.67,2022
-97411,Saint-Denis,97,38421,Saint-Martin-d'Hères,38,12.79,2022
-97414,Saint-Louis,97,38421,Saint-Martin-d'Hères,38,3.14,2022
-97615,Pamandzi,97,38421,Saint-Martin-d'Hères,38,3.14,2022
-99999,Résidence antérieure dans un pays étranger,99,38421,Saint-Martin-d'Hères,38,400.24,2022
 38059,Brié-et-Angonnes,38,38422,Saint-Martin-d'Uriage,38,19.6,2022
 38151,Échirolles,38,38422,Saint-Martin-d'Uriage,38,10.91,2022
 38158,Eybens,38,38422,Saint-Martin-d'Uriage,38,24.62,2022
@@ -40515,7 +39590,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 75120,Paris 20e Arrondissement,75,38423,Saint-Martin-le-Vinoux,38,4.82,2022
 87085,Limoges,87,38423,Saint-Martin-le-Vinoux,38,4.56,2022
 95203,Eaubonne,95,38423,Saint-Martin-le-Vinoux,38,4.69,2022
-99999,Résidence antérieure dans un pays étranger,99,38423,Saint-Martin-le-Vinoux,38,61.65,2022
 38516,La Tronche,38,38425,Saint-Maurice-l'Exil,38,4.85,2022
 76540,Rouen,76,38425,Saint-Maurice-l'Exil,38,9.81,2022
 38421,Saint-Martin-d'Hères,38,38428,Saint-Michel-en-Beaumont,38,4.0,2022
@@ -40578,7 +39652,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 38471,Le Sappey-en-Chartreuse,38,38471,Le Sappey-en-Chartreuse,38,1035.37,2022
 38565,Voreppe,38,38471,Le Sappey-en-Chartreuse,38,10.13,2022
 73065,Chambéry,73,38471,Le Sappey-en-Chartreuse,38,10.13,2022
-99999,Résidence antérieure dans un pays étranger,99,38471,Le Sappey-en-Chartreuse,38,10.14,2022
 38472,Sarcenas,38,38472,Sarcenas,38,238.37,2022
 05023,Briançon,05,38474,Sassenage,38,3.23,2022
 07337,Vernosc-lès-Annonay,07,38474,Sassenage,38,1.61,2022
@@ -40638,7 +39711,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 74021,Arthaz-Pont-Notre-Dame,74,38474,Sassenage,38,1.14,2022
 87085,Limoges,87,38474,Sassenage,38,3.93,2022
 91477,Palaiseau,91,38474,Sassenage,38,5.0,2022
-99999,Résidence antérieure dans un pays étranger,99,38474,Sassenage,38,26.99,2022
 38478,Séchilienne,38,38478,Séchilienne,38,994.06,2022
 38562,Vizille,38,38478,Séchilienne,38,9.94,2022
 38524,Varces-Allières-et-Risset,38,38479,Porte-des-Bonnevaux,38,9.21,2022
@@ -40704,8 +39776,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 84007,Avignon,84,38485,Seyssinet-Pariset,38,5.2,2022
 90052,Giromagny,90,38485,Seyssinet-Pariset,38,2.54,2022
 94067,Saint-Mandé,94,38485,Seyssinet-Pariset,38,10.2,2022
-97302,Cayenne,97,38485,Seyssinet-Pariset,38,4.07,2022
-99999,Résidence antérieure dans un pays étranger,99,38485,Seyssinet-Pariset,38,28.48,2022
 05165,Savournon,05,38486,Seyssins,38,5.0,2022
 13016,La Bouilladisse,13,38486,Seyssins,38,25.01,2022
 13213,Marseille 13e Arrondissement,13,38486,Seyssins,38,5.0,2022
@@ -40746,7 +39816,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 83050,Draguignan,83,38486,Seyssins,38,5.0,2022
 92050,Nanterre,92,38486,Seyssins,38,5.0,2022
 95197,Deuil-la-Barre,95,38486,Seyssins,38,10.0,2022
-99999,Résidence antérieure dans un pays étranger,99,38486,Seyssins,38,15.01,2022
 38185,Grenoble,38,38487,Seyssuel,38,4.68,2022
 38169,Fontaine,38,38490,Sillans,38,14.8,2022
 38185,Grenoble,38,38490,Sillans,38,19.89,2022
@@ -40852,8 +39921,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 84054,L'Isle-sur-la-Sorgue,84,38516,La Tronche,38,4.78,2022
 91692,Les Ulis,91,38516,La Tronche,38,4.99,2022
 92012,Boulogne-Billancourt,92,38516,La Tronche,38,4.98,2022
-97113,Le Gosier,97,38516,La Tronche,38,9.97,2022
-99999,Résidence antérieure dans un pays étranger,99,38516,La Tronche,38,69.74,2022
 38151,Échirolles,38,38517,Tullins,38,5.0,2022
 38169,Fontaine,38,38517,Tullins,38,10.03,2022
 38185,Grenoble,38,38517,Tullins,38,25.07,2022
@@ -40914,9 +39981,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 83050,Draguignan,83,38524,Varces-Allières-et-Risset,38,14.45,2022
 83110,Rougiers,83,38524,Varces-Allières-et-Risset,38,5.14,2022
 91201,Draveil,91,38524,Varces-Allières-et-Risset,38,4.98,2022
-97302,Cayenne,97,38524,Varces-Allières-et-Risset,38,18.64,2022
-97411,Saint-Denis,97,38524,Varces-Allières-et-Risset,38,24.26,2022
-99999,Résidence antérieure dans un pays étranger,99,38524,Varces-Allières-et-Risset,38,29.22,2022
 10387,Troyes,10,38528,Vaulnaveys-le-Bas,38,14.72,2022
 38151,Échirolles,38,38528,Vaulnaveys-le-Bas,38,4.68,2022
 38185,Grenoble,38,38528,Vaulnaveys-le-Bas,38,29.56,2022
@@ -40947,7 +40011,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 74133,Gaillard,74,38529,Vaulnaveys-le-Haut,38,4.99,2022
 75120,Paris 20e Arrondissement,75,38529,Vaulnaveys-le-Haut,38,4.99,2022
 86158,Migné-Auxances,86,38529,Vaulnaveys-le-Haut,38,4.99,2022
-99999,Résidence antérieure dans un pays étranger,99,38529,Vaulnaveys-le-Haut,38,4.99,2022
 38169,Fontaine,38,38533,Venon,38,25.18,2022
 38334,Revel,38,38533,Venon,38,5.04,2022
 38533,Venon,38,38533,Venon,38,780.6,2022
@@ -41019,8 +40082,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 73011,Albertville,73,38545,Vif,38,9.99,2022
 73051,Le Bourget-du-Lac,73,38545,Vif,38,4.93,2022
 74280,Thônes,74,38545,Vif,38,10.11,2022
-97111,Deshaies,97,38545,Vif,38,9.99,2022
-99999,Résidence antérieure dans un pays étranger,99,38545,Vif,38,5.05,2022
 38150,Domène,38,38547,Villard-Bonnot,38,5.18,2022
 38151,Échirolles,38,38547,Villard-Bonnot,38,10.28,2022
 38169,Fontaine,38,38547,Villard-Bonnot,38,49.42,2022
@@ -41230,7 +40291,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 83023,Brignoles,83,42005,Andrézieux-Bouthéon,42,4.71,2022
 91103,Brétigny-sur-Orge,91,42005,Andrézieux-Bouthéon,42,4.71,2022
 93047,Montfermeil,93,42005,Andrézieux-Bouthéon,42,4.55,2022
-99999,Résidence antérieure dans un pays étranger,99,42005,Andrézieux-Bouthéon,42,79.9,2022
 42218,Saint-Étienne,42,42006,Apinac,42,9.42,2022
 42092,L'Étrat,42,42010,Aveizieux,42,9.73,2022
 42133,Marcenod,42,42010,Aveizieux,42,9.73,2022
@@ -41263,12 +40323,10 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42032,Cellieu,42,42032,Cellieu,42,1670.11,2022
 42323,Veauche,42,42032,Cellieu,42,14.65,2022
 69096,Grigny-sur-Rhône,69,42032,Cellieu,42,14.7,2022
-99999,Résidence antérieure dans un pays étranger,99,42032,Cellieu,42,4.88,2022
 42036,Chagnon,42,42036,Chagnon,42,492.45,2022
 42186,Rive-de-Gier,42,42036,Chagnon,42,4.92,2022
 42283,Saint-Romain-en-Jarez,42,42036,Chagnon,42,9.85,2022
 69149,Oullins-Pierre-Bénite,69,42036,Chagnon,42,9.85,2022
-99999,Résidence antérieure dans un pays étranger,99,42036,Chagnon,42,4.92,2022
 42275,Saint-Priest-en-Jarez,42,42038,Chalain-le-Comtal,42,9.84,2022
 42218,Saint-Étienne,42,42041,Chambéon,42,4.95,2022
 42275,Saint-Priest-en-Jarez,42,42041,Chambéon,42,19.91,2022
@@ -41319,8 +40377,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 81105,Graulhet,81,42044,Le Chambon-Feugerolles,42,2.32,2022
 83137,Toulon,83,42044,Le Chambon-Feugerolles,42,1.3,2022
 91161,Chilly-Mazarin,91,42044,Le Chambon-Feugerolles,42,4.06,2022
-97611,Mamoudzou,97,42044,Le Chambon-Feugerolles,42,2.86,2022
-99999,Résidence antérieure dans un pays étranger,99,42044,Le Chambon-Feugerolles,42,15.02,2022
 42044,Le Chambon-Feugerolles,42,42046,Champdieu,42,5.03,2022
 42218,Saint-Étienne,42,42046,Champdieu,42,14.97,2022
 42234,Saint-Héand,42,42046,Champdieu,42,19.94,2022
@@ -41331,7 +40387,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42218,Saint-Étienne,42,42053,Châteauneuf,42,9.84,2022
 42259,Saint-Martin-la-Plaine,42,42053,Châteauneuf,42,4.88,2022
 69149,Oullins-Pierre-Bénite,69,42053,Châteauneuf,42,4.88,2022
-99999,Résidence antérieure dans un pays étranger,99,42053,Châteauneuf,42,29.61,2022
 42092,L'Étrat,42,42059,Chazelles-sur-Lyon,42,15.0,2022
 42218,Saint-Étienne,42,42059,Chazelles-sur-Lyon,42,19.49,2022
 42234,Saint-Héand,42,42059,Chazelles-sur-Lyon,42,9.77,2022
@@ -41370,7 +40425,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42316,Unieux,42,42092,L'Étrat,42,5.3,2022
 42330,Villars,42,42092,L'Étrat,42,5.33,2022
 76498,Le Petit-Quevilly,76,42092,L'Étrat,42,5.33,2022
-99999,Résidence antérieure dans un pays étranger,99,42092,L'Étrat,42,5.23,2022
 42093,Farnay,42,42093,Farnay,42,1323.07,2022
 42103,La Grand-Croix,42,42093,Farnay,42,15.36,2022
 42186,Rive-de-Gier,42,42093,Farnay,42,14.78,2022
@@ -41441,8 +40495,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 78601,Sonchamp,78,42095,Firminy,42,4.98,2022
 84142,Velleron,84,42095,Firminy,42,3.02,2022
 95127,Cergy,95,42095,Firminy,42,5.06,2022
-97611,Mamoudzou,97,42095,Firminy,42,22.08,2022
-99999,Résidence antérieure dans un pays étranger,99,42095,Firminy,42,399.12,2022
 42075,Craintilleux,42,42096,Fontanès,42,14.68,2022
 42096,Fontanès,42,42096,Fontanès,42,661.42,2022
 42275,Saint-Priest-en-Jarez,42,42096,Fontanès,42,5.0,2022
@@ -41474,7 +40526,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69194,Saint-Didier-au-Mont-d'Or,69,42097,La Fouillouse,42,9.65,2022
 69386,Lyon 6e Arrondissement,69,42097,La Fouillouse,42,5.01,2022
 69387,Lyon 7e Arrondissement,69,42097,La Fouillouse,42,5.2,2022
-99999,Résidence antérieure dans un pays étranger,99,42097,La Fouillouse,42,4.65,2022
 42218,Saint-Étienne,42,42098,Fourneaux,42,5.02,2022
 17306,Royan,17,42099,Fraisses,42,15.06,2022
 42044,Le Chambon-Feugerolles,42,42099,Fraisses,42,14.72,2022
@@ -41537,7 +40588,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42308,La Terrasse-sur-Dorlay,42,42110,L'Horme,42,15.56,2022
 62684,Racquinghem,62,42110,L'Horme,42,5.19,2022
 69238,Saint-Symphorien-sur-Coise,69,42110,L'Horme,42,5.19,2022
-99999,Résidence antérieure dans un pays étranger,99,42110,L'Horme,42,5.19,2022
 42218,Saint-Étienne,42,42112,Jarnosse,42,10.4,2022
 42044,Le Chambon-Feugerolles,42,42115,Jonzieux,42,14.95,2022
 42218,Saint-Étienne,42,42115,Jonzieux,42,19.97,2022
@@ -41575,7 +40625,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69387,Lyon 7e Arrondissement,69,42123,Lorette,42,4.8,2022
 69388,Lyon 8e Arrondissement,69,42123,Lorette,42,4.82,2022
 84016,Bédarrides,84,42123,Lorette,42,4.8,2022
-99999,Résidence antérieure dans un pays étranger,99,42123,Lorette,42,4.82,2022
 42218,Saint-Étienne,42,42126,Luriecq,42,5.59,2022
 42218,Saint-Étienne,42,42128,Machézal,42,5.36,2022
 42167,Pavezin,42,42129,Maclas,42,19.93,2022
@@ -41620,7 +40669,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42305,La Talaudière,42,42167,Pavezin,42,5.29,2022
 69141,Mornant,69,42167,Pavezin,42,5.06,2022
 74026,La Balme-de-Sillingy,74,42167,Pavezin,42,5.29,2022
-99999,Résidence antérieure dans un pays étranger,99,42167,Pavezin,42,10.35,2022
 38185,Grenoble,38,42168,Pélussin,42,10.16,2022
 42095,Firminy,42,42168,Pélussin,42,4.49,2022
 42186,Rive-de-Gier,42,42168,Pélussin,42,18.71,2022
@@ -41657,7 +40705,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 84007,Avignon,84,42183,La Ricamarie,42,42.04,2022
 92040,Issy-les-Moulineaux,92,42183,La Ricamarie,42,10.16,2022
 95582,Sannois,95,42183,La Ricamarie,42,4.91,2022
-99999,Résidence antérieure dans un pays étranger,99,42183,La Ricamarie,42,65.79,2022
 42183,La Ricamarie,42,42184,Riorges,42,3.71,2022
 42218,Saint-Étienne,42,42184,Riorges,42,10.6,2022
 42005,Andrézieux-Bouthéon,42,42185,Rivas,42,15.42,2022
@@ -41728,10 +40775,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 77284,Meaux,77,42186,Rive-de-Gier,42,13.55,2022
 88109,Cleurie,88,42186,Rive-de-Gier,42,7.12,2022
 91377,Massy,91,42186,Rive-de-Gier,42,11.54,2022
-97310,Roura,97,42186,Rive-de-Gier,42,4.83,2022
-97604,Bouéni,97,42186,Rive-de-Gier,42,3.39,2022
-97616,Sada,97,42186,Rive-de-Gier,42,3.39,2022
-99999,Résidence antérieure dans un pays étranger,99,42186,Rive-de-Gier,42,21.19,2022
 34057,Castelnau-le-Lez,34,42187,Roanne,42,1.16,2022
 34172,Montpellier,34,42187,Roanne,42,8.63,2022
 35238,Rennes,35,42187,Roanne,42,4.39,2022
@@ -41779,7 +40822,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69028,Brindas,69,42189,Roche-la-Molière,42,4.86,2022
 69204,Saint-Genis-Laval,69,42189,Roche-la-Molière,42,5.02,2022
 69256,Vaulx-en-Velin,69,42189,Roche-la-Molière,42,9.71,2022
-99999,Résidence antérieure dans un pays étranger,99,42189,Roche-la-Molière,42,5.02,2022
 42218,Saint-Étienne,42,42191,Roisey,42,9.42,2022
 42242,Saint-Joseph,42,42191,Roisey,42,4.59,2022
 42059,Chazelles-sur-Lyon,42,42192,Rozier-Côtes-d'Aurec,42,4.97,2022
@@ -41810,7 +40852,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42323,Veauche,42,42206,Saint-Bonnet-les-Oules,42,9.96,2022
 63113,Clermont-Ferrand,63,42206,Saint-Bonnet-les-Oules,42,4.98,2022
 69382,Lyon 2e Arrondissement,69,42206,Saint-Bonnet-les-Oules,42,9.96,2022
-99999,Résidence antérieure dans un pays étranger,99,42206,Saint-Bonnet-les-Oules,42,4.98,2022
 01304,Pont-d'Ain,01,42207,Saint-Chamond,42,1.09,2022
 03310,Vichy,03,42207,Saint-Chamond,42,4.22,2022
 05023,Briançon,05,42207,Saint-Chamond,42,2.9,2022
@@ -41956,10 +40997,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93066,Saint-Denis,93,42207,Saint-Chamond,42,3.08,2022
 93078,Villepinte,93,42207,Saint-Chamond,42,9.25,2022
 94043,Le Kremlin-Bicêtre,94,42207,Saint-Chamond,42,2.54,2022
-97411,Saint-Denis,97,42207,Saint-Chamond,42,8.14,2022
-97610,Koungou,97,42207,Saint-Chamond,42,4.15,2022
-97611,Mamoudzou,97,42207,Saint-Chamond,42,8.69,2022
-99999,Résidence antérieure dans un pays étranger,99,42207,Saint-Chamond,42,129.15,2022
 07197,Roiffieux,07,42208,Saint-Christo-en-Jarez,42,5.29,2022
 31555,Toulouse,31,42208,Saint-Christo-en-Jarez,42,14.87,2022
 42032,Cellieu,42,42208,Saint-Christo-en-Jarez,42,10.24,2022
@@ -42836,42 +41873,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95323,Jouy-le-Moutier,95,42218,Saint-Étienne,42,3.76,2022
 95488,Pierrelaye,95,42218,Saint-Étienne,42,2.91,2022
 95680,Villiers-le-Bel,95,42218,Saint-Étienne,42,3.11,2022
-97118,Petit-Bourg,97,42218,Saint-Étienne,42,1.32,2022
-97120,Pointe-à-Pitre,97,42218,Saint-Étienne,42,1.59,2022
-97209,Fort-de-France,97,42218,Saint-Étienne,42,5.91,2022
-97212,Gros-Morne,97,42218,Saint-Étienne,42,8.13,2022
-97213,Le Lamentin,97,42218,Saint-Étienne,42,4.85,2022
-97216,Le Marigot,97,42218,Saint-Étienne,42,3.6,2022
-97218,Le Morne-Rouge,97,42218,Saint-Étienne,42,3.07,2022
-97222,Le Robert,97,42218,Saint-Étienne,42,1.08,2022
-97231,Les Trois-Îlets,97,42218,Saint-Étienne,42,10.78,2022
-97302,Cayenne,97,42218,Saint-Étienne,42,90.48,2022
-97304,Kourou,97,42218,Saint-Étienne,42,3.23,2022
-97307,Matoury,97,42218,Saint-Étienne,42,0.98,2022
-97311,Saint-Laurent-du-Maroni,97,42218,Saint-Étienne,42,3.8,2022
-97403,Entre-Deux,97,42218,Saint-Étienne,42,4.87,2022
-97406,La Plaine-des-Palmistes,97,42218,Saint-Étienne,42,0.99,2022
-97407,Le Port,97,42218,Saint-Étienne,42,2.7,2022
-97408,La Possession,97,42218,Saint-Étienne,42,0.98,2022
-97410,Saint-Benoît,97,42218,Saint-Étienne,42,37.32,2022
-97411,Saint-Denis,97,42218,Saint-Étienne,42,57.88,2022
-97412,Saint-Joseph,97,42218,Saint-Étienne,42,10.04,2022
-97413,Saint-Leu,97,42218,Saint-Étienne,42,4.67,2022
-97414,Saint-Louis,97,42218,Saint-Étienne,42,4.53,2022
-97415,Saint-Paul,97,42218,Saint-Étienne,42,1.17,2022
-97418,Sainte-Marie,97,42218,Saint-Étienne,42,1.82,2022
-97602,Bandraboua,97,42218,Saint-Étienne,42,5.99,2022
-97604,Bouéni,97,42218,Saint-Étienne,42,3.67,2022
-97606,Chirongui,97,42218,Saint-Étienne,42,3.17,2022
-97607,Dembeni,97,42218,Saint-Étienne,42,4.47,2022
-97611,Mamoudzou,97,42218,Saint-Étienne,42,29.12,2022
-97616,Sada,97,42218,Saint-Étienne,42,1.95,2022
-97617,Tsingoni,97,42218,Saint-Étienne,42,0.98,2022
-97801,97801,97,42218,Saint-Étienne,42,1.0,2022
-98735,Papeete,98,42218,Saint-Étienne,42,13.12,2022
-98817,Le Mont-Dore,98,42218,Saint-Étienne,42,4.75,2022
-98818,Nouméa,98,42218,Saint-Étienne,42,10.49,2022
-99999,Résidence antérieure dans un pays étranger,99,42218,Saint-Étienne,42,1484.43,2022
 42218,Saint-Étienne,42,42219,Saint-Étienne-le-Molard,42,5.29,2022
 42218,Saint-Étienne,42,42221,Sainte-Foy-Saint-Sulpice,42,5.0,2022
 01244,Meximieux,01,42222,Saint-Galmier,42,5.0,2022
@@ -42912,7 +41913,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69284,Montanay,69,42222,Saint-Galmier,42,10.01,2022
 75118,Paris 18e Arrondissement,75,42222,Saint-Galmier,42,5.0,2022
 83120,Saint-Zacharie,83,42222,Saint-Galmier,42,20.02,2022
-99999,Résidence antérieure dans un pays étranger,99,42222,Saint-Galmier,42,25.02,2022
 23106,Lépaud,23,42223,Saint-Genest-Lerpt,42,4.96,2022
 25604,Verne,25,42223,Saint-Genest-Lerpt,42,4.98,2022
 42005,Andrézieux-Bouthéon,42,42223,Saint-Genest-Lerpt,42,14.83,2022
@@ -42935,7 +41935,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 45336,Viglain,45,42223,Saint-Genest-Lerpt,42,5.0,2022
 69027,Brignais,69,42223,Saint-Genest-Lerpt,42,5.0,2022
 69388,Lyon 8e Arrondissement,69,42223,Saint-Genest-Lerpt,42,9.97,2022
-99999,Résidence antérieure dans un pays étranger,99,42223,Saint-Genest-Lerpt,42,4.94,2022
 34172,Montpellier,34,42224,Saint-Genest-Malifaux,42,4.95,2022
 42103,La Grand-Croix,42,42224,Saint-Genest-Malifaux,42,5.18,2022
 42189,Roche-la-Molière,42,42224,Saint-Genest-Malifaux,42,5.06,2022
@@ -42965,7 +41964,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69259,Vénissieux,69,42225,Genilac,42,10.03,2022
 69266,Villeurbanne,69,42225,Genilac,42,5.01,2022
 92035,La Garenne-Colombes,92,42225,Genilac,42,5.01,2022
-99999,Résidence antérieure dans un pays étranger,99,42225,Genilac,42,5.01,2022
 42305,La Talaudière,42,42228,Saint-Georges-Haute-Ville,42,4.8,2022
 42218,Saint-Étienne,42,42230,Saint-Germain-Laval,42,5.16,2022
 42218,Saint-Étienne,42,42232,Saint-Haon-le-Châtel,42,5.0,2022
@@ -43015,8 +42013,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42311,La Tour-en-Jarez,42,42237,Saint-Jean-Bonnefonds,42,5.05,2022
 63124,Cournon-d'Auvergne,63,42237,Saint-Jean-Bonnefonds,42,5.15,2022
 69034,Caluire-et-Cuire,69,42237,Saint-Jean-Bonnefonds,42,19.41,2022
-97406,La Plaine-des-Palmistes,97,42237,Saint-Jean-Bonnefonds,42,5.05,2022
-99999,Résidence antérieure dans un pays étranger,99,42237,Saint-Jean-Bonnefonds,42,4.57,2022
 34172,Montpellier,34,42241,Saint-Jodard,42,5.0,2022
 42186,Rive-de-Gier,42,42242,Saint-Joseph,42,26.07,2022
 42207,Saint-Chamond,42,42242,Saint-Joseph,42,20.3,2022
@@ -43062,7 +42058,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42204,Saint-Bonnet-le-Château,42,42266,Saint-Nizier-de-Fornas,42,10.25,2022
 42266,Saint-Nizier-de-Fornas,42,42266,Saint-Nizier-de-Fornas,42,602.95,2022
 42312,La Tourette,42,42266,Saint-Nizier-de-Fornas,42,5.12,2022
-99999,Résidence antérieure dans un pays étranger,99,42266,Saint-Nizier-de-Fornas,42,5.12,2022
 42222,Saint-Galmier,42,42267,Saint-Nizier-sous-Charlieu,42,5.12,2022
 42234,Saint-Héand,42,42267,Saint-Nizier-sous-Charlieu,42,5.12,2022
 42023,Bourg-Argental,42,42270,Saint-Paul-en-Cornillon,42,5.09,2022
@@ -43091,7 +42086,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94052,Nogent-sur-Marne,94,42271,Saint-Paul-en-Jarez,42,4.95,2022
 95002,Ableiges,95,42271,Saint-Paul-en-Jarez,42,5.07,2022
 95040,Avernes,95,42271,Saint-Paul-en-Jarez,42,5.07,2022
-99999,Résidence antérieure dans un pays étranger,99,42271,Saint-Paul-en-Jarez,42,23.56,2022
 42218,Saint-Étienne,42,42273,Saint-Pierre-la-Noaille,42,4.69,2022
 38185,Grenoble,38,42274,Saint-Polgues,42,4.91,2022
 06068,Gourdon,06,42275,Saint-Priest-en-Jarez,42,9.37,2022
@@ -43155,7 +42149,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76540,Rouen,76,42275,Saint-Priest-en-Jarez,42,3.8,2022
 92050,Nanterre,92,42275,Saint-Priest-en-Jarez,42,6.99,2022
 93005,Aulnay-sous-Bois,93,42275,Saint-Priest-en-Jarez,42,3.8,2022
-99999,Résidence antérieure dans un pays étranger,99,42275,Saint-Priest-en-Jarez,42,25.28,2022
 38185,Grenoble,38,42279,Saint-Just-Saint-Rambert,42,4.55,2022
 42005,Andrézieux-Bouthéon,42,42279,Saint-Just-Saint-Rambert,42,18.67,2022
 42095,Firminy,42,42279,Saint-Just-Saint-Rambert,42,8.19,2022
@@ -43225,7 +42218,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42330,Villars,42,42302,Sorbiers,42,29.84,2022
 69276,Feyzin,69,42302,Sorbiers,42,4.92,2022
 69385,Lyon 5e Arrondissement,69,42302,Sorbiers,42,14.86,2022
-99999,Résidence antérieure dans un pays étranger,99,42302,Sorbiers,42,14.92,2022
 42005,Andrézieux-Bouthéon,42,42304,Sury-le-Comtal,42,9.79,2022
 42044,Le Chambon-Feugerolles,42,42304,Sury-le-Comtal,42,15.57,2022
 42095,Firminy,42,42304,Sury-le-Comtal,42,9.79,2022
@@ -43269,7 +42261,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 69388,Lyon 8e Arrondissement,69,42305,La Talaudière,42,5.0,2022
 73008,Aix-les-Bains,73,42305,La Talaudière,42,4.92,2022
 83144,La Valette-du-Var,83,42305,La Talaudière,42,4.84,2022
-99999,Résidence antérieure dans un pays étranger,99,42305,La Talaudière,42,15.01,2022
 42207,Saint-Chamond,42,42306,Tarentaise,42,20.16,2022
 42218,Saint-Étienne,42,42306,Tarentaise,42,5.04,2022
 42225,Genilac,42,42307,Tartaras,42,10.96,2022
@@ -43284,7 +42275,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42275,Saint-Priest-en-Jarez,42,42311,La Tour-en-Jarez,42,10.0,2022
 42311,La Tour-en-Jarez,42,42311,La Tour-en-Jarez,42,1333.79,2022
 43012,Aurec-sur-Loire,43,42311,La Tour-en-Jarez,42,4.95,2022
-99999,Résidence antérieure dans un pays étranger,99,42311,La Tour-en-Jarez,42,90.4,2022
 42218,Saint-Étienne,42,42312,La Tourette,42,5.46,2022
 42266,Saint-Nizier-de-Fornas,42,42312,La Tourette,42,26.36,2022
 42207,Saint-Chamond,42,42313,Trelins,42,25.26,2022
@@ -43313,7 +42303,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 43224,Sainte-Sigolène,43,42316,Unieux,42,4.91,2022
 43244,Tence,43,42316,Unieux,42,4.94,2022
 69388,Lyon 8e Arrondissement,69,42316,Unieux,42,4.99,2022
-99999,Résidence antérieure dans un pays étranger,99,42316,Unieux,42,25.03,2022
 34172,Montpellier,34,42318,Usson-en-Forez,42,10.05,2022
 42103,La Grand-Croix,42,42318,Usson-en-Forez,42,4.86,2022
 42218,Saint-Étienne,42,42318,Usson-en-Forez,42,4.71,2022
@@ -43332,7 +42321,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 42207,Saint-Chamond,42,42322,La Valla-en-Gier,42,9.52,2022
 42218,Saint-Étienne,42,42322,La Valla-en-Gier,42,9.59,2022
 42322,La Valla-en-Gier,42,42322,La Valla-en-Gier,42,1025.12,2022
-99999,Résidence antérieure dans un pays étranger,99,42322,La Valla-en-Gier,42,5.04,2022
 38185,Grenoble,38,42323,Veauche,42,4.81,2022
 42005,Andrézieux-Bouthéon,42,42323,Veauche,42,29.57,2022
 42043,Chambœuf,42,42323,Veauche,42,15.05,2022
@@ -43381,7 +42369,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 73011,Albertville,73,42330,Villars,42,9.99,2022
 75119,Paris 19e Arrondissement,75,42330,Villars,42,5.0,2022
 83049,Cuers,83,42330,Villars,42,9.99,2022
-99999,Résidence antérieure dans un pays étranger,99,42330,Villars,42,29.98,2022
 42218,Saint-Étienne,42,42332,Villerest,42,5.0,2022
 38382,Saint-Égrève,38,42334,Violay,42,5.11,2022
 42005,Andrézieux-Bouthéon,42,42335,Viricelles,42,5.11,2022
@@ -46110,7 +45097,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76602,Saint-Maclou-de-Folleville,76,76005,Amfreville-la-Mi-Voie,76,4.84,2022
 76681,Sotteville-lès-Rouen,76,76005,Amfreville-la-Mi-Voie,76,9.19,2022
 94028,Créteil,94,76005,Amfreville-la-Mi-Voie,76,4.84,2022
-99999,Résidence antérieure dans un pays étranger,99,76005,Amfreville-la-Mi-Voie,76,15.62,2022
 76366,Le Houlme,76,76007,Anceaumeville,76,5.11,2022
 76540,Rouen,76,76007,Anceaumeville,76,10.23,2022
 76575,Saint-Étienne-du-Rouvray,76,76007,Anceaumeville,76,19.53,2022
@@ -46181,7 +45167,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76575,Saint-Étienne-du-Rouvray,76,76069,Belbeuf,76,4.85,2022
 76681,Sotteville-lès-Rouen,76,76069,Belbeuf,76,4.76,2022
 76709,Le Trait,76,76069,Belbeuf,76,4.76,2022
-99999,Résidence antérieure dans un pays étranger,99,76069,Belbeuf,76,4.85,2022
 76222,Duclair,76,76076,Bénarville,76,4.76,2022
 76540,Rouen,76,76077,Bénesville,76,14.73,2022
 76165,Caudebec-lès-Elbeuf,76,76087,Berville-en-Caux,76,4.89,2022
@@ -46228,8 +45213,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76681,Sotteville-lès-Rouen,76,76095,Bihorel,76,5.13,2022
 77449,Serris,77,76095,Bihorel,76,5.2,2022
 78638,Vaux-sur-Seine,78,76095,Bihorel,76,5.13,2022
-97411,Saint-Denis,97,76095,Bihorel,76,4.99,2022
-99999,Résidence antérieure dans un pays étranger,99,76095,Bihorel,76,85.78,2022
 76212,Darnétal,76,76100,Blainville-Crevon,76,9.92,2022
 76216,Déville-lès-Rouen,76,76100,Blainville-Crevon,76,9.92,2022
 76540,Rouen,76,76100,Blainville-Crevon,76,15.03,2022
@@ -46415,7 +45398,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92051,Neuilly-sur-Seine,92,76108,Bois-Guillaume,76,6.91,2022
 93055,Pantin,93,76108,Bois-Guillaume,76,5.92,2022
 94028,Créteil,94,76108,Bois-Guillaume,76,28.48,2022
-99999,Résidence antérieure dans un pays étranger,99,76108,Bois-Guillaume,76,44.36,2022
 76402,Malaunay,76,76110,Bois-Himont,76,9.79,2022
 76540,Rouen,76,76110,Bois-Himont,76,5.36,2022
 76212,Darnétal,76,76111,Bois-l'Évêque,76,16.19,2022
@@ -46563,8 +45545,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93066,Saint-Denis,93,76157,Canteleu,76,19.43,2022
 94022,Choisy-le-Roi,94,76157,Canteleu,76,1.14,2022
 94078,Villeneuve-Saint-Georges,94,76157,Canteleu,76,4.51,2022
-97116,Morne-à-l'Eau,97,76157,Canteleu,76,8.69,2022
-99999,Résidence antérieure dans un pays étranger,99,76157,Canteleu,76,20.73,2022
 76410,Maromme,76,76160,Carville-la-Folletière,76,4.91,2022
 76377,Isneauville,76,76163,Catenay,76,9.82,2022
 76474,Notre-Dame-de-Bondeville,76,76163,Catenay,76,34.36,2022
@@ -46650,8 +45630,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95127,Cergy,95,76165,Caudebec-lès-Elbeuf,76,6.67,2022
 95504,Presles,95,76165,Caudebec-lès-Elbeuf,76,3.75,2022
 95585,Sarcelles,95,76165,Caudebec-lès-Elbeuf,76,3.25,2022
-97611,Mamoudzou,97,76165,Caudebec-lès-Elbeuf,76,2.19,2022
-99999,Résidence antérieure dans un pays étranger,99,76165,Caudebec-lès-Elbeuf,76,7.86,2022
 76540,Rouen,76,76167,Cauville-sur-Mer,76,10.76,2022
 27348,Igoville,27,76178,Cléon,76,15.23,2022
 27432,La Neuville-du-Bosc,27,76178,Cléon,76,5.06,2022
@@ -46671,7 +45649,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76561,Saint-Aubin-lès-Elbeuf,76,76178,Cléon,76,35.71,2022
 76682,Sotteville-sous-le-Val,76,76178,Cléon,76,4.9,2022
 76709,Le Trait,76,76178,Cléon,76,5.11,2022
-99999,Résidence antérieure dans un pays étranger,99,76178,Cléon,76,10.36,2022
 76410,Maromme,76,76179,Clères,76,9.73,2022
 76536,Roncherolles-sur-le-Vivier,76,76188,Cottévrard,76,10.02,2022
 76475,Franqueville-Saint-Pierre,76,76192,Criel-sur-Mer,76,10.17,2022
@@ -46759,9 +45736,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92051,Neuilly-sur-Seine,92,76212,Darnétal,76,4.95,2022
 95176,Cormeilles-en-Parisis,95,76212,Darnétal,76,4.83,2022
 95539,Saint-Brice-sous-Forêt,95,76212,Darnétal,76,4.83,2022
-97119,Petit-Canal,97,76212,Darnétal,76,4.83,2022
-97302,Cayenne,97,76212,Darnétal,76,9.9,2022
-99999,Résidence antérieure dans un pays étranger,99,76212,Darnétal,76,59.88,2022
 04130,Montlaux,04,76216,Déville-lès-Rouen,76,3.31,2022
 06004,Antibes,06,76216,Déville-lès-Rouen,76,4.35,2022
 14118,Caen,14,76216,Déville-lès-Rouen,76,14.98,2022
@@ -46878,7 +45852,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93031,Épinay-sur-Seine,93,76216,Déville-lès-Rouen,76,12.38,2022
 93049,Neuilly-Plaisance,93,76216,Déville-lès-Rouen,76,1.35,2022
 94021,Chevilly-Larue,94,76216,Déville-lès-Rouen,76,3.01,2022
-99999,Résidence antérieure dans un pays étranger,99,76216,Déville-lès-Rouen,76,73.84,2022
 38185,Grenoble,38,76217,Dieppe,76,3.73,2022
 76322,Le Grand-Quevilly,76,76217,Dieppe,76,7.38,2022
 76402,Malaunay,76,76217,Dieppe,76,3.29,2022
@@ -47042,8 +46015,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93050,Neuilly-sur-Marne,93,76231,Elbeuf,76,3.97,2022
 93053,Noisy-le-Sec,93,76231,Elbeuf,76,1.56,2022
 95306,Herblay-sur-Seine,95,76231,Elbeuf,76,3.47,2022
-97129,Sainte-Rose,97,76231,Elbeuf,76,6.94,2022
-99999,Résidence antérieure dans un pays étranger,99,76231,Elbeuf,76,120.21,2022
 76540,Rouen,76,76234,Émanville,76,10.62,2022
 76540,Rouen,76,76235,Envermeu,76,4.77,2022
 76095,Bihorel,76,76236,Envronville,76,10.0,2022
@@ -47144,7 +46115,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76681,Sotteville-lès-Rouen,76,76319,Grand-Couronne,76,14.98,2022
 76717,Val-de-la-Haye,76,76319,Grand-Couronne,76,9.99,2022
 93064,Rosny-sous-Bois,93,76319,Grand-Couronne,76,19.97,2022
-99999,Résidence antérieure dans un pays étranger,99,76319,Grand-Couronne,76,4.99,2022
 07101,Grospierres,07,76322,Le Grand-Quevilly,76,3.72,2022
 14006,Amayé-sur-Orne,14,76322,Le Grand-Quevilly,76,5.4,2022
 14118,Caen,14,76322,Le Grand-Quevilly,76,0.99,2022
@@ -47246,9 +46216,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92048,Meudon,92,76322,Le Grand-Quevilly,76,5.0,2022
 94034,Fresnes,94,76322,Le Grand-Quevilly,76,2.89,2022
 95369,Margency,95,76322,Le Grand-Quevilly,76,1.21,2022
-97103,Baie-Mahault,97,76322,Le Grand-Quevilly,76,7.43,2022
-97423,Les Trois-Bassins,97,76322,Le Grand-Quevilly,76,3.16,2022
-99999,Résidence antérieure dans un pays étranger,99,76322,Le Grand-Quevilly,76,20.26,2022
 76540,Rouen,76,76324,Grèges,76,4.88,2022
 76540,Rouen,76,76325,Grémonville,76,5.0,2022
 76451,Mont-Saint-Aignan,76,76328,Grigneuseville,76,10.39,2022
@@ -47341,7 +46308,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76681,Sotteville-lès-Rouen,76,76366,Le Houlme,76,4.97,2022
 76758,Yvetot,76,76366,Le Houlme,76,10.01,2022
 93048,Montreuil,93,76366,Le Houlme,76,4.97,2022
-99999,Résidence antérieure dans un pays étranger,99,76366,Le Houlme,76,4.97,2022
 27040,Barquet,27,76367,Houppeville,76,4.76,2022
 37015,Azay-sur-Cher,37,76367,Houppeville,76,10.01,2022
 60594,Saint-Quentin-des-Prés,60,76367,Houppeville,76,9.76,2022
@@ -47358,7 +46324,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76705,Tourville-la-Rivière,76,76367,Houppeville,76,4.76,2022
 78082,Boissy-Mauvoisin,78,76367,Houppeville,76,4.76,2022
 92025,Colombes,92,76367,Houppeville,76,5.26,2022
-99999,Résidence antérieure dans un pays étranger,99,76367,Houppeville,76,4.76,2022
 17443,Thairé,17,76377,Isneauville,76,15.06,2022
 27229,Évreux,27,76377,Isneauville,76,5.02,2022
 27453,Perriers-sur-Andelle,27,76377,Isneauville,76,5.0,2022
@@ -47408,7 +46373,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76474,Notre-Dame-de-Bondeville,76,76391,La Londe,76,5.0,2022
 76497,Petit-Couronne,76,76391,La Londe,76,5.0,2022
 76540,Rouen,76,76391,La Londe,76,20.17,2022
-99999,Résidence antérieure dans un pays étranger,99,76391,La Londe,76,5.0,2022
 76095,Bihorel,76,76395,Longueil,76,9.77,2022
 76561,Saint-Aubin-lès-Elbeuf,76,76396,Longuerue,76,15.52,2022
 76095,Bihorel,76,76397,Longueville-sur-Scie,76,5.1,2022
@@ -47445,8 +46409,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76621,Saint-Martin-Osmonville,76,76402,Malaunay,76,9.99,2022
 76628,Saint-Ouen-du-Breuil,76,76402,Malaunay,76,10.33,2022
 86194,Poitiers,86,76402,Malaunay,76,14.98,2022
-97113,Le Gosier,97,76402,Malaunay,76,4.83,2022
-97132,Trois-Rivières,97,76402,Malaunay,76,14.49,2022
 76540,Rouen,76,76403,Malleville-les-Grès,76,10.0,2022
 14118,Caen,14,76410,Maromme,76,8.41,2022
 27003,Acquigny,27,76410,Maromme,76,5.0,2022
@@ -47536,7 +46498,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 92063,Rueil-Malmaison,92,76410,Maromme,76,8.87,2022
 93008,Bobigny,93,76410,Maromme,76,9.89,2022
 95127,Cergy,95,76410,Maromme,76,5.41,2022
-99999,Résidence antérieure dans un pays étranger,99,76410,Maromme,76,52.46,2022
 76451,Mont-Saint-Aignan,76,76412,Martainville-Épreville,76,14.3,2022
 76561,Saint-Aubin-lès-Elbeuf,76,76412,Martainville-Épreville,76,5.03,2022
 76681,Sotteville-lès-Rouen,76,76412,Martainville-Épreville,76,4.52,2022
@@ -47596,7 +46557,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 83082,Montferrat,83,76429,Le Mesnil-Esnard,76,5.0,2022
 92026,Courbevoie,92,76429,Le Mesnil-Esnard,76,10.61,2022
 94065,Rungis,94,76429,Le Mesnil-Esnard,76,5.62,2022
-99999,Résidence antérieure dans un pays étranger,99,76429,Le Mesnil-Esnard,76,38.91,2022
 76216,Déville-lès-Rouen,76,76433,Mesnil-Panneville,76,4.96,2022
 76322,Le Grand-Quevilly,76,76433,Mesnil-Panneville,76,4.96,2022
 76410,Maromme,76,76433,Mesnil-Panneville,76,9.91,2022
@@ -47902,13 +46862,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 94017,Champigny-sur-Marne,94,76451,Mont-Saint-Aignan,76,1.1,2022
 95288,Groslay,95,76451,Mont-Saint-Aignan,76,1.44,2022
 95424,Montigny-lès-Cormeilles,95,76451,Mont-Saint-Aignan,76,5.4,2022
-97302,Cayenne,97,76451,Mont-Saint-Aignan,76,3.31,2022
-97411,Saint-Denis,97,76451,Mont-Saint-Aignan,76,1.0,2022
-97602,Bandraboua,97,76451,Mont-Saint-Aignan,76,1.18,2022
-97605,Chiconi,97,76451,Mont-Saint-Aignan,76,4.04,2022
-97607,Dembeni,97,76451,Mont-Saint-Aignan,76,4.04,2022
-97611,Mamoudzou,97,76451,Mont-Saint-Aignan,76,7.35,2022
-99999,Résidence antérieure dans un pays étranger,99,76451,Mont-Saint-Aignan,76,144.0,2022
 76095,Bihorel,76,76452,Montville,76,5.43,2022
 76322,Le Grand-Quevilly,76,76452,Montville,76,9.88,2022
 76350,Hautot-sur-Seine,76,76452,Montville,76,10.06,2022
@@ -47979,7 +46932,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76575,Saint-Étienne-du-Rouvray,76,76474,Notre-Dame-de-Bondeville,76,10.48,2022
 76594,Saint-Jean-du-Cardonnay,76,76474,Notre-Dame-de-Bondeville,76,10.24,2022
 76681,Sotteville-lès-Rouen,76,76474,Notre-Dame-de-Bondeville,76,15.48,2022
-99999,Résidence antérieure dans un pays étranger,99,76474,Notre-Dame-de-Bondeville,76,14.69,2022
 13206,Marseille 6e Arrondissement,13,76475,Franqueville-Saint-Pierre,76,4.73,2022
 14333,Honfleur,14,76475,Franqueville-Saint-Pierre,76,5.26,2022
 24082,Carsac-Aillac,24,76475,Franqueville-Saint-Pierre,76,10.24,2022
@@ -48003,7 +46955,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76631,Saint-Paër,76,76475,Franqueville-Saint-Pierre,76,19.43,2022
 76681,Sotteville-lès-Rouen,76,76475,Franqueville-Saint-Pierre,76,20.21,2022
 95127,Cergy,95,76475,Franqueville-Saint-Pierre,76,4.86,2022
-99999,Résidence antérieure dans un pays étranger,99,76475,Franqueville-Saint-Pierre,76,15.09,2022
 76322,Le Grand-Quevilly,76,76476,Port-Jérôme-sur-Seine,76,3.97,2022
 76540,Rouen,76,76476,Port-Jérôme-sur-Seine,76,5.43,2022
 76750,Yainville,76,76476,Port-Jérôme-sur-Seine,76,1.07,2022
@@ -48081,7 +47032,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76681,Sotteville-lès-Rouen,76,76497,Petit-Couronne,76,35.41,2022
 78646,Versailles,78,76497,Petit-Couronne,76,5.2,2022
 94077,Villeneuve-le-Roi,94,76497,Petit-Couronne,76,30.02,2022
-99999,Résidence antérieure dans un pays étranger,99,76497,Petit-Couronne,76,10.2,2022
 01170,Béard-Géovreissiat,01,76498,Le Petit-Quevilly,76,1.5,2022
 01192,Izernore,01,76498,Le Petit-Quevilly,76,1.5,2022
 13117,Vitrolles,13,76498,Le Petit-Quevilly,76,3.77,2022
@@ -48215,7 +47165,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95127,Cergy,95,76498,Le Petit-Quevilly,76,2.38,2022
 95355,Magny-en-Vexin,95,76498,Le Petit-Quevilly,76,5.16,2022
 95487,Persan,95,76498,Le Petit-Quevilly,76,0.82,2022
-99999,Résidence antérieure dans un pays étranger,99,76498,Le Petit-Quevilly,76,91.45,2022
 76402,Malaunay,76,76503,Pissy-Pôville,76,15.27,2022
 76212,Darnétal,76,76509,Préaux,76,10.54,2022
 76377,Isneauville,76,76509,Préaux,76,21.09,2022
@@ -48230,7 +47179,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76475,Franqueville-Saint-Pierre,76,76514,Quévreville-la-Poterie,76,4.89,2022
 76498,Le Petit-Quevilly,76,76514,Quévreville-la-Poterie,76,4.92,2022
 76514,Quévreville-la-Poterie,76,76514,Quévreville-la-Poterie,76,956.75,2022
-97415,Saint-Paul,97,76514,Quévreville-la-Poterie,76,5.02,2022
 76216,Déville-lès-Rouen,76,76515,Quiberville-sur-Mer,76,5.25,2022
 76103,Bonsecours,76,76517,Quincampoix,76,5.0,2022
 76108,Bois-Guillaume,76,76517,Quincampoix,76,10.0,2022
@@ -49236,28 +48184,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95563,Saint-Leu-la-Forêt,95,76540,Rouen,76,0.96,2022
 95598,Soisy-sous-Montmorency,95,76540,Rouen,76,6.18,2022
 95651,Vétheuil,95,76540,Rouen,76,8.93,2022
-97103,Baie-Mahault,97,76540,Rouen,76,0.96,2022
-97106,Bouillante,97,76540,Rouen,76,3.98,2022
-97120,Pointe-à-Pitre,97,76540,Rouen,76,11.81,2022
-97209,Fort-de-France,97,76540,Rouen,76,24.21,2022
-97226,Sainte-Anne,97,76540,Rouen,76,3.33,2022
-97228,Sainte-Marie,97,76540,Rouen,76,6.96,2022
-97231,Les Trois-Îlets,97,76540,Rouen,76,8.62,2022
-97302,Cayenne,97,76540,Rouen,76,14.69,2022
-97307,Matoury,97,76540,Rouen,76,0.96,2022
-97309,Remire-Montjoly,97,76540,Rouen,76,8.33,2022
-97408,La Possession,97,76540,Rouen,76,2.59,2022
-97409,Saint-André,97,76540,Rouen,76,5.17,2022
-97411,Saint-Denis,97,76540,Rouen,76,3.03,2022
-97415,Saint-Paul,97,76540,Rouen,76,1.11,2022
-97416,Saint-Pierre,97,76540,Rouen,76,5.24,2022
-97420,Sainte-Suzanne,97,76540,Rouen,76,1.4,2022
-97422,Le Tampon,97,76540,Rouen,76,3.18,2022
-97607,Dembeni,97,76540,Rouen,76,7.17,2022
-97611,Mamoudzou,97,76540,Rouen,76,3.89,2022
-98738,Punaauia,98,76540,Rouen,76,7.39,2022
-98818,Nouméa,98,76540,Rouen,76,1.11,2022
-99999,Résidence antérieure dans un pays étranger,99,76540,Rouen,76,1241.15,2022
 76216,Déville-lès-Rouen,76,76541,Roumare,76,4.96,2022
 76354,Hénouville,76,76541,Roumare,76,19.85,2022
 76474,Notre-Dame-de-Bondeville,76,76541,Roumare,76,19.85,2022
@@ -49286,14 +48212,12 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76429,Le Mesnil-Esnard,76,76558,Saint-Aubin-Celloville,76,9.87,2022
 76475,Franqueville-Saint-Pierre,76,76558,Saint-Aubin-Celloville,76,19.95,2022
 76558,Saint-Aubin-Celloville,76,76558,Saint-Aubin-Celloville,76,1092.36,2022
-99999,Résidence antérieure dans un pays étranger,99,76558,Saint-Aubin-Celloville,76,4.93,2022
 27580,Saint-Ouen-de-Thouberville,27,76560,Saint-Aubin-Épinay,76,5.0,2022
 76005,Amfreville-la-Mi-Voie,76,76560,Saint-Aubin-Épinay,76,10.47,2022
 76429,Le Mesnil-Esnard,76,76560,Saint-Aubin-Épinay,76,15.08,2022
 76519,Rainfreville,76,76560,Saint-Aubin-Épinay,76,5.0,2022
 76560,Saint-Aubin-Épinay,76,76560,Saint-Aubin-Épinay,76,938.6,2022
 76599,Saint-Léger-du-Bourg-Denis,76,76560,Saint-Aubin-Épinay,76,10.47,2022
-99999,Résidence antérieure dans un pays étranger,99,76560,Saint-Aubin-Épinay,76,14.49,2022
 01244,Meximieux,01,76561,Saint-Aubin-lès-Elbeuf,76,5.0,2022
 01283,Oyonnax,01,76561,Saint-Aubin-lès-Elbeuf,76,5.0,2022
 14366,Lisieux,14,76561,Saint-Aubin-lès-Elbeuf,76,5.0,2022
@@ -49346,7 +48270,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 83016,Le Beausset,83,76561,Saint-Aubin-lès-Elbeuf,76,5.0,2022
 94077,Villeneuve-le-Roi,94,76561,Saint-Aubin-lès-Elbeuf,76,5.0,2022
 95572,Saint-Ouen-l'Aumône,95,76561,Saint-Aubin-lès-Elbeuf,76,5.0,2022
-99999,Résidence antérieure dans un pays étranger,99,76561,Saint-Aubin-lès-Elbeuf,76,14.99,2022
 76540,Rouen,76,76562,Saint-Aubin-le-Cauf,76,4.95,2022
 76498,Le Petit-Quevilly,76,76565,Saint-Aubin-sur-Scie,76,5.0,2022
 76157,Canteleu,76,76566,Sainte-Austreberthe,76,9.84,2022
@@ -49533,9 +48456,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 95210,Enghien-les-Bains,95,76575,Saint-Étienne-du-Rouvray,76,1.1,2022
 95252,Franconville,95,76575,Saint-Étienne-du-Rouvray,76,0.83,2022
 95480,Parmain,95,76575,Saint-Étienne-du-Rouvray,76,1.32,2022
-97115,Lamentin,97,76575,Saint-Étienne-du-Rouvray,76,44.54,2022
-97225,Saint-Pierre,97,76575,Saint-Étienne-du-Rouvray,76,6.7,2022
-99999,Résidence antérieure dans un pays étranger,99,76575,Saint-Étienne-du-Rouvray,76,369.29,2022
 76540,Rouen,76,76577,Sainte-Foy,76,9.77,2022
 76212,Darnétal,76,76580,Saint-Georges-sur-Fontaine,76,10.11,2022
 76216,Déville-lès-Rouen,76,76580,Saint-Georges-sur-Fontaine,76,5.06,2022
@@ -49676,7 +48596,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76640,Saint-Pierre-lès-Elbeuf,76,76640,Saint-Pierre-lès-Elbeuf,76,7658.08,2022
 76681,Sotteville-lès-Rouen,76,76640,Saint-Pierre-lès-Elbeuf,76,5.04,2022
 78361,Mantes-la-Jolie,78,76640,Saint-Pierre-lès-Elbeuf,76,20.18,2022
-99999,Résidence antérieure dans un pays étranger,99,76640,Saint-Pierre-lès-Elbeuf,76,15.05,2022
 35238,Rennes,35,76647,Saint-Romain-de-Colbosc,76,4.62,2022
 76322,Le Grand-Quevilly,76,76647,Saint-Romain-de-Colbosc,76,9.49,2022
 76540,Rouen,76,76647,Saint-Romain-de-Colbosc,76,18.25,2022
@@ -49841,10 +48760,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 93077,Villemomble,93,76681,Sotteville-lès-Rouen,76,12.53,2022
 94041,Ivry-sur-Seine,94,76681,Sotteville-lès-Rouen,76,3.36,2022
 95563,Saint-Leu-la-Forêt,95,76681,Sotteville-lès-Rouen,76,3.3,2022
-97229,Schœlcher,97,76681,Sotteville-lès-Rouen,76,3.28,2022
-97418,Sainte-Marie,97,76681,Sotteville-lès-Rouen,76,9.44,2022
-98735,Papeete,98,76681,Sotteville-lès-Rouen,76,1.28,2022
-99999,Résidence antérieure dans un pays étranger,99,76681,Sotteville-lès-Rouen,76,82.08,2022
 27469,Pont-de-l'Arche,27,76682,Sotteville-sous-le-Val,76,10.43,2022
 51454,Reims,51,76682,Sotteville-sous-le-Val,76,4.91,2022
 76457,Moulineaux,76,76682,Sotteville-sous-le-Val,76,14.73,2022
@@ -49880,7 +48795,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76705,Tourville-la-Rivière,76,76705,Tourville-la-Rivière,76,2240.13,2022
 76758,Yvetot,76,76705,Tourville-la-Rivière,76,5.01,2022
 95018,Argenteuil,95,76705,Tourville-la-Rivière,76,5.01,2022
-99999,Résidence antérieure dans un pays étranger,99,76705,Tourville-la-Rivière,76,10.03,2022
 08491,Vrigne aux Bois,08,76709,Le Trait,76,5.05,2022
 27684,Le Vieil-Évreux,27,76709,Le Trait,76,5.06,2022
 50502,Saint-Lô,50,76709,Le Trait,76,5.07,2022
@@ -49923,7 +48837,6 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 76322,Le Grand-Quevilly,76,76717,Val-de-la-Haye,76,5.15,2022
 76540,Rouen,76,76717,Val-de-la-Haye,76,5.18,2022
 76717,Val-de-la-Haye,76,76717,Val-de-la-Haye,76,652.45,2022
-99999,Résidence antérieure dans un pays étranger,99,76717,Val-de-la-Haye,76,10.37,2022
 76451,Mont-Saint-Aignan,76,76719,Valmont,76,5.06,2022
 76108,Bois-Guillaume,76,76723,Vassonville,76,19.48,2022
 76322,Le Grand-Quevilly,76,76725,Vattetot-sous-Beaumont,76,9.35,2022
@@ -51461,158 +50374,3 @@ code_origine,commune_origine,dep_origine,code_destination,commune_destination,de
 35238,Rennes,35,95637,Vauréal,95,3.05,2022
 76540,Rouen,76,95637,Vauréal,95,4.05,2022
 76498,Le Petit-Quevilly,76,95680,Villiers-le-Bel,95,16.7,2022
-34172,Montpellier,34,97101,Les Abymes,97,2.8,2022
-42095,Firminy,42,97101,Les Abymes,97,3.95,2022
-34172,Montpellier,34,97102,Anse-Bertrand,97,9.86,2022
-34172,Montpellier,34,97103,Baie-Mahault,97,5.28,2022
-35047,Bruz,35,97103,Baie-Mahault,97,14.6,2022
-35278,Saint-Grégoire,35,97103,Baie-Mahault,97,2.18,2022
-38185,Grenoble,38,97103,Baie-Mahault,97,1.24,2022
-34172,Montpellier,34,97105,Basse-Terre,97,2.8,2022
-35315,Saint-Sulpice-la-Forêt,35,97107,Capesterre-Belle-Eau,97,7.96,2022
-34172,Montpellier,34,97113,Le Gosier,97,20.45,2022
-35238,Rennes,35,97113,Le Gosier,97,2.69,2022
-38185,Grenoble,38,97113,Le Gosier,97,5.37,2022
-35238,Rennes,35,97115,Lamentin,97,1.48,2022
-38421,Saint-Martin-d'Hères,38,97115,Lamentin,97,1.22,2022
-34172,Montpellier,34,97116,Morne-à-l'Eau,97,4.85,2022
-34172,Montpellier,34,97117,Le Moule,97,28.86,2022
-35204,Nouvoitou,35,97117,Le Moule,97,3.05,2022
-35238,Rennes,35,97117,Le Moule,97,3.58,2022
-34172,Montpellier,34,97118,Petit-Bourg,97,15.66,2022
-35238,Rennes,35,97118,Petit-Bourg,97,9.53,2022
-38185,Grenoble,38,97118,Petit-Bourg,97,3.33,2022
-38382,Saint-Égrève,38,97118,Petit-Bourg,97,3.71,2022
-76410,Maromme,76,97118,Petit-Bourg,97,5.33,2022
-76540,Rouen,76,97118,Petit-Bourg,97,5.33,2022
-34172,Montpellier,34,97120,Pointe-à-Pitre,97,4.86,2022
-35238,Rennes,35,97120,Pointe-à-Pitre,97,3.49,2022
-35238,Rennes,35,97121,Pointe-Noire,97,5.1,2022
-42218,Saint-Étienne,42,97122,Port-Louis,97,5.0,2022
-34095,Fabrègues,34,97124,Saint-Claude,97,6.91,2022
-34172,Montpellier,34,97124,Saint-Claude,97,6.91,2022
-35238,Rennes,35,97124,Saint-Claude,97,1.22,2022
-38382,Saint-Égrève,38,97124,Saint-Claude,97,2.95,2022
-42218,Saint-Étienne,42,97124,Saint-Claude,97,6.91,2022
-34172,Montpellier,34,97125,Saint-François,97,5.31,2022
-35238,Rennes,35,97125,Saint-François,97,3.16,2022
-35352,Vern-sur-Seiche,35,97125,Saint-François,97,4.77,2022
-34058,Castries,34,97128,Sainte-Anne,97,2.57,2022
-34172,Montpellier,34,97128,Sainte-Anne,97,3.72,2022
-35238,Rennes,35,97128,Sainte-Anne,97,1.13,2022
-38185,Grenoble,38,97128,Sainte-Anne,97,7.44,2022
-42218,Saint-Étienne,42,97128,Sainte-Anne,97,5.45,2022
-35238,Rennes,35,97205,Case-Pilote,97,9.94,2022
-34172,Montpellier,34,97206,Le Diamant,97,4.96,2022
-35210,Pacé,35,97207,Ducos,97,3.12,2022
-76540,Rouen,76,97207,Ducos,97,3.79,2022
-35238,Rennes,35,97208,Fonds-Saint-Denis,97,4.89,2022
-34172,Montpellier,34,97209,Fort-de-France,97,8.34,2022
-35238,Rennes,35,97209,Fort-de-France,97,8.8,2022
-38185,Grenoble,38,97209,Fort-de-France,97,15.0,2022
-42218,Saint-Étienne,42,97209,Fort-de-France,97,3.11,2022
-76157,Canteleu,76,97209,Fort-de-France,97,4.32,2022
-38185,Grenoble,38,97212,Gros-Morne,97,8.0,2022
-34172,Montpellier,34,97213,Le Lamentin,97,16.2,2022
-34172,Montpellier,34,97217,Le Marin,97,9.96,2022
-34172,Montpellier,34,97218,Le Morne-Rouge,97,27.24,2022
-34172,Montpellier,34,97220,Rivière-Pilote,97,8.38,2022
-34172,Montpellier,34,97221,Rivière-Salée,97,2.97,2022
-42283,Saint-Romain-en-Jarez,42,97221,Rivière-Salée,97,2.97,2022
-34129,Lattes,34,97222,Le Robert,97,3.25,2022
-34172,Montpellier,34,97222,Le Robert,97,3.25,2022
-34270,Saint-Jean-de-Védas,34,97222,Le Robert,97,3.25,2022
-38516,La Tronche,38,97222,Le Robert,97,3.25,2022
-34172,Montpellier,34,97229,Schœlcher,97,7.9,2022
-38421,Saint-Martin-d'Hères,38,97229,Schœlcher,97,4.78,2022
-42218,Saint-Étienne,42,97229,Schœlcher,97,2.82,2022
-34057,Castelnau-le-Lez,34,97230,La Trinité,97,12.39,2022
-34172,Montpellier,34,97230,La Trinité,97,3.47,2022
-35238,Rennes,35,97230,La Trinité,97,2.49,2022
-34095,Fabrègues,34,97231,Les Trois-Îlets,97,5.0,2022
-34172,Montpellier,34,97302,Cayenne,97,4.1,2022
-35210,Pacé,35,97302,Cayenne,97,20.23,2022
-35238,Rennes,35,97302,Cayenne,97,56.57,2022
-38185,Grenoble,38,97302,Cayenne,97,17.39,2022
-42218,Saint-Étienne,42,97302,Cayenne,97,2.05,2022
-76475,Franqueville-Saint-Pierre,76,97302,Cayenne,97,18.69,2022
-76540,Rouen,76,97302,Cayenne,97,5.96,2022
-34172,Montpellier,34,97304,Kourou,97,4.28,2022
-38185,Grenoble,38,97304,Kourou,97,2.71,2022
-42218,Saint-Étienne,42,97304,Kourou,97,3.63,2022
-35238,Rennes,35,97305,Macouria,97,10.07,2022
-38185,Grenoble,38,97305,Macouria,97,5.03,2022
-34172,Montpellier,34,97307,Matoury,97,4.35,2022
-76410,Maromme,76,97307,Matoury,97,7.05,2022
-34172,Montpellier,34,97309,Remire-Montjoly,97,13.9,2022
-35238,Rennes,35,97309,Remire-Montjoly,97,5.24,2022
-38185,Grenoble,38,97309,Remire-Montjoly,97,5.39,2022
-76540,Rouen,76,97309,Remire-Montjoly,97,8.61,2022
-34172,Montpellier,34,97311,Saint-Laurent-du-Maroni,97,8.27,2022
-35238,Rennes,35,97311,Saint-Laurent-du-Maroni,97,1.22,2022
-34172,Montpellier,34,97313,Montsinéry-Tonnegrande,97,5.38,2022
-34337,Villeneuve-lès-Maguelone,34,97313,Montsinéry-Tonnegrande,97,5.38,2022
-34172,Montpellier,34,97401,Les Avirons,97,10.36,2022
-35238,Rennes,35,97403,Entre-Deux,97,5.16,2022
-34172,Montpellier,34,97404,L'Étang-Salé,97,2.34,2022
-35238,Rennes,35,97404,L'Étang-Salé,97,1.32,2022
-34123,Juvignac,34,97405,Petite-Île,97,4.22,2022
-34172,Montpellier,34,97405,Petite-Île,97,7.83,2022
-34172,Montpellier,34,97407,Le Port,97,7.93,2022
-38185,Grenoble,38,97407,Le Port,97,2.95,2022
-34172,Montpellier,34,97408,La Possession,97,13.54,2022
-35238,Rennes,35,97408,La Possession,97,8.32,2022
-38281,Noyarey,38,97408,La Possession,97,12.48,2022
-34172,Montpellier,34,97409,Saint-André,97,3.14,2022
-35278,Saint-Grégoire,35,97409,Saint-André,97,5.3,2022
-34172,Montpellier,34,97410,Saint-Benoît,97,4.49,2022
-35032,Bourgbarré,35,97410,Saint-Benoît,97,5.87,2022
-35088,Corps-Nuds,35,97410,Saint-Benoît,97,2.94,2022
-35238,Rennes,35,97410,Saint-Benoît,97,6.05,2022
-42237,Saint-Jean-Bonnefonds,42,97410,Saint-Benoît,97,1.21,2022
-34172,Montpellier,34,97411,Saint-Denis,97,66.29,2022
-34337,Villeneuve-lès-Maguelone,34,97411,Saint-Denis,97,2.03,2022
-35047,Bruz,35,97411,Saint-Denis,97,2.31,2022
-35238,Rennes,35,97411,Saint-Denis,97,24.81,2022
-38185,Grenoble,38,97411,Saint-Denis,97,31.51,2022
-38423,Saint-Martin-le-Vinoux,38,97411,Saint-Denis,97,3.76,2022
-42218,Saint-Étienne,42,97411,Saint-Denis,97,3.24,2022
-76540,Rouen,76,97411,Saint-Denis,97,3.24,2022
-35245,Romillé,35,97412,Saint-Joseph,97,2.0,2022
-34172,Montpellier,34,97413,Saint-Leu,97,6.25,2022
-35238,Rennes,35,97413,Saint-Leu,97,2.62,2022
-42218,Saint-Étienne,42,97413,Saint-Leu,97,5.28,2022
-76513,Quevillon,76,97413,Saint-Leu,97,9.47,2022
-34172,Montpellier,34,97414,Saint-Louis,97,4.47,2022
-35051,Cesson-Sévigné,35,97414,Saint-Louis,97,3.77,2022
-34057,Castelnau-le-Lez,34,97415,Saint-Paul,97,18.15,2022
-34123,Juvignac,34,97415,Saint-Paul,97,3.1,2022
-34172,Montpellier,34,97415,Saint-Paul,97,54.67,2022
-35065,La Chapelle-Thouarault,35,97415,Saint-Paul,97,1.29,2022
-35238,Rennes,35,97415,Saint-Paul,97,17.21,2022
-35245,Romillé,35,97415,Saint-Paul,97,3.65,2022
-38185,Grenoble,38,97415,Saint-Paul,97,8.29,2022
-42186,Rive-de-Gier,42,97415,Saint-Paul,97,13.62,2022
-42218,Saint-Étienne,42,97415,Saint-Paul,97,4.17,2022
-42271,Saint-Paul-en-Jarez,42,97415,Saint-Paul,97,3.65,2022
-76540,Rouen,76,97415,Saint-Paul,97,3.65,2022
-34058,Castries,34,97416,Saint-Pierre,97,4.14,2022
-34172,Montpellier,34,97416,Saint-Pierre,97,15.83,2022
-35055,Chantepie,35,97416,Saint-Pierre,97,3.83,2022
-35238,Rennes,35,97416,Saint-Pierre,97,21.18,2022
-38185,Grenoble,38,97416,Saint-Pierre,97,4.14,2022
-42218,Saint-Étienne,42,97416,Saint-Pierre,97,14.01,2022
-42305,La Talaudière,42,97416,Saint-Pierre,97,4.14,2022
-76448,Montmain,76,97416,Saint-Pierre,97,2.57,2022
-76540,Rouen,76,97416,Saint-Pierre,97,3.07,2022
-42218,Saint-Étienne,42,97417,Saint-Philippe,97,4.98,2022
-34172,Montpellier,34,97418,Sainte-Marie,97,10.05,2022
-35238,Rennes,35,97418,Sainte-Marie,97,8.33,2022
-76634,Saint-Pierre-de-Manneville,76,97418,Sainte-Marie,97,1.32,2022
-34172,Montpellier,34,97420,Sainte-Suzanne,97,1.09,2022
-34172,Montpellier,34,97422,Le Tampon,97,4.43,2022
-35055,Chantepie,35,97422,Le Tampon,97,4.63,2022
-35238,Rennes,35,97422,Le Tampon,97,1.29,2022
-38179,Gières,38,97422,Le Tampon,97,1.14,2022
-38185,Grenoble,38,97422,Le Tampon,97,3.43,2022
-76540,Rouen,76,97422,Le Tampon,97,8.0,2022

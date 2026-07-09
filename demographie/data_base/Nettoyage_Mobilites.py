@@ -1,5 +1,6 @@
 # ==============================================================================
-# SCRIPT DE PRÉTRAITEMENT DES 3 FICHIERS DE MOBILITÉ (CORRIGÉ : FLUX LARGES)
+# SCRIPT DE PRÉTRAITEMENT DES 3 FICHIERS DE MOBILITÉ
+# PÉRIMÈTRE : FRANCE MÉTROPOLITAINE STRICTE
 # ==============================================================================
 
 import pandas as pd
@@ -7,14 +8,17 @@ import os
 from pathlib import Path
 import re
 
-# ── GESTION DES CHEMINS (Automatique selon l'arborescence) ────────────────────
+# ── GESTION DES CHEMINS ───────────────────────────────────────────────────────
 SCRIPT_DIR = Path(__file__).parent.resolve()
 INPUT_DIR = SCRIPT_DIR
 OUTPUT_DIR = SCRIPT_DIR.parent / "data_clean" / "mobilite"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
+# ── RÉFÉRENTIELS GÉOGRAPHIQUES ────────────────────────────────────────────────
+# Génération stricte des départements de France métropolitaine (01 à 95 + 2A/2B)
+DEPS_FRANCE_METRO = [str(i).zfill(2) for i in range(1, 96) if i != 20] + ["2A", "2B"]
+DEPS_METROPOLES = {"38", "35", "76", "42", "34"}
 
-# ── Communes des 5 métropoles ─────────────────────────────────────────────────
 COMMUNES_GRENOBLE = [
     "Bresson","Brié-et-Angonnes","Champ-sur-Drac","Champagnier","Claix",
     "Corenc","Domène","Échirolles","Eybens","Fontaine","Fontanil-Cornillon",
@@ -93,21 +97,34 @@ COMMUNES_METROPOLES = set(
     COMMUNES_GRENOBLE + COMMUNES_RENNES + COMMUNES_ROUEN
     + COMMUNES_SAINT_ETIENNE + COMMUNES_MONTPELLIER
 )
-DEPS_METROPOLES = {"38", "35", "76", "42", "34"}
 
 
-# ── Utilitaire : extraction département depuis code INSEE commune ─────────────
+# ── FONCTIONS UTILITAIRES ─────────────────────────────────────────────────────
 def get_dep(code) -> str:
-    s = str(code).strip()
-    if s.upper().startswith("2A") or s.upper().startswith("2B"):
-        return s[:2].upper()
-    if not re.match(r'^\d+$', s):
-        return "XX"   # étranger, inconnu
-    return s.zfill(5)[:2]
+    """Extrait le code département (2 caractères) de manière robuste."""
+    s = str(code).strip().upper()
+    if pd.isna(code) or not s:
+        return "XX"
+    if s.startswith("2A") or s.startswith("2B"):
+        return s[:2]
+    if re.match(r'^\d+$', s):
+        # Prend toujours les 2 premiers chiffres pour identifier le département
+        return s.zfill(5)[:2]
+    return "XX"
 
+def concatener_code_insee(code_brut) -> str:
+    """
+    Assure la création du code INSEE à 5 caractères par concaténation stricte :
+    Département (2 caractères) + Code commune municipal (3 caractères).
+    """
+    s = str(code_brut).strip()
+    s = s.zfill(5) # Sécurisation de la longueur minimale
+    dep_code = s[:2]
+    com_code = s[-3:]
+    return dep_code + com_code
 
 # ==============================================================================
-# 1. MIGRATIONS RÉSIDENTIELLES (CORRIGÉ)
+# 1. MIGRATIONS RÉSIDENTIELLES
 # ==============================================================================
 def nettoyer_migrations(df_raw, annee: int, col_flux: str) -> pd.DataFrame:
     df = df_raw.copy()
@@ -118,8 +135,10 @@ def nettoyer_migrations(df_raw, annee: int, col_flux: str) -> pd.DataFrame:
         print(f"  ⚠️  {annee} — colonnes manquantes : {manquantes}")
         return pd.DataFrame()
 
-    df["CODGEO"] = df["CODGEO"].astype(str).str.zfill(5)
-    df["DCRAN"]  = df["DCRAN"].astype(str).str.zfill(5)
+    # Reconstruction propre par concaténation (Dep 2 + Com 3)
+    df["CODGEO"] = df["CODGEO"].apply(concatener_code_insee)
+    df["DCRAN"]  = df["DCRAN"].apply(concatener_code_insee)
+    
     df["LIBGEO"] = df["LIBGEO"].astype(str).str.strip()
     df["L_DCRAN"] = df["L_DCRAN"].astype(str).str.strip()
 
@@ -128,11 +147,15 @@ def nettoyer_migrations(df_raw, annee: int, col_flux: str) -> pd.DataFrame:
 
     df[col_flux] = pd.to_numeric(df[col_flux], errors="coerce").fillna(0).round(2)
 
-    # CORRECTION : On garde si la commune d'origine OU la commune de destination est dans nos métropoles
+    # 1. Filtre géographique : On ne garde QUE la France métropolitaine (élimine "XX", "99", DOM-TOM)
+    mask_metro = df["dep_destination"].isin(DEPS_FRANCE_METRO) & df["dep_origine"].isin(DEPS_FRANCE_METRO)
+    
+    # 2. Filtre métropoles : Au moins l'une des communes est dans l'une des 5 métropoles cibles
     mask_dest = df["LIBGEO"].isin(COMMUNES_METROPOLES) & df["dep_destination"].isin(DEPS_METROPOLES)
     mask_orig = df["L_DCRAN"].isin(COMMUNES_METROPOLES) & df["dep_origine"].isin(DEPS_METROPOLES)
     
-    df = df[mask_dest | mask_orig].copy()
+    # Application combinée
+    df = df[mask_metro & (mask_dest | mask_orig)].copy()
     df["annee"] = annee
 
     df = df.rename(columns={
@@ -151,7 +174,7 @@ def nettoyer_migrations(df_raw, annee: int, col_flux: str) -> pd.DataFrame:
 
 
 # ==============================================================================
-# 2. MOBILITÉ PROFESSIONNELLE (CORRIGÉ)
+# 2. MOBILITÉ PROFESSIONNELLE
 # ==============================================================================
 def nettoyer_mobilite_travail(df_raw, annee: int, col_flux: str) -> pd.DataFrame:
     df = df_raw.copy()
@@ -159,11 +182,10 @@ def nettoyer_mobilite_travail(df_raw, annee: int, col_flux: str) -> pd.DataFrame
     cols_needed = ["CODGEO", "LIBGEO", "DCLT", "L_DCLT", col_flux]
     manquantes = [c for c in cols_needed if c not in df.columns]
     if manquantes:
-        print(f"  ⚠️  {annee} — colonnes manquantes : {manquantes}")
         return pd.DataFrame()
 
-    df["CODGEO"] = df["CODGEO"].astype(str).str.zfill(5)
-    df["DCLT"]   = df["DCLT"].astype(str).str.zfill(5)
+    df["CODGEO"] = df["CODGEO"].apply(concatener_code_insee)
+    df["DCLT"]   = df["DCLT"].apply(concatener_code_insee)
     df["LIBGEO"] = df["LIBGEO"].astype(str).str.strip()
     df["L_DCLT"] = df["L_DCLT"].astype(str).str.strip()
 
@@ -172,11 +194,11 @@ def nettoyer_mobilite_travail(df_raw, annee: int, col_flux: str) -> pd.DataFrame
 
     df[col_flux] = pd.to_numeric(df[col_flux], errors="coerce").fillna(0).round(2)
 
-    # CORRECTION : Résidence OU Travail dans nos métropoles
-    mask_res  = df["LIBGEO"].isin(COMMUNES_METROPOLES) & df["dep_residence"].isin(DEPS_METROPOLES)
-    mask_trav = df["L_DCLT"].isin(COMMUNES_METROPOLES) & df["dep_travail"].isin(DEPS_METROPOLES)
+    mask_metro = df["dep_residence"].isin(DEPS_FRANCE_METRO) & df["dep_travail"].isin(DEPS_FRANCE_METRO)
+    mask_res   = df["LIBGEO"].isin(COMMUNES_METROPOLES) & df["dep_residence"].isin(DEPS_METROPOLES)
+    mask_trav  = df["L_DCLT"].isin(COMMUNES_METROPOLES) & df["dep_travail"].isin(DEPS_METROPOLES)
     
-    df = df[mask_res | mask_trav].copy()
+    df = df[mask_metro & (mask_res | mask_trav)].copy()
     df["annee"] = annee
 
     df = df.rename(columns={
@@ -195,7 +217,7 @@ def nettoyer_mobilite_travail(df_raw, annee: int, col_flux: str) -> pd.DataFrame
 
 
 # ==============================================================================
-# 3. MOBILITÉ SCOLAIRE (CORRIGÉ)
+# 3. MOBILITÉ SCOLAIRE
 # ==============================================================================
 def nettoyer_mobilite_scolaire(df_raw, annee: int, col_flux: str) -> pd.DataFrame:
     df = df_raw.copy()
@@ -203,12 +225,11 @@ def nettoyer_mobilite_scolaire(df_raw, annee: int, col_flux: str) -> pd.DataFram
     cols_needed = ["CODGEO", "LIBGEO", "DCETU", "L_DCETU", col_flux]
     manquantes = [c for c in cols_needed if c not in df.columns]
     if manquantes:
-        print(f"  ⚠️  {annee} — colonnes manquantes : {manquantes}")
         return pd.DataFrame()
 
-    df["CODGEO"]  = df["CODGEO"].astype(str).str.zfill(5)
-    df["DCETU"]   = df["DCETU"].astype(str).str.zfill(5)
-    df["LIBGEO"]  = df["LIBGEO"].astype(str).str.strip()
+    df["CODGEO"] = df["CODGEO"].apply(concatener_code_insee)
+    df["DCETU"]  = df["DCETU"].apply(concatener_code_insee)
+    df["LIBGEO"] = df["LIBGEO"].astype(str).str.strip()
     df["L_DCETU"] = df["L_DCETU"].astype(str).str.strip()
 
     df["dep_origine"]     = df["CODGEO"].apply(get_dep)
@@ -216,11 +237,11 @@ def nettoyer_mobilite_scolaire(df_raw, annee: int, col_flux: str) -> pd.DataFram
 
     df[col_flux] = pd.to_numeric(df[col_flux], errors="coerce").fillna(0).round(2)
 
-    # CORRECTION : Origine OU Destination scolaire dans nos métropoles
-    mask_orig = df["LIBGEO"].isin(COMMUNES_METROPOLES) & df["dep_origine"].isin(DEPS_METROPOLES)
-    mask_dest = df["L_DCETU"].isin(COMMUNES_METROPOLES) & df["dep_destination"].isin(DEPS_METROPOLES)
+    mask_metro = df["dep_origine"].isin(DEPS_FRANCE_METRO) & df["dep_destination"].isin(DEPS_FRANCE_METRO)
+    mask_orig  = df["LIBGEO"].isin(COMMUNES_METROPOLES) & df["dep_origine"].isin(DEPS_METROPOLES)
+    mask_dest  = df["L_DCETU"].isin(COMMUNES_METROPOLES) & df["dep_destination"].isin(DEPS_METROPOLES)
     
-    df = df[mask_orig | mask_dest].copy()
+    df = df[mask_metro & (mask_orig | mask_dest)].copy()
     df["annee"] = annee
 
     df = df.rename(columns={
@@ -239,7 +260,7 @@ def nettoyer_mobilite_scolaire(df_raw, annee: int, col_flux: str) -> pd.DataFram
 
 
 # ==============================================================================
-# EXÉCUTION & STATS (Inchangé mais utile pour valider les volumes de flux)
+# EXÉCUTION & STATS 
 # ==============================================================================
 def log_stats(df, nom, col_orig_dep, col_dest_dep):
     if df.empty:
@@ -263,58 +284,42 @@ if __name__ == "__main__":
     print(f"Sauvegarde prévue dans   : {OUTPUT_DIR}")
     print("=" * 65)
 
-    # ── 1. MIGRATIONS RÉSIDENTIELLES ─────────────────────────────────────────
     print("\n▶ MIGRATIONS RÉSIDENTIELLES")
     try:
         df_res_2019 = pd.read_csv(INPUT_DIR / "Migrations_resid_2019.csv", sep=";", low_memory=False)
         df_res_2022 = pd.read_csv(INPUT_DIR / "Migrations_resid_2022.csv", sep=";", low_memory=False)
-
         df_res_c19 = nettoyer_migrations(df_res_2019, 2019, "NBFLUX_C19_POP01P")
         df_res_c22 = nettoyer_migrations(df_res_2022, 2022, "NBFLUX_C22_POP01P")
         df_res_final = pd.concat([df_res_c19, df_res_c22], ignore_index=True)
-
         log_stats(df_res_final, "Migrations résid.", "dep_origine", "dep_destination")
-        out = OUTPUT_DIR / "Migrations_resid_clean.csv"
-        df_res_final.to_csv(out, index=False)
-        print(f"  ✅ Remplacé avec succès : {out.name}")
+        df_res_final.to_csv(OUTPUT_DIR / "Migrations_resid_clean.csv", index=False)
     except FileNotFoundError as e:
-        print(f"  ❌ Fichier introuvable : {e}")
+        print(f"  ❌ {e}")
 
-    # ── 2. MOBILITÉ PROFESSIONNELLE ──────────────────────────────────────────
     print("\n▶ MOBILITÉ PROFESSIONNELLE")
     try:
         df_prof_2019 = pd.read_csv(INPUT_DIR / "Mobilite_profess_2019.csv", sep=";", low_memory=False)
         df_prof_2022 = pd.read_csv(INPUT_DIR / "Mobilite_profess_2022.csv", sep=";", low_memory=False)
-
         df_prof_c19 = nettoyer_mobilite_travail(df_prof_2019, 2019, "NBFLUX_C19_ACTOCC15P")
         df_prof_c22 = nettoyer_mobilite_travail(df_prof_2022, 2022, "NBFLUX_C22_ACTOCC15P")
         df_prof_final = pd.concat([df_prof_c19, df_prof_c22], ignore_index=True)
-
         log_stats(df_prof_final, "Mobilité prof.", "dep_residence", "dep_travail")
-        out = OUTPUT_DIR / "Mobilite_profess_clean.csv"
-        df_prof_final.to_csv(out, index=False)
-        print(f"  ✅ Remplacé avec succès : {out.name}")
+        df_prof_final.to_csv(OUTPUT_DIR / "Mobilite_profess_clean.csv", index=False)
     except FileNotFoundError as e:
-        print(f"  ❌ Fichier introuvable : {e}")
+        print(f"  ❌ {e}")
 
-    # ── 3. MOBILITÉ SCOLAIRE ─────────────────────────────────────────────────
     print("\n▶ MOBILITÉ SCOLAIRE")
     try:
         df_scol_2019 = pd.read_csv(INPUT_DIR / "Mobilite_scolaire_2019.csv", sep=";", low_memory=False)
         df_scol_2022 = pd.read_csv(INPUT_DIR / "Mobilite_scolaire_2022.csv", sep=";", low_memory=False)
-
         df_scol_c19 = nettoyer_mobilite_scolaire(df_scol_2019, 2019, "NBFLUX_C19_SCOL02P")
         df_scol_c22 = nettoyer_mobilite_scolaire(df_scol_2022, 2022, "NBFLUX_C22_SCOL02P")
         df_scol_final = pd.concat([df_scol_c19, df_scol_c22], ignore_index=True)
-
         log_stats(df_scol_final, "Mobilité scol.", "dep_origine", "dep_destination")
-        out = OUTPUT_DIR / "Mobilite_scolaire_clean.csv"
-        df_scol_final.to_csv(out, index=False)
-        print(f"  ✅ Remplacé avec succès : {out.name}")
+        df_scol_final.to_csv(OUTPUT_DIR / "Mobilite_scolaire_clean.csv", index=False)
     except FileNotFoundError as e:
-        print(f"  ❌ Fichier introuvable : {e}")
+        print(f"  ❌ {e}")
 
     print("\n" + "=" * 65)
-    print("TERMINÉ.")
-    print("Les fichiers ont été écrasés avec tous les flux (internes et externes) !")
+    print("TERMINÉ. Filtre géographique métropolitain strict appliqué.")
     print("=" * 65)
