@@ -702,16 +702,18 @@ def charger_eau():
                 )
         return df
 
-    # ── Eau potable ──────────────────────────────────────────────────────────
+    # ── Eau potable (AEP) — indicateurs SISPEA utilisés dans l'onglet Environnement
     IND_AEP = [
-        "D101.0",   # Abonnés desservis
-        "D102.0",   # Prix TTC eau potable à 120 m³ (€/m³)
-        "P103.2B",  # Conformité eau distribuée (% analyses conformes)
-        "P105.3",   # Pertes en réseau (m³/km/j)
-        "P108.3",   # Protection ressource : captages avec arrêté (%)
-        "P152.1",   # Taux de conformité microbiologique (%)
-        "VP.056",   # Volume mis en distribution (m³/an)
-        "VP.020",   # Rendement réseau (%)
+        "D102.0",   # Prix TTC du service au m³ (120 m³)
+        "D151.0",   # Délai max d'ouverture des branchements (jours)
+        "P101.1",   # Conformité paramètres bactériologiques (%)
+        "P102.1",   # Conformité paramètres physico-chimiques (%)
+        "P104.3",   # Rendement du réseau de distribution (%)
+        "P106.3",   # ILI — pertes en réseau (m³/km/j)
+        "P107.2",   # Taux de renouvellement des réseaux (%)
+        "P108.3",   # Protection des points de captage (%)
+        "P154.0",   # Taux d'impayés sur factures eau (%)
+        "P155.1",   # Taux de réclamations (/ 1 000 hab.)
     ]
     df_aep = safe("Eau_potable_2020-Entites_de_gestion.csv", IND_AEP)
 
@@ -2707,8 +2709,6 @@ if vue == "Démographie":
                 interpret_int = (
                     f"**Volume interne** : nombre de {label_int.lower()}. "
                     f"Ces flux ne participent pas au solde net mais révèlent la cohésion fonctionnelle de la métropole.\n\n"
-                    f"**Autonomie territoriale** : part des flux internes par rapport aux flux vers l'extérieur. "
-                    f"Une métropole à 80 %+ d'autonomie est très auto-suffisante."
                 )
 
             elif "domicile" in theme_mob:
@@ -8122,907 +8122,684 @@ if vue == "Environnement":
                     )
     
     # ==============================================================================
-    # ONGLET EAU & ASSAINISSEMENT — CODE COMPLET
-    # Remplace le bloc "with tab_env3:" dans app.py
+    # ONGLET 3 — EAU ET ASSAINISSEMENT (AEP, AC, ANC, TARIFS)
     # ==============================================================================
 
-    with tab_env3:
-
-        st.markdown("""
-        <div style='background-color:#f1f8f5;padding:10px 15px;border-radius:10px;
-                    border-left:5px solid #1C3A27;margin-bottom:20px;font-size:0.85em;'>
-            <strong>Source :</strong> SISPEA - Système d'Information sur les Services Publics
-            d'Eau et d'Assainissement :
-            <a href='https://www.services.eaufrance.fr/pro/telechargement#donnees-services'
-               target='_blank' style='color:#1C3A27;'>Accéder aux données</a>
-            &nbsp;·&nbsp; Données 2020.<br><br>
-            <strong>Note sur les données :</strong>
-            Les indicateurs portent sur les services publics d'<b>eau potable (AEP)</b>,
-            d'<b>assainissement collectif (AC)</b> et d'<b>assainissement non collectif (ANC)</b>.
-            Saint-Étienne dispose de plusieurs entités de gestion communales : les indicateurs
-            sont agrégés en moyenne pondérée par la population desservie.<br><br>
-            Certains indicateurs (collecte, dépollution) peuvent dépasser 100 %. C'est normal,
-            les eaux de pluie parasites s'infiltrant dans les réseaux diluent les effluents,
-            augmentant le volume traité sans augmenter la charge polluante réelle.<br><br>
-            <span style='color:#C62828;font-weight:700;'>⚠️ Rennes Métropole non disponible :</span>
-            la compétence eau y est organisée via des syndicats intercommunaux dont les périmètres
-            ne correspondent pas à la métropole.
-        </div>""", unsafe_allow_html=True)
-
-        # ── Filtres ────────────────────────────────────────────────────────────
-        with st.container():
-            filter_bar("Filtres - Eau & Assainissement")
-            fw1, fw2 = st.columns([1, 3])
-            with fw1:
-                filter_row_label("Thématique")
-            with fw2:
-                theme_eau = st.selectbox(
-                    "",
-                    ["💧 Eau potable (AEP)",
-                     "🚿 Assainissement collectif (AC)",
-                     "🏡 Assainissement non collectif (ANC)",
-                     "💶 Détail tarifaire"],
-                    key="env_eau_theme",
-                    label_visibility="collapsed",
-                )
-
-            METROS_EAU_4 = ["Grenoble", "Montpellier", "Saint-Étienne", "Rouen"]
-            sel_metros_eau = st.multiselect(
-                "Métropoles à comparer", METROS_EAU_4, default=METROS_EAU_4,
-                key="env_eau_metros",
-                help="Rennes Métropole n'est pas disponible dans SISPEA pour ces compétences.",
-            )
-
-        st.markdown("---")
-
-        if not sel_metros_eau:
-            st.warning("Sélectionnez au moins une métropole.")
-            st.stop()
-
-        eau_colors = [COULEURS.get(m, "#888888") for m in sel_metros_eau]
-        n_eau = len(sel_metros_eau)
-
-        # ── Helpers ────────────────────────────────────────────────────────────
-        def get_val(df, metro, col):
-            if df is None or col not in df.columns:
-                return np.nan
-            row = df[df["metropole"] == metro]
-            return float(row[col].values[0]) if len(row) > 0 else np.nan
-
-        def fv(v, dec=1, suf=""):
-            """Format valeur — retourne N/D si nan."""
-            if pd.isna(v):
-                return "N/D"
-            if dec == 0:
-                return f"{int(round(v)):,}".replace(",", "\u202f") + suf
-            return f"{v:.{dec}f}{suf}"
-
-        def bar_h_eau(metros, x_vals, colors, title_x, fmt_fn=None):
-            """Barres horizontales triées, couleur territoire, hachures Grenoble."""
-            rows = [{"t": m, "v": v, "c": c}
-                    for m, v, c in zip(metros, x_vals, colors)]
-            df_b = pd.DataFrame(rows).dropna(subset=["v"])
-            df_b = df_b.sort_values("v", ascending=True)
-            if df_b.empty:
-                return go.Figure()
-            fig = go.Figure()
-            for _, r in df_b.iterrows():
-                is_g = r["t"] == "Grenoble"
-                txt  = fmt_fn(r["v"]) if fmt_fn else f"{r['v']:.1f}"
-                mkr  = dict(color=r["c"])
-                if is_g:
-                    mkr["pattern"] = dict(shape="/", fgcolor="#FF584D",
-                                          fillmode="overlay", solidity=0.3, size=20)
-                fig.add_trace(go.Bar(
-                    y=[r["t"]], x=[r["v"]], orientation="h",
-                    name=r["t"], marker=mkr, showlegend=False,
-                    text=[txt], textposition="outside", cliponaxis=False,
-                    hovertemplate="<b>" + r["t"] + "</b><br>"
-                                  + title_x + " : " + txt + "<extra></extra>",
-                ))
-            fig.update_layout(
-                height=120 + len(df_b) * 52,
-                margin=dict(t=10, b=10, l=10, r=90),
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                font_family="Sora",
-                xaxis=dict(title=title_x, gridcolor="#E8F5EE"),
-                yaxis=dict(title=""),
-            )
-            return fig
-
-        def lollipop_eau(metros, x_vals, colors, title_x, fmt_fn=None,
-                         ref_line=None, ref_label=""):
-            """Lollipop chart horizontal — plus original que les barres."""
-            rows = [{"t": m, "v": v, "c": c}
-                    for m, v, c in zip(metros, x_vals, colors)]
-            df_b = pd.DataFrame(rows).dropna(subset=["v"])
-            df_b = df_b.sort_values("v", ascending=True).reset_index(drop=True)
-            if df_b.empty:
-                return go.Figure()
-            fig = go.Figure()
-            # Lignes horizontales (tiges)
-            for _, r in df_b.iterrows():
-                is_g = r["t"] == "Grenoble"
-                fig.add_shape(
-                    type="line",
-                    x0=0, x1=r["v"], y0=r["t"], y1=r["t"],
-                    line=dict(color=r["c"], width=3 if is_g else 2,
-                              dash="dot" if is_g else "solid"),
-                )
-            # Points (têtes)
-            txt_list = [fmt_fn(r["v"]) if fmt_fn else f"{r['v']:.1f}"
-                        for _, r in df_b.iterrows()]
-            fig.add_trace(go.Scatter(
-                x=df_b["v"], y=df_b["t"],
-                mode="markers+text",
-                marker=dict(
-                    size=[16 if t == "Grenoble" else 12 for t in df_b["t"]],
-                    color=df_b["c"].tolist(),
-                    line=dict(
-                        color=["#FF584D" if t == "Grenoble" else "white"
-                               for t in df_b["t"]],
-                        width=[3 if t == "Grenoble" else 1.5 for t in df_b["t"]],
-                    ),
-                    symbol=["diamond" if t == "Grenoble" else "circle"
-                            for t in df_b["t"]],
-                ),
-                text=txt_list,
-                textposition="middle right",
-                textfont=dict(size=10, family="Sora"),
-                showlegend=False,
-                hovertemplate=[
-                    "<b>" + r["t"] + "</b><br>" + title_x + " : " + txt_list[i]
-                    + "<extra></extra>"
-                    for i, (_, r) in enumerate(df_b.iterrows())
-                ],
-            ))
-            if ref_line is not None:
-                fig.add_vline(x=ref_line, line_dash="dot",
-                              line_color="#888", line_width=1.5)
-                fig.add_annotation(
-                    x=ref_line, y=len(df_b) - 0.3,
-                    text=ref_label, showarrow=False,
-                    font=dict(size=9, color="#888", family="Sora"),
-                    xanchor="left", xshift=4,
-                )
-            fig.update_layout(
-                height=120 + len(df_b) * 52,
-                margin=dict(t=10, b=10, l=10, r=110),
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                font_family="Sora",
-                xaxis=dict(title=title_x, gridcolor="#E8F5EE", range=[0, None]),
-                yaxis=dict(title="", showgrid=False),
-            )
-            return fig
-
-        def radar_eau(metros, cols, labels, df_data, colors):
-            """Radar multi-métropoles normalisé 0-100 sur les valeurs du panel."""
-            fig = go.Figure()
-            vals_norm = {}
-            for col in cols:
-                raw = [get_val(df_data, m, col) for m in metros]
-                clean = [v for v in raw if pd.notna(v)]
-                if not clean:
-                    vals_norm[col] = [0.0] * len(metros)
-                    continue
-                mn, mx = min(clean), max(clean)
-                vals_norm[col] = [
-                    (v - mn) / (mx - mn) * 100 if pd.notna(v) and mx != mn
-                    else (50.0 if pd.notna(v) else 0.0)
-                    for v in raw
-                ]
-            for i, (m, c) in enumerate(zip(metros, colors)):
-                is_g = m == "Grenoble"
-                r_vals = [vals_norm[col][i] for col in cols]
-                r, g, b = int(c[1:3], 16), int(c[3:5], 16), int(c[5:7], 16)
-                fig.add_trace(go.Scatterpolar(
-                    r=r_vals + [r_vals[0]],
-                    theta=labels + [labels[0]],
-                    fill="toself",
-                    fillcolor=f"rgba({r},{g},{b},0.10)",
-                    name=m,
-                    line=dict(color="#FF584D" if is_g else c,
-                              width=3 if is_g else 2,
-                              dash="dot" if is_g else "solid"),
-                    hovertemplate="<b>" + m + "</b><br>%{theta}<extra></extra>",
-                ))
-            fig.update_layout(
-                height=380, margin=dict(t=50, b=40),
-                paper_bgcolor="rgba(0,0,0,0)", font_family="Sora",
-                polar=dict(
-                    bgcolor="rgba(0,0,0,0)",
-                    radialaxis=dict(gridcolor="#E8F5EE", range=[0, 110],
-                                   tickfont=dict(size=8), showticklabels=False),
-                    angularaxis=dict(gridcolor="#E8F5EE"),
-                ),
-                legend=dict(orientation="h", y=-0.15, x=0.5, xanchor="center",
-                            font=dict(size=10)),
-            )
-            return fig
-
-        def scatter_eau(metros, x_vals, y_vals, colors, xlabel, ylabel):
-            """Scatter avec bulles et annotations."""
-            fig = go.Figure()
-            for m, xv, yv, c in zip(metros, x_vals, y_vals, colors):
-                if pd.isna(xv) or pd.isna(yv):
-                    continue
-                is_g = m == "Grenoble"
-                fig.add_trace(go.Scatter(
-                    x=[xv], y=[yv], mode="markers+text",
-                    name=m, text=[m], textposition="top center",
-                    textfont=dict(size=10, color="#FF584D" if is_g else c,
-                                  family="Sora"),
-                    marker=dict(
-                        size=20, color=c,
-                        line=dict(color="#FF584D" if is_g else "white",
-                                  width=3 if is_g else 1.5),
-                        symbol="diamond" if is_g else "circle",
-                    ),
-                    hovertemplate=(
-                        "<b>" + m + "</b><br>"
-                        + xlabel + " : %{x:.2f}<br>"
-                        + ylabel + " : %{y:.1f}<extra></extra>"
-                    ),
-                ))
-            fig.update_layout(
-                height=360, margin=dict(t=20, b=20, l=20, r=20),
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                font_family="Sora", showlegend=False,
-                xaxis=dict(title=xlabel, gridcolor="#E8F5EE"),
-                yaxis=dict(title=ylabel, gridcolor="#E8F5EE"),
-            )
-            return fig
-
-        # ══════════════════════════════════════════════════════════════════════
-        # 💧 EAU POTABLE (AEP)
-        # ══════════════════════════════════════════════════════════════════════
-        if "Eau potable" in theme_eau:
-
-            if df_aep_eau is None:
-                st.info("📂 Fichier eau potable introuvable.")
-                st.stop()
-
-            df_sel = df_aep_eau[df_aep_eau["metropole"].isin(sel_metros_eau)].copy()
-
-            # ── KPI — pattern identique aux autres onglets ────────────────────
-            st.subheader("Indicateurs clés — Eau potable 2020")
-            kpi_cols_aep = st.columns(n_eau)
-            for i, m in enumerate(sel_metros_eau):
-                kpi_color = eau_colors[i]
-                abo    = get_val(df_sel, m, "D101.0")
-                prix   = get_val(df_sel, m, "D102.0")
-                conf   = get_val(df_sel, m, "P103.2B")
-                rendmt = get_val(df_sel, m, "VP.020")
-                abo_str    = fv(abo, 0)
-                prix_str   = fv(prix, 2, " €/m³")
-                conf_str   = fv(conf, 0, "%")
-                rendmt_str = fv(rendmt, 0, "%")
-                html_card = (
-                    "<div style='display:flex;flex-direction:column;justify-content:center;"
-                    "border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.1);"
-                    "background:#fff;min-height:80px;"
-                    f"border-left:6px solid {kpi_color};padding:12px 16px;margin-bottom:10px;'>"
-                    f"<div style='font-size:11px;font-weight:700;letter-spacing:0.08em;"
-                    f"color:#666;text-transform:uppercase;'>{m}</div>"
-                    f"<div style='font-size:24px;font-weight:bold;color:#111;margin:4px 0;'>"
-                    f"{abo_str}</div>"
-                    f"<div style='font-size:11px;font-weight:700;color:{kpi_color};"
-                    f"text-transform:uppercase;letter-spacing:0.05em;'>abonnés AEP</div>"
-                    f"<div style='margin-top:6px;font-size:11px;color:#555;'>"
-                    f"Prix TTC 120m³ : <b style='color:#E65100;'>{prix_str}</b><br>"
-                    f"Conformité : <b style='color:#2E7D32;'>{conf_str}</b>"
-                    f"&nbsp;&nbsp;·&nbsp;&nbsp;"
-                    f"Rendement : <b style='color:#7B1FA2;'>{rendmt_str}</b>"
-                    f"</div></div>"
-                )
-                with kpi_cols_aep[i]:
-                    st.markdown(html_card, unsafe_allow_html=True)
-
-            st.markdown("---")
-
-            # ── Graphique 1 : Lollipop Prix + Lollipop Rendement ─────────────
-            g1, g2 = st.columns(2)
-            with g1:
-                st.subheader(
-                    "Prix de l'eau TTC à 120 m³ (€/m³)",
-                    help=(
-                        "D102.0 : référence nationale SISPEA. Inclut part eau + "
-                        "redevances agence de l'eau + TVA. "
-                        "Pour Saint-Étienne : moyenne pondérée par population."
-                    ),
-                )
-                x = [get_val(df_sel, m, "D102.0") for m in sel_metros_eau]
-                st.plotly_chart(style(lollipop_eau(sel_metros_eau, x, eau_colors,
-                    "€/m³ TTC", fmt_fn=lambda v: f"{v:.2f} €")),
-                    use_container_width=True)
-
-            with g2:
-                st.subheader(
-                    "Rendement du réseau (%)",
-                    help=(
-                        "VP.020 : volume consommé / volume distribué × 100. "
-                        "< 70 % = réseau très fuiteux. Objectif : 85 %."
-                    ),
-                )
-                x = [get_val(df_sel, m, "VP.020") for m in sel_metros_eau]
-                st.plotly_chart(style(lollipop_eau(sel_metros_eau, x, eau_colors,
-                    "%", fmt_fn=lambda v: f"{v:.0f}%",
-                    ref_line=85, ref_label="Objectif 85 %")),
-                    use_container_width=True)
-
-            with st.expander("💡 Interpréter ces graphiques"):
-                st.write(
-                    "**Prix de l'eau** : la forme en lollipop met en évidence l'écart "
-                    "entre les métropoles. Montpellier et Grenoble bénéficient de "
-                    "ressources abondantes (Rhône, massif alpin) qui limitent les coûts "
-                    "de production.\n\n"
-                    "**Rendement réseau** : la ligne pointillée indique l'objectif "
-                    "réglementaire de 85 %. Un rendement inférieur signale des fuites "
-                    "importantes — coûteuses et contraires à l'objectif de sobriété hydrique. "
-                    "Grenoble apparaît en losange rouge avec tige pointillée."
-                )
-
-            st.markdown("---")
-
-            # ── Graphique 2 : Radar qualité eau ──────────────────────────────
-            st.subheader(
-                "Radar de performance — Eau potable",
-                help=(
-                    "Comparaison normalisée (0 = moins bonne valeur du panel, "
-                    "100 = meilleure valeur) sur 4 indicateurs de qualité. "
-                    "Plus la surface est étendue, plus la métropole est performante."
-                ),
-            )
-            st.plotly_chart(style(radar_eau(
-                sel_metros_eau,
-                ["P103.2B", "VP.020", "P108.3", "P152.1"],
-                ["Conformité eau\n(%)", "Rendement\nréseau (%)",
-                 "Protection\ncaptages (%)", "Conformité\nmicrobiologique (%)"],
-                df_sel, eau_colors,
-            )), use_container_width=True)
-
-            with st.expander("💡 Interpréter le radar"):
-                st.write(
-                    "Les axes sont normalisés : 100 = meilleure valeur du panel, "
-                    "0 = moins bonne. Ce graphique montre la position relative de "
-                    "chaque métropole — pas les valeurs absolues. "
-                    "Grenoble apparaît en pointillé rouge.\n\n"
-                    "**P103.2B** : conformité analyses eau distribuée (ARS).\n"
-                    "**VP.020** : rendement réseau (moins de fuites = mieux).\n"
-                    "**P108.3** : captages avec arrêté de protection.\n"
-                    "**P152.1** : conformité microbiologique spécifique."
-                )
-
-            st.markdown("---")
-
-            # ── Graphique 3 : Scatter Prix vs Rendement ───────────────────────
-            g3, g4 = st.columns(2)
-            with g3:
-                st.subheader(
-                    "Prix vs Rendement réseau",
-                    help=(
-                        "Un réseau efficace (haut rendement = moins d'eau perdue) "
-                        "devrait se traduire par un coût moindre. Ce scatter met en "
-                        "regard performance technique et coût pour l'abonné."
-                    ),
-                )
-                x_sc = [get_val(df_sel, m, "D102.0") for m in sel_metros_eau]
-                y_sc = [get_val(df_sel, m, "VP.020") for m in sel_metros_eau]
-                st.plotly_chart(style(scatter_eau(
-                    sel_metros_eau, x_sc, y_sc, eau_colors,
-                    "Prix TTC (€/m³)", "Rendement réseau (%)"
-                )), use_container_width=True)
-
-            with g4:
-                st.subheader(
-                    "Pertes réseau et protection captages",
-                    help=(
-                        "P105.3 : pertes par fuite (m³/km/j). "
-                        "P108.3 : % captages protégés. "
-                        "Deux dimensions complémentaires de la sobriété hydrique."
-                    ),
-                )
-                x_sc2 = [get_val(df_sel, m, "P105.3") for m in sel_metros_eau]
-                y_sc2 = [get_val(df_sel, m, "P108.3") for m in sel_metros_eau]
-                st.plotly_chart(style(scatter_eau(
-                    sel_metros_eau, x_sc2, y_sc2, eau_colors,
-                    "Pertes réseau (m³/km/j)", "Protection captages (%)"
-                )), use_container_width=True)
-
-            with st.expander("💡 Interpréter ces graphiques"):
-                st.write(
-                    "**Prix vs Rendement** : idéalement, un territoire doit se "
-                    "positionner en bas à droite (prix faible, rendement élevé). "
-                    "Un territoire en haut à gauche a un réseau inefficace ET cher.\n\n"
-                    "**Pertes vs Protection captages** : un territoire avec peu de "
-                    "pertes ET des captages bien protégés est doublement engagé dans "
-                    "la préservation de la ressource en eau."
-                )
-
-        # ══════════════════════════════════════════════════════════════════════
-        # 🚿 ASSAINISSEMENT COLLECTIF (AC)
-        # ══════════════════════════════════════════════════════════════════════
-        elif "collectif" in theme_eau:
-
-            if df_ac_eau is None:
-                st.info("📂 Fichier assainissement collectif introuvable.")
-                st.stop()
-
-            df_sel = df_ac_eau[df_ac_eau["metropole"].isin(sel_metros_eau)].copy()
-
-            # ── KPI ──────────────────────────────────────────────────────────
-            st.subheader("Indicateurs clés — Assainissement collectif 2020")
-            kpi_cols_ac = st.columns(n_eau)
-            for i, m in enumerate(sel_metros_eau):
-                kpi_color = eau_colors[i]
-                abo  = get_val(df_sel, m, "D201.0")
-                dbo  = get_val(df_sel, m, "D202.0")
-                coll = get_val(df_sel, m, "P203.3")
-                depo = get_val(df_sel, m, "P255.3")
-                abo_str  = fv(abo, 0)
-                dbo_str  = fv(dbo, 0, " kg/j")
-                coll_str = fv(coll, 0, "%")
-                depo_str = fv(depo, 0, "%")
-                html_card = (
-                    "<div style='display:flex;flex-direction:column;justify-content:center;"
-                    "border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.1);"
-                    "background:#fff;min-height:80px;"
-                    f"border-left:6px solid {kpi_color};padding:12px 16px;margin-bottom:10px;'>"
-                    f"<div style='font-size:11px;font-weight:700;letter-spacing:0.08em;"
-                    f"color:#666;text-transform:uppercase;'>{m}</div>"
-                    f"<div style='font-size:24px;font-weight:bold;color:#111;margin:4px 0;'>"
-                    f"{abo_str}</div>"
-                    f"<div style='font-size:11px;font-weight:700;color:{kpi_color};"
-                    f"text-transform:uppercase;letter-spacing:0.05em;'>abonnés AC</div>"
-                    f"<div style='margin-top:6px;font-size:11px;color:#555;'>"
-                    f"Charge DBO5 : <b style='color:#E65100;'>{dbo_str}</b><br>"
-                    f"Collecte : <b style='color:#2E7D32;'>{coll_str}</b>"
-                    f"&nbsp;&nbsp;·&nbsp;&nbsp;"
-                    f"Dépollution : <b style='color:#7B1FA2;'>{depo_str}</b>"
-                    f"</div></div>"
-                )
-                with kpi_cols_ac[i]:
-                    st.markdown(html_card, unsafe_allow_html=True)
-
-            st.markdown("---")
-
-            # ── Graphique 1 : Radar conformité AC ────────────────────────────
-            st.subheader(
-                "Radar de conformité — Assainissement collectif",
-                help=(
-                    "Comparaison normalisée (0-100) des 4 indicateurs de conformité. "
-                    "Les axes ne représentent pas les valeurs absolues mais les "
-                    "positions relatives entre métropoles."
-                ),
-            )
-            st.plotly_chart(style(radar_eau(
-                sel_metros_eau,
-                ["P204.3", "P205.3", "P203.3", "P206.3"],
-                ["Équipements\nSTEP (%)", "Performance\népuration (%)",
-                 "Collecte\neffluents (%)", "Boues\nconformes (%)"],
-                df_sel, eau_colors,
-            )), use_container_width=True)
-
-            with st.expander("💡 Interpréter le radar"):
-                st.write(
-                    "**P204.3** : équipements STEP aux normes (directive ERU 1991).\n"
-                    "**P205.3** : objectifs de traitement atteints.\n"
-                    "**P203.3** : effluents bien acheminés vers les STEP.\n"
-                    "**P206.3** : boues valorisées réglementairement.\n\n"
-                    "Des valeurs > 100 % pour P203.3 et P255.3 sont normales : "
-                    "les eaux parasites de pluie s'infiltrent dans les réseaux, "
-                    "diluant les effluents sans augmenter la charge polluante réelle."
-                )
-
-            st.markdown("---")
-
-            # ── Graphique 2 : Lollipop conformité + barres dépollution ────────
-            g1, g2 = st.columns(2)
-            with g1:
-                st.subheader(
-                    "Conformité équipements et performance épuration",
-                    help="P204.3 et P205.3 : les deux indicateurs de conformité réglementaire des STEP.",
-                )
-                # Grouped lollipop : P204 et P205 côte à côte
-                fig_conf = go.Figure()
-                for j, (col, label, offset) in enumerate([
-                    ("P204.3", "Équipements", -0.2),
-                    ("P205.3", "Performance", 0.2),
-                ]):
-                    x_c = [get_val(df_sel, m, col) for m in sel_metros_eau]
-                    rows = [{"t": m, "v": v, "c": c, "off": offset}
-                            for m, v, c in zip(sel_metros_eau, x_c, eau_colors)]
-                    df_c = pd.DataFrame(rows).dropna(subset=["v"])
-                    for _, r in df_c.iterrows():
-                        is_g = r["t"] == "Grenoble"
-                        fig_conf.add_shape(
-                            type="line",
-                            x0=0, x1=r["v"],
-                            y0=r["t"], y1=r["t"],
-                            line=dict(color=r["c"],
-                                      width=3 if is_g else 1.5,
-                                      dash="dot" if is_g else "solid"),
-                        )
-                    fig_conf.add_trace(go.Scatter(
-                        x=df_c["v"], y=df_c["t"],
-                        mode="markers", name=label,
-                        marker=dict(
-                            size=[14 if t == "Grenoble" else 10 for t in df_c["t"]],
-                            color=df_c["c"].tolist(),
-                            symbol=["diamond" if t == "Grenoble" else
-                                    ("circle" if j == 0 else "square")
-                                    for t in df_c["t"]],
-                            line=dict(
-                                color=["#FF584D" if t == "Grenoble" else "white"
-                                       for t in df_c["t"]],
-                                width=[2 if t == "Grenoble" else 1 for t in df_c["t"]],
-                            ),
-                        ),
-                        hovertemplate=[
-                            "<b>" + t + "</b><br>" + label + " : "
-                            + fv(v, 1, "%") + "<extra></extra>"
-                            for t, v in zip(df_c["t"], df_c["v"])
-                        ],
-                    ))
-                fig_conf.update_layout(
-                    height=120 + n_eau * 52,
-                    margin=dict(t=10, b=10, l=10, r=20),
-                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                    font_family="Sora",
-                    xaxis=dict(title="%", gridcolor="#E8F5EE"),
-                    yaxis=dict(title="", showgrid=False),
-                    legend=dict(orientation="h", y=1.1, x=0),
-                )
-                st.plotly_chart(style(fig_conf), use_container_width=True)
-
-            with g2:
-                st.subheader(
-                    "Taux de dépollution (%)",
-                    help=(
-                        "P255.3 : % DBO5 éliminée. Peut dépasser 100 % en raison "
-                        "de la dilution des effluents par les eaux parasites de pluie."
-                    ),
-                )
-                x = [get_val(df_sel, m, "P255.3") for m in sel_metros_eau]
-                st.plotly_chart(style(bar_h_eau(sel_metros_eau, x, eau_colors,
-                    "% DBO5 éliminée", fmt_fn=lambda v: f"{v:.0f}%")),
-                    use_container_width=True)
-
-            with st.expander("💡 Interpréter ces graphiques"):
-                st.write(
-                    "**Lollipop double** : les cercles = équipements (P204.3), "
-                    "les carrés = performance (P205.3). Une STEP peut être conforme "
-                    "en équipements mais sous-performante lors de pics de charge.\n\n"
-                    "**Dépollution (P255.3)** : peut dépasser 100 % — c'est normal. "
-                    "Les eaux de pluie s'infiltrant dans les réseaux diluent les "
-                    "effluents : le volume traité augmente mais la charge polluante "
-                    "entrante reste identique, ce qui fait monter mécaniquement le taux."
-                )
-
-            st.markdown("---")
-
-            # ── Graphique 3 : Scatter abonnés vs DBO5 ─────────────────────────
-            st.subheader(
-                "Volume d'activité : abonnés vs charge polluante (DBO5)",
-                help=(
-                    "Un écart important entre abonnés et charge DBO5 peut révéler "
-                    "la présence d'activités industrielles (forte charge / abonné) "
-                    "ou d'infiltrations parasites importantes (charge diluée)."
-                ),
-            )
-            x_ac = [get_val(df_sel, m, "D201.0") for m in sel_metros_eau]
-            y_ac = [get_val(df_sel, m, "D202.0") for m in sel_metros_eau]
-            st.plotly_chart(style(scatter_eau(
-                sel_metros_eau, x_ac, y_ac, eau_colors,
-                "Abonnés AC", "Charge DBO5 (kg/j)"
-            )), use_container_width=True)
-
-            with st.expander("💡 Interpréter ce graphique"):
-                st.write(
-                    "La relation entre abonnés et charge DBO5 devrait être linéaire "
-                    "(plus d'abonnés = plus de pollution à traiter). Un point au-dessus "
-                    "de la tendance signale une charge industrielle importante. "
-                    "Un point en dessous peut indiquer un grand nombre d'infiltrations "
-                    "parasites (eaux claires) qui diluent les effluents."
-                )
-
-        # ══════════════════════════════════════════════════════════════════════
-        # 🏡 ASSAINISSEMENT NON COLLECTIF (ANC)
-        # ══════════════════════════════════════════════════════════════════════
-        elif "non collectif" in theme_eau:
-
-            if df_anc_eau is None:
-                st.info("📂 Fichier assainissement non collectif introuvable.")
-                st.stop()
-
-            df_sel = df_anc_eau[df_anc_eau["metropole"].isin(sel_metros_eau)].copy()
-            for col_anc in ["D301.0", "D302.0", "P301.3", "VP.181", "VP.167", "VP.166"]:
-                if col_anc in df_sel.columns:
-                    df_sel[col_anc] = pd.to_numeric(
-                        df_sel[col_anc].astype(str).str.replace(",", "."),
-                        errors="coerce")
-
-            # ── KPI ──────────────────────────────────────────────────────────
-            st.subheader("Indicateurs clés — Assainissement non collectif 2020")
-            kpi_cols_anc = st.columns(n_eau)
-            for i, m in enumerate(sel_metros_eau):
-                kpi_color = eau_colors[i]
-                nb    = get_val(df_sel, m, "D301.0")
-                conf  = get_val(df_sel, m, "D302.0")
-                rehab = get_val(df_sel, m, "P301.3")
-                nc    = get_val(df_sel, m, "VP.166")
-                nb_str    = fv(nb, 0)
-                conf_str  = fv(conf, 0, "%")
-                rehab_str = fv(rehab, 1, "%")
-                nc_str    = fv(nc, 0)
-                html_card = (
-                    "<div style='display:flex;flex-direction:column;justify-content:center;"
-                    "border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.1);"
-                    "background:#fff;min-height:80px;"
-                    f"border-left:6px solid {kpi_color};padding:12px 16px;margin-bottom:10px;'>"
-                    f"<div style='font-size:11px;font-weight:700;letter-spacing:0.08em;"
-                    f"color:#666;text-transform:uppercase;'>{m}</div>"
-                    f"<div style='font-size:24px;font-weight:bold;color:#111;margin:4px 0;'>"
-                    f"{nb_str}</div>"
-                    f"<div style='font-size:11px;font-weight:700;color:{kpi_color};"
-                    f"text-transform:uppercase;letter-spacing:0.05em;'>installations ANC</div>"
-                    f"<div style='margin-top:6px;font-size:11px;color:#555;'>"
-                    f"Conformité : <b style='color:#2E7D32;'>{conf_str}</b>"
-                    f"&nbsp;&nbsp;·&nbsp;&nbsp;"
-                    f"Réhabilitation : <b style='color:#E65100;'>{rehab_str}</b><br>"
-                    f"Non conformes : <b style='color:#C62828;'>{nc_str}</b>"
-                    f"</div></div>"
-                )
-                with kpi_cols_anc[i]:
-                    st.markdown(html_card, unsafe_allow_html=True)
-
-            st.markdown("---")
-
-            # ── Graphique 1 : Barres installations + lollipop conformité ─────
-            g1, g2 = st.columns(2)
-            with g1:
-                st.subheader(
-                    "Installations ANC recensées",
-                    help="D301.0 : nombre total de dispositifs ANC recensés sur le territoire.",
-                )
-                x = [get_val(df_sel, m, "D301.0") for m in sel_metros_eau]
-                st.plotly_chart(style(bar_h_eau(sel_metros_eau, x, eau_colors,
-                    "installations",
-                    fmt_fn=lambda v: f"{int(v):,}".replace(",", "\u202f"))),
-                    use_container_width=True)
-
-            with g2:
-                st.subheader(
-                    "Taux de conformité ANC (%)",
-                    help=(
-                        "D302.0 : part des installations conformes au dernier contrôle SPANC. "
-                        "Une installation non conforme présente un risque sanitaire "
-                        "ou environnemental (pollution des nappes, cours d'eau)."
-                    ),
-                )
-                x = [get_val(df_sel, m, "D302.0") for m in sel_metros_eau]
-                st.plotly_chart(style(lollipop_eau(sel_metros_eau, x, eau_colors,
-                    "% conformes", fmt_fn=lambda v: f"{v:.0f}%")),
-                    use_container_width=True)
-
-            with st.expander("💡 Interpréter ces graphiques"):
-                st.write(
-                    "L'ANC concerne les habitations hors réseau collectif. "
-                    "Le SPANC contrôle et conseille les propriétaires.\n\n"
-                    "Un nombre élevé d'installations ne signifie pas que la métropole "
-                    "est moins performante en assainissement collectif : cela reflète "
-                    "souvent un territoire plus rural ou étendu."
-                )
-
-            st.markdown("---")
-
-            # ── Graphique 2 : Scatter conformité vs réhabilitation ────────────
-            st.subheader(
-                "Conformité vs taux de réhabilitation — Trajectoire ANC",
-                help=(
-                    "Un territoire avec un faible taux de conformité mais un taux "
-                    "de réhabilitation élevé est en bonne trajectoire. "
-                    "À l'inverse, faible conformité + faible réhabilitation "
-                    "signale un parc dégradé sans politique active de mise aux normes."
-                ),
-            )
-            x_anc = [get_val(df_sel, m, "D302.0") for m in sel_metros_eau]
-            y_anc = [get_val(df_sel, m, "P301.3") for m in sel_metros_eau]
-            fig_anc = scatter_eau(sel_metros_eau, x_anc, y_anc, eau_colors,
-                                  "Taux de conformité (%)", "Taux de réhabilitation (%)")
-            # Quadrant annotations
-            x_clean = [v for v in x_anc if pd.notna(v)]
-            y_clean = [v for v in y_anc if pd.notna(v)]
-            if x_clean and y_clean:
-                xm = (min(x_clean) + max(x_clean)) / 2
-                ym = (min(y_clean) + max(y_clean)) / 2
-                for qx, qy, label, col_q in [
-                    (xm * 0.5,   ym * 1.5,   "Bon taux réhab.\nconformité à améliorer", "#2E7D32"),
-                    (xm * 1.5,   ym * 1.5,   "Situation\nidéale", "#1565C0"),
-                    (xm * 0.5,   ym * 0.5,   "Situation\ncritique", "#C62828"),
-                    (xm * 1.5,   ym * 0.5,   "Bonne conformité\nréhab. à renforcer", "#E65100"),
-                ]:
-                    fig_anc.add_annotation(
-                        x=qx, y=qy, text=label, showarrow=False,
-                        font=dict(size=8, color=col_q, family="Sora"),
-                        opacity=0.5,
-                    )
-            st.plotly_chart(style(fig_anc), use_container_width=True)
-
-        # ══════════════════════════════════════════════════════════════════════
-        # 💶 DÉTAIL TARIFAIRE
-        # ══════════════════════════════════════════════════════════════════════
-        else:
-
-            if df_tar_eau is None:
-                st.info("📂 Fichier tarifaire introuvable.")
-                st.stop()
-
-            df_sel_tar = df_tar_eau[df_tar_eau["metropole"].isin(sel_metros_eau)].copy()
-            pop_col_tar = "Pop de l'entité de gestion sans double compte"
+        with tab_env3:
 
             st.markdown("""
-            <div style='background:#fff8e1;padding:10px 14px;border-radius:8px;
-                        border-left:4px solid #F9A825;font-size:0.85em;margin-bottom:16px;'>
-                <b>Structure de la facture d'eau :</b> prix volumique HT + abonnement
-                + redevances agence de l'eau + TVA (5,5 % eau potable, 10 % assainissement).
-                Pour Saint-Étienne, chaque commune a un tarif propre :
-                les valeurs sont des moyennes pondérées par le nombre d'abonnés.
+            <div style='background-color:#f1f8f5;padding:10px 15px;border-radius:10px;
+                        border-left:5px solid #1C3A27;margin-bottom:20px;font-size:0.85em;'>
+                <strong>Source :</strong> SISPEA — Système d'Information sur les Services Publics
+                d'Eau et d'Assainissement :
+                <a href='https://www.services.eaufrance.fr/pro/telechargement#donnees-services'
+                target='_blank' style='color:#1C3A27;'>Accéder aux données</a>
+                &nbsp;·&nbsp; Données 2020.<br><br>
+                <strong>Périmètre :</strong> 4 métropoles disposant de données SISPEA agrégées au
+                niveau métropolitain. La ligne pointillée grise indique la moyenne nationale française
+                (source : SISPEA, janvier 2025) lorsqu'elle est disponible.<br><br>
+                <span style='color:#C62828;font-weight:700;'>⚠️ Rennes Métropole non disponible :</span>
+                la compétence eau y est organisée via des syndicats intercommunaux dont les périmètres
+                ne correspondent pas directement à la métropole.
             </div>""", unsafe_allow_html=True)
 
-            def agg_tar(metro, col):
-                sub = df_sel_tar[df_sel_tar["metropole"] == metro].copy()
+            # ── Filtres ────────────────────────────────────────────────────────────
+            with st.container():
+                filter_bar("Filtres - Eau & Assainissement")
+                fw1, fw2 = st.columns([1, 3])
+                with fw1:
+                    filter_row_label("Thématique")
+                with fw2:
+                    theme_eau = st.selectbox(
+                        "",
+                        ["💧 Eau potable (AEP)",
+                        "🚿 Assainissement collectif (AC)",
+                        "🏡 Assainissement non collectif (ANC)",
+                        "💶 Détail tarifaire"],
+                        key="env_eau_theme",
+                        label_visibility="collapsed",
+                    )
+
+                METROS_EAU_4 = ["Grenoble", "Montpellier", "Saint-Étienne", "Rouen"]
+                sel_metros_eau = st.multiselect(
+                    "Métropoles à comparer", METROS_EAU_4, default=METROS_EAU_4,
+                    key="env_eau_metros",
+                    help="Rennes Métropole n'est pas disponible dans SISPEA pour ces compétences.",
+                )
+
+            st.markdown("---")
+
+            if not sel_metros_eau:
+                st.warning("Sélectionnez au moins une métropole.")
+                st.stop()
+
+            if "Saint-Étienne" in sel_metros_eau:
+                st.warning(
+                    "⚠️ **Note sur Saint-Étienne :** la compétence eau n'y est pas unifiée — "
+                    "plusieurs entités de gestion coexistent dans SISPEA. Les valeurs présentées "
+                    "sont des moyennes. Certains indicateurs peuvent être partiels ou peu "
+                    "représentatifs à l'échelle de la métropole."
+                )
+
+            eau_colors = [COULEURS.get(m, "#888888") for m in sel_metros_eau]
+            n_eau = len(sel_metros_eau)
+
+            # ── Helpers ────────────────────────────────────────────────────────────
+            def get_val(df, metro, col):
+                if df is None or col not in df.columns:
+                    return np.nan
+                sub = df[df["metropole"] == metro].copy()
+                if sub.empty:
+                    return np.nan
+                sub[col] = pd.to_numeric(
+                    sub[col].astype(str).str.replace(",", "."), errors="coerce"
+                )
+                val = sub[col].mean(skipna=True)
+                return float(val) if pd.notna(val) else np.nan
+
+            def get_val_tar(df, metro, col):
+                sub = df[df["metropole"] == metro].copy()
                 if sub.empty or col not in sub.columns:
                     return np.nan
                 sub[col] = pd.to_numeric(
-                    sub[col].astype(str).str.replace(",", "."), errors="coerce")
-                sub[pop_col_tar] = pd.to_numeric(
-                    sub[pop_col_tar], errors="coerce").fillna(0)
-                valid = sub[[col, pop_col_tar]].dropna(subset=[col])
-                if len(valid) == 0:
-                    return np.nan
-                tot = valid[pop_col_tar].sum()
-                return float((valid[col] * valid[pop_col_tar]).sum() / tot
-                             if tot > 0 else valid[col].mean())
-
-            # ── KPI tarifaires ────────────────────────────────────────────────
-            st.subheader("Indicateurs tarifaires — Eau 2020")
-            kpi_cols_tar = st.columns(n_eau)
-            for i, m in enumerate(sel_metros_eau):
-                kpi_color = eau_colors[i]
-                d102   = agg_tar(m, "D102.0")
-                p_eau  = agg_tar(m, "VP.179")
-                p_fix  = agg_tar(m, "VP.178")
-                p_rdev = agg_tar(m, "VP.216")
-                d102_str  = fv(d102, 2, " €/m³")
-                p_eau_str = fv(p_eau, 2, " €/m³")
-                p_fix_str = fv(p_fix, 0, " €/an")
-                rdv_str   = fv(p_rdev, 3, " €/m³")
-                html_card = (
-                    "<div style='display:flex;flex-direction:column;justify-content:center;"
-                    "border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.1);"
-                    "background:#fff;min-height:80px;"
-                    f"border-left:6px solid {kpi_color};padding:12px 16px;margin-bottom:10px;'>"
-                    f"<div style='font-size:11px;font-weight:700;letter-spacing:0.08em;"
-                    f"color:#666;text-transform:uppercase;'>{m}</div>"
-                    f"<div style='font-size:24px;font-weight:bold;color:#E65100;margin:4px 0;'>"
-                    f"{d102_str}</div>"
-                    f"<div style='font-size:11px;font-weight:700;color:{kpi_color};"
-                    f"text-transform:uppercase;letter-spacing:0.05em;'>prix TTC tout compris</div>"
-                    f"<div style='margin-top:6px;font-size:11px;color:#555;'>"
-                    f"Part volumique HT : <b style='color:#1565C0;'>{p_eau_str}</b><br>"
-                    f"Abonnement : <b style='color:#2E7D32;'>{p_fix_str}</b>"
-                    f"&nbsp;&nbsp;·&nbsp;&nbsp;"
-                    f"Redevance agence : <b style='color:#7B1FA2;'>{rdv_str}</b>"
-                    f"</div></div>"
+                    sub[col].astype(str).str.replace(",", "."), errors="coerce"
                 )
-                with kpi_cols_tar[i]:
-                    st.markdown(html_card, unsafe_allow_html=True)
+                pop_col_tar = "Pop de l'entité de gestion sans double compte"
+                if pop_col_tar in sub.columns:
+                    sub[pop_col_tar] = pd.to_numeric(
+                        sub[pop_col_tar], errors="coerce"
+                    ).fillna(0)
+                    valid = sub[[col, pop_col_tar]].dropna(subset=[col])
+                    if len(valid) > 0:
+                        tot = valid[pop_col_tar].sum()
+                        return float(
+                            (valid[col] * valid[pop_col_tar]).sum() / tot
+                            if tot > 0 else valid[col].mean()
+                        )
+                return float(sub[col].mean(skipna=True))
 
-            st.markdown("---")
+            def fv(v, dec=1, suf=""):
+                if pd.isna(v):
+                    return "N/D"
+                if dec == 0:
+                    return f"{int(round(v)):,}".replace(",", "\u202f") + suf
+                return f"{v:.{dec}f}{suf}"
 
-            # ── Graphique 1 : Décomposition facture (stacked bar horizontal) ──
-            st.subheader(
-                "Décomposition de la facture eau potable (€/m³)",
-                help=(
-                    "Visualisation des composantes du prix : part volumique collectivité, "
-                    "redevance agence de l'eau, TVA. L'abonnement n'est pas inclus car "
-                    "il est annuel et non volumique."
-                ),
-            )
-            comp_data = []
-            for m in sel_metros_eau:
-                p_vol  = agg_tar(m, "VP.179")
-                p_rdev = agg_tar(m, "VP.216")
-                p_tva  = agg_tar(m, "VP.213")
-                if not any(pd.isna(v) for v in [p_vol, p_rdev]):
-                    tva_val = (p_vol + p_rdev) * (p_tva / 100) if pd.notna(p_tva) else 0
-                    comp_data.append({
-                        "m": m,
-                        "Vol. collectivité HT": p_vol if pd.notna(p_vol) else 0,
-                        "Redevance agence": p_rdev if pd.notna(p_rdev) else 0,
-                        "TVA": tva_val,
-                    })
-
-            if comp_data:
-                df_comp = pd.DataFrame(comp_data)
-                fig_comp = go.Figure()
-                composantes = [
-                    ("Vol. collectivité HT", "#1565C0"),
-                    ("Redevance agence",     "#7B1FA2"),
-                    ("TVA",                  "#AAAAAA"),
-                ]
-                for comp_name, comp_color in composantes:
-                    fig_comp.add_trace(go.Bar(
-                        y=df_comp["m"], x=df_comp[comp_name],
-                        name=comp_name, orientation="h",
-                        marker_color=comp_color,
+            def chart_indicateur(code, metros, colors, df_data, meta_dict, val_func=get_val):
+                """Barres horizontales triées, hachures Grenoble, ligne moyenne nationale."""
+                meta = meta_dict[code]
+                rows = []
+                
+                for m, c in zip(metros, colors):
+                    v = val_func(df_data, m, code)
+                    if pd.notna(v):
+                        rows.append({"t": m, "v": v, "c": c})
+                        
+                # Vérification avant la création du DataFrame ---
+                if not rows:
+                    st.info("Données non disponibles pour cet indicateur.")
+                    return
+                    
+                df_b = pd.DataFrame(rows).sort_values("v", ascending=True)
+                
+                fig = go.Figure()
+                for _, r in df_b.iterrows():
+                    is_g = r["t"] == "Grenoble"
+                    txt  = fv(r["v"], meta["dec"], meta["suf"])
+                    mkr  = dict(color=r["c"])
+                    
+                    # Conservation stricte de vos styles visuels (hachures)
+                    if is_g:
+                        mkr["pattern"] = dict(
+                            shape="/", fgcolor="#FF584D",
+                            fillmode="overlay", solidity=0.3, size=20,
+                        )
+                        
+                    fig.add_trace(go.Bar(
+                        y=[r["t"]], x=[r["v"]], orientation="h",
+                        marker=mkr, showlegend=False,
+                        text=[txt], textposition="outside", cliponaxis=False,
                         hovertemplate=(
-                            "<b>%{y}</b><br>" + comp_name
-                            + " : %{x:.3f} €/m³<extra></extra>"
+                            "<b>" + r["t"] + "</b><br>"
+                            + meta["titre"] + " : " + txt + "<extra></extra>"
                         ),
                     ))
-                apply_grenoble_hatch(fig_comp, active=True)
-                fig_comp.update_layout(
-                    barmode="stack",
-                    height=120 + n_eau * 52,
-                    margin=dict(t=10, b=10, l=10, r=10),
+                    
+                if meta.get("moy_fr") is not None:
+                    fig.add_vline(
+                        x=meta["moy_fr"], line_dash="dot",
+                        line_color="#888888", line_width=2,
+                    )
+                    fig.add_annotation(
+                        x=meta["moy_fr"], y=len(df_b) - 0.35,
+                        text=meta["moy_label"], showarrow=False,
+                        font=dict(size=9, color="#888", family="Sora"),
+                        xanchor="left", xshift=4,
+                    )
+                    
+                fig.update_layout(
+                    height=110 + len(df_b) * 48,
+                    margin=dict(t=10, b=10, l=10, r=100),
                     paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                     font_family="Sora",
-                    xaxis=dict(title="€/m³", gridcolor="#E8F5EE"),
+                    xaxis=dict(title=meta["axe"], gridcolor="#E8F5EE"),
                     yaxis=dict(title=""),
-                    legend=dict(orientation="h", y=1.08, x=0),
                 )
-                st.plotly_chart(style(fig_comp), use_container_width=True)
+                st.plotly_chart(style(fig), use_container_width=True)
 
-            st.markdown("---")
-
-            # ── Graphique 2 : Lollipop prix volumique + scatter fixe vs vol ───
-            g1, g2 = st.columns(2)
-            with g1:
-                st.subheader(
-                    "Prix volumique eau potable HT (€/m³)",
-                    help=(
-                        "VP.179 : prix hors taxes du m³, part collectivité "
-                        "(hors abonnement, redevances, TVA). "
-                        "Principal levier pour inciter à la sobriété hydrique."
-                    ),
+            def display_recap_table(metros, df_data, meta_dict, val_func=get_val):
+                lignes = []
+                for m in metros:
+                    row = {"Métropole": m}
+                    for code, meta in meta_dict.items():
+                        v = val_func(df_data, m, code)
+                        row[meta["titre"]] = fv(v, meta["dec"], meta["suf"])
+                        if meta.get("moy_fr") is not None and pd.notna(v):
+                            delta = v - meta["moy_fr"]
+                            if meta["higher_better"]:
+                                ecart = ("↑ Au-dessus" if delta > 0
+                                        else ("↓ En dessous" if delta < 0 else "= Égal"))
+                            else:
+                                ecart = ("↓ Mieux" if delta < 0
+                                        else ("↑ Moins bon" if delta > 0 else "= Égal"))
+                            row[f"Écart vs France ({code})"] = (
+                                f"{delta:+.2f}{meta['suf']} ({ecart})"
+                            )
+                    lignes.append(row)
+                st.dataframe(
+                    pd.DataFrame(lignes).set_index("Métropole"),
+                    use_container_width=True,
                 )
-                x = [agg_tar(m, "VP.179") for m in sel_metros_eau]
-                st.plotly_chart(style(lollipop_eau(sel_metros_eau, x, eau_colors,
-                    "€/m³ HT", fmt_fn=lambda v: f"{v:.2f} €")),
-                    use_container_width=True)
 
-            with g2:
-                st.subheader(
-                    "Abonnement annuel vs prix volumique",
-                    help=(
-                        "Une part fixe élevée (abonnement) signifie qu'une grande "
-                        "partie de la facture est indépendante de la consommation — "
-                        "ce qui peut freiner les efforts de sobriété hydrique. "
-                        "Idéal : abonnement bas + prix volumique modéré."
-                    ),
-                )
-                x_t = [agg_tar(m, "VP.179") for m in sel_metros_eau]
-                y_t = [agg_tar(m, "VP.178") for m in sel_metros_eau]
-                st.plotly_chart(style(scatter_eau(
-                    sel_metros_eau, x_t, y_t, eau_colors,
-                    "Prix volumique HT (€/m³)", "Abonnement annuel (€/an)"
-                )), use_container_width=True)
+            # ══════════════════════════════════════════════════════════════════════
+            # 💧 EAU POTABLE (AEP) — 10 indicateurs
+            # ══════════════════════════════════════════════════════════════════════
+            if theme_eau == "💧 Eau potable (AEP)":
+                if df_aep_eau is None:
+                    st.info("📂 Fichier eau potable introuvable.")
+                    st.stop()
 
-            with st.expander("💡 Comprendre la structure du tarif de l'eau"):
-                st.write(
-                    "**Prix volumique (VP.179)** : coût du m³ hors taxes, part "
-                    "collectivité. Montpellier et Grenoble sont les moins chères grâce "
-                    "à des ressources abondantes.\n\n"
-                    "**Abonnement (VP.178)** : forfait annuel indépendant de la "
-                    "consommation. Un abonnement élevé pénalise les petits consommateurs "
-                    "et dilue l'effet incitatif du prix volumique.\n\n"
-                    "**TVA** : 5,5 % pour l'eau potable, 10 % pour l'assainissement.\n\n"
-                    "**Redevance agence (VP.216)** : contribution au financement des "
-                    "travaux dans le bassin versant — Rhône-Méditerranée (Grenoble, "
-                    "Montpellier), Seine-Normandie (Rouen), Loire-Bretagne (Saint-Étienne)."
+                df_sel = df_aep_eau[df_aep_eau["metropole"].isin(sel_metros_eau)].copy()
+                st.subheader("Indicateurs — Eau potable 2020")
+
+                IND_AEP_META = {
+                    "D102.0": {
+                        "titre": "Prix TTC du service (120 m³)",
+                        "axe": "€/m³ TTC",
+                        "moy_fr": 2.52,
+                        "moy_label": "Moy. France (janv. 2025) : 2,52 €/m³",
+                        "higher_better": False, "dec": 2, "suf": " €/m³",
+                        "help": "D102.0 — Prix tout compris pour 120 m³/an (ménage de référence).",
+                    },
+                    "D151.0": {
+                        "titre": "Délai max d'ouverture des branchements",
+                        "axe": "jours",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": False, "dec": 0, "suf": " j",
+                        "help": "D151.0 — Délai maximum garanti pour ouvrir un branchement à un nouvel abonné.",
+                    },
+                    "P101.1": {
+                        "titre": "Conformité bactériologique",
+                        "axe": "%",
+                        "moy_fr": 96.4,
+                        "moy_label": "Moy. France : 96,4 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": "P101.1 — Taux d'analyses conformes aux normes bactériologiques (contrôle ARS).",
+                    },
+                    "P102.1": {
+                        "titre": "Conformité physico-chimique",
+                        "axe": "%",
+                        "moy_fr": 90.6,
+                        "moy_label": "Moy. France : 90,6 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": "P102.1 — Taux d'analyses conformes aux normes physico-chimiques (contrôle ARS).",
+                    },
+                    "P104.3": {
+                        "titre": "Rendement du réseau de distribution",
+                        "axe": "%",
+                        "moy_fr": 84.4,
+                        "moy_label": "Moy. France : 84,4 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": "P104.3 — Volume consommé / volume distribué × 100. Plus élevé = moins de fuites.",
+                    },
+                    "P106.3": {
+                        "titre": "Indice linéaire de perte en réseau",
+                        "axe": "m³/km/j",
+                        "moy_fr": 2.6,
+                        "moy_label": "Moy. France : 2,6 m³/km/j",
+                        "higher_better": False, "dec": 1, "suf": " m³/km/j",
+                        "help": "P106.3 — Volume perdu par fuite par km de réseau et par jour. Plus bas = moins de fuites.",
+                    },
+                    "P107.2": {
+                        "titre": "Taux de renouvellement des réseaux AEP",
+                        "axe": "%/an",
+                        "moy_fr": 0.69,
+                        "moy_label": "Moy. France : 0,69 %/an",
+                        "higher_better": True, "dec": 2, "suf": " %",
+                        "help": "P107.2 — Longueur de canalisations renouvelées / longueur totale × 100 (moy. 5 ans).",
+                    },
+                    "P108.3": {
+                        "titre": "Indice d'avancement protection captages",
+                        "axe": "%",
+                        "moy_fr": 84.7,
+                        "moy_label": "Moy. France : 84,7 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": "P108.3 — Part des captages dotés d'un arrêté préfectoral de protection. Objectif : 100 %.",
+                    },
+                    "P154.0": {
+                        "titre": "Taux d'impayés sur factures AEP",
+                        "axe": "%",
+                        "moy_fr": 2.56,
+                        "moy_label": "Moy. France : 2,56 %",
+                        "higher_better": False, "dec": 2, "suf": " %",
+                        "help": "P154.0 — Part des factures de l'année N-1 impayées à la clôture de l'exercice.",
+                    },
+                    "P155.1": {
+                        "titre": "Taux de réclamations AEP",
+                        "axe": "/ 1 000 hab.",
+                        "moy_fr": 2.57,
+                        "moy_label": "Moy. France : 2,57 / 1000 hab.",
+                        "higher_better": False, "dec": 2, "suf": " / 1000 hab.",
+                        "help": "P155.1 — Nombre de réclamations écrites reçues pour 1 000 habitants.",
+                    },
+                }
+
+                indicators_aep = [
+                    "D102.0", "D151.0",
+                    "P101.1", "P102.1",
+                    "P104.3", "P106.3",
+                    "P107.2", "P108.3",
+                    "P154.0", "P155.1",
+                ]
+
+                for i in range(0, len(indicators_aep), 2):
+                    cols = st.columns(2)
+                    for j in range(2):
+                        if i + j < len(indicators_aep):
+                            code = indicators_aep[i + j]
+                            with cols[j]:
+                                st.markdown(
+                                    f"##### {IND_AEP_META[code]['titre']}",
+                                    help=IND_AEP_META[code]["help"],
+                                )
+                                chart_indicateur(code, sel_metros_eau, eau_colors,
+                                                df_sel, IND_AEP_META)
+
+                st.markdown("---")
+                st.subheader("Tableau comparatif — Eau potable vs moyenne nationale")
+                display_recap_table(sel_metros_eau, df_sel, IND_AEP_META)
+
+                with st.expander("📋 Fiche méthodologique — Indicateurs AEP"):
+                    st.markdown("""
+    | Code | Indicateur | Interprétation |
+    |---|---|---|
+    | **D102.0** | Prix TTC | Facture type pour 120 m³/an. Référence nationale de comparaison. |
+    | **D151.0** | Délai max raccordement | Réactivité pour ouvrir un branchement. Lacunaire pour les gestions fragmentées. |
+    | **P101.1** | Conformité bactériologique | Qualité microbiologique de l'eau distribuée (contrôle ARS). |
+    | **P102.1** | Conformité physico-chimique | Respect des normes chimiques de l'eau distribuée. |
+    | **P104.3** | Rendement réseau | Efficacité : moins de fuites = mieux. Objectif réglementaire : 85 %. |
+    | **P106.3** | Indice linéaire de perte | Intensité des fuites par km de réseau. Plus bas = mieux. |
+    | **P107.2** | Renouvellement réseaux | Effort d'investissement. 1 %/an = renouvellement complet en 100 ans. |
+    | **P108.3** | Protection des captages | Sécurisation de la ressource en eau brute. Obligatoire depuis 1992. |
+    | **P154.0** | Taux d'impayés | Factures non honorées. Peut signaler des difficultés sociales. |
+    | **P155.1** | Taux de réclamations | Satisfaction usagers. Peut être sous-évalué si non agrégé localement. |
+    """)
+
+            # ══════════════════════════════════════════════════════════════════════
+            # 🚿 ASSAINISSEMENT COLLECTIF (AC) — 10 indicateurs
+            # ══════════════════════════════════════════════════════════════════════
+            elif theme_eau == "🚿 Assainissement collectif (AC)":
+                if df_ac_eau is None:
+                    st.info("📂 Fichier assainissement collectif introuvable.")
+                    st.stop()
+
+                df_sel = df_ac_eau[df_ac_eau["metropole"].isin(sel_metros_eau)].copy()
+                st.subheader("Indicateurs — Assainissement collectif 2020")
+
+                IND_AC_META = {
+                    "D201.0": {
+                        "titre": "Population desservie en assainissement collectif",
+                        "axe": "habitants",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": True, "dec": 0, "suf": " hab.",
+                        "help": (
+                            "D201.0 — Nombre d'habitants desservis par un réseau de collecte "
+                            "des eaux usées. Un habitant est considéré desservi dès lors qu'un "
+                            "réseau existe devant son immeuble, qu'il y soit raccordé ou non. "
+                            "⚠️ D201.1 absent des données — D201.0 utilisé en substitution."
+                        ),
+                    },
+                    "D204.0": {
+                        "titre": "Prix TTC assainissement collectif (120 m³)",
+                        "axe": "€/m³ TTC",
+                        "moy_fr": 1.86,
+                        "moy_label": "Moy. France (janv. 2025) : 1,86 €/m³",
+                        "higher_better": False, "dec": 2, "suf": " €/m³",
+                        "help": (
+                            "D204.0 — Prix TTC du service d'assainissement collectif au m³, "
+                            "calculé pour une consommation de référence de 120 m³/an."
+                        ),
+                    },
+                    "P201.1": {
+                        "titre": "Taux de desserte par réseau de collecte",
+                        "axe": "%",
+                        "moy_fr": 97.2,
+                        "moy_label": "Moy. France : 97,2 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": (
+                            "P201.1 — Rapport entre le nombre d'abonnés du service AC et le nombre "
+                            "potentiel d'abonnés de la zone relevant du collectif. 100 % = tous les "
+                            "logements de la zone sont desservis par un réseau existant."
+                        ),
+                    },
+                    "P203.3": {
+                        "titre": "Conformité de la collecte des effluents",
+                        "axe": "%",
+                        "moy_fr": 84.5,
+                        "moy_label": "Moy. France : 84,5 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": (
+                            "P203.3 — Part des systèmes de collecte conformes aux prescriptions "
+                            "de la Directive ERU. Peut dépasser 100 % en raison des eaux parasites "
+                            "(pluies s'infiltrant dans les réseaux) qui augmentent les volumes collectés."
+                        ),
+                    },
+                    "P204.3": {
+                        "titre": "Conformité des équipements d'épuration (STEU)",
+                        "axe": "%",
+                        "moy_fr": 88.3,
+                        "moy_label": "Moy. France : 88,3 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": (
+                            "P204.3 — Indicateur 0 ou 100 pour chaque STEU > 2 000 EH, "
+                            "pondéré par les charges brutes de pollution. Évalue la conformité "
+                            "des équipements physiques de la station (capacité, ouvrages)."
+                        ),
+                    },
+                    "P205.3": {
+                        "titre": "Conformité performance des ouvrages d'épuration",
+                        "axe": "%",
+                        "moy_fr": 86.7,
+                        "moy_label": "Moy. France : 86,7 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": (
+                            "P205.3 — Indicateur 0 ou 100 pour chaque STEU > 2 000 EH, évaluant "
+                            "si les performances réelles de traitement (qualité des rejets) respectent "
+                            "les seuils réglementaires. Distinct de P204.3 qui juge les équipements."
+                        ),
+                    },
+                    "P252.2": {
+                        "titre": "Points noirs du réseau de collecte",
+                        "axe": "nb / 100 km",
+                        "moy_fr": 3.1,
+                        "moy_label": "Moy. France : 3,1 / 100 km",
+                        "higher_better": False, "dec": 1, "suf": " / 100 km",
+                        "help": (
+                            "P252.2 — Nombre de tronçons nécessitant des interventions fréquentes "
+                            "de curage (≥ 2 fois/an) pour 100 km de réseau. Plus bas = meilleur état "
+                            "du réseau. Indique les points problématiques (dépôts, racines, sections insuffisantes)."
+                        ),
+                    },
+                    "P253.2": {
+                        "titre": "Taux de renouvellement des réseaux de collecte",
+                        "axe": "%/an",
+                        "moy_fr": 0.60,
+                        "moy_label": "Moy. France : 0,60 %/an",
+                        "higher_better": True, "dec": 2, "suf": " %/an",
+                        "help": (
+                            "P253.2 — Taux moyen de renouvellement des canalisations sur 5 ans "
+                            "(longueur renouvelée / longueur totale × 100). 1 %/an = renouvellement "
+                            "complet en 100 ans. En dessous, le réseau vieillit plus vite qu'il n'est entretenu."
+                        ),
+                    },
+                    "P257.0": {
+                        "titre": "Taux d'impayés sur factures AC",
+                        "axe": "%",
+                        "moy_fr": 2.10,
+                        "moy_label": "Moy. France : 2,10 %",
+                        "higher_better": False, "dec": 2, "suf": " %",
+                        "help": (
+                            "P257.0 — Part des factures d'assainissement de l'année N-1 impayées "
+                            "à la clôture de l'exercice. Un taux élevé peut signaler des difficultés "
+                            "sociales ou des défauts de gestion du recouvrement."
+                        ),
+                    },
+                    "P258.1": {
+                        "titre": "Taux de réclamations AC",
+                        "axe": "/ 1 000 abonnés",
+                        "moy_fr": 2.30,
+                        "moy_label": "Moy. France : 2,30 / 1000 abonnés",
+                        "higher_better": False, "dec": 2, "suf": " / 1000 ab.",
+                        "help": (
+                            "P258.1 — Nombre de réclamations écrites reçues par le service AC "
+                            "pour 1 000 abonnés. Mesure la satisfaction usagers et la qualité "
+                            "de la relation clientèle."
+                        ),
+                    },
+                }
+
+                indicators_ac = [
+                    "D201.0", "D204.0",
+                    "P201.1", "P203.3",
+                    "P204.3", "P205.3",
+                    "P252.2", "P253.2",
+                    "P257.0", "P258.1",
+                ]
+
+                for i in range(0, len(indicators_ac), 2):
+                    cols = st.columns(2)
+                    for j in range(2):
+                        if i + j < len(indicators_ac):
+                            code = indicators_ac[i + j]
+                            with cols[j]:
+                                st.markdown(
+                                    f"##### {IND_AC_META[code]['titre']}",
+                                    help=IND_AC_META[code]["help"],
+                                )
+                                chart_indicateur(code, sel_metros_eau, eau_colors,
+                                                df_sel, IND_AC_META)
+
+                st.markdown("---")
+                st.subheader("Tableau comparatif — AC vs moyenne nationale")
+                display_recap_table(sel_metros_eau, df_sel, IND_AC_META)
+
+                with st.expander("📋 Fiche méthodologique — Indicateurs AC"):
+                    st.markdown("""
+    | Code | Indicateur | Interprétation |
+    |---|---|---|
+    | **D201.0** | Population desservie | Habitants couverts par un réseau collectif (raccordés ou raccordables). |
+    | **D204.0** | Prix TTC (120 m³) | Coût du service AC pour un ménage de référence. |
+    | **P201.1** | Taux de desserte | Part des logements de la zone AC avec un réseau en façade. |
+    | **P203.3** | Conformité collecte ERU | Maîtrise des déversements non traités. Peut dépasser 100 % (eaux parasites). |
+    | **P204.3** | Conformité équipements STEU | Stations d'épuration conformes en équipements (capacité, ouvrages). |
+    | **P205.3** | Conformité performance STEU | Stations atteignant leurs objectifs de rejet réglementaires. |
+    | **P252.2** | Points noirs réseau | Tronçons nécessitant des curages fréquents. Moins = meilleur état. |
+    | **P253.2** | Renouvellement réseau collecte | Effort de maintenance. 1 %/an = renouvellement en 100 ans. |
+    | **P257.0** | Taux d'impayés AC | Factures AC non honorées. Enjeu social et de recouvrement. |
+    | **P258.1** | Taux de réclamations AC | Litiges usagers pour 1 000 abonnés. Qualité de la relation clientèle. |
+    """)
+
+            # ══════════════════════════════════════════════════════════════════════
+            # 🏡 ASSAINISSEMENT NON COLLECTIF (ANC) — 3 indicateurs
+            # ══════════════════════════════════════════════════════════════════════
+            elif theme_eau == "🏡 Assainissement non collectif (ANC)":
+                if df_anc_eau is None:
+                    st.info("📂 Fichier assainissement non collectif introuvable.")
+                    st.stop()
+
+                df_sel = df_anc_eau[df_anc_eau["metropole"].isin(sel_metros_eau)].copy()
+                for col_anc in ["D301.0", "D302.0", "P301.3", "VP.166"]:
+                    if col_anc in df_sel.columns:
+                        df_sel[col_anc] = pd.to_numeric(
+                            df_sel[col_anc].astype(str).str.replace(",", "."),
+                            errors="coerce",
+                        )
+
+                st.subheader("Indicateurs — Assainissement non collectif 2020")
+
+                IND_ANC_META = {
+                    "D301.0": {
+                        "titre": "Installations ANC recensées",
+                        "axe": "installations",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": True, "dec": 0, "suf": "",
+                        "help": (
+                            "D301.0 — Nombre total de dispositifs ANC (fosses septiques, filtres à "
+                            "sable, micro-stations, phytoépuration…) recensés sur le territoire. "
+                            "Concerne les habitations non raccordées au réseau public."
+                        ),
+                    },
+                    "D302.0": {
+                        "titre": "Taux de conformité des dispositifs ANC",
+                        "axe": "%",
+                        "moy_fr": 58.0,
+                        "moy_label": "Moy. France : ~58 %",
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": (
+                            "D302.0 — Part des installations jugées conformes lors du dernier "
+                            "contrôle SPANC. Une installation conforme ne présente pas de risque "
+                            "sanitaire ou environnemental avéré. Les non conformes doivent être "
+                            "réhabilitées dans un délai fixé par l'arrêté du 27/04/2012."
+                        ),
+                    },
+                    "P301.3": {
+                        "titre": "Taux de réhabilitation des installations ANC",
+                        "axe": "%",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": True, "dec": 1, "suf": " %",
+                        "help": (
+                            "P301.3 — Part des installations non conformes ayant fait l'objet "
+                            "d'une réhabilitation dans l'année. Un taux élevé traduit une politique "
+                            "active de mise aux normes. À lire conjointement avec D302.0 : un faible "
+                            "taux de conformité couplé à un fort taux de réhabilitation indique "
+                            "un territoire en bonne trajectoire."
+                        ),
+                    },
+                }
+
+                indicators_anc = ["D301.0", "D302.0", "P301.3"]
+
+                # D301.0 en pleine largeur (volume), D302.0 et P301.3 côte à côte
+                st.markdown(
+                    f"##### {IND_ANC_META['D301.0']['titre']}",
+                    help=IND_ANC_META["D301.0"]["help"],
                 )
+                chart_indicateur("D301.0", sel_metros_eau, eau_colors,
+                                df_sel, IND_ANC_META)
+
+                cols_anc = st.columns(2)
+                with cols_anc[0]:
+                    st.markdown(
+                        f"##### {IND_ANC_META['D302.0']['titre']}",
+                        help=IND_ANC_META["D302.0"]["help"],
+                    )
+                    chart_indicateur("D302.0", sel_metros_eau, eau_colors,
+                                    df_sel, IND_ANC_META)
+                with cols_anc[1]:
+                    st.markdown(
+                        f"##### {IND_ANC_META['P301.3']['titre']}",
+                        help=IND_ANC_META["P301.3"]["help"],
+                    )
+                    chart_indicateur("P301.3", sel_metros_eau, eau_colors,
+                                    df_sel, IND_ANC_META)
+
+                st.markdown("---")
+                st.subheader("Tableau comparatif — ANC")
+                display_recap_table(sel_metros_eau, df_sel, IND_ANC_META)
+
+                with st.expander("📋 Fiche méthodologique — Indicateurs ANC"):
+                    st.markdown("""
+    | Code | Indicateur | Interprétation |
+    |---|---|---|
+    | **D301.0** | Installations recensées | Volume du parc autonome sur le territoire. Reflète l'ampleur du SPANC. |
+    | **D302.0** | Taux de conformité | Part des installations sans risque sanitaire ou environnemental avéré. |
+    | **P301.3** | Taux de réhabilitation | Dynamique de mise aux normes des installations défaillantes. |
+    """)
+
+            # ══════════════════════════════════════════════════════════════════════
+            # 💶 DÉTAIL TARIFAIRE
+            # ══════════════════════════════════════════════════════════════════════
+            else:
+                if df_tar_eau is None:
+                    st.info("📂 Fichier tarifaire introuvable.")
+                    st.stop()
+
+                df_sel_tar = df_tar_eau[
+                    df_tar_eau["metropole"].isin(sel_metros_eau)
+                ].copy()
+
+                st.markdown("""
+                <div style='background:#fff8e1;padding:10px 14px;border-radius:8px;
+                            border-left:4px solid #F9A825;font-size:0.85em;margin-bottom:16px;'>
+                    <b>Structure de la facture d'eau :</b> prix volumique HT + abonnement
+                    + redevances agence de l'eau + TVA (5,5 % eau potable, 10 % assainissement).
+                    Pour Saint-Étienne, chaque commune a un tarif propre :
+                    les valeurs sont des moyennes pondérées par le nombre d'abonnés.
+                </div>""", unsafe_allow_html=True)
+
+                st.subheader("Indicateurs tarifaires — Eau 2020")
+
+                IND_TAR_META = {
+                    "D102.0": {
+                        "titre": "Prix TTC eau potable (120 m³)",
+                        "axe": "€/m³ TTC",
+                        "moy_fr": 2.52,
+                        "moy_label": "Moy. France (janv. 2025) : 2,52 €/m³",
+                        "higher_better": False, "dec": 2, "suf": " €/m³",
+                        "help": "Coût global pour l'usager eau potable.",
+                    },
+                    "VP.179": {
+                        "titre": "Part volumique HT (collectivité)",
+                        "axe": "€/m³",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": False, "dec": 2, "suf": " €/m³",
+                        "help": "Levier d'incitation à la sobriété hydrique.",
+                    },
+                    "VP.178": {
+                        "titre": "Abonnement annuel",
+                        "axe": "€/an",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": False, "dec": 0, "suf": " €",
+                        "help": "Part fixe indépendante de la consommation.",
+                    },
+                    "VP.216": {
+                        "titre": "Redevance agence de l'eau",
+                        "axe": "€/m³",
+                        "moy_fr": None, "moy_label": None,
+                        "higher_better": False, "dec": 3, "suf": " €/m³",
+                        "help": "Contribution au financement du bassin versant.",
+                    },
+                }
+
+                indicators_tar = ["D102.0", "VP.179", "VP.178", "VP.216"]
+                for i in range(0, len(indicators_tar), 2):
+                    cols_t = st.columns(2)
+                    for j in range(2):
+                        if i + j < len(indicators_tar):
+                            code_t = indicators_tar[i + j]
+                            with cols_t[j]:
+                                st.markdown(
+                                    f"##### {IND_TAR_META[code_t]['titre']}",
+                                    help=IND_TAR_META[code_t]["help"],
+                                )
+                                chart_indicateur(code_t, sel_metros_eau, eau_colors,
+                                                df_sel_tar, IND_TAR_META,
+                                                val_func=get_val_tar)
+
+                st.markdown("---")
+                st.subheader("Tableau comparatif — Tarification")
+                display_recap_table(sel_metros_eau, df_sel_tar,
+                                    IND_TAR_META, val_func=get_val_tar)
+
+                with st.expander("📋 Fiche méthodologique — Tarification"):
+                    st.markdown("""
+    | Code | Indicateur | Interprétation |
+    |---|---|---|
+    | **D102.0** | Prix TTC (120 m³) | Facture type eau potable. Référence nationale de comparaison. |
+    | **VP.179** | Part volumique HT | Rémunération du service. Principal levier d'incitation à économiser. |
+    | **VP.178** | Abonnement | Part fixe. Élevé = frein à la sobriété hydrique. |
+    | **VP.216** | Redevance agence | Taxes reversées pour protéger la ressource au niveau du bassin. |
+    """)
 
     # # ── Onglet 4 : Déchets & Transition ──────────────────────────────────────
     # with tab_env4:
