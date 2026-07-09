@@ -1351,7 +1351,7 @@ if vue == "Description":
     st.markdown("""
         <div class="main-intro">
             <p style="font-size: 1.1rem; color: #1C3A27; margin: 0;">
-                Cette application presents des analyses comparatives sur <b>5 métropoles françaises et 49 communes de la métropole de Grenoble</b> à partir des données de l'INSEE, la CAF, Data.gouv et OSM France. 
+                Cette application presents des analyses comparatives sur <b>5 métropoles françaises et 49 communes de la métropole de Grenoble</b> à partir des données de l'INSEE, la CAF, Data.gouv, OSM France, ATMO France et SISPEA. 
                 Chaque page dispose de ses propres filtres en haut de page, adaptés aux données présentées. 
                 Selon les onglets, il est possible de filtrer par métropole, par commune, par année ou par thématique.
             </p>
@@ -1428,14 +1428,14 @@ if vue == "Description":
     
     env1, env2, env3 = st.columns(3)
     with env1:
-        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Air</div><div class="card-title"><b> Qualité de l'air</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Suivi des indices de pollution atmosphérique.</div></div>""", unsafe_allow_html=True)
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Sols</div><div class="card-title"><b> Artificialisation des sols</b></div>
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Cet onglet regroupe les indicateurs clés permettant de suivre l’artificialisation des sols sur le territoire.</div></div>""", unsafe_allow_html=True)
     with env2:
-        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Nature</div><div class="card-title"><b> Espaces verts & Biodiversité</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Analyse</div></div>""", unsafe_allow_html=True)
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Air</div><div class="card-title"><b>Qualité de l'air</b></div>
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Cet onglet synthétise la qualité de l’air à travers l’indice ATMO, en comparant les niveaux de pollution par territoire et leur évolution prévisionnelle.e</div></div>""", unsafe_allow_html=True)
     with env3:
-        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Transition</div><div class="card-title"><b> Déchets & Énergie</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Analyse.</div></div>""", unsafe_allow_html=True)
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Eau</div><div class="card-title"><b> Eau & Assainissement</b></div>
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Cet onglet synthétise les indicateurs de service liés à l’eau et à l’assainissement pour les métropoles disposant de données SISPEA.</div></div>""", unsafe_allow_html=True)
 
     st.stop()   
 
@@ -6916,11 +6916,10 @@ le comportement électoral structurel des territoires et doivent être interpré
 # PAGE ENVIRONNEMENT
 # ==============================================================================
 if vue == "Environnement":
-    tab_env1, tab_env2, tab_env3, tab_env4 = st.tabs([
+    tab_env1, tab_env2, tab_env3 = st.tabs([
         "🏗️  Artificialisation des sols",
         "🍃  Qualité de l'air",
-        "💧  Assainissement",
-        "♻️  Déchets & Transition",
+        "💧  Eau & Assainissement",
     ])
 
     
@@ -8800,21 +8799,3 @@ if vue == "Environnement":
     | **VP.178** | Abonnement | Part fixe. Élevé = frein à la sobriété hydrique. |
     | **VP.216** | Redevance agence | Taxes reversées pour protéger la ressource au niveau du bassin. |
     """)
-
-    # # ── Onglet 4 : Déchets & Transition ──────────────────────────────────────
-    # with tab_env4:
-    #     filter_bar("Filtres - Déchets & Transition")
-    #     f_col5, f_col6 = st.columns(2)
-    #     with f_col5:
-    #         metros_dech = st.multiselect(
-    #             "Sélectionner les métropoles :", TOUTES,
-    #             default=shared_default_env(TOUTES), key="env_dechets_metros", on_change=sync_metros_env, args=("env_dechets_metros",)
-    #         )
-    #     with f_col6:
-    #         communes_dech = st.multiselect(
-    #             "Sélectionner les communes (Grenoble) :", COMMUNES_GRENOBLE,
-    #             default=shared_default_communes_env(COMMUNES_GRENOBLE), key="env_dechets_communes", on_change=sync_communes_env, args=("env_dechets_communes",)
-    #         )
-    #     st.markdown('</div>', unsafe_allow_html=True)
-        
-    #     st.info("Données en cours de traitement. Intégrez vos graphiques de production de déchets ménagers et de tri sélectif ici.")
