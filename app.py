@@ -2636,16 +2636,16 @@ if vue == "Démographie":
             <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px;
                         border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 14px;'>
                 <strong>Source :</strong> INSEE<br><br>
-                🏠 <b>Migrations résidentielles</b> : mesure l'origine et la destination des habitants ayant déménagé au cours de l'année. L'analyse sépare les flux de proximité (internes à la métropole) des flux d'échanges nationaux (entrants et sortants de la métropole).
-                <a href='https://www.insee.fr/fr/statistiques/8582988' target='_blank'
-                   style='color:#1C3A27;font-size:0.85em;'>Données INSEE</a><br><br>
                 💼 <b>Trajets domicile-travail</b> : représente les déplacements quotidiens de la population active. Elle comptabilise les actifs stables (travaillant dans leur territoire de résidence) et les flux alternants (actifs entrants et sortants d'autres métropoles).
                 <a href='https://www.insee.fr/fr/statistiques/8582949' target='_blank'
-                   style='color:#1C3A27;font-size:0.85em;'>Données INSEE</a><br><br>
+                   style='color:#1C3A27;font-size:0.85em;'>Accéder aux données</a><br><br>
+                🏠 <b>Migrations résidentielles</b> : mesure l'origine et la destination des habitants ayant déménagé au cours de l'année. L'analyse sépare les flux de proximité (internes à la métropole) des flux d'échanges nationaux (entrants et sortants de la métropole).
+                <a href='https://www.insee.fr/fr/statistiques/8582988' target='_blank'
+                   style='color:#1C3A27;font-size:0.85em;'>Accéder aux données</a><br><br>
                 🎓 <b>Mobilités scolaires</b> : analyse les déplacements quotidiens des élèves et étudiants (de la maternelle au supérieur) entre leur domicile et leur lieu d'études.<br> 
                         Les données comptabilisent la totalité de la population scolarisée en isolant les jeunes qui étudient dans leur propre commune de résidence des flux alternants (élèves venant de territoires extérieurs et élèves locaux se déplaçant hors de la métropole).
                 <a href='https://www.insee.fr/fr/statistiques/8582969' target='_blank'
-                   style='color:#1C3A27;font-size:0.85em;'>Données INSEE</a>
+                   style='color:#1C3A27;font-size:0.85em;'>Accéder aux données</a>
             </div>""", unsafe_allow_html=True)
 
             with st.container():
@@ -2683,8 +2683,8 @@ if vue == "Démographie":
                 with mob_col1:
                     theme_mob = st.selectbox(
                         "Thématique d'analyse",
-                        ["🏠 Migrations Résidentielles",
-                         "💼 Trajets domicile-travail",
+                        ["💼 Trajets domicile-travail",
+                         "🏠 Migrations Résidentielles",
                          "🎓 Mobilité Scolaire"],
                         key="mob_theme",
                     )
@@ -2709,6 +2709,10 @@ if vue == "Démographie":
                 interpret_int = (
                     f"**Volume interne** : nombre de {label_int.lower()}. "
                     f"Ces flux ne participent pas au solde net mais révèlent la cohésion fonctionnelle de la métropole.\n\n"
+                    f"**Poids des déménagements internes dans la population** : rapporte le nombre de "
+                    f"déménagements internes à la population totale du territoire (données de l'onglet "
+                    f"Population Globale). Il exprime la part de la population qui a changé de commune de "
+                    f"résidence au sein de la même métropole au cours de l'année."
                 )
 
             elif "domicile" in theme_mob:
@@ -2721,7 +2725,7 @@ if vue == "Démographie":
                 help_ext  = "Flux d'actifs entre cette métropole et d'autres territoires."
                 help_int  = "Actifs dont le domicile ET le lieu de travail sont dans la même métropole."
                 
-                # ✍️ MODIFIEZ VOS INTERPRÉTATIONS DE GRAPHIQUES ICI :
+                # MODIFIEZ VOS INTERPRÉTATIONS DE GRAPHIQUES ICI :
                 interpret_vol = (
                     f"**{label_in}** (barres pleines) : actifs résidant à l'extérieur mais venant travailler ici.\n\n"
                     f"**{label_out}** (barres transparentes) : actifs résidant ici mais partant travailler à l'extérieur.\n\n"
@@ -2790,13 +2794,21 @@ if vue == "Démographie":
                         & df_yr[col_dest].isin(coms_set)
                     ]["flux"].sum())
 
+                    # Population du territoire (source : onglet Population Globale)
+                    # utilisée pour le graphique de comparaison Migration résidentielle / population.
+                    if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
+                        pop_target = commune_val(target, "population_2022")
+                    else:
+                        pop_target = epci_val(target, "population_2022")
+
                     entities_mob.append({
-                        "name":    target,
-                        "in":      f_in,
-                        "out":     f_out,
-                        "interne": f_int,
-                        "solde":   f_in - f_out,
-                        "coms":    coms_set,
+                        "name":       target,
+                        "in":         f_in,
+                        "out":        f_out,
+                        "interne":    f_int,
+                        "solde":      f_in - f_out,
+                        "coms":       coms_set,
+                        "population": pop_target,
                     })
 
                 df_plot_mob = pd.DataFrame(entities_mob)
@@ -3088,6 +3100,79 @@ if vue == "Démographie":
                             )
                             st.plotly_chart(fig_int, use_container_width=True)
 
+                        # Affichage du graphique de Poids des déménagements internes / population
+                        # UNIQUEMENT pour la thématique "Migrations" (comparaison avec l'onglet Population Globale)
+                        if "Migrations" in theme_mob:
+                            with ci2:
+                                st.markdown(
+                                    "##### Déménagements internes / population (%)",
+                                    help=(
+                                        "Rapport entre le nombre de déménagements internes à la métropole "
+                                        "(graphique de gauche) et la population totale du territoire "
+                                        "(source : onglet Population Globale, population 2022). "
+                                        "Par exemple, 14 828 déménagements internes pour 449 509 habitants "
+                                        "à Grenoble-Alpes Métropole représentent environ 3,3 % de la population."
+                                    ),
+                                )
+                                df_plot_mob["population"] = pd.to_numeric(
+                                    df_plot_mob["population"], errors="coerce"
+                                )
+                                df_plot_mob["pct_dem_pop"] = (
+                                    df_plot_mob["interne"] / df_plot_mob["population"] * 100
+                                ).replace([np.inf, -np.inf], np.nan).fillna(0)
+                                df_plot_mob["pct_reste_pop"] = 100 - df_plot_mob["pct_dem_pop"]
+
+                                COLOR_DEM_INTERNE = PALETTE_METRO[0]
+                                COLOR_RESTE_POP   = PALETTE_METRO[4]
+
+                                fig_dem_pop = go.Figure()
+
+                                fig_dem_pop.add_trace(go.Bar(
+                                    x=noms_mob,
+                                    y=df_plot_mob["pct_dem_pop"],
+                                    name="Déménagements internes (%)",
+                                    marker=dict(color=COLOR_DEM_INTERNE),
+                                    text=[f"{v:.1f}%" for v in df_plot_mob["pct_dem_pop"]],
+                                    textposition="inside",
+                                    textfont=dict(color="#333", size=10),
+                                    customdata=df_plot_mob[["interne", "population"]].values,
+                                    hovertemplate=(
+                                        "<b>%{x}</b><br>Déménagements internes : %{customdata[0]:,.0f}"
+                                        "<br>Population : %{customdata[1]:,.0f}"
+                                        "<br>Part : %{y:.2f} %<extra></extra>"
+                                    ),
+                                ))
+
+                                fig_dem_pop.add_trace(go.Bar(
+                                    x=noms_mob,
+                                    y=df_plot_mob["pct_reste_pop"],
+                                    name="Reste de la population (%)",
+                                    marker=dict(color=COLOR_RESTE_POP),
+                                    text=[f"{v:.1f}%" for v in df_plot_mob["pct_reste_pop"]],
+                                    textposition="inside",
+                                    textfont=dict(color="white", size=10),
+                                    hovertemplate="<b>%{x}</b><br>Reste de la population : %{y:.2f} %<extra></extra>",
+                                ))
+
+                                if greno_vrect:
+                                    fig_dem_pop.add_vrect(**greno_vrect)
+                                fig_dem_pop.update_layout(
+                                    barmode="stack",
+                                    height=320, margin=dict(t=10, b=10),
+                                    paper_bgcolor="rgba(0,0,0,0)",
+                                    plot_bgcolor="rgba(0,0,0,0)",
+                                    font_family="Sora",
+                                    legend=dict(orientation="h", yanchor="bottom", y=1.02,
+                                                xanchor="left", x=0),
+                                    xaxis=dict(showgrid=False),
+                                    yaxis=dict(
+                                        gridcolor="#E8F5EE",
+                                        title="Part de la population (%)",
+                                        range=[0, 100],
+                                    ),
+                                )
+                                st.plotly_chart(fig_dem_pop, use_container_width=True)
+
                         # Affichage du graphique d'Autonomie Territoriale UNIQUEMENT si ce n'est pas "Migrations"
                         if "Migrations" not in theme_mob:
                             with ci2:
@@ -3156,8 +3241,7 @@ if vue == "Démographie":
                                 st.plotly_chart(fig_auto, use_container_width=True)
 
                         with st.expander("💡 Interpréter les flux internes"):
-                            st.write(interpret_int)  # Utilisation de votre variable paramétrée
-
+                            st.write(interpret_int)
 # ==============================================================================
 # ONGLET 4 - TRANSPORT DOMICILE-TRAVAIL
 # ==============================================================================
