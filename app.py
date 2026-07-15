@@ -2372,10 +2372,10 @@ if vue == "Démographie":
                     all_maxes.append(max(max(vh, default=0), max(vf, default=0)))
                 shared_x_max = max(all_maxes) * 1.18 if all_maxes else 5.0
 
-                ncols    = min(n_m, 3)
+                ncols    = 3
                 rows_pyr = [sel_metros_age[i:i+ncols] for i in range(0, n_m, ncols)]
                 for row in rows_pyr:
-                    cols = st.columns(len(row))
+                    cols = st.columns(ncols)
                     for j, m in enumerate(row):
                         df_m = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)]
                         fig  = build_pyramide_pct(df_m, m, metro_h_map[m], metro_f_map[m], x_max=shared_x_max)
@@ -2531,10 +2531,10 @@ if vue == "Démographie":
                     all_maxes_c.append(max(max(vh, default=0), max(vf, default=0)))
                 shared_x_max_c = max(all_maxes_c) * 1.18 if all_maxes_c else 5.0
 
-                ncols      = min(n_comm_age, 3)
+                ncols      = 3
                 rows_pyr_c = [communes_age[i:i+ncols] for i in range(0, n_comm_age, ncols)]
                 for row in rows_pyr_c:
-                    cols = st.columns(len(row))
+                    cols = st.columns(ncols)
                     for j, comm in enumerate(row):
                         df_c = df_pop[(df_pop["LIBELLE"] == comm) & (df_pop["annee"] == annee_age)]
                         fig  = build_pyramide_pct(df_c, comm, "#2D6A4F", "#74C69D", x_max=shared_x_max_c)
@@ -4551,10 +4551,10 @@ if vue == "Démographie":
                 # permettre une comparaison visuelle directe des hauteurs de barres
                 shared_x_max = max(all_maxes) * 1.10 if all_maxes else 100
 
-                ncols = min(n_targets, 3)
+                ncols = 3
                 rows_pyr = [targets_log[i:i + ncols] for i in range(0, n_targets, ncols)]
                 for row in rows_pyr:
-                    cols = st.columns(len(row))
+                    cols = st.columns(ncols)
                     for j, t in enumerate(row):
                         df_t = df_filter_peuplement(t)
                         is_greno = (t == "Grenoble" and highlight_grenoble_actif)
