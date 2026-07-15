@@ -5575,7 +5575,7 @@ if vue == "Solidarité et citoyenneté":
             </div>
         </div>"""
 
-        # ──────────────────────────────────────────────────────────────────────────
+    # ──────────────────────────────────────────────────────────────────────────
     # ONGLET 1 - SOLIDARITÉ (CAF)
     # ──────────────────────────────────────────────────────────────────────────
     with s1:
@@ -5968,8 +5968,103 @@ if vue == "Solidarité et citoyenneté":
                                 st.caption(
                                     "ℹ️ Ces parts totalisent 100 % par territoire (somme des 4 catégories). "
                                     "Un foyer pouvant cumuler plusieurs aides, ce 100 % représente le poids relatif "
-                                    "de chaque catégorie dans le volume affiché — pas la part de foyers distincts."
+                                    "de chaque catégorie dans le volume affiché — pas la part de foyers distincts. "
+                                    "👉 Voir le taux de cumul ci-dessous pour mesurer ce phénomène."
                                 )
+
+                        st.markdown("---")
+
+                        # ── Taux de cumul d'aides (indicateur de recoupement) ──
+                        st.markdown(
+                            "##### Taux de cumul d'aides par territoire",
+                            help=(
+                                "Un même foyer peut percevoir plusieurs aides à la fois (ex : Logement ET "
+                                "Enfance & Jeunesse). Ce taux mesure ce cumul : "
+                                "(Insertion + Logement + Jeunes enfants + Enfance & Jeunesse) / Foyers aidés "
+                                "toutes aides confondues (NDUR). Un taux de 1,00 signifie qu'aucun foyer ne cumule "
+                                "d'aide (chacun ne touche qu'une seule catégorie). Plus le taux dépasse 1, plus les "
+                                "foyers aidés cumulent de catégories d'aides en moyenne. Ce taux est calculé à partir "
+                                "du nombre de foyers, quelle que soit la mesure sélectionnée plus haut "
+                                "(foyers / personnes / montant)."
+                            )
+                        )
+                        FOYERS_NDUR_COL  = "Nombre foyers NDUR"
+                        FOYERS_CATS_COLS = {
+                            "Insertion":          "Nombre foyers NDURINS",
+                            "Logement":           "Nombre foyers NDURAL",
+                            "Jeunes enfants":     "Nombre foyers NDURPAJE",
+                            "Enfance & Jeunesse": "Nombre foyers NDUREJ",
+                        }
+                        cols_cumul_needed = [FOYERS_NDUR_COL] + list(FOYERS_CATS_COLS.values())
+                        if all(c in df_fil.columns for c in cols_cumul_needed):
+                            df_cumul = df_fil.groupby(geo_col, as_index=False)[cols_cumul_needed].sum()
+                            df_cumul["Somme_4_categories"] = df_cumul[list(FOYERS_CATS_COLS.values())].sum(axis=1)
+                            df_cumul["Taux_cumul"] = df_cumul.apply(
+                                lambda r: (r["Somme_4_categories"] / r[FOYERS_NDUR_COL])
+                                          if r[FOYERS_NDUR_COL] > 0 else np.nan,
+                                axis=1
+                            )
+                            df_cumul = df_cumul.dropna(subset=["Taux_cumul"])
+
+                            if not df_cumul.empty:
+                                if is_metro:
+                                    df_cumul["Metropole_Key"] = df_cumul[geo_col].apply(
+                                        lambda x: next((m for m in COULEURS.keys() if m in x), x)
+                                    )
+                                    fig_cumul = px.bar(
+                                        df_cumul, x="Taux_cumul", y=geo_col,
+                                        color="Metropole_Key", color_discrete_map=COULEURS,
+                                        orientation="h",
+                                        text=df_cumul["Taux_cumul"].apply(lambda v: f"{v:.2f}"),
+                                        labels={"Taux_cumul": "Aides / foyer aidé", geo_col: ""},
+                                        custom_data=[FOYERS_NDUR_COL, "Somme_4_categories"],
+                                        height=320
+                                    )
+                                    apply_grenoble_hatch(fig_cumul)
+                                else:
+                                    fig_cumul = px.bar(
+                                        df_cumul, x="Taux_cumul", y=geo_col,
+                                        color=geo_col, color_discrete_sequence=color_seq_caf,
+                                        orientation="h",
+                                        text=df_cumul["Taux_cumul"].apply(lambda v: f"{v:.2f}"),
+                                        labels={"Taux_cumul": "Aides / foyer aidé", geo_col: ""},
+                                        custom_data=[FOYERS_NDUR_COL, "Somme_4_categories"],
+                                        height=320
+                                    )
+
+                                fig_cumul.update_traces(
+                                    textposition="outside",
+                                    hovertemplate=(
+                                        "<b>%{y}</b><br>Taux de cumul : <b>%{x:.2f}</b> aide(s) / foyer aidé"
+                                        "<br>Foyers aidés toutes aides (NDUR) : %{customdata[0]:,.0f}"
+                                        "<br>Somme des 4 catégories : %{customdata[1]:,.0f}<extra></extra>"
+                                    )
+                                )
+                                fig_cumul.add_vline(
+                                    x=1, line_dash="dash", line_color="#888",
+                                    annotation_text="Aucun cumul (1 aide / foyer)",
+                                    annotation_position="top"
+                                )
+                                fig_cumul.update_layout(
+                                    separators=", ",
+                                    showlegend=False,
+                                    xaxis=dict(title="Aides / foyer aidé (moyenne)"),
+                                    yaxis=dict(categoryorder="total ascending", title=""),
+                                    margin=dict(t=40, b=30, l=140)
+                                )
+                                st.plotly_chart(style(fig_cumul, 30), use_container_width=True)
+                                st.caption(
+                                    "ℹ️ Taux = (Insertion + Logement + Jeunes enfants + Enfance & Jeunesse) / "
+                                    "Foyers aidés toutes aides confondues (NDUR). Un taux de 1,50 signifie qu'en "
+                                    "moyenne, un foyer aidé sur ce territoire touche 1,5 catégorie d'aide différente."
+                                )
+                            else:
+                                st.info("Impossible de calculer le taux de cumul (données NDUR manquantes ou nulles).")
+                        else:
+                            st.info(
+                                "Le taux de cumul nécessite les colonnes 'Nombre foyers NDUR', 'NDURINS', "
+                                "'NDURAL', 'NDURPAJE' et 'NDUREJ', qui ne sont pas toutes présentes dans ce fichier."
+                            )
 
                         st.markdown("---")
 
@@ -6060,11 +6155,11 @@ if vue == "Solidarité et citoyenneté":
                             - **Personnes concernées** : individus vivant dans ces foyers  
                             - **Montants (€)** : total des aides versées  
                             - **Quotient familial** : niveau de vie du foyer (revenus / parts)
-                            - **Logement** : APL, ALS, ALF 
-                            - **Insertion** : RSA, AAH, prime d'activité  
+                            - **Logement** : APL, ALS, ALF - **Insertion** : RSA, AAH, prime d'activité  
                             - **Jeunes enfants (PAJE)** : naissance, garde, petite enfance  
                             - **Enfance & jeunesse** : allocations familiales, rentrée scolaire
                             """)
+
 
     # ──────────────────────────────────────────────────────────────────────────
     # ONGLET 2 - ÉDUCATION
