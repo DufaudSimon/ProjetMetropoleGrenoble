@@ -8312,6 +8312,12 @@ if vue == "Environnement":
                 <strong>Périmètre :</strong> 4 métropoles disposant de données SISPEA agrégées au
                 niveau métropolitain. La ligne pointillée grise indique la moyenne nationale française
                 (source : SISPEA, janvier 2025) lorsqu'elle est disponible.<br><br>
+                <strong>Méthode de calcul (homogène sur les 4 thématiques) :</strong> lorsqu'une
+                métropole regroupe plusieurs entités de gestion, la valeur affichée est une
+                <strong>moyenne pondérée par la population desservie</strong> de chaque entité
+                (une grande régie pèse plus qu'un petit syndicat). Si la donnée de population
+                n'est pas disponible pour un indicateur, une moyenne simple est
+                utilisée à la place.<br><br>
                 <span style='color:#C62828;font-weight:700;'>⚠️ Rennes Métropole non disponible :</span>
                 la compétence eau y est organisée via des syndicats intercommunaux dont les périmètres
                 ne correspondent pas directement à la métropole.
@@ -8351,15 +8357,32 @@ if vue == "Environnement":
                 st.warning(
                     "⚠️ **Note sur Saint-Étienne :** la compétence eau n'y est pas unifiée — "
                     "plusieurs entités de gestion coexistent dans SISPEA. Les valeurs présentées "
-                    "sont des moyennes. Certains indicateurs peuvent être partiels ou peu "
-                    "représentatifs à l'échelle de la métropole."
+                    "sont des moyennes pondérées par la population desservie de chaque entité "
+                    "lorsque cette donnée est disponible (moyenne simple sinon). Certains "
+                    "indicateurs peuvent malgré tout rester partiels ou peu représentatifs à "
+                    "l'échelle de la métropole."
                 )
 
             eau_colors = [COULEURS.get(m, "#888888") for m in sel_metros_eau]
             n_eau = len(sel_metros_eau)
 
             # ── Helpers ────────────────────────────────────────────────────────────
+            # Colonne de population utilisée pour pondérer les moyennes lorsqu'un territoire
+            # regroupe plusieurs entités de gestion (ex : Saint-Étienne). Présente dans certains
+            # fichiers SISPEA (ex : détail tarifaire) mais pas systématiquement dans tous.
+            POP_COL_PONDERATION = "Pop de l'entité de gestion sans double compte"
+
             def get_val(df, metro, col):
+                """
+                Valeur agrégée pour une métropole et un indicateur donnés.
+                - Si la colonne de population (POP_COL_PONDERATION) est disponible et exploitable :
+                  moyenne pondérée par la population desservie de chaque entité de gestion (une
+                  grande régie pèse plus qu'un petit syndicat dans la moyenne).
+                - Sinon : moyenne arithmétique simple, en repli (ex : fichiers sans donnée de
+                  population pour cet indicateur).
+                Cette fonction unique est utilisée pour TOUS les indicateurs de l'onglet Eau
+                (AEP, AC, ANC, Tarifs), afin que la méthode de calcul soit homogène partout.
+                """
                 if df is None or col not in df.columns:
                     return np.nan
                 sub = df[df["metropole"] == metro].copy()
@@ -8368,29 +8391,18 @@ if vue == "Environnement":
                 sub[col] = pd.to_numeric(
                     sub[col].astype(str).str.replace(",", "."), errors="coerce"
                 )
+
+                if POP_COL_PONDERATION in sub.columns:
+                    sub[POP_COL_PONDERATION] = pd.to_numeric(
+                        sub[POP_COL_PONDERATION], errors="coerce"
+                    ).fillna(0)
+                    valid   = sub[[col, POP_COL_PONDERATION]].dropna(subset=[col])
+                    tot_pop = valid[POP_COL_PONDERATION].sum()
+                    if tot_pop > 0:
+                        return float((valid[col] * valid[POP_COL_PONDERATION]).sum() / tot_pop)
+
                 val = sub[col].mean(skipna=True)
                 return float(val) if pd.notna(val) else np.nan
-
-            def get_val_tar(df, metro, col):
-                sub = df[df["metropole"] == metro].copy()
-                if sub.empty or col not in sub.columns:
-                    return np.nan
-                sub[col] = pd.to_numeric(
-                    sub[col].astype(str).str.replace(",", "."), errors="coerce"
-                )
-                pop_col_tar = "Pop de l'entité de gestion sans double compte"
-                if pop_col_tar in sub.columns:
-                    sub[pop_col_tar] = pd.to_numeric(
-                        sub[pop_col_tar], errors="coerce"
-                    ).fillna(0)
-                    valid = sub[[col, pop_col_tar]].dropna(subset=[col])
-                    if len(valid) > 0:
-                        tot = valid[pop_col_tar].sum()
-                        return float(
-                            (valid[col] * valid[pop_col_tar]).sum() / tot
-                            if tot > 0 else valid[col].mean()
-                        )
-                return float(sub[col].mean(skipna=True))
 
             def fv(v, dec=1, suf=""):
                 if pd.isna(v):
@@ -8813,47 +8825,59 @@ if vue == "Environnement":
 
                 IND_ANC_META = {
                     "D301.0": {
-                        "titre": "Installations ANC recensées",
-                        "axe": "installations",
+                        "titre": "Habitants desservis par le SPANC",
+                        "axe": "habitants",
                         "moy_fr": None, "moy_label": None,
-                        "higher_better": True, "dec": 0, "suf": "",
+                        "higher_better": True, "dec": 0, "suf": " hab.",
                         "help": (
-                            "D301.0 — Nombre total de dispositifs ANC (fosses septiques, filtres à "
-                            "sable, micro-stations, phytoépuration…) recensés sur le territoire. "
-                            "Concerne les habitations non raccordées au réseau public."
+                            "D301.0 — Nombre d'habitants desservis par le service public "
+                            "d'assainissement non collectif (SPANC), qu'ils soient résidents "
+                            "permanents ou présents seulement une partie de l'année (population "
+                            "saisonnière incluse). Ne concerne que les zones classées en "
+                            "assainissement non collectif (par opposition aux zones raccordées "
+                            "au réseau collectif). Ce n'est PAS un nombre d'installations : "
+                            "un même foyer compte pour plusieurs habitants."
                         ),
                     },
                     "D302.0": {
-                        "titre": "Taux de conformité des dispositifs ANC",
-                        "axe": "%",
-                        "moy_fr": 58.0,
-                        "moy_label": "Moy. France : ~58 %",
-                        "higher_better": True, "dec": 1, "suf": " %",
+                        "titre": "Indice de mise en œuvre du SPANC",
+                        "axe": "points (échelle 0-140)",
+                        "moy_fr": 105,
+                        "moy_label": "Moy. France (janv. 2025) : 105 pts",
+                        "higher_better": True, "dec": 0, "suf": " pts",
                         "help": (
-                            "D302.0 — Part des installations jugées conformes lors du dernier "
-                            "contrôle SPANC. Une installation conforme ne présente pas de risque "
-                            "sanitaire ou environnemental avéré. Les non conformes doivent être "
-                            "réhabilitées dans un délai fixé par l'arrêté du 27/04/2012."
+                            "D302.0 — C'est un indice descriptif : de 0 à 100 points, il mesure si la "
+                            "collectivité assure les prestations obligatoires du SPANC (contrôle "
+                            "de la conception, de l'implantation, de la bonne exécution et du bon "
+                            "fonctionnement des installations). Au-delà de 100, jusqu'à 140, des "
+                            "points supplémentaires valorisent les services complémentaires "
+                            "facultatifs (ex : entretien, réalisation de travaux). Un score élevé "
+                            "signifie un service étendu — pas forcément des installations en bon "
+                            "état : voir le taux de conformité (P301.3) pour ça."
                         ),
                     },
                     "P301.3": {
-                        "titre": "Taux de réhabilitation des installations ANC",
+                        "titre": "Taux de conformité des dispositifs ANC",
                         "axe": "%",
-                        "moy_fr": None, "moy_label": None,
+                        "moy_fr": 70.7,
+                        "moy_label": "Moy. France (janv. 2025) : 70,7 %",
                         "higher_better": True, "dec": 1, "suf": " %",
                         "help": (
-                            "P301.3 — Part des installations non conformes ayant fait l'objet "
-                            "d'une réhabilitation dans l'année. Un taux élevé traduit une politique "
-                            "active de mise aux normes. À lire conjointement avec D302.0 : un faible "
-                            "taux de conformité couplé à un fort taux de réhabilitation indique "
-                            "un territoire en bonne trajectoire."
+                            "P301.3 — C'est ici le véritable taux de conformité : part des "
+                            "installations contrôlées et jugées conformes (ou mises en conformité "
+                            "validée par le service) parmi l'ensemble des installations contrôlées "
+                            "depuis la création du service jusqu'au 31/12 de l'année considérée. "
+                            "Un service qui n'a encore contrôlé qu'une petite partie de son parc "
+                            "peut afficher un taux élevé qui n'est pas encore représentatif de "
+                            "l'ensemble du territoire."
                         ),
                     },
                 }
 
                 indicators_anc = ["D301.0", "D302.0", "P301.3"]
 
-                # D301.0 en pleine largeur (volume), D302.0 et P301.3 côte à côte
+                # D301.0 en pleine largeur (population desservie),
+                # puis P301.3 (le vrai % de conformité) et D302.0 (l'indice en points) côte à côte
                 st.markdown(
                     f"##### {IND_ANC_META['D301.0']['titre']}",
                     help=IND_ANC_META["D301.0"]["help"],
@@ -8864,17 +8888,17 @@ if vue == "Environnement":
                 cols_anc = st.columns(2)
                 with cols_anc[0]:
                     st.markdown(
-                        f"##### {IND_ANC_META['D302.0']['titre']}",
-                        help=IND_ANC_META["D302.0"]["help"],
-                    )
-                    chart_indicateur("D302.0", sel_metros_eau, eau_colors,
-                                    df_sel, IND_ANC_META)
-                with cols_anc[1]:
-                    st.markdown(
                         f"##### {IND_ANC_META['P301.3']['titre']}",
                         help=IND_ANC_META["P301.3"]["help"],
                     )
                     chart_indicateur("P301.3", sel_metros_eau, eau_colors,
+                                    df_sel, IND_ANC_META)
+                with cols_anc[1]:
+                    st.markdown(
+                        f"##### {IND_ANC_META['D302.0']['titre']}",
+                        help=IND_ANC_META["D302.0"]["help"],
+                    )
+                    chart_indicateur("D302.0", sel_metros_eau, eau_colors,
                                     df_sel, IND_ANC_META)
 
                 st.markdown("---")
@@ -8883,11 +8907,15 @@ if vue == "Environnement":
 
                 with st.expander("📋 Fiche méthodologique — Indicateurs ANC"):
                     st.markdown("""
-    | Code | Indicateur | Interprétation |
-    |---|---|---|
-    | **D301.0** | Installations recensées | Volume du parc autonome sur le territoire. Reflète l'ampleur du SPANC. |
-    | **D302.0** | Taux de conformité | Part des installations sans risque sanitaire ou environnemental avéré. |
-    | **P301.3** | Taux de réhabilitation | Dynamique de mise aux normes des installations défaillantes. |
+    | Code | Indicateur | Unité | Interprétation |
+    |---|---|---|---|
+    | **D301.0** | Habitants desservis | Nombre d'habitants | Population couverte par le SPANC (résidents permanents + saisonniers). Dimensionne l'ampleur du service, ne juge pas sa qualité. |
+    | **D302.0** | Indice de mise en œuvre | Points (0 à 140) | 0-100 = respect des obligations réglementaires du SPANC (contrôle conception / implantation / exécution / fonctionnement). 100-140 = services complémentaires facultatifs (entretien, travaux). **Ne mesure pas l'état réel des installations.** |
+    | **P301.3** | Taux de conformité | % | Part des installations contrôlées jugées conformes (ou mises en conformité validée) parmi le total contrôlé depuis la création du service. **C'est le seul indicateur de la qualité réelle des équipements.** |
+
+    **⚠️ Point de vigilance :** un territoire peut afficher un score D302.0 élevé (service très
+    structuré, beaucoup de contrôles organisés) tout en ayant un P301.3 modeste (beaucoup
+    d'installations contrôlées jugées non conformes). Les deux indicateurs sont complémentaires dans l'analyse.
     """)
 
             # ══════════════════════════════════════════════════════════════════════
@@ -8907,8 +8935,6 @@ if vue == "Environnement":
                             border-left:4px solid #F9A825;font-size:0.85em;margin-bottom:16px;'>
                     <b>Structure de la facture d'eau :</b> prix volumique HT + abonnement
                     + redevances agence de l'eau + TVA (5,5 % eau potable, 10 % assainissement).
-                    Pour Saint-Étienne, chaque commune a un tarif propre :
-                    les valeurs sont des moyennes pondérées par le nombre d'abonnés.
                 </div>""", unsafe_allow_html=True)
 
                 st.subheader("Indicateurs tarifaires — Eau 2020")
@@ -8917,7 +8943,7 @@ if vue == "Environnement":
                     "D102.0": {
                         "titre": "Prix TTC eau potable (120 m³)",
                         "axe": "€/m³ TTC",
-                        "moy_fr": 2.52,
+                        "moy_fr": None,
                         "moy_label": "Moy. France (janv. 2025) : 2,52 €/m³",
                         "higher_better": False, "dec": 2, "suf": " €/m³",
                         "help": "Coût global pour l'usager eau potable.",
@@ -8957,13 +8983,11 @@ if vue == "Environnement":
                                     help=IND_TAR_META[code_t]["help"],
                                 )
                                 chart_indicateur(code_t, sel_metros_eau, eau_colors,
-                                                df_sel_tar, IND_TAR_META,
-                                                val_func=get_val_tar)
+                                                df_sel_tar, IND_TAR_META)
 
                 st.markdown("---")
                 st.subheader("Tableau comparatif — Tarification")
-                display_recap_table(sel_metros_eau, df_sel_tar,
-                                    IND_TAR_META, val_func=get_val_tar)
+                display_recap_table(sel_metros_eau, df_sel_tar, IND_TAR_META)
 
                 with st.expander("📋 Fiche méthodologique — Tarification"):
                     st.markdown("""
