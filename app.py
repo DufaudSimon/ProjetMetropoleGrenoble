@@ -8655,29 +8655,6 @@ if vue == "Environnement":
                             "⚠️ D201.1 absent des données — D201.0 utilisé en substitution."
                         ),
                     },
-                    "D204.0": {
-                        "titre": "Prix TTC assainissement collectif (120 m³)",
-                        "axe": "€/m³ TTC",
-                        "moy_fr": 1.86,
-                        "moy_label": "Moy. France (janv. 2025) : 1,86 €/m³",
-                        "higher_better": False, "dec": 2, "suf": " €/m³",
-                        "help": (
-                            "D204.0 — Prix TTC du service d'assainissement collectif au m³, "
-                            "calculé pour une consommation de référence de 120 m³/an."
-                        ),
-                    },
-                    "P201.1": {
-                        "titre": "Taux de desserte par réseau de collecte",
-                        "axe": "%",
-                        "moy_fr": 97.2,
-                        "moy_label": "Moy. France : 97,2 %",
-                        "higher_better": True, "dec": 1, "suf": " %",
-                        "help": (
-                            "P201.1 — Rapport entre le nombre d'abonnés du service AC et le nombre "
-                            "potentiel d'abonnés de la zone relevant du collectif. 100 % = tous les "
-                            "logements de la zone sont desservis par un réseau existant."
-                        ),
-                    },
                     "P203.3": {
                         "titre": "Conformité de la collecte des effluents",
                         "axe": "%",
@@ -8714,62 +8691,11 @@ if vue == "Environnement":
                             "les seuils réglementaires. Distinct de P204.3 qui juge les équipements."
                         ),
                     },
-                    "P252.2": {
-                        "titre": "Points noirs du réseau de collecte",
-                        "axe": "nb / 100 km",
-                        "moy_fr": 3.1,
-                        "moy_label": "Moy. France : 3,1 / 100 km",
-                        "higher_better": False, "dec": 1, "suf": " / 100 km",
-                        "help": (
-                            "P252.2 — Nombre de tronçons nécessitant des interventions fréquentes "
-                            "de curage (≥ 2 fois/an) pour 100 km de réseau. Plus bas = meilleur état "
-                            "du réseau. Indique les points problématiques (dépôts, racines, sections insuffisantes)."
-                        ),
-                    },
-                    "P253.2": {
-                        "titre": "Taux de renouvellement des réseaux de collecte",
-                        "axe": "%/an",
-                        "moy_fr": 0.60,
-                        "moy_label": "Moy. France : 0,60 %/an",
-                        "higher_better": True, "dec": 2, "suf": " %/an",
-                        "help": (
-                            "P253.2 — Taux moyen de renouvellement des canalisations sur 5 ans "
-                            "(longueur renouvelée / longueur totale × 100). 1 %/an = renouvellement "
-                            "complet en 100 ans. En dessous, le réseau vieillit plus vite qu'il n'est entretenu."
-                        ),
-                    },
-                    "P257.0": {
-                        "titre": "Taux d'impayés sur factures AC",
-                        "axe": "%",
-                        "moy_fr": 2.10,
-                        "moy_label": "Moy. France : 2,10 %",
-                        "higher_better": False, "dec": 2, "suf": " %",
-                        "help": (
-                            "P257.0 — Part des factures d'assainissement de l'année N-1 impayées "
-                            "à la clôture de l'exercice. Un taux élevé peut signaler des difficultés "
-                            "sociales ou des défauts de gestion du recouvrement."
-                        ),
-                    },
-                    "P258.1": {
-                        "titre": "Taux de réclamations AC",
-                        "axe": "/ 1 000 abonnés",
-                        "moy_fr": 2.30,
-                        "moy_label": "Moy. France : 2,30 / 1000 abonnés",
-                        "higher_better": False, "dec": 2, "suf": " / 1000 ab.",
-                        "help": (
-                            "P258.1 — Nombre de réclamations écrites reçues par le service AC "
-                            "pour 1 000 abonnés. Mesure la satisfaction usagers et la qualité "
-                            "de la relation clientèle."
-                        ),
-                    },
                 }
 
                 indicators_ac = [
-                    "D201.0", "D204.0",
-                    "P201.1", "P203.3",
+                    "D201.0", "P203.3",
                     "P204.3", "P205.3",
-                    "P252.2", "P253.2",
-                    "P257.0", "P258.1",
                 ]
 
                 for i in range(0, len(indicators_ac), 2):
@@ -8794,15 +8720,9 @@ if vue == "Environnement":
     | Code | Indicateur | Interprétation |
     |---|---|---|
     | **D201.0** | Population desservie | Habitants couverts par un réseau collectif (raccordés ou raccordables). |
-    | **D204.0** | Prix TTC (120 m³) | Coût du service AC pour un ménage de référence. |
-    | **P201.1** | Taux de desserte | Part des logements de la zone AC avec un réseau en façade. |
     | **P203.3** | Conformité collecte ERU | Maîtrise des déversements non traités. Peut dépasser 100 % (eaux parasites). |
     | **P204.3** | Conformité équipements STEU | Stations d'épuration conformes en équipements (capacité, ouvrages). |
     | **P205.3** | Conformité performance STEU | Stations atteignant leurs objectifs de rejet réglementaires. |
-    | **P252.2** | Points noirs réseau | Tronçons nécessitant des curages fréquents. Moins = meilleur état. |
-    | **P253.2** | Renouvellement réseau collecte | Effort de maintenance. 1 %/an = renouvellement en 100 ans. |
-    | **P257.0** | Taux d'impayés AC | Factures AC non honorées. Enjeu social et de recouvrement. |
-    | **P258.1** | Taux de réclamations AC | Litiges usagers pour 1 000 abonnés. Qualité de la relation clientèle. |
     """)
 
             # ══════════════════════════════════════════════════════════════════════
