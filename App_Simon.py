@@ -1174,13 +1174,12 @@ if st.session_state.page == "home":
         <div class="info-card darkgreen">
             <div class="info-card-title"> Environnement & Transition</div>
             <div class="info-card-body">
-                Suivi de la qualité de l'air, de la présence de la biodiversité, des espaces verts et de la gestion locale des déchets.
+                Suivi de la qualité de l'air, de l'artificialisation des sols / des espaces verts et de l'eau / assainissement.
             </div>
             <div class="tag-row">
                 <span class="tag-darkgreen">Qualité de l'air</span>
-                <span class="tag-darkgreen">Espaces Verts</span>
-                <span class="tag-darkgreen">Déchets</span>
-                <span class="tag-darkgreen">Transition</span>
+                <span class="tag-darkgreen">Artificialisation des sols</span>
+                <span class="tag-darkgreen">Eau et assainissement</span>
             </div>
         </div>
     </div>
@@ -1351,7 +1350,7 @@ if vue == "Description":
     st.markdown("""
         <div class="main-intro">
             <p style="font-size: 1.1rem; color: #1C3A27; margin: 0;">
-                Cette application presents des analyses comparatives sur <b>5 métropoles françaises et 49 communes de la métropole de Grenoble</b> à partir des données de l'INSEE, la CAF, Data.gouv et OSM France. 
+                Cette application presents des analyses comparatives sur <b>5 métropoles françaises et 49 communes de la métropole de Grenoble</b> à partir des données de l'INSEE, la CAF, Data.gouv, OSM France, ATMO France et SISPEA. 
                 Chaque page dispose de ses propres filtres en haut de page, adaptés aux données présentées. 
                 Selon les onglets, il est possible de filtrer par métropole, par commune, par année ou par thématique.
             </p>
@@ -1428,14 +1427,14 @@ if vue == "Description":
     
     env1, env2, env3 = st.columns(3)
     with env1:
-        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Air</div><div class="card-title"><b> Qualité de l'air</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Suivi des indices de pollution atmosphérique.</div></div>""", unsafe_allow_html=True)
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Sols</div><div class="card-title"><b> Artificialisation des sols</b></div>
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Cet onglet regroupe les indicateurs clés permettant de suivre l’artificialisation des sols sur le territoire.</div></div>""", unsafe_allow_html=True)
     with env2:
-        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Nature</div><div class="card-title"><b> Espaces verts & Biodiversité</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Analyse</div></div>""", unsafe_allow_html=True)
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Air</div><div class="card-title"><b>Qualité de l'air</b></div>
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Cet onglet synthétise la qualité de l’air à travers l’indice ATMO, en comparant les niveaux de pollution par territoire et leur évolution prévisionnelle.e</div></div>""", unsafe_allow_html=True)
     with env3:
-        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Transition</div><div class="card-title"><b> Déchets & Énergie</b></div>
-        <div class="card-body" style="font-size:0.9rem; color:#555;">Analyse.</div></div>""", unsafe_allow_html=True)
+        st.markdown("""<div class="feature-card"><div class="theme-badge badge-env">Eau</div><div class="card-title"><b> Eau & Assainissement</b></div>
+        <div class="card-body" style="font-size:0.9rem; color:#555;">Cet onglet synthétise les indicateurs de service liés à l’eau et à l’assainissement pour les métropoles disposant de données SISPEA.</div></div>""", unsafe_allow_html=True)
 
     st.stop()   
 
@@ -2372,10 +2371,10 @@ if vue == "Démographie":
                     all_maxes.append(max(max(vh, default=0), max(vf, default=0)))
                 shared_x_max = max(all_maxes) * 1.18 if all_maxes else 5.0
 
-                ncols    = min(n_m, 3)
+                ncols    = 3
                 rows_pyr = [sel_metros_age[i:i+ncols] for i in range(0, n_m, ncols)]
                 for row in rows_pyr:
-                    cols = st.columns(len(row))
+                    cols = st.columns(ncols)
                     for j, m in enumerate(row):
                         df_m = df_pop[(df_pop["metropole"] == m) & (df_pop["annee"] == annee_age)]
                         fig  = build_pyramide_pct(df_m, m, metro_h_map[m], metro_f_map[m], x_max=shared_x_max)
@@ -2531,10 +2530,10 @@ if vue == "Démographie":
                     all_maxes_c.append(max(max(vh, default=0), max(vf, default=0)))
                 shared_x_max_c = max(all_maxes_c) * 1.18 if all_maxes_c else 5.0
 
-                ncols      = min(n_comm_age, 3)
+                ncols      = 3
                 rows_pyr_c = [communes_age[i:i+ncols] for i in range(0, n_comm_age, ncols)]
                 for row in rows_pyr_c:
-                    cols = st.columns(len(row))
+                    cols = st.columns(ncols)
                     for j, comm in enumerate(row):
                         df_c = df_pop[(df_pop["LIBELLE"] == comm) & (df_pop["annee"] == annee_age)]
                         fig  = build_pyramide_pct(df_c, comm, "#2D6A4F", "#74C69D", x_max=shared_x_max_c)
@@ -2636,16 +2635,16 @@ if vue == "Démographie":
             <div style='background-color: #f1f8f5; padding: 15px; border-radius: 10px;
                         border-left: 5px solid #1C3A27; margin-bottom: 20px; font-size: 14px;'>
                 <strong>Source :</strong> INSEE<br><br>
-                🏠 <b>Migrations résidentielles</b> : mesure l'origine et la destination des habitants ayant déménagé au cours de l'année. L'analyse sépare les flux de proximité (internes à la métropole) des flux d'échanges nationaux (entrants et sortants de la métropole).
-                <a href='https://www.insee.fr/fr/statistiques/8582988' target='_blank'
-                   style='color:#1C3A27;font-size:0.85em;'>Données INSEE</a><br><br>
                 💼 <b>Trajets domicile-travail</b> : représente les déplacements quotidiens de la population active. Elle comptabilise les actifs stables (travaillant dans leur territoire de résidence) et les flux alternants (actifs entrants et sortants d'autres métropoles).
                 <a href='https://www.insee.fr/fr/statistiques/8582949' target='_blank'
-                   style='color:#1C3A27;font-size:0.85em;'>Données INSEE</a><br><br>
+                   style='color:#1C3A27;font-size:0.85em;'>Accéder aux données</a><br><br>
+                🏠 <b>Migrations résidentielles</b> : mesure l'origine et la destination des habitants ayant déménagé au cours de l'année. L'analyse sépare les flux de proximité (internes à la métropole) des flux d'échanges nationaux (entrants et sortants de la métropole).
+                <a href='https://www.insee.fr/fr/statistiques/8582988' target='_blank'
+                   style='color:#1C3A27;font-size:0.85em;'>Accéder aux données</a><br><br>
                 🎓 <b>Mobilités scolaires</b> : analyse les déplacements quotidiens des élèves et étudiants (de la maternelle au supérieur) entre leur domicile et leur lieu d'études.<br> 
                         Les données comptabilisent la totalité de la population scolarisée en isolant les jeunes qui étudient dans leur propre commune de résidence des flux alternants (élèves venant de territoires extérieurs et élèves locaux se déplaçant hors de la métropole).
                 <a href='https://www.insee.fr/fr/statistiques/8582969' target='_blank'
-                   style='color:#1C3A27;font-size:0.85em;'>Données INSEE</a>
+                   style='color:#1C3A27;font-size:0.85em;'>Accéder aux données</a>
             </div>""", unsafe_allow_html=True)
 
             with st.container():
@@ -2683,8 +2682,8 @@ if vue == "Démographie":
                 with mob_col1:
                     theme_mob = st.selectbox(
                         "Thématique d'analyse",
-                        ["🏠 Migrations Résidentielles",
-                         "💼 Trajets domicile-travail",
+                        ["💼 Trajets domicile-travail",
+                         "🏠 Migrations Résidentielles",
                          "🎓 Mobilité Scolaire"],
                         key="mob_theme",
                     )
@@ -2709,6 +2708,10 @@ if vue == "Démographie":
                 interpret_int = (
                     f"**Volume interne** : nombre de {label_int.lower()}. "
                     f"Ces flux ne participent pas au solde net mais révèlent la cohésion fonctionnelle de la métropole.\n\n"
+                    f"**Poids des déménagements internes dans la population** : rapporte le nombre de "
+                    f"déménagements internes à la population totale du territoire (données de l'onglet "
+                    f"Population Globale). Il exprime la part de la population qui a changé de commune de "
+                    f"résidence au sein de la même métropole au cours de l'année."
                 )
 
             elif "domicile" in theme_mob:
@@ -2721,7 +2724,7 @@ if vue == "Démographie":
                 help_ext  = "Flux d'actifs entre cette métropole et d'autres territoires."
                 help_int  = "Actifs dont le domicile ET le lieu de travail sont dans la même métropole."
                 
-                # ✍️ MODIFIEZ VOS INTERPRÉTATIONS DE GRAPHIQUES ICI :
+                # MODIFIEZ VOS INTERPRÉTATIONS DE GRAPHIQUES ICI :
                 interpret_vol = (
                     f"**{label_in}** (barres pleines) : actifs résidant à l'extérieur mais venant travailler ici.\n\n"
                     f"**{label_out}** (barres transparentes) : actifs résidant ici mais partant travailler à l'extérieur.\n\n"
@@ -2790,13 +2793,21 @@ if vue == "Démographie":
                         & df_yr[col_dest].isin(coms_set)
                     ]["flux"].sum())
 
+                    # Population du territoire (source : onglet Population Globale)
+                    # utilisée pour le graphique de comparaison Migration résidentielle / population.
+                    if mode_mob == "Comparaison communes Grenoble-Alpes Métropole":
+                        pop_target = commune_val(target, "population_2022")
+                    else:
+                        pop_target = epci_val(target, "population_2022")
+
                     entities_mob.append({
-                        "name":    target,
-                        "in":      f_in,
-                        "out":     f_out,
-                        "interne": f_int,
-                        "solde":   f_in - f_out,
-                        "coms":    coms_set,
+                        "name":       target,
+                        "in":         f_in,
+                        "out":        f_out,
+                        "interne":    f_int,
+                        "solde":      f_in - f_out,
+                        "coms":       coms_set,
+                        "population": pop_target,
                     })
 
                 df_plot_mob = pd.DataFrame(entities_mob)
@@ -3088,6 +3099,79 @@ if vue == "Démographie":
                             )
                             st.plotly_chart(fig_int, use_container_width=True)
 
+                        # Affichage du graphique de Poids des déménagements internes / population
+                        # UNIQUEMENT pour la thématique "Migrations" (comparaison avec l'onglet Population Globale)
+                        if "Migrations" in theme_mob:
+                            with ci2:
+                                st.markdown(
+                                    "##### Déménagements internes / population (%)",
+                                    help=(
+                                        "Rapport entre le nombre de déménagements internes à la métropole "
+                                        "(graphique de gauche) et la population totale du territoire "
+                                        "(source : onglet Population Globale, population 2022). "
+                                        "Par exemple, 14 828 déménagements internes pour 449 509 habitants "
+                                        "à Grenoble-Alpes Métropole représentent environ 3,3 % de la population."
+                                    ),
+                                )
+                                df_plot_mob["population"] = pd.to_numeric(
+                                    df_plot_mob["population"], errors="coerce"
+                                )
+                                df_plot_mob["pct_dem_pop"] = (
+                                    df_plot_mob["interne"] / df_plot_mob["population"] * 100
+                                ).replace([np.inf, -np.inf], np.nan).fillna(0)
+                                df_plot_mob["pct_reste_pop"] = 100 - df_plot_mob["pct_dem_pop"]
+
+                                COLOR_DEM_INTERNE = PALETTE_METRO[0]
+                                COLOR_RESTE_POP   = PALETTE_METRO[4]
+
+                                fig_dem_pop = go.Figure()
+
+                                fig_dem_pop.add_trace(go.Bar(
+                                    x=noms_mob,
+                                    y=df_plot_mob["pct_dem_pop"],
+                                    name="Déménagements internes (%)",
+                                    marker=dict(color=COLOR_DEM_INTERNE),
+                                    text=[f"{v:.1f}%" for v in df_plot_mob["pct_dem_pop"]],
+                                    textposition="inside",
+                                    textfont=dict(color="#333", size=10),
+                                    customdata=df_plot_mob[["interne", "population"]].values,
+                                    hovertemplate=(
+                                        "<b>%{x}</b><br>Déménagements internes : %{customdata[0]:,.0f}"
+                                        "<br>Population : %{customdata[1]:,.0f}"
+                                        "<br>Part : %{y:.2f} %<extra></extra>"
+                                    ),
+                                ))
+
+                                fig_dem_pop.add_trace(go.Bar(
+                                    x=noms_mob,
+                                    y=df_plot_mob["pct_reste_pop"],
+                                    name="Reste de la population (%)",
+                                    marker=dict(color=COLOR_RESTE_POP),
+                                    text=[f"{v:.1f}%" for v in df_plot_mob["pct_reste_pop"]],
+                                    textposition="inside",
+                                    textfont=dict(color="white", size=10),
+                                    hovertemplate="<b>%{x}</b><br>Reste de la population : %{y:.2f} %<extra></extra>",
+                                ))
+
+                                if greno_vrect:
+                                    fig_dem_pop.add_vrect(**greno_vrect)
+                                fig_dem_pop.update_layout(
+                                    barmode="stack",
+                                    height=320, margin=dict(t=10, b=10),
+                                    paper_bgcolor="rgba(0,0,0,0)",
+                                    plot_bgcolor="rgba(0,0,0,0)",
+                                    font_family="Sora",
+                                    legend=dict(orientation="h", yanchor="bottom", y=1.02,
+                                                xanchor="left", x=0),
+                                    xaxis=dict(showgrid=False),
+                                    yaxis=dict(
+                                        gridcolor="#E8F5EE",
+                                        title="Part de la population (%)",
+                                        range=[0, 100],
+                                    ),
+                                )
+                                st.plotly_chart(fig_dem_pop, use_container_width=True)
+
                         # Affichage du graphique d'Autonomie Territoriale UNIQUEMENT si ce n'est pas "Migrations"
                         if "Migrations" not in theme_mob:
                             with ci2:
@@ -3156,8 +3240,7 @@ if vue == "Démographie":
                                 st.plotly_chart(fig_auto, use_container_width=True)
 
                         with st.expander("💡 Interpréter les flux internes"):
-                            st.write(interpret_int)  # Utilisation de votre variable paramétrée
-
+                            st.write(interpret_int)
 # ==============================================================================
 # ONGLET 4 - TRANSPORT DOMICILE-TRAVAIL
 # ==============================================================================
@@ -4467,10 +4550,10 @@ if vue == "Démographie":
                 # permettre une comparaison visuelle directe des hauteurs de barres
                 shared_x_max = max(all_maxes) * 1.10 if all_maxes else 100
 
-                ncols = min(n_targets, 3)
+                ncols = 3
                 rows_pyr = [targets_log[i:i + ncols] for i in range(0, n_targets, ncols)]
                 for row in rows_pyr:
-                    cols = st.columns(len(row))
+                    cols = st.columns(ncols)
                     for j, t in enumerate(row):
                         df_t = df_filter_peuplement(t)
                         is_greno = (t == "Grenoble" and highlight_grenoble_actif)
@@ -5796,7 +5879,12 @@ if vue == "Solidarité et citoyenneté":
                         with c2:
                             st.markdown(
                                 f"##### Comparaison toutes catégories d'aides ({year_caf})",
-                                help="Permet de comparer en un seul coup d'œil la répartition de chaque aide entre les territoires."
+                                help="Pour chaque territoire, part (%) que représente chaque catégorie d'aide "
+                                     "dans le total des 4 catégories affichées (Insertion, Logement, Jeunes enfants, "
+                                     "Enfance & Jeunesse) — ces parts totalisent donc toujours 100 % par construction. "
+                                     "⚠️ Attention : un même foyer peut cumuler plusieurs aides à la fois. Ce graphique "
+                                     "ne mesure donc pas la part des foyers distincts qui perçoivent chaque aide, mais "
+                                     "le poids relatif de chaque catégorie dans le volume total des 4 aides affichées."
                             )
                             AIDES_COMP = {
                                 "Insertion":          f"{measure_prefix} NDURINS",
@@ -5806,37 +5894,67 @@ if vue == "Solidarité et citoyenneté":
                             }
                             aides_disp = {lab: col for lab, col in AIDES_COMP.items() if col in df_fil.columns}
                             if aides_disp:
-                                bcomp = df_fil.groupby(geo_col, as_index=False)[list(aides_disp.values())].sum()
+                                bcomp_raw = df_fil.groupby(geo_col, as_index=False)[list(aides_disp.values())].sum()
+                                bcomp_raw["_total_comp"] = bcomp_raw[list(aides_disp.values())].sum(axis=1)
+
+                                # Conversion en % du total (des 4 catégories) pour CHAQUE territoire
+                                bcomp_pct = bcomp_raw.copy()
+                                for col in aides_disp.values():
+                                    bcomp_pct[col] = bcomp_raw.apply(
+                                        lambda r, c=col: (r[c] / r["_total_comp"] * 100)
+                                                          if r["_total_comp"] > 0 else 0,
+                                        axis=1
+                                    )
+
                                 if is_metro:
-                                    bcomp["Metropole_Key"] = bcomp[geo_col].apply(
+                                    bcomp_pct["Metropole_Key"] = bcomp_pct[geo_col].apply(
                                         lambda x: next((m for m in COULEURS.keys() if m in x), x)
                                     )
-                                bcomp = bcomp.rename(columns={v: k for k, v in aides_disp.items()})
-                                bcomp_long = bcomp.melt(
+
+                                bcomp_pct_named = bcomp_pct.rename(columns={v: k for k, v in aides_disp.items()})
+                                bcomp_raw_named = bcomp_raw.rename(columns={v: k for k, v in aides_disp.items()})
+
+                                bcomp_long = bcomp_pct_named.melt(
                                     id_vars=[geo_col] + (["Metropole_Key"] if is_metro else []),
+                                    value_vars=list(aides_disp.keys()),
+                                    var_name="Catégorie", value_name="Part"
+                                )
+                                bcomp_long_raw = bcomp_raw_named.melt(
+                                    id_vars=[geo_col],
                                     value_vars=list(aides_disp.keys()),
                                     var_name="Catégorie", value_name="Valeur"
                                 )
+                                bcomp_long = bcomp_long.merge(
+                                    bcomp_long_raw, on=[geo_col, "Catégorie"], how="left"
+                                )
+
                                 color_group_comp = "Metropole_Key" if is_metro else geo_col
                                 color_map_comp   = COULEURS if is_metro else None
                                 fig_comp = px.bar(
-                                    bcomp_long, x="Valeur", y="Catégorie",
+                                    bcomp_long, x="Part", y="Catégorie",
                                     color=color_group_comp,
                                     color_discrete_map=color_map_comp,
                                     color_discrete_sequence=color_seq_caf,
-                                    barmode="group", orientation="h", text_auto=",.0f",
+                                    barmode="group", orientation="h",
+                                    text=bcomp_long["Part"].apply(lambda v: f"{v:.1f}%"),
                                     labels={
-                                        "Valeur": label_metric,
+                                        "Part": "% du total (4 catégories)",
                                         "Catégorie": "",
                                         color_group_comp: "Territoire"
                                     },
+                                    custom_data=["Valeur"],
                                     height=360
                                 )
                                 fig_comp.update_traces(
-                                    hovertemplate="<b>%{y}</b><br>%{fullData.name} : <b>%{x:,.0f}</b><extra></extra>"
+                                    textposition="outside",
+                                    hovertemplate=(
+                                        "<b>%{y}</b><br>%{fullData.name}<br>Part : <b>%{x:.1f}%</b>"
+                                        "<br>Valeur : <b>%{customdata[0]:,.0f}</b><extra></extra>"
+                                    )
                                 )
                                 fig_comp.update_layout(
                                     separators=", ",
+                                    xaxis=dict(range=[0, 100], title="% du total (4 catégories)"),
                                     legend=dict(
                                         orientation="v", yanchor="middle", y=0.5,
                                         xanchor="left", x=1.02
@@ -5847,132 +5965,188 @@ if vue == "Solidarité et citoyenneté":
                                 if is_metro:
                                     apply_grenoble_hatch(fig_comp)
                                 st.plotly_chart(style(fig_comp, 30), use_container_width=True)
+                                st.caption(
+                                    "ℹ️ Ces parts totalisent 100 % par territoire (somme des 4 catégories). "
+                                    "Un foyer pouvant cumuler plusieurs aides, ce 100 % représente le poids relatif "
+                                    "de chaque catégorie dans le volume affiché — pas la part de foyers distincts. "
+                                    "👉 Voir le taux de cumul ci-dessous pour mesurer ce phénomène."
+                                )
 
                         st.markdown("---")
 
-                        # ── Ligne 2 : Évolution temporelle + Structure ─────────
-                        c3, c4 = st.columns(2)
-
-                        with c3:
-                            st.markdown(
-                                f"##### Évolution temporelle - {label_metric}",
-                                help="Évolution de l'indicateur sélectionné sur toutes les années disponibles."
+                        # ── Taux de cumul d'aides (indicateur de recoupement) ──
+                        st.markdown(
+                            "##### Taux de cumul d'aides par territoire",
+                            help=(
+                                "Un même foyer peut percevoir plusieurs aides à la fois (ex : Logement ET "
+                                "Enfance & Jeunesse). Ce taux mesure ce cumul : "
+                                "(Insertion + Logement + Jeunes enfants + Enfance & Jeunesse) / Foyers aidés "
+                                "toutes aides confondues (NDUR). Un taux de 1,00 signifie qu'aucun foyer ne cumule "
+                                "d'aide (chacun ne touche qu'une seule catégorie). Plus le taux dépasse 1, plus les "
+                                "foyers aidés cumulent de catégories d'aides en moyenne. Ce taux est calculé à partir "
+                                "du nombre de foyers, quelle que soit la mesure sélectionnée plus haut "
+                                "(foyers / personnes / montant)."
                             )
-                            df_evol = df_caf.copy()
-                            if is_metro:
-                                df_evol = df_evol[df_evol["Agglomeration"].isin(sel_entites_caf)]
-                                df_evol["Metropole_Key"] = df_evol["Agglomeration"].apply(
-                                    lambda x: next((m for m in COULEURS.keys() if m in x), x)
+                        )
+                        FOYERS_NDUR_COL  = "Nombre foyers NDUR"
+                        FOYERS_CATS_COLS = {
+                            "Insertion":          "Nombre foyers NDURINS",
+                            "Logement":           "Nombre foyers NDURAL",
+                            "Jeunes enfants":     "Nombre foyers NDURPAJE",
+                            "Enfance & Jeunesse": "Nombre foyers NDUREJ",
+                        }
+                        cols_cumul_needed = [FOYERS_NDUR_COL] + list(FOYERS_CATS_COLS.values())
+                        if all(c in df_fil.columns for c in cols_cumul_needed):
+                            df_cumul = df_fil.groupby(geo_col, as_index=False)[cols_cumul_needed].sum()
+                            df_cumul["Somme_4_categories"] = df_cumul[list(FOYERS_CATS_COLS.values())].sum(axis=1)
+                            df_cumul["Taux_cumul"] = df_cumul.apply(
+                                lambda r: (r["Somme_4_categories"] / r[FOYERS_NDUR_COL])
+                                          if r[FOYERS_NDUR_COL] > 0 else np.nan,
+                                axis=1
+                            )
+                            df_cumul = df_cumul.dropna(subset=["Taux_cumul"])
+
+                            if not df_cumul.empty:
+                                if is_metro:
+                                    df_cumul["Metropole_Key"] = df_cumul[geo_col].apply(
+                                        lambda x: next((m for m in COULEURS.keys() if m in x), x)
+                                    )
+                                    fig_cumul = px.bar(
+                                        df_cumul, x="Taux_cumul", y=geo_col,
+                                        color="Metropole_Key", color_discrete_map=COULEURS,
+                                        orientation="h",
+                                        text=df_cumul["Taux_cumul"].apply(lambda v: f"{v:.2f}"),
+                                        labels={"Taux_cumul": "Aides / foyer aidé", geo_col: ""},
+                                        custom_data=[FOYERS_NDUR_COL, "Somme_4_categories"],
+                                        height=320
+                                    )
+                                    apply_grenoble_hatch(fig_cumul)
+                                else:
+                                    fig_cumul = px.bar(
+                                        df_cumul, x="Taux_cumul", y=geo_col,
+                                        color=geo_col, color_discrete_sequence=color_seq_caf,
+                                        orientation="h",
+                                        text=df_cumul["Taux_cumul"].apply(lambda v: f"{v:.2f}"),
+                                        labels={"Taux_cumul": "Aides / foyer aidé", geo_col: ""},
+                                        custom_data=[FOYERS_NDUR_COL, "Somme_4_categories"],
+                                        height=320
+                                    )
+
+                                fig_cumul.update_traces(
+                                    textposition="outside",
+                                    hovertemplate=(
+                                        "<b>%{y}</b><br>Taux de cumul : <b>%{x:.2f}</b> aide(s) / foyer aidé"
+                                        "<br>Foyers aidés toutes aides (NDUR) : %{customdata[0]:,.0f}"
+                                        "<br>Somme des 4 catégories : %{customdata[1]:,.0f}<extra></extra>"
+                                    )
                                 )
-                                df_evol_agg = df_evol.groupby(
-                                    ["Annee", "Metropole_Key"], as_index=False
-                                )[metric_key].sum()
-                                fig_evol = px.line(
-                                    df_evol_agg, x="Annee", y=metric_key, color="Metropole_Key",
-                                    markers=True, color_discrete_map=COULEURS,
-                                    labels={
-                                        "Annee": "Année", metric_key: label_metric,
-                                        "Metropole_Key": "Métropole"
-                                    },
-                                    height=360
+                                fig_cumul.add_vline(
+                                    x=1, line_dash="dash", line_color="#888",
+                                    annotation_text="Aucun cumul (1 aide / foyer)",
+                                    annotation_position="top"
                                 )
-                                for trace in fig_evol.data:
-                                    if "Grenoble" in trace.name:
-                                        trace.line.dash  = "dash"
-                                        trace.line.color = "#FF584D"
-                                        trace.line.width = 2.5
-                                        if trace.marker:
-                                            trace.marker.color  = "#FF584D"
-                                            trace.marker.symbol = "diamond"
-                                            trace.marker.size   = 8
+                                fig_cumul.update_layout(
+                                    separators=", ",
+                                    showlegend=False,
+                                    xaxis=dict(title="Aides / foyer aidé (moyenne)"),
+                                    yaxis=dict(categoryorder="total ascending", title=""),
+                                    margin=dict(t=40, b=30, l=140)
+                                )
+                                st.plotly_chart(style(fig_cumul, 30), use_container_width=True)
+                                st.caption(
+                                    "ℹ️ Taux = (Insertion + Logement + Jeunes enfants + Enfance & Jeunesse) / "
+                                    "Foyers aidés toutes aides confondues (NDUR). Un taux de 1,50 signifie qu'en "
+                                    "moyenne, un foyer aidé sur ce territoire touche 1,5 catégorie d'aide différente."
+                                )
                             else:
-                                if "Nom_Commune" in df_evol.columns:
-                                    df_evol = df_evol[
-                                        (df_evol["Agglomeration"] == gre_agglo) &
-                                        (df_evol["Nom_Commune"].isin(sel_entites_caf))
-                                    ]
-                                df_evol_agg = df_evol.groupby(
-                                    ["Annee", "Nom_Commune"], as_index=False
-                                )[metric_key].sum()
-                                fig_evol = px.line(
-                                    df_evol_agg, x="Annee", y=metric_key, color="Nom_Commune",
-                                    markers=True, color_discrete_sequence=PALETTE_COMMUNE_CAF,
-                                    labels={
-                                        "Annee": "Année", metric_key: label_metric,
-                                        "Nom_Commune": "Commune"
-                                    },
-                                    height=360
-                                )
-                            fig_evol.update_traces(
-                                hovertemplate=(
-                                    "<b>%{fullData.name}</b><br>Année : %{x}<br>"
-                                    + label_metric + " : %{y:,.0f}<extra></extra>"
-                                )
+                                st.info("Impossible de calculer le taux de cumul (données NDUR manquantes ou nulles).")
+                        else:
+                            st.info(
+                                "Le taux de cumul nécessite les colonnes 'Nombre foyers NDUR', 'NDURINS', "
+                                "'NDURAL', 'NDURPAJE' et 'NDUREJ', qui ne sont pas toutes présentes dans ce fichier."
                             )
-                            fig_evol.update_layout(
-                                legend=dict(
-                                    orientation="v", yanchor="middle", y=0.5,
-                                    xanchor="left", x=1.02
-                                ),
-                                margin=dict(t=30, r=40, b=30)
-                            )
-                            st.plotly_chart(style(fig_evol, 30), use_container_width=True)
 
-                        with c4:
-                            st.markdown(
-                                f"##### Structure détaillée de la solidarité ({year_caf})",
-                                help="Répartition en % du total par grande catégorie d'allocation."
+                        st.markdown("---")
+
+                        # ── Ligne 2 : Évolution temporelle ─────────────────────
+                        st.markdown(
+                            f"##### Évolution temporelle - {label_metric}",
+                            help="Évolution de l'indicateur sélectionné sur toutes les années disponibles."
+                        )
+                        df_evol = df_caf.copy()
+                        if is_metro:
+                            df_evol = df_evol[df_evol["Agglomeration"].isin(sel_entites_caf)]
+                            df_evol["Metropole_Key"] = df_evol["Agglomeration"].apply(
+                                lambda x: next((m for m in COULEURS.keys() if m in x), x)
                             )
-                            INDICATEURS_GLOBAUX = [
-                                "Nombre foyers NDUR",
-                                "Nombre personnes NDUR",
-                                "Montant total NDUR",
+                            df_evol_agg = df_evol.groupby(
+                                ["Annee", "Metropole_Key"], as_index=False
+                            )[metric_key].sum()
+                            fig_evol = px.line(
+                                df_evol_agg, x="Annee", y=metric_key, color="Metropole_Key",
+                                markers=True, color_discrete_map=COULEURS,
+                                labels={
+                                    "Annee": "Année", metric_key: label_metric,
+                                    "Metropole_Key": "Métropole"
+                                },
+                                height=360
+                            )
+
+                            # Une forme de marqueur distincte par métropole (ordre fixe = cohérent
+                            # d'un graphique à l'autre, quelle que soit la sélection en cours)
+                            MARKER_SYMBOLS_METRO = [
+                                "circle", "square", "triangle-up", "star", "hexagon",
+                                "cross", "x", "pentagon", "triangle-down", "diamond-wide",
                             ]
-                            if metric_key in INDICATEURS_GLOBAUX:
-                                current_root = metric_key.split("NDUR")[0]
-                                aides_struct = {
-                                    "Insertion (RSA, AAH…)": current_root + "NDURINS",
-                                    "Logement (APL, ALS…)":  current_root + "NDURAL",
-                                    "Jeunes enfants (PAJE)":  current_root + "NDURPAJE",
-                                    "Enfance & Jeunesse":     current_root + "NDUREJ",
-                                }
-                                aides_d = {
-                                    lab: col for lab, col in aides_struct.items()
-                                    if col in df_fil.columns
-                                }
-                                if aides_d:
-                                    tot_struct  = df_fil[list(aides_d.values())].sum().sum()
-                                    rows_struct = [
-                                        {
-                                            "Catégorie": lab,
-                                            "Valeur":    df_fil[col].sum(),
-                                            "Part":      df_fil[col].sum() / tot_struct * 100
-                                                         if tot_struct > 0 else 0,
-                                        }
-                                        for lab, col in aides_d.items()
-                                    ]
-                                    df_struct   = pd.DataFrame(rows_struct)
-                                    grey_struct = ["#444444", "#777777", "#aaaaaa", "#cccccc"]
-                                    fig_struct  = px.bar(
-                                        df_struct, x="Part", y="Catégorie", orientation="h",
-                                        color="Catégorie", color_discrete_sequence=grey_struct,
-                                        text=df_struct["Part"].apply(lambda v: f"{v:.1f}%"),
-                                        labels={"Part": "% du total", "Catégorie": ""},
-                                        height=360
-                                    )
-                                    fig_struct.update_traces(
-                                        textposition="outside",
-                                        hovertemplate="<b>%{y}</b><br>Part : <b>%{text}</b><extra></extra>"
-                                    )
-                                    fig_struct.update_layout(
-                                        showlegend=False,
-                                        xaxis=dict(range=[0, 60], title="% du total"),
-                                        yaxis={"categoryorder": "total ascending"},
-                                        margin=dict(t=30, b=30, l=10, r=60)
-                                    )
-                                    st.plotly_chart(style(fig_struct, 30), use_container_width=True)
-                            else:
-                                st.info("Sélectionnez 'Toutes aides' pour voir la structure détaillée.")
+                            METRO_SYMBOL_MAP = {
+                                m: MARKER_SYMBOLS_METRO[i % len(MARKER_SYMBOLS_METRO)]
+                                for i, m in enumerate(COULEURS.keys())
+                            }
+
+                            for trace in fig_evol.data:
+                                if trace.marker:
+                                    trace.marker.symbol = METRO_SYMBOL_MAP.get(trace.name, "circle")
+                                    trace.marker.size   = 8
+                                if "Grenoble" in trace.name:
+                                    trace.line.dash  = "dash"
+                                    trace.line.color = "#FF584D"
+                                    trace.line.width = 2.5
+                                    if trace.marker:
+                                        trace.marker.color  = "#FF584D"
+                                        trace.marker.symbol = "diamond"
+                                        trace.marker.size   = 8
+                        else:
+                            if "Nom_Commune" in df_evol.columns:
+                                df_evol = df_evol[
+                                    (df_evol["Agglomeration"] == gre_agglo) &
+                                    (df_evol["Nom_Commune"].isin(sel_entites_caf))
+                                ]
+                            df_evol_agg = df_evol.groupby(
+                                ["Annee", "Nom_Commune"], as_index=False
+                            )[metric_key].sum()
+                            fig_evol = px.line(
+                                df_evol_agg, x="Annee", y=metric_key, color="Nom_Commune",
+                                markers=True, color_discrete_sequence=PALETTE_COMMUNE_CAF,
+                                labels={
+                                    "Annee": "Année", metric_key: label_metric,
+                                    "Nom_Commune": "Commune"
+                                },
+                                height=360
+                            )
+                        fig_evol.update_traces(
+                            hovertemplate=(
+                                "<b>%{fullData.name}</b><br>Année : %{x}<br>"
+                                + label_metric + " : %{y:,.0f}<extra></extra>"
+                            )
+                        )
+                        fig_evol.update_layout(
+                            legend=dict(
+                                orientation="v", yanchor="middle", y=0.5,
+                                xanchor="left", x=1.02
+                            ),
+                            margin=dict(t=30, r=40, b=30)
+                        )
+                        st.plotly_chart(style(fig_evol, 30), use_container_width=True)
 
                         st.markdown("---")
                         with st.expander("Note méthodologique"):
@@ -5985,6 +6159,7 @@ if vue == "Solidarité et citoyenneté":
                             - **Jeunes enfants (PAJE)** : naissance, garde, petite enfance  
                             - **Enfance & jeunesse** : allocations familiales, rentrée scolaire
                             """)
+
 
     # ──────────────────────────────────────────────────────────────────────────
     # ONGLET 2 - ÉDUCATION
@@ -6916,11 +7091,10 @@ le comportement électoral structurel des territoires et doivent être interpré
 # PAGE ENVIRONNEMENT
 # ==============================================================================
 if vue == "Environnement":
-    tab_env1, tab_env2, tab_env3, tab_env4 = st.tabs([
+    tab_env1, tab_env2, tab_env3 = st.tabs([
         "🏗️  Artificialisation des sols",
         "🍃  Qualité de l'air",
-        "💧  Assainissement",
-        "♻️  Déchets & Transition",
+        "💧  Eau & Assainissement",
     ])
 
     
@@ -8138,6 +8312,12 @@ if vue == "Environnement":
                 <strong>Périmètre :</strong> 4 métropoles disposant de données SISPEA agrégées au
                 niveau métropolitain. La ligne pointillée grise indique la moyenne nationale française
                 (source : SISPEA, janvier 2025) lorsqu'elle est disponible.<br><br>
+                <strong>Méthode de calcul (homogène sur les 4 thématiques) :</strong> lorsqu'une
+                métropole regroupe plusieurs entités de gestion, la valeur affichée est une
+                <strong>moyenne pondérée par la population desservie</strong> de chaque entité
+                (une grande régie pèse plus qu'un petit syndicat). Si la donnée de population
+                n'est pas disponible pour un indicateur, une moyenne simple est
+                utilisée à la place.<br><br>
                 <span style='color:#C62828;font-weight:700;'>⚠️ Rennes Métropole non disponible :</span>
                 la compétence eau y est organisée via des syndicats intercommunaux dont les périmètres
                 ne correspondent pas directement à la métropole.
@@ -8177,15 +8357,32 @@ if vue == "Environnement":
                 st.warning(
                     "⚠️ **Note sur Saint-Étienne :** la compétence eau n'y est pas unifiée — "
                     "plusieurs entités de gestion coexistent dans SISPEA. Les valeurs présentées "
-                    "sont des moyennes. Certains indicateurs peuvent être partiels ou peu "
-                    "représentatifs à l'échelle de la métropole."
+                    "sont des moyennes pondérées par la population desservie de chaque entité "
+                    "lorsque cette donnée est disponible (moyenne simple sinon). Certains "
+                    "indicateurs peuvent malgré tout rester partiels ou peu représentatifs à "
+                    "l'échelle de la métropole."
                 )
 
             eau_colors = [COULEURS.get(m, "#888888") for m in sel_metros_eau]
             n_eau = len(sel_metros_eau)
 
             # ── Helpers ────────────────────────────────────────────────────────────
+            # Colonne de population utilisée pour pondérer les moyennes lorsqu'un territoire
+            # regroupe plusieurs entités de gestion (ex : Saint-Étienne). Présente dans certains
+            # fichiers SISPEA (ex : détail tarifaire) mais pas systématiquement dans tous.
+            POP_COL_PONDERATION = "Pop de l'entité de gestion sans double compte"
+
             def get_val(df, metro, col):
+                """
+                Valeur agrégée pour une métropole et un indicateur donnés.
+                - Si la colonne de population (POP_COL_PONDERATION) est disponible et exploitable :
+                  moyenne pondérée par la population desservie de chaque entité de gestion (une
+                  grande régie pèse plus qu'un petit syndicat dans la moyenne).
+                - Sinon : moyenne arithmétique simple, en repli (ex : fichiers sans donnée de
+                  population pour cet indicateur).
+                Cette fonction unique est utilisée pour TOUS les indicateurs de l'onglet Eau
+                (AEP, AC, ANC, Tarifs), afin que la méthode de calcul soit homogène partout.
+                """
                 if df is None or col not in df.columns:
                     return np.nan
                 sub = df[df["metropole"] == metro].copy()
@@ -8194,29 +8391,18 @@ if vue == "Environnement":
                 sub[col] = pd.to_numeric(
                     sub[col].astype(str).str.replace(",", "."), errors="coerce"
                 )
+
+                if POP_COL_PONDERATION in sub.columns:
+                    sub[POP_COL_PONDERATION] = pd.to_numeric(
+                        sub[POP_COL_PONDERATION], errors="coerce"
+                    ).fillna(0)
+                    valid   = sub[[col, POP_COL_PONDERATION]].dropna(subset=[col])
+                    tot_pop = valid[POP_COL_PONDERATION].sum()
+                    if tot_pop > 0:
+                        return float((valid[col] * valid[POP_COL_PONDERATION]).sum() / tot_pop)
+
                 val = sub[col].mean(skipna=True)
                 return float(val) if pd.notna(val) else np.nan
-
-            def get_val_tar(df, metro, col):
-                sub = df[df["metropole"] == metro].copy()
-                if sub.empty or col not in sub.columns:
-                    return np.nan
-                sub[col] = pd.to_numeric(
-                    sub[col].astype(str).str.replace(",", "."), errors="coerce"
-                )
-                pop_col_tar = "Pop de l'entité de gestion sans double compte"
-                if pop_col_tar in sub.columns:
-                    sub[pop_col_tar] = pd.to_numeric(
-                        sub[pop_col_tar], errors="coerce"
-                    ).fillna(0)
-                    valid = sub[[col, pop_col_tar]].dropna(subset=[col])
-                    if len(valid) > 0:
-                        tot = valid[pop_col_tar].sum()
-                        return float(
-                            (valid[col] * valid[pop_col_tar]).sum() / tot
-                            if tot > 0 else valid[col].mean()
-                        )
-                return float(sub[col].mean(skipna=True))
 
             def fv(v, dec=1, suf=""):
                 if pd.isna(v):
@@ -8469,29 +8655,6 @@ if vue == "Environnement":
                             "⚠️ D201.1 absent des données — D201.0 utilisé en substitution."
                         ),
                     },
-                    "D204.0": {
-                        "titre": "Prix TTC assainissement collectif (120 m³)",
-                        "axe": "€/m³ TTC",
-                        "moy_fr": 1.86,
-                        "moy_label": "Moy. France (janv. 2025) : 1,86 €/m³",
-                        "higher_better": False, "dec": 2, "suf": " €/m³",
-                        "help": (
-                            "D204.0 — Prix TTC du service d'assainissement collectif au m³, "
-                            "calculé pour une consommation de référence de 120 m³/an."
-                        ),
-                    },
-                    "P201.1": {
-                        "titre": "Taux de desserte par réseau de collecte",
-                        "axe": "%",
-                        "moy_fr": 97.2,
-                        "moy_label": "Moy. France : 97,2 %",
-                        "higher_better": True, "dec": 1, "suf": " %",
-                        "help": (
-                            "P201.1 — Rapport entre le nombre d'abonnés du service AC et le nombre "
-                            "potentiel d'abonnés de la zone relevant du collectif. 100 % = tous les "
-                            "logements de la zone sont desservis par un réseau existant."
-                        ),
-                    },
                     "P203.3": {
                         "titre": "Conformité de la collecte des effluents",
                         "axe": "%",
@@ -8528,62 +8691,11 @@ if vue == "Environnement":
                             "les seuils réglementaires. Distinct de P204.3 qui juge les équipements."
                         ),
                     },
-                    "P252.2": {
-                        "titre": "Points noirs du réseau de collecte",
-                        "axe": "nb / 100 km",
-                        "moy_fr": 3.1,
-                        "moy_label": "Moy. France : 3,1 / 100 km",
-                        "higher_better": False, "dec": 1, "suf": " / 100 km",
-                        "help": (
-                            "P252.2 — Nombre de tronçons nécessitant des interventions fréquentes "
-                            "de curage (≥ 2 fois/an) pour 100 km de réseau. Plus bas = meilleur état "
-                            "du réseau. Indique les points problématiques (dépôts, racines, sections insuffisantes)."
-                        ),
-                    },
-                    "P253.2": {
-                        "titre": "Taux de renouvellement des réseaux de collecte",
-                        "axe": "%/an",
-                        "moy_fr": 0.60,
-                        "moy_label": "Moy. France : 0,60 %/an",
-                        "higher_better": True, "dec": 2, "suf": " %/an",
-                        "help": (
-                            "P253.2 — Taux moyen de renouvellement des canalisations sur 5 ans "
-                            "(longueur renouvelée / longueur totale × 100). 1 %/an = renouvellement "
-                            "complet en 100 ans. En dessous, le réseau vieillit plus vite qu'il n'est entretenu."
-                        ),
-                    },
-                    "P257.0": {
-                        "titre": "Taux d'impayés sur factures AC",
-                        "axe": "%",
-                        "moy_fr": 2.10,
-                        "moy_label": "Moy. France : 2,10 %",
-                        "higher_better": False, "dec": 2, "suf": " %",
-                        "help": (
-                            "P257.0 — Part des factures d'assainissement de l'année N-1 impayées "
-                            "à la clôture de l'exercice. Un taux élevé peut signaler des difficultés "
-                            "sociales ou des défauts de gestion du recouvrement."
-                        ),
-                    },
-                    "P258.1": {
-                        "titre": "Taux de réclamations AC",
-                        "axe": "/ 1 000 abonnés",
-                        "moy_fr": 2.30,
-                        "moy_label": "Moy. France : 2,30 / 1000 abonnés",
-                        "higher_better": False, "dec": 2, "suf": " / 1000 ab.",
-                        "help": (
-                            "P258.1 — Nombre de réclamations écrites reçues par le service AC "
-                            "pour 1 000 abonnés. Mesure la satisfaction usagers et la qualité "
-                            "de la relation clientèle."
-                        ),
-                    },
                 }
 
                 indicators_ac = [
-                    "D201.0", "D204.0",
-                    "P201.1", "P203.3",
+                    "D201.0", "P203.3",
                     "P204.3", "P205.3",
-                    "P252.2", "P253.2",
-                    "P257.0", "P258.1",
                 ]
 
                 for i in range(0, len(indicators_ac), 2):
@@ -8608,15 +8720,9 @@ if vue == "Environnement":
     | Code | Indicateur | Interprétation |
     |---|---|---|
     | **D201.0** | Population desservie | Habitants couverts par un réseau collectif (raccordés ou raccordables). |
-    | **D204.0** | Prix TTC (120 m³) | Coût du service AC pour un ménage de référence. |
-    | **P201.1** | Taux de desserte | Part des logements de la zone AC avec un réseau en façade. |
     | **P203.3** | Conformité collecte ERU | Maîtrise des déversements non traités. Peut dépasser 100 % (eaux parasites). |
     | **P204.3** | Conformité équipements STEU | Stations d'épuration conformes en équipements (capacité, ouvrages). |
     | **P205.3** | Conformité performance STEU | Stations atteignant leurs objectifs de rejet réglementaires. |
-    | **P252.2** | Points noirs réseau | Tronçons nécessitant des curages fréquents. Moins = meilleur état. |
-    | **P253.2** | Renouvellement réseau collecte | Effort de maintenance. 1 %/an = renouvellement en 100 ans. |
-    | **P257.0** | Taux d'impayés AC | Factures AC non honorées. Enjeu social et de recouvrement. |
-    | **P258.1** | Taux de réclamations AC | Litiges usagers pour 1 000 abonnés. Qualité de la relation clientèle. |
     """)
 
             # ══════════════════════════════════════════════════════════════════════
@@ -8639,47 +8745,59 @@ if vue == "Environnement":
 
                 IND_ANC_META = {
                     "D301.0": {
-                        "titre": "Installations ANC recensées",
-                        "axe": "installations",
+                        "titre": "Habitants desservis par le SPANC",
+                        "axe": "habitants",
                         "moy_fr": None, "moy_label": None,
-                        "higher_better": True, "dec": 0, "suf": "",
+                        "higher_better": True, "dec": 0, "suf": " hab.",
                         "help": (
-                            "D301.0 — Nombre total de dispositifs ANC (fosses septiques, filtres à "
-                            "sable, micro-stations, phytoépuration…) recensés sur le territoire. "
-                            "Concerne les habitations non raccordées au réseau public."
+                            "D301.0 — Nombre d'habitants desservis par le service public "
+                            "d'assainissement non collectif (SPANC), qu'ils soient résidents "
+                            "permanents ou présents seulement une partie de l'année (population "
+                            "saisonnière incluse). Ne concerne que les zones classées en "
+                            "assainissement non collectif (par opposition aux zones raccordées "
+                            "au réseau collectif). Ce n'est PAS un nombre d'installations : "
+                            "un même foyer compte pour plusieurs habitants."
                         ),
                     },
                     "D302.0": {
-                        "titre": "Taux de conformité des dispositifs ANC",
-                        "axe": "%",
-                        "moy_fr": 58.0,
-                        "moy_label": "Moy. France : ~58 %",
-                        "higher_better": True, "dec": 1, "suf": " %",
+                        "titre": "Indice de mise en œuvre du SPANC",
+                        "axe": "points (échelle 0-140)",
+                        "moy_fr": 105,
+                        "moy_label": "Moy. France (janv. 2025) : 105 pts",
+                        "higher_better": True, "dec": 0, "suf": " pts",
                         "help": (
-                            "D302.0 — Part des installations jugées conformes lors du dernier "
-                            "contrôle SPANC. Une installation conforme ne présente pas de risque "
-                            "sanitaire ou environnemental avéré. Les non conformes doivent être "
-                            "réhabilitées dans un délai fixé par l'arrêté du 27/04/2012."
+                            "D302.0 — C'est un indice descriptif : de 0 à 100 points, il mesure si la "
+                            "collectivité assure les prestations obligatoires du SPANC (contrôle "
+                            "de la conception, de l'implantation, de la bonne exécution et du bon "
+                            "fonctionnement des installations). Au-delà de 100, jusqu'à 140, des "
+                            "points supplémentaires valorisent les services complémentaires "
+                            "facultatifs (ex : entretien, réalisation de travaux). Un score élevé "
+                            "signifie un service étendu — pas forcément des installations en bon "
+                            "état : voir le taux de conformité (P301.3) pour ça."
                         ),
                     },
                     "P301.3": {
-                        "titre": "Taux de réhabilitation des installations ANC",
+                        "titre": "Taux de conformité des dispositifs ANC",
                         "axe": "%",
-                        "moy_fr": None, "moy_label": None,
+                        "moy_fr": 70.7,
+                        "moy_label": "Moy. France (janv. 2025) : 70,7 %",
                         "higher_better": True, "dec": 1, "suf": " %",
                         "help": (
-                            "P301.3 — Part des installations non conformes ayant fait l'objet "
-                            "d'une réhabilitation dans l'année. Un taux élevé traduit une politique "
-                            "active de mise aux normes. À lire conjointement avec D302.0 : un faible "
-                            "taux de conformité couplé à un fort taux de réhabilitation indique "
-                            "un territoire en bonne trajectoire."
+                            "P301.3 — C'est ici le véritable taux de conformité : part des "
+                            "installations contrôlées et jugées conformes (ou mises en conformité "
+                            "validée par le service) parmi l'ensemble des installations contrôlées "
+                            "depuis la création du service jusqu'au 31/12 de l'année considérée. "
+                            "Un service qui n'a encore contrôlé qu'une petite partie de son parc "
+                            "peut afficher un taux élevé qui n'est pas encore représentatif de "
+                            "l'ensemble du territoire."
                         ),
                     },
                 }
 
                 indicators_anc = ["D301.0", "D302.0", "P301.3"]
 
-                # D301.0 en pleine largeur (volume), D302.0 et P301.3 côte à côte
+                # D301.0 en pleine largeur (population desservie),
+                # puis P301.3 (le vrai % de conformité) et D302.0 (l'indice en points) côte à côte
                 st.markdown(
                     f"##### {IND_ANC_META['D301.0']['titre']}",
                     help=IND_ANC_META["D301.0"]["help"],
@@ -8690,17 +8808,17 @@ if vue == "Environnement":
                 cols_anc = st.columns(2)
                 with cols_anc[0]:
                     st.markdown(
-                        f"##### {IND_ANC_META['D302.0']['titre']}",
-                        help=IND_ANC_META["D302.0"]["help"],
-                    )
-                    chart_indicateur("D302.0", sel_metros_eau, eau_colors,
-                                    df_sel, IND_ANC_META)
-                with cols_anc[1]:
-                    st.markdown(
                         f"##### {IND_ANC_META['P301.3']['titre']}",
                         help=IND_ANC_META["P301.3"]["help"],
                     )
                     chart_indicateur("P301.3", sel_metros_eau, eau_colors,
+                                    df_sel, IND_ANC_META)
+                with cols_anc[1]:
+                    st.markdown(
+                        f"##### {IND_ANC_META['D302.0']['titre']}",
+                        help=IND_ANC_META["D302.0"]["help"],
+                    )
+                    chart_indicateur("D302.0", sel_metros_eau, eau_colors,
                                     df_sel, IND_ANC_META)
 
                 st.markdown("---")
@@ -8709,11 +8827,15 @@ if vue == "Environnement":
 
                 with st.expander("📋 Fiche méthodologique — Indicateurs ANC"):
                     st.markdown("""
-    | Code | Indicateur | Interprétation |
-    |---|---|---|
-    | **D301.0** | Installations recensées | Volume du parc autonome sur le territoire. Reflète l'ampleur du SPANC. |
-    | **D302.0** | Taux de conformité | Part des installations sans risque sanitaire ou environnemental avéré. |
-    | **P301.3** | Taux de réhabilitation | Dynamique de mise aux normes des installations défaillantes. |
+    | Code | Indicateur | Unité | Interprétation |
+    |---|---|---|---|
+    | **D301.0** | Habitants desservis | Nombre d'habitants | Population couverte par le SPANC (résidents permanents + saisonniers). Dimensionne l'ampleur du service, ne juge pas sa qualité. |
+    | **D302.0** | Indice de mise en œuvre | Points (0 à 140) | 0-100 = respect des obligations réglementaires du SPANC (contrôle conception / implantation / exécution / fonctionnement). 100-140 = services complémentaires facultatifs (entretien, travaux). **Ne mesure pas l'état réel des installations.** |
+    | **P301.3** | Taux de conformité | % | Part des installations contrôlées jugées conformes (ou mises en conformité validée) parmi le total contrôlé depuis la création du service. **C'est le seul indicateur de la qualité réelle des équipements.** |
+
+    **⚠️ Point de vigilance :** un territoire peut afficher un score D302.0 élevé (service très
+    structuré, beaucoup de contrôles organisés) tout en ayant un P301.3 modeste (beaucoup
+    d'installations contrôlées jugées non conformes). Les deux indicateurs sont complémentaires dans l'analyse.
     """)
 
             # ══════════════════════════════════════════════════════════════════════
@@ -8733,8 +8855,6 @@ if vue == "Environnement":
                             border-left:4px solid #F9A825;font-size:0.85em;margin-bottom:16px;'>
                     <b>Structure de la facture d'eau :</b> prix volumique HT + abonnement
                     + redevances agence de l'eau + TVA (5,5 % eau potable, 10 % assainissement).
-                    Pour Saint-Étienne, chaque commune a un tarif propre :
-                    les valeurs sont des moyennes pondérées par le nombre d'abonnés.
                 </div>""", unsafe_allow_html=True)
 
                 st.subheader("Indicateurs tarifaires — Eau 2020")
@@ -8743,7 +8863,7 @@ if vue == "Environnement":
                     "D102.0": {
                         "titre": "Prix TTC eau potable (120 m³)",
                         "axe": "€/m³ TTC",
-                        "moy_fr": 2.52,
+                        "moy_fr": None,
                         "moy_label": "Moy. France (janv. 2025) : 2,52 €/m³",
                         "higher_better": False, "dec": 2, "suf": " €/m³",
                         "help": "Coût global pour l'usager eau potable.",
@@ -8783,13 +8903,11 @@ if vue == "Environnement":
                                     help=IND_TAR_META[code_t]["help"],
                                 )
                                 chart_indicateur(code_t, sel_metros_eau, eau_colors,
-                                                df_sel_tar, IND_TAR_META,
-                                                val_func=get_val_tar)
+                                                df_sel_tar, IND_TAR_META)
 
                 st.markdown("---")
                 st.subheader("Tableau comparatif — Tarification")
-                display_recap_table(sel_metros_eau, df_sel_tar,
-                                    IND_TAR_META, val_func=get_val_tar)
+                display_recap_table(sel_metros_eau, df_sel_tar, IND_TAR_META)
 
                 with st.expander("📋 Fiche méthodologique — Tarification"):
                     st.markdown("""
@@ -8800,21 +8918,3 @@ if vue == "Environnement":
     | **VP.178** | Abonnement | Part fixe. Élevé = frein à la sobriété hydrique. |
     | **VP.216** | Redevance agence | Taxes reversées pour protéger la ressource au niveau du bassin. |
     """)
-
-    # # ── Onglet 4 : Déchets & Transition ──────────────────────────────────────
-    # with tab_env4:
-    #     filter_bar("Filtres - Déchets & Transition")
-    #     f_col5, f_col6 = st.columns(2)
-    #     with f_col5:
-    #         metros_dech = st.multiselect(
-    #             "Sélectionner les métropoles :", TOUTES,
-    #             default=shared_default_env(TOUTES), key="env_dechets_metros", on_change=sync_metros_env, args=("env_dechets_metros",)
-    #         )
-    #     with f_col6:
-    #         communes_dech = st.multiselect(
-    #             "Sélectionner les communes (Grenoble) :", COMMUNES_GRENOBLE,
-    #             default=shared_default_communes_env(COMMUNES_GRENOBLE), key="env_dechets_communes", on_change=sync_communes_env, args=("env_dechets_communes",)
-    #         )
-    #     st.markdown('</div>', unsafe_allow_html=True)
-        
-    #     st.info("Données en cours de traitement. Intégrez vos graphiques de production de déchets ménagers et de tri sélectif ici.")
