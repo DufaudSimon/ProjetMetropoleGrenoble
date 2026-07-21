@@ -145,7 +145,7 @@ def nettoyer_migrations(df_raw, annee: int, col_flux: str) -> pd.DataFrame:
     df["dep_destination"] = df["CODGEO"].apply(get_dep)
     df["dep_origine"]     = df["DCRAN"].apply(get_dep)
 
-    df[col_flux] = pd.to_numeric(df[col_flux], errors="coerce").fillna(0).round(2)
+    df[col_flux] = pd.to_numeric(df[col_flux], errors="coerce").fillna(0)
 
     # 1. Filtre géographique : On ne garde QUE la France métropolitaine (élimine "XX", "99", DOM-TOM)
     mask_metro = df["dep_destination"].isin(DEPS_FRANCE_METRO) & df["dep_origine"].isin(DEPS_FRANCE_METRO)
@@ -192,7 +192,7 @@ def nettoyer_mobilite_travail(df_raw, annee: int, col_flux: str) -> pd.DataFrame
     df["dep_residence"] = df["CODGEO"].apply(get_dep)
     df["dep_travail"]   = df["DCLT"].apply(get_dep)
 
-    df[col_flux] = pd.to_numeric(df[col_flux], errors="coerce").fillna(0).round(2)
+    df[col_flux] = pd.to_numeric(df[col_flux], errors="coerce").fillna(0)
 
     mask_metro = df["dep_residence"].isin(DEPS_FRANCE_METRO) & df["dep_travail"].isin(DEPS_FRANCE_METRO)
     mask_res   = df["LIBGEO"].isin(COMMUNES_METROPOLES) & df["dep_residence"].isin(DEPS_METROPOLES)
@@ -235,7 +235,7 @@ def nettoyer_mobilite_scolaire(df_raw, annee: int, col_flux: str) -> pd.DataFram
     df["dep_origine"]     = df["CODGEO"].apply(get_dep)
     df["dep_destination"] = df["DCETU"].apply(get_dep)
 
-    df[col_flux] = pd.to_numeric(df[col_flux], errors="coerce").fillna(0).round(2)
+    df[col_flux] = pd.to_numeric(df[col_flux], errors="coerce").fillna(0)
 
     mask_metro = df["dep_origine"].isin(DEPS_FRANCE_METRO) & df["dep_destination"].isin(DEPS_FRANCE_METRO)
     mask_orig  = df["LIBGEO"].isin(COMMUNES_METROPOLES) & df["dep_origine"].isin(DEPS_METROPOLES)

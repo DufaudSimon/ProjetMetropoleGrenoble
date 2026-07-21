@@ -5930,9 +5930,11 @@ if vue == "Solidarité et citoyenneté":
 
                                 color_group_comp = "Metropole_Key" if is_metro else geo_col
                                 color_map_comp   = COULEURS if is_metro else None
+                                ordre_territoires = list(bcomp_long[color_group_comp].unique())[::-1]  # ordre inversé
                                 fig_comp = px.bar(
                                     bcomp_long, x="Part", y="Catégorie",
                                     color=color_group_comp,
+                                    category_orders = {color_group_comp: ordre_territoires},
                                     color_discrete_map=color_map_comp,
                                     color_discrete_sequence=color_seq_caf,
                                     barmode="group", orientation="h",
@@ -5957,7 +5959,7 @@ if vue == "Solidarité et citoyenneté":
                                     xaxis=dict(range=[0, 100], title="% du total (4 catégories)"),
                                     legend=dict(
                                         orientation="v", yanchor="middle", y=0.5,
-                                        xanchor="left", x=1.02
+                                        xanchor="left", x=1.02, traceorder = "reversed"
                                     ),
                                     margin=dict(t=30, b=30, l=120),
                                     yaxis={"categoryorder": "total ascending"}
