@@ -1423,7 +1423,7 @@ if vue == "Description":
         <div class="card-body" style="font-size:0.9rem; color:#555;">Cette page liste les établissements de santés disponibles. Cela sert à voir si l'on peut se soigner facilement près de chez soi dans chaque quartier.</div></div>""", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown('<p style="font-size:1.5rem; font-weight:700; color:#1B5E20; border-bottom: 2px solid #1B5E20;"> Thématique 3 : Environnement & Transition</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size:1.5rem; font-weight:700; color:#1B5E20; border-bottom: 2px solid #1B5E20;"> Thématique 3 : Environnement </p>', unsafe_allow_html=True)
     
     env1, env2, env3 = st.columns(3)
     with env1:
