@@ -702,6 +702,7 @@ def charger_eau():
                 )
         return df
 
+    # Tiret long : alt + 0151
     # ── Eau potable (AEP) — indicateurs SISPEA utilisés dans l'onglet Environnement
     IND_AEP = [
         "D102.0",   # Prix TTC du service au m³ (120 m³)
@@ -5874,7 +5875,7 @@ if vue == "Solidarité et citoyenneté":
                                     ),
                                     margin=dict(t=30, r=40, b=80)
                                 )
-                                st.plotly_chart(style(fig_qf, 30), use_container_width=True)
+                                st.plotly_chart(style(fig_qf, 30), use_container_width=True) 
 
                         with c2:
                             st.markdown(
